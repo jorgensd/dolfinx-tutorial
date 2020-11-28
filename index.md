@@ -33,6 +33,19 @@ Occasionally we will consider a more physically relevant example to remind the r
 
 Working with this tutorial obviously require access to the FEniCS software. The software is quite complex, and building the software and all the dependencies from source can be a daunting task. The list of dependencies can be found at [https://fenicsproject.org/docs/dolfinx/dev/python/installation.html](https://fenicsproject.org/docs/dolfinx/dev/python/installation.html).
 
-Fortunately, we supply a pre-built docker image at: [https://hub.docker.com/r/dolfinx/dolfinx](https://hub.docker.com/r/dolfinx/dolfinx).
+
+## Docker
+Fortunately, we supply a pre-built docker image at [https://hub.docker.com/r/dolfinx/dolfinx](https://hub.docker.com/r/dolfinx/dolfinx).
 The [Dockerfile](https://github.com/FEniCS/dolfinx/blob/master/Dockerfile)
-provides a definitive build recipe.
+provides a definitive build recipe. 
+
+Docker is a software that uses \textit{containers} to supply software across different kinds of operating systems (Linux, Mac, Windows). The first step is to install docker, following the instructions at their [web-page](https://docs.docker.com/get-started/). 
+As the dolfinx docker images are hosted at Docker-hub, one can directly access the image 
+```
+docker run dolfinx/dolfin
+```
+There are several ways of customizing a docker container, such as mounting volumes/sharing folder, setting a working directory, sharing graphical interfaces etc. See `docker run --help` for an extensive list.
+
+Once you have installed dolfin-X, either by using docker or installing form source, you can test the installation by running `python3 -c "import dolfinx"`. If all goes well, no error-messages should appear.
+
+If you are a beginner in Python, we suggest reading [A Primer on Scientific Programming in Python](https://link.springer.com/book/10.1007%2F978-3-662-49887-3) by Hans Petter Langtangen, which will give you a gentle introduction to the Python programming language. Note that dolfin-X, being a state of the art finite element solver, only supports Python 3, as Python 2 reached its end of life January 1st, 2020. To automatically transfer Python 2 scripts to Python 3, it is suggested to use the [2to3](https://docs.python.org/3/library/2to3.html)-package, which provides automated translation of the code.
