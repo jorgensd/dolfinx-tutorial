@@ -15,9 +15,24 @@ Additionally, Dolfin-X also contains compute intensive functions such as finite 
 
 ## What you will learn
 
-The goa of this tutorial is to demonstrate how to apply the finite element to solve PDEs in FEniCS. Through a series of examples, we will demonstrate how to:
+The goal of this tutorial is to demonstrate how to apply the finite element to solve PDEs in FEniCS. Through a series of examples, we will demonstrate how to:
 
 - Solve linear PDEs (such as the Poisson equation),
 - Solve time-dependent PDEs (such as the heat equation),
 - Solve nonlinear PDEs,
 - Solve systems of time-dependent nonlinear PDEs.
+
+Important topics involve how to set boundary conditions of various types (Dirichlet, Neumann, Robin), how to create meshes, how to define variable coefficients, how to interact with linear and nonlinear solvers, and how to postprocess and visualize solutions.
+
+# Working with this tutorial
+
+Most of the mathematical part of the examples will be kept at a simple level, such that we can keep the focus on the functionality and syntax of FEniCS-X. Therefore we will mostly use the Poisson equation and the time-dependent diffusion equation as model problems. We will use adjusted input data, such that the solution of the problem can be exactly reproduced on uniform, structured meshes with the finite element method. This greatly simplifies the verification of the implementations. 
+Occasionally we will consider a more physically relevant example to remind the reader that there are no big leaps from solving simple model problems to challenging real-world problems when using FEniCS-X.
+
+# Obtaining the software
+
+Working with this tutorial obviously require access to the FEniCS software. The software is quite complex, and building the software and all the dependencies from source can be a daunting task. The list of dependencies can be found at [https://fenicsproject.org/docs/dolfinx/dev/python/installation.html](https://fenicsproject.org/docs/dolfinx/dev/python/installation.html).
+
+Fortunately, we supply a pre-built docker image at: [https://hub.docker.com/r/dolfinx/dolfinx](https://hub.docker.com/r/dolfinx/dolfinx).
+The [Dockerfile](https://github.com/FEniCS/dolfinx/blob/master/Dockerfile)
+provides a definitive build recipe.
