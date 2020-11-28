@@ -47,3 +47,19 @@ There are several ways of customizing a docker container, such as mounting volum
 Once you have installed dolfin-X, either by using docker or installing form source, you can test the installation by running `python3 -c "import dolfinx"`. If all goes well, no error-messages should appear.
 
 If you are a beginner in Python, we suggest reading [A Primer on Scientific Programming in Python](https://link.springer.com/book/10.1007%2F978-3-662-49887-3) by Hans Petter Langtangen, which will give you a gentle introduction to the Python programming language. Note that dolfin-X, being a state of the art finite element solver, only supports Python 3, as Python 2 reached its end of life January 1st, 2020. To automatically transfer Python 2 scripts to Python 3, it is suggested to use the [2to3](https://docs.python.org/3/library/2to3.html)-package, which provides automated translation of the code.
+
+
+# The Finite element method
+There has been written many good text-books on the finite element method, and we refer to the original FEniCS tutorial, for references to these, (see Chapter 1.6.2 of [The FEniCS tutorial](https://www.springer.com/gp/book/9783319524610)).
+
+
+# Fundamentals: Solving the Poisson equation
+The goal of this chapter is to solve one of the most basic PDEs, the Poisson equations, with a few lines of code in FEniCS-X. We start by introducing the most fundamental FEniCS objects, such as `Mesh`, `Function`, `FunctionSpace`, `TrialFunction` and `TestFunction`, and learn how to write a basic PDE solver. 
+This will include:
+- How to formulate a mathematical variational problem
+- How to apply boundary conditions
+- How to solve the discrete linear system
+- How to visualize the solution
+
+The Poisson equation is the following boundary-value problem
+$ -\nabla\cdot (\nabla u(x)) = f(x)$
