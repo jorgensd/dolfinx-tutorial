@@ -4,4 +4,20 @@ This webpage gives a concise overview of the functionality of [Dolfin-X](https:/
 
 Dolfin-X can be used as either a C++ or Python software, but this tutorial will focus on Python programming, as it is the simplest and most effective approach for beginners. After having gone through this tutorial, the reader should familiarize themselfs with the Dolfin-X [documentation](https://fenicsproject.org/docs/dolfinx/dev/python/), which includes the API and numerous demos.
 
-Comments and corrections to this webpage should be submitted to <https://github.com/jorgensd/dolfinx-tutorial/issues>.
+Comments and corrections to this webpage should be submitted to [dolfinx-tutorial issue tracker](https://github.com/jorgensd/dolfinx-tutorial/issues).
+
+## The FEniCS Project
+
+The FEniCS project is a research and software project aimed at creating mathematical methods and software for solving partial differential equations. This includes creating intuitive, efficient and flexible software. The project was initiated in 2003, and is developed in collaboration between researchers from a number of universities and research institutes around the world. For the latest updates and more information about the FEniCS project, visit the [FEniCS](https://fenicsproject.org) webpage.
+
+The latest version of the FEniCS project, FEniCS-X, consists of several building blocks, namely [FIAT](https://github.com/FEniCS/fiat)/[LibTab](https://github.com/FEniCS/libtab), [UFL](https://github.com/FEniCS/ufl), [FFC-X](https://github.com/FEniCS/ffcx) and [Dolfin-X](https://github.com/FEniCS/dolfinx). We will now go through the main objectives of each of these building blocks. Dolfin-X is the high performance C++ backend of FEniCS-X, where structures such as meshes, function spaces and functions are implemented. 
+Additionally, Dolfin-X also contains compute intensive functions such as finite element assembly and mesh refinement algorithms. It also provides an interface to linear algebra solvers and data-structures, such as [PETSc](https://www.mcs.anl.gov/petsc/). UFL is a high-level form language for describing variational formulations with a high-level mathematical syntax. FFC-X is the form compiler of FEniCS; given variational formulations written with UFL, it generates efficient C code. FIAT/LibTab is the finite element backend of FEniCS, responsible for generating finite element basis functions. 
+
+## What you will learn
+
+The goa of this tutorial is to demonstrate how to apply the finite element to solve PDEs in FEniCS. Through a series of examples, we will demonstrate how to:
+
+- Solve linear PDEs (such as the Poisson equation),
+- Solve time-dependent PDEs (such as the heat equation),
+- Solve nonlinear PDEs,
+- Solve systems of time-dependent nonlinear PDEs.
