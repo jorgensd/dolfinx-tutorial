@@ -62,4 +62,4 @@ This will include:
 - How to visualize the solution
 
 The Poisson equation is the following boundary-value problem
-$ -\nabla\cdot (\nabla u(x)) = f(x)$
+$$ -\nabla\cdot (\nabla u(x)) = f(x)$$
