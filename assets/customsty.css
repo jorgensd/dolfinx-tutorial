@@ -5,3 +5,28 @@
     padding: 0;
     overflow: hidden;
   }
+
+
+  .nav li {
+    list-style-type: none;
+    float: left;
+    font-variant:small-caps;
+    font-weight:bold;
+    font-size:20px;
+  }
+
+
+.nav li a {
+  padding: 12px;
+  padding-right: 16px;
+  padding-left: 16px;
+  display: block;
+  color: black;
+  text-align: center;
+  text-decoration: none;
+}
+
+
+.nav li a:hover {
+  color: #1F73ED;
+}
