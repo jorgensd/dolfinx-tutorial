@@ -1,4 +1,5 @@
 import dolfinx
+import dolfinx.cpp
 import dolfinx.mesh
 import dolfinx.plotting
 import matplotlib.pyplot
@@ -8,7 +9,7 @@ from mpi4py import MPI
 from petsc4py import PETSc
 
 # Create the mesh and define function space
-mesh = dolfinx.UnitSquareMesh(MPI.COMM_WORLD, 8, 8)
+mesh = dolfinx.UnitSquareMesh(MPI.COMM_WORLD, 8, 8, dolfinx.cpp.mesh.CellType.triangle)
 V = dolfinx.FunctionSpace(mesh, ("CG", 1))
 
 # Define boundary condition

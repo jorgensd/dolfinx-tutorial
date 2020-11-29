@@ -1,2 +1,2 @@
 all:
-    ipynb-py-convert python_files/t1.py python_files/t1.ipynb
+	ipynb-py-convert t1.py t1.ipynb
