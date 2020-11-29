@@ -3,4 +3,4 @@
   page: index
 
 - title: Tutorials
-  page: tutorials
+  page: dolfinx-tutorial/tutorials
