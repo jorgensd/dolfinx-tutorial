@@ -20,6 +20,7 @@ boundary_facets = dolfinx.mesh.locate_entities_boundary(mesh, fdim,
                                                         lambda x: numpy.full(x.shape[1], True, dtype=numpy.bool))
 bc = dolfinx.DirichletBC(uD, dolfinx.fem.locate_dofs_topological(V, fdim, boundary_facets))
 
+# Define variational problem
 u = ufl.TrialFunction(V)
 v = ufl.TestFunction(V)
 f = dolfinx.Constant(mesh, -6)
