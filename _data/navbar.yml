@@ -1,3 +1,6 @@
 # Site navigation links
 - title: Home
   page: index
+
+- title: Tutorials
+  page: tutorials
