@@ -27,7 +27,7 @@ Important topics involve how to set boundary conditions of various types (Dirich
 Most of the mathematical part of the examples will be kept at a simple level, such that we can keep the focus on the functionality and syntax of FEniCS-X. Therefore we will mostly use the Poisson equation and the time-dependent diffusion equation as model problems. We will use adjusted input data, such that the solution of the problem can be exactly reproduced on uniform, structured meshes with the finite element method. This greatly simplifies the verification of the implementations. 
 Occasionally we will consider a more physically relevant example to remind the reader that there are no big leaps from solving simple model problems to challenging real-world problems when using FEniCS-X.
 
-# Obtaining the software
+## Obtaining the software
 
 Working with this tutorial obviously require access to the FEniCS software. The software is quite complex, and building the software and all the dependencies from source can be a daunting task. The list of dependencies can be found at [https://fenicsproject.org/docs/dolfinx/dev/python/installation.html](https://fenicsproject.org/docs/dolfinx/dev/python/installation.html).
 
@@ -49,17 +49,7 @@ Once you have installed dolfin-X, either by using docker or installing form sour
 If you are a beginner in Python, we suggest reading [A Primer on Scientific Programming in Python](https://link.springer.com/book/10.1007%2F978-3-662-49887-3) by Hans Petter Langtangen, which will give you a gentle introduction to the Python programming language. Note that dolfin-X, being a state of the art finite element solver, only supports Python 3, as Python 2 reached its end of life January 1st, 2020. To automatically transfer Python 2 scripts to Python 3, it is suggested to use the [2to3](https://docs.python.org/3/library/2to3.html)-package, which provides automated translation of the code.
 
 
-# The Finite element method
+## The Finite element method
 There has been written many good text-books on the finite element method, and we refer to the original FEniCS tutorial, for references to these, (see Chapter 1.6.2 of [The FEniCS tutorial](https://www.springer.com/gp/book/9783319524610)).
 
 
-# Fundamentals: Solving the Poisson equation
-The goal of this chapter is to solve one of the most basic PDEs, the Poisson equations, with a few lines of code in FEniCS-X. We start by introducing the most fundamental FEniCS objects, such as `Mesh`, `Function`, `FunctionSpace`, `TrialFunction` and `TestFunction`, and learn how to write a basic PDE solver. 
-This will include:
-- How to formulate a mathematical variational problem
-- How to apply boundary conditions
-- How to solve the discrete linear system
-- How to visualize the solution
-
-The Poisson equation is the following boundary-value problem
-$$ -\nabla\cdot (\nabla u(x)) = f(x)$$
