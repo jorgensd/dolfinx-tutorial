@@ -1,6 +1,6 @@
 # Site navigation links
 - title: Home
-  page: index
+  page: dolfinx-tutorial/index
 
 - title: Tutorials
   page: dolfinx-tutorial/tutorials
