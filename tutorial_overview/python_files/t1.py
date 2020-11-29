@@ -25,8 +25,8 @@ bc = dolfinx.DirichletBC(uD, dolfinx.fem.locate_dofs_topological(V, fdim, bounda
 u = ufl.TrialFunction(V)
 v = ufl.TestFunction(V)
 f = dolfinx.Constant(mesh, -6)
-a = ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx
-L = ufl.inner(f, v) * ufl.dx
+a = ufl.dot(ufl.grad(u), ufl.grad(v)) * ufl.dx
+L = f * v * ufl.dx
 
 # Compute solution
 uh = dolfinx.Function(V)
