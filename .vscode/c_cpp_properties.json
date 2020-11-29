@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "/usr/include/python3.8/",
+                "${workspaceFolder}/",
+                "/usr/include/eigen3/",
+                "/usr/local/petsc/include/",
+                "/home/shared/dolfinx_src/ffcX/ffcx/codegeneration/",
+                "/usr/include/x86_64-linux-gnu/mpich/",
+                "/usr/local/dolfinx-real/include/"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64",
+            "configurationProvider": "vector-of-bool.cmake-tools"
+        }
+    ],
+    "version": 4
+}
