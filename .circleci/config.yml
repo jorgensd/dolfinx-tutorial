@@ -1,0 +1,11 @@
+version: 2.1
+
+jobs:
+  tutorials:
+    docker:
+      - image: dolfinx/dolfinx
+    steps:
+      - checkout
+      - run:
+          command: python3 tutorial_overview/python_files/t1.py
+          name: Run first tutorial
