@@ -30,3 +30,9 @@
 .nav li a:hover {
   color: #1F73ED;
 }
+
+.paper:target {
+  padding-left:25px;padding-right:25px;
+  border-left: #a30c0c 10px solid;
+  border-right: #a30c0c 10px solid;
+}
