@@ -38,11 +38,19 @@ dolfinx.plotting.plot(uh)
 dolfinx.plotting.plot(mesh, color="k")
 matplotlib.pyplot.savefig("uh.png")
 
-# Compute error in L2 norm
-error_L2 = numpy.sqrt(dolfinx.fem.assemble_scalar(ufl.inner(uh - uD, uh - uD) * ufl.dx))
+# Compute exact solution
+V2 = dolfinx.FunctionSpace(mesh, ("CG", 2))
+uex = dolfinx.Function(V2)
+uex.interpolate(lambda x: 1 + x[0]**2 + 2 * x[1]**2)
+uex.vector.ghostUpdate(addv=PETSc.InsertMode.INSERT, mode=PETSc.ScatterMode.FORWARD)
 
-# Compute maximum error at a dof
-error_max = numpy.max(numpy.abs(uh.vector.array - uD.vector.array))
+# Compute error in L2 norm
+error_L2 = numpy.sqrt(dolfinx.fem.assemble_scalar(ufl.inner(uh - uex, uh - uex) * ufl.dx))
+
+# Compute maximum error at the vertices
+u_vertex_values = uh.compute_point_values()
+u_ex_vertex_values = uex.compute_point_values()
+error_max = numpy.max(numpy.abs(u_vertex_values - u_ex_vertex_values))
 
 # Print errors
 print("Error_L2 = {0:.2e}".format(error_L2))
