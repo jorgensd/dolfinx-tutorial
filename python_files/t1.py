@@ -4,7 +4,6 @@ import dolfinx.plotting
 import matplotlib.pyplot
 import numpy
 import ufl
-
 from mpi4py import MPI
 from petsc4py import PETSc
 
