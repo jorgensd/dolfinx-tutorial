@@ -19,5 +19,5 @@ COPY . ${HOME}
 USER root
 RUN ch
 
-chown -R ${NB_UID} ${HOME}
+RUN chown -R ${NB_UID} ${HOME}
 USER ${NB_USER}
