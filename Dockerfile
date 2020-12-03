@@ -12,7 +12,6 @@ RUN sudo adduser --disabled-password \
     --uid ${NB_UID} \
     ${NB_USER}
 
-RUN git clone 
 # Make sure the contents of our repo are in ${HOME}
 COPY . ${HOME}
 USER root
