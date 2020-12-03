@@ -17,8 +17,8 @@ uD = dolfinx.Function(V)
 uD.interpolate(lambda x: 1 + x[0]**2 + 2 * x[1]**2)
 uD.vector.ghostUpdate(addv=PETSc.InsertMode.INSERT, mode=PETSc.ScatterMode.FORWARD)
 fdim = mesh.topology.dim - 1
-boundary_facets = dolfinx.mesh.locate_entities_boundary(mesh, fdim,
-                                                        lambda x: numpy.full(x.shape[1], True, dtype=numpy.bool))
+boundary_facets = dolfinx.mesh.locate_entities_boundary(
+    mesh, fdim, lambda x: numpy.full(x.shape[1], True, dtype=numpy.bool))
 bc = dolfinx.DirichletBC(uD, dolfinx.fem.locate_dofs_topological(V, fdim, boundary_facets))
 
 # Define variational problem
