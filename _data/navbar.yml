@@ -1,6 +1,0 @@
-# Site navigation links
-- title: Home
-  page: dolfinx-tutorial/index
-
-- title: Tutorials
-  page: dolfinx-tutorial/tutorials
