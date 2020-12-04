@@ -36,7 +36,7 @@ ARG PETSC_SLEPC_DEBUGGING="no"
 # Ubuntu MPI variant. "mpich" or "openmpi".
 ARG MPI="mpich"
 
-ARG NB_USER=fenics
+ARG NB_USER=jovyan
 ARG NB_UID=1000
 ENV USER ${NB_USER}
 ENV NB_UID ${NB_UID}
