@@ -1,9 +1,10 @@
-FROM ubuntu:20.04
+FROM dokken92/dolfinx_custom:tutorials
 
-RUN apt-get update && \
-    apt-get -y install git python3-pip && \
-    pip3 install --no-cache-dir notebook==5.*
-#FROM dokken92/dolfinx_custom:tutorials
+# FROM ubuntu:20.04
+
+# RUN apt-get update && \
+#     apt-get -y install git python3-pip && \
+#     pip3 install --no-cache-dir notebook==5.*
 ARG NB_USER=jovyan
 ARG NB_UID=1000
 ENV USER ${NB_USER}
