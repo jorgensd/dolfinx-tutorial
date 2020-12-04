@@ -19,10 +19,6 @@ RUN adduser --disabled-password \
 # Make sure the contents of our repo are in ${HOME}
 WORKDIR ${HOME}
 USER root
-
-RUN git clone https://github.com/jorgensd/dolfinx-tutorial/ && \
-    cd dolfinx-tutorial && \
-    git checkout dokken/jupyterbook
 COPY . ${HOME}
 
 RUN chown -R ${NB_UID} ${HOME}
