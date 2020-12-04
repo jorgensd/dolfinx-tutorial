@@ -1,7 +1,7 @@
 FROM dokken92/dolfinx_custom:tutorials
 
 
-ARG NB_USER=fenics
+ARG NB_USER=jovyan
 ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
 
