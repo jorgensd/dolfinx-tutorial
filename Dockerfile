@@ -10,6 +10,7 @@ ENV HOME /home/${NB_USER}
 USER root
 WORKDIR ${HOME}
 RUN git clone https://github.com/jorgensd/dolfinx-tutorial.git &&\
+    cd dolfinx-tutorial.git &&\
     git checkout dokken/jupyterbook
 COPY dolfinx-tutorial/ ${HOME}
 USER root
