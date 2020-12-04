@@ -1,7 +1,7 @@
 FROM ubuntu:20.04
 
 RUN apt-get update && \
-    apt-get -y install python-pip3 && \
+    apt-get -y install python3-pip && \
     pip3 install --no-cache-dir notebook==5.*
 #FROM dokken92/dolfinx_custom:tutorials
 ARG NB_USER=jovyan
