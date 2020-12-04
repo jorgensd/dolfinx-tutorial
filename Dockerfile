@@ -12,7 +12,7 @@ WORKDIR ${HOME}
 RUN git clone https://github.com/jorgensd/dolfinx-tutorial.git &&\
     cd dolfinx-tutorial &&\
     git checkout dokken/jupyterbook
-COPY dolfinx-tutorial/ ${HOME}
+COPY . ${HOME}
 USER root
 
 RUN chown -R ${NB_UID} ${HOME}
