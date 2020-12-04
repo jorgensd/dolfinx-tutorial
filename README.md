@@ -8,6 +8,7 @@ jupyter-book build .
 
 Push book
 ```bash
+pip3 install ghp-import
 ghp-import -n -p -f _build/html
 ```
 
