@@ -17,6 +17,7 @@ RUN adduser --disabled-password \
 
 
 # Make sure the contents of our repo are in ${HOME}
+WORKDIR ${HOME}
 USER root
 
 ADD https://github.com/jorgensd/dolfinx-tutorial/tree/dokken/jupyterbook/tutorial_overview ${HOME}
