@@ -9,7 +9,7 @@ kernelspec:
   language: python
   name: python3
 ---
-# Fundamentals: Solving the Poisson equation
+# Solving the Poisson equation
 
 Authors: Hans Petter Langtangen, Anders Logg 
 

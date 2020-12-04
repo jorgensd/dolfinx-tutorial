@@ -3,5 +3,7 @@
 #
 - file: index
 
-- sections:
-    - file: tutorial_overview/t1
+- part: Fundamentals
+  chapters:
+        - file: chapter1/fundamentals
+        - file: chapter1/membrane
