@@ -1,4 +1,6 @@
-FROM dokken92/dolfinx_custom:tutorials
+FROM ubuntu:20.04
+
+#FROM dokken92/dolfinx_custom:tutorials
 
 ARG NB_USER=jovyan
 ARG NB_UID=1000
