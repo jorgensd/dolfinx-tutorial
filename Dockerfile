@@ -1,5 +1,6 @@
 FROM ubuntu:20.04
 
+RUN pip3 install --no-cache-dir notebook==5.*
 #FROM dokken92/dolfinx_custom:tutorials
 ARG NB_USER=jovyan
 ARG NB_UID=1000
@@ -20,3 +21,4 @@ ADD https://github.com/jorgensd/dolfinx-tutorial/tree/dokken/jupyterbook/tutoria
 
 RUN chown -R ${NB_UID} ${HOME}
 USER ${NB_USER}
+ENTRYPOINT []
