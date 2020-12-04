@@ -12,7 +12,7 @@ RUN git clone https://github.com/jorgensd/dolfinx-tutorial.git &&\
     cd dolfinx-tutorial &&\
     git checkout dokken/jupyterbook &&\
     cd ..
-COPY dolfinx-tutorial/* ${HOME}
+COPY dolfinx-tutorial/tutorial_overview ${HOME}
 
 USER root
 
