@@ -7,8 +7,11 @@ ENV HOME /home/${NB_USER}
 
 
 # Make sure the contents of our repo are in ${HOME}
-COPY . ${HOME}
+RUN git clone git@github.com:jorgensd/dolfinx-tutorial.git &&\
+    git checkout dokken/jupyterbook
+COPY dolfinx-tutorial/ ${HOME}
 USER root
 
 RUN chown -R ${NB_UID} ${HOME}
 USER ${NB_USER}
+WORKDIR ${HOME}
