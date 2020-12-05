@@ -1,4 +1,5 @@
 FROM dokken92/dolfinx_custom:tutorials
+USER root
 RUN apt-get update && \
     apt-get -y install git python3-pip && \
     pip3 install --no-cache-dir notebook==5.*
