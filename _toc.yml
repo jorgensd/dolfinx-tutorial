@@ -3,7 +3,12 @@
 #
 - file: index
 
+- part: Introduction
+  chapters:
+        - file: fem
+
 - part: Fundamentals
   chapters:
         - file: chapter1/fundamentals
+        - file: chapter1/implementation1
         - file: chapter1/membrane
