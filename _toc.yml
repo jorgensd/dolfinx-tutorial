@@ -10,5 +10,6 @@
 - part: Fundamentals
   chapters:
         - file: chapter1/fundamentals
-        - file: chapter1/implementation1
+          sections:
+                - file: chapter1/implementation1
         - file: chapter1/membrane
