@@ -5,7 +5,7 @@ Dolfin-X can be used as either a C++ or Python software, but this tutorial will 
 
 Comments and corrections to this webpage should be submitted to dolfinx-tutorial issue tracker by going to the relevant page in the tutorial, then click the ![git](git.png)-symbol in the top right corner and "open issue".
 
-## Interative tutorials
+## Interactive tutorials
 As this book has been published as a Jupyter Book, we provide interactive notebooks that can be ran in the browser. To start such a notebook click the ![Binder symbol](binder.png)-symbol in the top right corner of the relevant tutorial.
 
 
