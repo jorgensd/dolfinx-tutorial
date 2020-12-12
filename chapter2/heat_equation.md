@@ -1,4 +1,7 @@
 # The heat equation
+Authors: Anders Logg and Hans Petter Langtangen
+Minor modifications by: Jørgen S. Dokken
+
 As a first extension of the Poisson problem from the previous chapter, weconsider the time-dependent heat equation, or the time-dependent diffusion equation. This is the natural extension of the Poisson equation describing the stationary distribution of heat in a body to a time-dependent problem. We will see that by discretizing time into small time intervals and applying standard time-stepping methods, we can solve the heat equation by solvinga sequence of variational problems, much like the one we encountered for the Poisson equation.
 
 ## The PDE problem
