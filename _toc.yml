@@ -11,5 +11,7 @@
   chapters:
         - file: chapter1/fundamentals
           sections:
-                - file: chapter1/implementation1
+                - file: chapter1/fundamentals_code
         - file: chapter1/membrane
+          sections:
+                - file: chapter1/membrane_code
