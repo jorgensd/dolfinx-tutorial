@@ -21,3 +21,5 @@
   chapters:
         - file: chapter2/intro
         - file: chapter2/heat_equation
+          sections:
+                - file: chapter2/heat_code

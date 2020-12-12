@@ -58,4 +58,6 @@ with
 \end{align}
 When solving this variational problem $u^0$ becomes the $L^2$-projection of the given initial value $u_0$ into the finite element space. 
 
-The alternative is to construct $u^0$ by just interpolating the intitial value $u_0$. We covered how to use interpolation in dolfin-X in the {doc}`membrane chapter <../chapter1/membrane_code>`. 
+The alternative is to construct $u^0$ by just interpolating the intitial value $u_0$. We covered how to use interpolation in dolfin-X in the {doc}`membrane chapter <../chapter1/membrane_code>`.
+
+We can use dolfin-X to either project or interpolate the initial condition. The most common choice is to use an projection, which computes an approximation to $u_0$. However, in some applications where we want to verify the code by reproducing exact solutions, one must use interpolate. In this chapter, we will use such a problem.
