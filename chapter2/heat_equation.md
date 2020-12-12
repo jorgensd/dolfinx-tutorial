@@ -50,7 +50,7 @@ where
 In addition to the variational problem to be solved in each  time step, we also need to approximate the initial condition. This equation can also be turned into a variational problem
 \begin{align}
     a_0(u,v)&=L_0(V),
-\end{algin}
+\end{align}
 with 
 \begin{align}
     a_0(u,v)&=\int_{\Omega}uv\mathrm{d} x,\\
