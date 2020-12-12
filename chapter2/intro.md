@@ -1,4 +1,4 @@
-# Summary
+# A Gallery of finite element solvers
 Authors: Anders Logg and Hans Petter Langtangen
 
 The goal of this cahapter is to demonstrate how a range of important PDEs from science and  engineering can be quickly solved with a few lines of `dolfin-X` code. 

@@ -20,4 +20,4 @@
 - part: A Gallery of finite element solvers
   chapters:
         - file: chapter2/intro
-        - file chapter2/heat_equation
+        - file: chapter2/heat_equation
