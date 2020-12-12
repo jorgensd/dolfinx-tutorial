@@ -16,3 +16,8 @@
           sections:
                 - file: chapter1/membrane_code
                 - file: chapter1/membrane_paraview
+
+- part: A Gallery of finite element solvers
+  chapters:
+        - file: chapter2/intro
+        - file chapter2/heat_equation
