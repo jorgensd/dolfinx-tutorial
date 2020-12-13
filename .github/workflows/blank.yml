@@ -30,11 +30,12 @@ jobs:
           pip3 install -U jupyter-book sphinxcontrib-bibtex==1.0.0
           jupyter-book build -W .
 
+      - store_artifacts:
+          path: ./_build/html/reports/
+
       # Pusb book to HTML to github pages
       - name: GitHub Pages action
         uses: peaceiris/actions-gh-pages@v3.5.9
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./_build/html
-      - store_artifacts:
-          path: ./_build/html/reports/
