@@ -32,7 +32,7 @@ jobs:
 
       # Pusb book to HTML to github pages
       - name: GitHub Pages action
-      uses: peaceiris/actions-gh-pages@v3.5.9
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./_build/html
+        uses: peaceiris/actions-gh-pages@v3.5.9
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_build/html
