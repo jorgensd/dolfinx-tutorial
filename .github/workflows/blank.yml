@@ -10,7 +10,7 @@ on:
 
   # Weekly build on Mondays at 8 am
   schedule:
-    cron: "0 8 * * 1"
+    - cron: "0 8 * * 1"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
