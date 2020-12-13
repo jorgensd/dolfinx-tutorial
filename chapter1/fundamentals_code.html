@@ -211,6 +211,11 @@
      Implementation
     </a>
    </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter2/linearelasticity_code.html#boundary-conditions">
+     Boundary conditions
+    </a>
+   </li>
   </ul>
   <i class="fas fa-chevron-down">
   </i>
@@ -386,13 +391,13 @@ Therefore, we need to make specific choices of <span class="math notranslate noh
 <!-- Particularly, piecewise linear continuous Galerkin finite elements are able to exactly reproduce a quadratic polynomial on 
 a uniformly partitioned mesh. -->
 <p>We use this fact to construct a quadratic function in <span class="math notranslate nohighlight">\(2D\)</span>. In particular we choose</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e7025bb1-3f73-4916-af6f-dfe4323fee69">
-<span class="eqno">(1)<a class="headerlink" href="#equation-e7025bb1-3f73-4916-af6f-dfe4323fee69" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-72a73deb-e1c6-4ad8-8b7a-95d461b94c0e">
+<span class="eqno">(1)<a class="headerlink" href="#equation-72a73deb-e1c6-4ad8-8b7a-95d461b94c0e" title="Permalink to this equation">¶</a></span>\[\begin{align}
  u_e(x,y)=1+x^2+2y^2
  \end{align}\]</div>
 <p>Inserting <span class="math notranslate nohighlight">\(u_e\)</span> in the original boundary problem, we find that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-978a2f83-7c53-48fc-a61e-13adcd9f0248">
-<span class="eqno">(2)<a class="headerlink" href="#equation-978a2f83-7c53-48fc-a61e-13adcd9f0248" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-fcde9dce-89cc-4040-ab27-84c38dcac009">
+<span class="eqno">(2)<a class="headerlink" href="#equation-fcde9dce-89cc-4040-ab27-84c38dcac009" title="Permalink to this equation">¶</a></span>\[\begin{align}
     f(x,y)= -6,\qquad u_d(x,y)=u_e(x,y)=1+x^2+2y^2,
 \end{align}\]</div>
 <p>regardless of the shape of the domain as long as we prescribe
