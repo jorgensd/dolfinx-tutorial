@@ -296,6 +296,25 @@
     <!-- Table of contents -->
     <div class="d-none d-md-block col-md-2 bd-toc show">
         
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-pde-problem">
+   The PDE problem
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-variational-formulation">
+   The variational formulation
+  </a>
+ </li>
+</ul>
+
+        </nav>
+        
     </div>
 </div>
     <div id="main-content" class="row">
@@ -306,8 +325,51 @@
   <div class="section" id="the-equations-of-linear-elasiticity">
 <h1>The equations of linear elasiticity<a class="headerlink" href="#the-equations-of-linear-elasiticity" title="Permalink to this headline">¶</a></h1>
 <p>Authors: Anders Logg and Hans Petter Langtangen</p>
-<p>Test</p>
+<p>Analysis of structures is one of  the major activities of modern engineering, which likely makes the PDE modeling the deformation of elastic bodies the most popular PDE in the world. It takes just one page of code to solve the equations of 2D or 3D elastiicity in dolfin-X, and shown in this section.</p>
+<div class="section" id="the-pde-problem">
+<h2>The PDE problem<a class="headerlink" href="#the-pde-problem" title="Permalink to this headline">¶</a></h2>
+<p>The equations governing small elastic deformations of a body <span class="math notranslate nohighlight">\(\Omega\)</span> can be written as</p>
+<div class="math notranslate nohighlight" id="equation-my-math-ref">
+<span class="eqno">(25)<a class="headerlink" href="#equation-my-math-ref" title="Permalink to this equation">¶</a></span>\[\begin{split}    -\nabla \cdot \sigma (u) &amp;= f &amp;&amp; \text{in } \Omega\\
+    \sigma(u)&amp;= \lambda \mathrm{tr}(\epsilon(u))I + 2 \mu \epsilon(u)\\
+    \epsilon(u) &amp;= \frac{1}{2}\left(\nabla u + (\nabla u )^T\right)\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\sigma\)</span> is the stress tensor, <span class="math notranslate nohighlight">\(f\)</span> is the body force per unit volume, <span class="math notranslate nohighlight">\(\lambda\)</span> and <span class="math notranslate nohighlight">\(\mu\)</span> are Lamé’s elasticity paramters for the material in <span class="math notranslate nohighlight">\(\Omega\)</span>, <span class="math notranslate nohighlight">\(I\)</span> is the identity tensor, <span class="math notranslate nohighlight">\(\mathrm{tr}\)</span> is the trace operator on a tensor, <span class="math notranslate nohighlight">\(\epsilon\)</span> is the symmetric strain-rate tensor (symmetric gradient), and <span class="math notranslate nohighlight">\(u\)</span> is the displacement vector filed. Above we have assumed isotropic elastic conditions.
+By insertion of <span class="math notranslate nohighlight">\(\epsilon(u)\)</span> into <span class="math notranslate nohighlight">\(\sigma\)</span> we obtain</p>
+<div class="amsmath math notranslate nohighlight" id="equation-948956e7-a77e-4a36-8381-cfb6f4d6e49b">
+<span class="eqno">(26)<a class="headerlink" href="#equation-948956e7-a77e-4a36-8381-cfb6f4d6e49b" title="Permalink to this equation">¶</a></span>\[\begin{align}
+    \sigma(u)&amp;=\lambda(\nabla \cdot u)I + \mu(\nabla u + (\nabla u)^T)
+\end{align}\]</div>
+<p>Note that we could have written the PDE above as a single vector PDE for <span class="math notranslate nohighlight">\(u\)</span>, which is the governing PDe for the unknown <span class="math notranslate nohighlight">\(u\)</span> (Navier’s) equation. However, it is convenient to keep the current representation of the PDE for the derivation of the variational formulation.</p>
+</div>
+<div class="section" id="the-variational-formulation">
+<h2>The variational formulation<a class="headerlink" href="#the-variational-formulation" title="Permalink to this headline">¶</a></h2>
+<p>The variational formulation of the PDE consists of forming the inner product of the PDE <a class="reference internal" href="#equation-my-math-ref">(25)</a> with a <em>vector</em> test function <span class="math notranslate nohighlight">\(v\in\hat{V}\)</span>, where <span class="math notranslate nohighlight">\(\hat{V}\)</span> is a vector-valued test function space, and integrating over the domain <span class="math notranslate nohighlight">\(\Omega\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[    -\int_{\Omega}(\nabla \cdot \sigma)\cdot v ~\mathrm{d} x = \int_{\Omega} f\cdot v ~\mathrm{d} x.\]</div>
+<p>Since <span class="math notranslate nohighlight">\(\nabla \cdot \sigma\)</span> contains second-order derivatives of our unknown <span class="math notranslate nohighlight">\(u\)</span>, we integrate this term by parts</p>
+<div class="math notranslate nohighlight">
+\[    -\int_{\Omega}(\nabla \cdot \sigma)\cdot v ~\mathrm{d} x =\int_{\Omega}\sigma : \nabla v ~\mathrm{d}x - \int_{\partial\Omega} (\sigma \cdot n)\cdot v~\mathrm{d}x,\]</div>
+<p>where the colon operator is the inner product between tensors (summed pairwise product of all elements), and <span class="math notranslate nohighlight">\(n\)</span> is the outward unit normal at the boundary. The quantity <span class="math notranslate nohighlight">\(\sigma \cdot n\)</span> is nown as the <em>traction</em> or stress vector at the boudnary, and often s prescribed as a boundary condition. We here assume that it is prescribed on a part <span class="math notranslate nohighlight">\(\partial \Omega_T\)</span> of the boundary as <span class="math notranslate nohighlight">\(\sigma \cdot n=T\)</span>. On te remaining part of the boundary, we assume that the value of the displacement is given as Dirichlet condition (and hence the boundary integral on those boundaries are <span class="math notranslate nohighlight">\(0\)</span>). We thus obtain</p>
+<div class="math notranslate nohighlight">
+\[    \int_{\Omega} \sigma : \nabla v ~\mathrm{d} x = \int_{\Omega} f\cdot v ~\mathrm{d} x + \int_{\partial\Omega_T}T~\mathrm{d} s.\]</div>
+<p>If we now insert for <span class="math notranslate nohighlight">\(\sigma\)</span> its representaton with the unknown <span class="math notranslate nohighlight">\(u\)</span>, we can obtain our variational formulation:
+Find <span class="math notranslate nohighlight">\(u\in V\)</span> such that</p>
+<div class="math notranslate nohighlight">
+\[    a(u,v) = L(v)\qquad  \forall v \in \hat{V},\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight" id="equation-elasticity">
+<span class="eqno">(27)<a class="headerlink" href="#equation-elasticity" title="Permalink to this equation">¶</a></span>\[\begin{split}    a(u,v)&amp;=\int_{\Omega}\sigma(u):\nabla v ~\mathrm{d}x\\
+    \sigma(u)&amp;=\lambda(\nabla \cdot u)I+\mu (\nabla u + (\nabla u)^T),\\
+    L(v)&amp;=\int_{\Omega}f\cdot v~\mathrm{d} x + \int_{\partial\Omega_T}T\cdot v~\mathrm{d}s.\end{split}\]</div>
+<p>One can show that the inner product of a symmetric tensor <span class="math notranslate nohighlight">\(A\)</span> and an anti-symmetric tensor <span class="math notranslate nohighlight">\(B\)</span> vanishes. If we express <span class="math notranslate nohighlight">\(\nabla v\)</span> as a sum of its symmtric and anti-symmetric parts, only the symmetric part will survive in the product <span class="math notranslate nohighlight">\(\sigma : \nabla v\)</span> since <span class="math notranslate nohighlight">\(\nabla v\)</span> is a symmetric tensor. Thus replacing <span class="math notranslate nohighlight">\(\nabla v\)</span> by the symmetric gradient <span class="math notranslate nohighlight">\(\epsilon(v)\)</span> gives rise to a slightly different variational form</p>
+<div class="math notranslate nohighlight" id="equation-elasticity-alternative">
+<span class="eqno">(28)<a class="headerlink" href="#equation-elasticity-alternative" title="Permalink to this equation">¶</a></span>\[    a(u,v)= \int_{\Omega}\sigma(u):\epsilon(v)~\mathrm{d} x,\]</div>
+<p>where <span class="math notranslate nohighlight">\(\epsilon(v)\)</span> is the symmetric part of <span class="math notranslate nohighlight">\(\nabla v\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[    \epsilon(v)=\frac{1}{2}\left(\nabla v + (\nabla v)^T\right)\]</div>
+<p>The formulation <a class="reference internal" href="#equation-elasticity-alternative">(28)</a> is what naturally arises from minimization of elastic potential energy and is a more popular formulation than <a class="reference internal" href="#equation-elasticity">(27)</a>.</p>
 <div class="toctree-wrapper compound">
+</div>
 </div>
 </div>
 
