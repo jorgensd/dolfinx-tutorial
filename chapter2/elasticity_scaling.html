@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>A Gallery of finite element solvers &#8212; FEniCS-X tutorial</title>
+    <title>Scaling &#8212; FEniCS-X tutorial</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -57,8 +57,7 @@
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="The heat equation" href="heat_equation.html" />
-    <link rel="prev" title="Using Paraview for visualization" href="../chapter1/membrane_paraview.html" />
+    <link rel="prev" title="Implementation" href="linearelasticity_code.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -163,8 +162,8 @@
  </span>
 </p>
 <ul class="current nav sidenav_l1">
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
+ <li class="toctree-l1">
+  <a class="reference internal" href="intro.html">
    A Gallery of finite element solvers
   </a>
  </li>
@@ -201,18 +200,18 @@
   <i class="fas fa-chevron-down">
   </i>
  </li>
- <li class="toctree-l1 collapsible-parent">
+ <li class="toctree-l1 current active collapsible-parent">
   <a class="reference internal" href="linearelasticity.html">
    The equations of linear elasiticity
   </a>
-  <ul class="collapse-ul">
+  <ul class="current collapse-ul">
    <li class="toctree-l2">
     <a class="reference internal" href="linearelasticity_code.html">
      Implementation
     </a>
    </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="elasticity_scaling.html">
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
      Scaling
     </a>
    </li>
@@ -260,7 +259,7 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../_sources/chapter2/intro.md"><button type="button"
+        <a class="dropdown-buttons" href="../_sources/chapter2/elasticity_scaling.md"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
                 data-placement="left">.md</button></a>
         <!-- Download PDF via print -->
@@ -280,7 +279,7 @@
                 data-toggle="tooltip" data-placement="left" title="Source repository"><i
                     class="fab fa-github"></i>repository</button></a>
         <a class="issues-button"
-            href="https://github.com/jorgensd/dolfinx-tutorial/issues/new?title=Issue%20on%20page%20%2Fchapter2/intro.html&body=Your%20issue%20content%20here."><button
+            href="https://github.com/jorgensd/dolfinx-tutorial/issues/new?title=Issue%20on%20page%20%2Fchapter2/elasticity_scaling.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
         
@@ -308,11 +307,22 @@
         
               <div>
                 
-  <div class="section" id="a-gallery-of-finite-element-solvers">
-<h1>A Gallery of finite element solvers<a class="headerlink" href="#a-gallery-of-finite-element-solvers" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="scaling">
+<h1>Scaling<a class="headerlink" href="#scaling" title="Permalink to this headline">¶</a></h1>
 <p>Authors: Anders Logg and Hans Petter Langtangen</p>
-<p>The goal of this cahapter is to demonstrate how a range of important PDEs from science and  engineering can be quickly solved with a few lines of <code class="docutils literal notranslate"><span class="pre">dolfin-X</span></code> code.
-We will start with the heat equation, then continue with the non-linear Poisson equation, the equations for linear elasticity, the Navier-Stokes equations, and finally look at how to solve systems of nonlinear advection-diffusion-reaction equations. These problems illustrate howt o solve time-dependent problems, non-linear problems, vector-values problems and systems of PDEs. For each problem, we derive the variational formulation and express the problem in Python in a way that closely resembels the mathematics.</p>
+<p>It is often advantageous to scale a problem as it reduces the need for setting physical parameters, and one obtains dimensonless numbers that reflect the competition of parameters and physical effects. We develop the code for the orignal model with dimensions, and run the scaled problem by tweaking parameters appropriately. Scaling reduces the number of active parameters from <span class="math notranslate nohighlight">\(6\)</span> to <span class="math notranslate nohighlight">\(2\)</span> for the present application.</p>
+<p>In Navier’s equation for <span class="math notranslate nohighlight">\(u\)</span>, arising from insertion of <span class="math notranslate nohighlight">\(\sigma(u)\)</span> in <a class="reference internal" href="linearelasticity.html#equation-elasticity-pde">(25)</a>,</p>
+<div class="math notranslate nohighlight">
+\[    -(\lambda + \mu)\nabla (\nabla \cdot u) - \mu \nabla^2 u = f,\]</div>
+<p>we insert coordiantes made dimensionless by <span class="math notranslate nohighlight">\(L\)</span>, and <span class="math notranslate nohighlight">\(\bar{u}=\frac{u}{U}\)</span>, which results in the dimensionless governing equations</p>
+<div class="math notranslate nohighlight">
+\[    - \beta \bar{\nabla}(\bar{\nabla}\cdot \bar{u})-\bar{\nabla}^2\bar{u} = \bar{f}, \qquad \bar{f} = (0,0,\gamma)\]</div>
+<p>where <span class="math notranslate nohighlight">\(\beta = 1+\frac{\lambda}{\mu}\)</span> is a dimensionless elastiscity paramter and where</p>
+<div class="math notranslate nohighlight">
+\[    \gamma=\frac{\rho g L^2}{\mu U}\]</div>
+<p>is a dimensionless variable reflecting the ratio of the load <span class="math notranslate nohighlight">\(\rho g\)</span> and the shear stress term <span class="math notranslate nohighlight">\(\mu \nabla^2u \sim \mu \frac{U}{L^2}\)</span> in the PDE.</p>
+<p>One option for the scaling is to chose <span class="math notranslate nohighlight">\(U\)</span> such that <span class="math notranslate nohighlight">\(\gamma\)</span> is of unit size (<span class="math notranslate nohighlight">\(U=\frac{\rho g L^2}{\mu}\)</span>). However, in elasticity, this leads to displacements of the size of the geometry. This can be achieved by choosing <span class="math notranslate nohighlight">\(U\)</span> equal to the maximum deflection of a clamped beam, for which there actually exists a formula: <span class="math notranslate nohighlight">\(U=\frac{3}{2} \rho g L^2\frac{\delta^2}{E}\)</span> where <span class="math notranslate nohighlight">\(\delta=\frac{L}{W}\)</span> is a parameter reflecting how slender the beam is, and <span class="math notranslate nohighlight">\(E\)</span> is the modulus of elasticity. Thus the dimensionless parameter <span class="math notranslate nohighlight">\(\delta\)</span> is very important i n the problem (as expected <span class="math notranslate nohighlight">\(\delta\gg 1\)</span> is what gives beam theory!). Taking <span class="math notranslate nohighlight">\(E\)</span> to be of the same order as <span class="math notranslate nohighlight">\(\mu\)</span>, which in this case and for many materials, we realize that <span class="math notranslate nohighlight">\(\gamma \sim \delta^{-2}\)</span> is an appropriate choice. Experimenting with the code to find a displacement that “looks right” in the plots of the deformed geometry, points to <span class="math notranslate nohighlight">\(\gamma=0.4\delta^{-2}\)</span> as our final choice of <span class="math notranslate nohighlight">\(\gamma\)</span>.</p>
+<p>The simulation code implements the problem with dimensions and physical parameters <span class="math notranslate nohighlight">\(\lambda, \mu, \rho, g, L\)</span> and <span class="math notranslate nohighlight">\(W\)</span>. Howeer, we can easily reuse this code for a scaled problem: Just set <span class="math notranslate nohighlight">\(\mu=\rho=L=1\)</span>, <span class="math notranslate nohighlight">\(W\)</span> as <span class="math notranslate nohighlight">\(W/L(\delta^-1)\)</span>, <span class="math notranslate nohighlight">\(g=\gamma\)</span> and <span class="math notranslate nohighlight">\(\lambda=\beta\)</span>.</p>
 </div>
 
     <script type="text/x-thebe-config">
@@ -343,8 +353,7 @@ We will start with the heat equation, then continue with the non-linear Poisson 
     
     <div class='prev-next-bottom'>
         
-    <a class='left-prev' id="prev-link" href="../chapter1/membrane_paraview.html" title="previous page">Using Paraview for visualization</a>
-    <a class='right-next' id="next-link" href="heat_equation.html" title="next page">The heat equation</a>
+    <a class='left-prev' id="prev-link" href="linearelasticity_code.html" title="previous page">Implementation</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">

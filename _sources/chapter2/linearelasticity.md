@@ -7,7 +7,7 @@ Analysis of structures is one of  the major activities of modern engineering, wh
 ## The PDE problem
 The equations governing small elastic deformations of a body $\Omega$ can be written as
 ```{math}
-:label: my-math-ref
+:label: elasticity-PDE
     -\nabla \cdot \sigma (u) &= f && \text{in } \Omega\\
     \sigma(u)&= \lambda \mathrm{tr}(\epsilon(u))I + 2 \mu \epsilon(u)\\
     \epsilon(u) &= \frac{1}{2}\left(\nabla u + (\nabla u )^T\right)
@@ -20,7 +20,7 @@ By insertion of $\epsilon(u)$ into $\sigma$ we obtain
 Note that we could have written the PDE above as a single vector PDE for $u$, which is the governing PDe for the unknown $u$ (Navier's) equation. However, it is convenient to keep the current representation of the PDE for the derivation of the variational formulation.
 
 ## The variational formulation
-The variational formulation of the PDE consists of forming the inner product of the PDE [](my-math-ref) with a *vector* test function $v\in\hat{V}$, where $\hat{V}$ is a vector-valued test function space, and integrating over the domain $\Omega$:
+The variational formulation of the PDE consists of forming the inner product of the PDE [](elasticity-PDE) with a *vector* test function $v\in\hat{V}$, where $\hat{V}$ is a vector-valued test function space, and integrating over the domain $\Omega$:
 ```{math}
     -\int_{\Omega}(\nabla \cdot \sigma)\cdot v ~\mathrm{d} x = \int_{\Omega} f\cdot v ~\mathrm{d} x.
 ```
