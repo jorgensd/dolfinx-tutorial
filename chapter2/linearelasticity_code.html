@@ -210,11 +210,6 @@
      Implementation
     </a>
    </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="#boundary-conditions">
-     Boundary conditions
-    </a>
-   </li>
   </ul>
   <i class="fas fa-chevron-down">
   </i>
@@ -322,44 +317,35 @@
         </div>
         <nav id="bd-toc-nav">
             <ul class="nav section-nav flex-column">
- <li class="toc-h1 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#">
-   Implementation
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#test-problem">
+   Test problem
   </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h2 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#test-problem">
-     Test problem
-    </a>
-   </li>
-  </ul>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#boundary-conditions">
    Boundary conditions
   </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h2 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#variational-formulation">
-     Variational formulation
-    </a>
-   </li>
-   <li class="toc-h2 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#solve-the-linear-variational-problem">
-     Solve the linear variational problem
-    </a>
-   </li>
-   <li class="toc-h2 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#visualization">
-     Visualization
-    </a>
-   </li>
-   <li class="toc-h2 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#stress-computation">
-     Stress computation
-    </a>
-   </li>
-  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#variational-formulation">
+   Variational formulation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#solve-the-linear-variational-problem">
+   Solve the linear variational problem
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#visualization">
+   Visualization
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#stress-computation">
+   Stress computation
+  </a>
  </li>
 </ul>
 
@@ -408,9 +394,8 @@
 </div>
 </div>
 </div>
-</div>
 <div class="section" id="boundary-conditions">
-<h1>Boundary conditions<a class="headerlink" href="#boundary-conditions" title="Permalink to this headline">¶</a></h1>
+<h2>Boundary conditions<a class="headerlink" href="#boundary-conditions" title="Permalink to this headline">¶</a></h2>
 <p>As we would like to clamp the boundary at <span class="math notranslate nohighlight">\(x=0\)</span>, we do this by using a marker function, which locate the facets where <span class="math notranslate nohighlight">\(x\)</span> is close to zero by machine prescision.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -442,6 +427,7 @@
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ufl</span>
 <span class="n">ds</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">Measure</span><span class="p">(</span><span class="s2">&quot;ds&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">mesh</span><span class="p">)</span>
 </pre></div>
+</div>
 </div>
 </div>
 </div>

@@ -211,11 +211,6 @@
      Implementation
     </a>
    </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="linearelasticity_code.html#boundary-conditions">
-     Boundary conditions
-    </a>
-   </li>
   </ul>
   <i class="fas fa-chevron-down">
   </i>
@@ -340,8 +335,8 @@
     \epsilon(u) &amp;= \frac{1}{2}\left(\nabla u + (\nabla u )^T\right)\end{split}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\sigma\)</span> is the stress tensor, <span class="math notranslate nohighlight">\(f\)</span> is the body force per unit volume, <span class="math notranslate nohighlight">\(\lambda\)</span> and <span class="math notranslate nohighlight">\(\mu\)</span> are Lamé’s elasticity paramters for the material in <span class="math notranslate nohighlight">\(\Omega\)</span>, <span class="math notranslate nohighlight">\(I\)</span> is the identity tensor, <span class="math notranslate nohighlight">\(\mathrm{tr}\)</span> is the trace operator on a tensor, <span class="math notranslate nohighlight">\(\epsilon\)</span> is the symmetric strain-rate tensor (symmetric gradient), and <span class="math notranslate nohighlight">\(u\)</span> is the displacement vector filed. Above we have assumed isotropic elastic conditions.
 By insertion of <span class="math notranslate nohighlight">\(\epsilon(u)\)</span> into <span class="math notranslate nohighlight">\(\sigma\)</span> we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-10e06fe0-c3f6-4e86-af55-54e950363632">
-<span class="eqno">(26)<a class="headerlink" href="#equation-10e06fe0-c3f6-4e86-af55-54e950363632" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-eda5cb0a-d3c9-4b1f-a826-19c4cbc0b15e">
+<span class="eqno">(26)<a class="headerlink" href="#equation-eda5cb0a-d3c9-4b1f-a826-19c4cbc0b15e" title="Permalink to this equation">¶</a></span>\[\begin{align}
     \sigma(u)&amp;=\lambda(\nabla \cdot u)I + \mu(\nabla u + (\nabla u)^T)
 \end{align}\]</div>
 <p>Note that we could have written the PDE above as a single vector PDE for <span class="math notranslate nohighlight">\(u\)</span>, which is the governing PDe for the unknown <span class="math notranslate nohighlight">\(u\)</span> (Navier’s) equation. However, it is convenient to keep the current representation of the PDE for the derivation of the variational formulation.</p>

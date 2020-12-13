@@ -211,11 +211,6 @@
      Implementation
     </a>
    </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="linearelasticity_code.html#boundary-conditions">
-     Boundary conditions
-    </a>
-   </li>
   </ul>
   <i class="fas fa-chevron-down">
   </i>
@@ -374,8 +369,8 @@
 <p>Author: Jørgen S. Dokken</p>
 <p>Just as for the Poisson problem from the previous chapter, we construct a test problem which makes it easy to determine if the calculations are correct.</p>
 <p>Since we know that our first-order time-stepping scheme is exact for linear functions, we create a problem which has linear variation in time. We combine this with a quadratic variation in space. Therefore, we choose the analytical solution to be</p>
-<div class="amsmath math notranslate nohighlight" id="equation-bf69399e-65ea-468f-9bcc-bf7b9e8b6516">
-<span class="eqno">(18)<a class="headerlink" href="#equation-bf69399e-65ea-468f-9bcc-bf7b9e8b6516" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-409ed3c6-8dd2-4b45-b69a-bc3b59690721">
+<span class="eqno">(18)<a class="headerlink" href="#equation-409ed3c6-8dd2-4b45-b69a-bc3b59690721" title="Permalink to this equation">¶</a></span>\[\begin{align}
 u = 1 + x^2+\alpha y^2 + \beta t
 \end{align}\]</div>
 <p>which yields a function whose computed values at the degrees of freedom will be exact, regardless of the mesh size and <span class="math notranslate nohighlight">\(\Delta t\)</span> as long as the mesh is uniformly partitioned.
