@@ -5,47 +5,47 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Requirements for dockerfile &#8212; FEniCS-X tutorial</title>
+    <title>The equations of linear elasiticity &#8212; FEniCS-X tutorial</title>
     
-  <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+  <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
     
   <link rel="stylesheet"
-    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
   <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
     
       
   <link rel="stylesheet"
-    href="_static/vendor/open-sans_all/1.44.1/index.css">
+    href="../_static/vendor/open-sans_all/1.44.1/index.css">
   <link rel="stylesheet"
-    href="_static/vendor/lato_latin-ext/1.44.1/index.css">
+    href="../_static/vendor/lato_latin-ext/1.44.1/index.css">
 
     
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
-    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     
-  <link rel="preload" as="script" href="_static/js/index.3da636dd464baa7582d2.js">
+  <link rel="preload" as="script" href="../_static/js/index.3da636dd464baa7582d2.js">
 
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
-    <script src="_static/togglebutton.js"></script>
-    <script src="_static/clipboard.min.js"></script>
-    <script src="_static/copybutton.js"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/togglebutton.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
     <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
+    <script src="../_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
@@ -54,9 +54,11 @@
         const thebe_selector_input = "pre"
         const thebe_selector_output = ".output"
     </script>
-    <script async="async" src="_static/sphinx-thebe.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="&lt;no title&gt;" href="linearelasticity_code.html" />
+    <link rel="prev" title="Implementation" href="nonlinpoisson_code.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -73,22 +75,22 @@
 <div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
     
         <div class="navbar-brand-box">
-<a class="navbar-brand text-wrap" href="index.html">
+<a class="navbar-brand text-wrap" href="../index.html">
   
-  <img src="_static/logo.jpeg" class="logo" alt="logo">
+  <img src="../_static/logo.jpeg" class="logo" alt="logo">
   
   
   <h1 class="site-logo" id="site-title">FEniCS-X tutorial</h1>
   
 </a>
-</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
   <i class="icon fas fa-search"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
 </form>
 <nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
     <ul class="nav sidenav_l1">
  <li class="toctree-l1">
-  <a class="reference internal" href="index.html">
+  <a class="reference internal" href="../index.html">
    The FEniCS-X tutorial
   </a>
  </li>
@@ -100,17 +102,17 @@
 </p>
 <ul class="nav sidenav_l1">
  <li class="toctree-l1">
-  <a class="reference internal" href="fem.html">
+  <a class="reference internal" href="../fem.html">
    An overview of the FEniCS Project
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="fem.html#what-you-will-learn">
+  <a class="reference internal" href="../fem.html#what-you-will-learn">
    What you will learn
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="fem.html#how-to-use-this-tutorial">
+  <a class="reference internal" href="../fem.html#how-to-use-this-tutorial">
    How to use this tutorial
   </a>
  </li>
@@ -122,12 +124,12 @@
 </p>
 <ul class="nav sidenav_l1">
  <li class="toctree-l1 collapsible-parent">
-  <a class="reference internal" href="chapter1/fundamentals.html">
+  <a class="reference internal" href="../chapter1/fundamentals.html">
    Solving the Poisson equation
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="chapter1/fundamentals_code.html">
+    <a class="reference internal" href="../chapter1/fundamentals_code.html">
      Implementation
     </a>
    </li>
@@ -136,17 +138,17 @@
   </i>
  </li>
  <li class="toctree-l1 collapsible-parent">
-  <a class="reference internal" href="chapter1/membrane.html">
+  <a class="reference internal" href="../chapter1/membrane.html">
    Deflection of a membrane
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="chapter1/membrane_code.html">
+    <a class="reference internal" href="../chapter1/membrane_code.html">
      Implementation
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="chapter1/membrane_paraview.html">
+    <a class="reference internal" href="../chapter1/membrane_paraview.html">
      Using Paraview for visualization
     </a>
    </li>
@@ -160,24 +162,24 @@
   A Gallery of finite element solvers
  </span>
 </p>
-<ul class="nav sidenav_l1">
+<ul class="current nav sidenav_l1">
  <li class="toctree-l1">
-  <a class="reference internal" href="chapter2/intro.html">
+  <a class="reference internal" href="intro.html">
    A Gallery of finite element solvers
   </a>
  </li>
  <li class="toctree-l1 collapsible-parent">
-  <a class="reference internal" href="chapter2/heat_equation.html">
+  <a class="reference internal" href="heat_equation.html">
    The heat equation
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="chapter2/heat_code.html">
+    <a class="reference internal" href="heat_code.html">
      Test problem 1: A known analytical solution
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="chapter2/diffusion_code.html">
+    <a class="reference internal" href="diffusion_code.html">
      Test Problem 2: Diffusion of a Gaussian function
     </a>
    </li>
@@ -186,12 +188,12 @@
   </i>
  </li>
  <li class="toctree-l1 collapsible-parent">
-  <a class="reference internal" href="chapter2/nonlinpoisson.html">
+  <a class="reference internal" href="nonlinpoisson.html">
    A nonlinear Poisson equation
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="chapter2/nonlinpoisson_code.html">
+    <a class="reference internal" href="nonlinpoisson_code.html">
      Implementation
     </a>
    </li>
@@ -199,8 +201,8 @@
   <i class="fas fa-chevron-down">
   </i>
  </li>
- <li class="toctree-l1 collapsible-parent">
-  <a class="reference internal" href="chapter2/linearelasticity.html">
+ <li class="toctree-l1 current active collapsible-parent">
+  <a class="current reference internal" href="#">
    The equations of linear elasiticity
   </a>
   <ul class="simple collapse-ul">
@@ -248,7 +250,7 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="_sources/README.md"><button type="button"
+        <a class="dropdown-buttons" href="../_sources/chapter2/linearelasticity.md"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
                 data-placement="left">.md</button></a>
         <!-- Download PDF via print -->
@@ -268,7 +270,7 @@
                 data-toggle="tooltip" data-placement="left" title="Source repository"><i
                     class="fab fa-github"></i>repository</button></a>
         <a class="issues-button"
-            href="https://github.com/jorgensd/dolfinx-tutorial/issues/new?title=Issue%20on%20page%20%2FREADME.html&body=Your%20issue%20content%20here."><button
+            href="https://github.com/jorgensd/dolfinx-tutorial/issues/new?title=Issue%20on%20page%20%2Fchapter2/linearelasticity.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
         
@@ -296,20 +298,12 @@
         
               <div>
                 
-  <p>#Cheatsheet</p>
-<p>Build book</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip3 install -U jupyter-book
-jupyter-book build .
-</pre></div>
+  <div class="section" id="the-equations-of-linear-elasiticity">
+<h1>The equations of linear elasiticity<a class="headerlink" href="#the-equations-of-linear-elasiticity" title="Permalink to this headline">¶</a></h1>
+<p>Authors: Anders Logg and Hans Petter Langtangen</p>
+<p>Test</p>
+<div class="toctree-wrapper compound">
 </div>
-<p>Push book</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip3 install ghp-import
-ghp-import -n -p -f _build/html
-</pre></div>
-</div>
-<div class="section" id="requirements-for-dockerfile">
-<h1>Requirements for dockerfile<a class="headerlink" href="#requirements-for-dockerfile" title="Permalink to this headline">¶</a></h1>
-<p>https://mybinder.readthedocs.io/en/latest/tutorials/dockerfile.html</p>
 </div>
 
     <script type="text/x-thebe-config">
@@ -325,7 +319,7 @@ ghp-import -n -p -f _build/html
         },
         kernelOptions: {
             kernelName: "python3",
-            path: "./."
+            path: "./chapter2"
         },
         predefinedOutput: true
     }
@@ -340,6 +334,8 @@ ghp-import -n -p -f _build/html
     
     <div class='prev-next-bottom'>
         
+    <a class='left-prev' id="prev-link" href="nonlinpoisson_code.html" title="previous page">Implementation</a>
+    <a class='right-next' id="next-link" href="linearelasticity_code.html" title="next page">&lt;no title&gt;</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">
@@ -368,7 +364,7 @@ ghp-import -n -p -f _build/html
     </div>
 
     
-  <script src="_static/js/index.3da636dd464baa7582d2.js"></script>
+  <script src="../_static/js/index.3da636dd464baa7582d2.js"></script>
 
 
     

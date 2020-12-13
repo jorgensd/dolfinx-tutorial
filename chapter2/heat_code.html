@@ -201,6 +201,15 @@
   <i class="fas fa-chevron-down">
   </i>
  </li>
+ <li class="toctree-l1 collapsible-parent">
+  <a class="reference internal" href="linearelasticity.html">
+   The equations of linear elasiticity
+  </a>
+  <ul class="simple collapse-ul">
+  </ul>
+  <i class="fas fa-chevron-down">
+  </i>
+ </li>
 </ul>
 
 </nav> <!-- To handle the deprecated key -->
@@ -355,8 +364,8 @@
 <p>Author: Jørgen S. Dokken</p>
 <p>Just as for the Poisson problem from the previous chapter, we construct a test problem which makes it easy to determine if the calculations are correct.</p>
 <p>Since we know that our first-order time-stepping scheme is exact for linear functions, we create a problem which has linear variation in time. We combine this with a quadratic variation in space. Therefore, we choose the analytical solution to be</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b7d51aee-b5ec-41dd-8971-933fbd025db6">
-<span class="eqno">(18)<a class="headerlink" href="#equation-b7d51aee-b5ec-41dd-8971-933fbd025db6" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-d0826818-9fe7-4cfa-bee2-ecbff012860f">
+<span class="eqno">(18)<a class="headerlink" href="#equation-d0826818-9fe7-4cfa-bee2-ecbff012860f" title="Permalink to this equation">¶</a></span>\[\begin{align}
 u = 1 + x^2+\alpha y^2 + \beta t
 \end{align}\]</div>
 <p>which yields a function whose computed values at the degrees of freedom will be exact, regardless of the mesh size and <span class="math notranslate nohighlight">\(\Delta t\)</span> as long as the mesh is uniformly partitioned.
