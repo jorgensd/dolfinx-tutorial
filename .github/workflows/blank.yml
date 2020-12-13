@@ -27,7 +27,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: Build the book
         run: |
-          pip3 install -U jupyter-book
+          pip3 install -U jupyter-book sphinxcontrib-bibtex==1.0.0
           jupyter-book build .
 
       # Pusb book to HTML to github pages
