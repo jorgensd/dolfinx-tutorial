@@ -1,0 +1,510 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Solving the Poisson equation &#8212; FEniCS-X tutorial</title>
+    
+  <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="../_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="../_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.3da636dd464baa7582d2.js">
+
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/togglebutton.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Implementation" href="fundamentals_code.html" />
+    <link rel="prev" title="An overview of the FEniCS Project" href="../fem.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="../index.html">
+  
+  <img src="../_static/logo.jpeg" class="logo" alt="logo">
+  
+  
+  <h1 class="site-logo" id="site-title">FEniCS-X tutorial</h1>
+  
+</a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form>
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../index.html">
+   The FEniCS-X tutorial
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Introduction
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../fem.html">
+   An overview of the FEniCS Project
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../fem.html#what-you-will-learn">
+   What you will learn
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../fem.html#how-to-use-this-tutorial">
+   How to use this tutorial
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Fundamentals
+ </span>
+</p>
+<ul class="current nav sidenav_l1">
+ <li class="toctree-l1 current active collapsible-parent">
+  <a class="current reference internal" href="#">
+   Solving the Poisson equation
+  </a>
+  <ul class="collapse-ul">
+   <li class="toctree-l2">
+    <a class="reference internal" href="fundamentals_code.html">
+     Implementation
+    </a>
+   </li>
+  </ul>
+  <i class="fas fa-chevron-down">
+  </i>
+ </li>
+ <li class="toctree-l1 collapsible-parent">
+  <a class="reference internal" href="membrane.html">
+   Deflection of a membrane
+  </a>
+  <ul class="collapse-ul">
+   <li class="toctree-l2">
+    <a class="reference internal" href="membrane_code.html">
+     Implementation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="membrane_paraview.html">
+     Using Paraview for visualization
+    </a>
+   </li>
+  </ul>
+  <i class="fas fa-chevron-down">
+  </i>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  A Gallery of finite element solvers
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter2/intro.html">
+   A Gallery of finite element solvers
+  </a>
+ </li>
+ <li class="toctree-l1 collapsible-parent">
+  <a class="reference internal" href="../chapter2/heat_equation.html">
+   The heat equation
+  </a>
+  <ul class="collapse-ul">
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter2/heat_code.html">
+     Test problem 1: A known analytical solution
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter2/diffusion_code.html">
+     Test Problem 2: Diffusion of a Gaussian function
+    </a>
+   </li>
+  </ul>
+  <i class="fas fa-chevron-down">
+  </i>
+ </li>
+ <li class="toctree-l1 collapsible-parent">
+  <a class="reference internal" href="../chapter2/nonlinpoisson.html">
+   A nonlinear Poisson equation
+  </a>
+  <ul class="collapse-ul">
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter2/nonlinpoisson_code.html">
+     Implementation
+    </a>
+   </li>
+  </ul>
+  <i class="fas fa-chevron-down">
+  </i>
+ </li>
+</ul>
+
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        <a class="dropdown-buttons"
+            href="../_sources/chapter1/fundamentals.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download notebook file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../_sources/chapter1/fundamentals.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.md</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+        <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/jorgensd/dolfinx-tutorial"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/jorgensd/dolfinx-tutorial/issues/new?title=Issue%20on%20page%20%2Fchapter1/fundamentals.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/jorgensd/dolfinx-tutorial/dokken/jupyterbook?urlpath=tree/./chapter1/fundamentals.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="../_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#finite-element-variational-formulation">
+   Finite element variational formulation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#abstract-finite-element-variational-formulation">
+   Abstract finite element variational formulation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#references">
+   References
+  </a>
+ </li>
+</ul>
+
+        </nav>
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="solving-the-poisson-equation">
+<h1>Solving the Poisson equation<a class="headerlink" href="#solving-the-poisson-equation" title="Permalink to this headline">¶</a></h1>
+<p>Authors: Hans Petter Langtangen, Anders Logg</p>
+<p>Adapted to FEniCS-X by Jørgen S. Dokken</p>
+<p>The goal of this tutorial is to solve one of the most basic PDEs, the Poisson equations, with a few lines of code in FEniCS-X. We start by introducing the most fundamental FEniCS objects, such as <code class="docutils literal notranslate"><span class="pre">Mesh</span></code>, <code class="docutils literal notranslate"><span class="pre">Function</span></code>, <code class="docutils literal notranslate"><span class="pre">FunctionSpace</span></code>, <code class="docutils literal notranslate"><span class="pre">TrialFunction</span></code> and <code class="docutils literal notranslate"><span class="pre">TestFunction</span></code>, and learn how to write a basic PDE solver.
+This will include:</p>
+<ul class="simple">
+<li><p>How to formulate a mathematical variational problem</p></li>
+<li><p>How to apply boundary conditions</p></li>
+<li><p>How to solve the discrete linear system</p></li>
+<li><p>How to visualize the solution</p></li>
+</ul>
+<p>The Poisson equation is the following boundary-value problem</p>
+<p><span class="math notranslate nohighlight">\( -\nabla^2 u(\mathbf{x}) = f(\mathbf{x}) \quad \mathbf{x} \in \Omega\)</span></p>
+<p><span class="math notranslate nohighlight">\( u(\mathbf{x}) = u_D(\mathbf{x})\quad \mathbf{x} \in \partial\Omega\)</span></p>
+<p>Here, <span class="math notranslate nohighlight">\(u=u(\mathbf{x})\)</span> is the unknown function, <span class="math notranslate nohighlight">\(f=f(\mathbf{x})\)</span> is a prescribed function, <span class="math notranslate nohighlight">\(\nabla^2\)</span> the Laplace operator, often written as <span class="math notranslate nohighlight">\(\Delta\)</span>, <span class="math notranslate nohighlight">\(\Omega\)</span> the spatial domain, and <span class="math notranslate nohighlight">\(\partial\Omega\)</span> is the boundary of <span class="math notranslate nohighlight">\(\Omega\)</span>. The Poisson problem, including both the PDE <span class="math notranslate nohighlight">\(-\nabla^2 u = f\)</span> and the boundary condition <span class="math notranslate nohighlight">\(u=u_D\)</span> on <span class="math notranslate nohighlight">\(\partial\Omega\)</span>, is an example of a <em>boundary-value problem</em>, which must be precisely state before it makes sense to start solving it numerically with FEniCS-X.</p>
+<p>In the two dimensional space with coordinates <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span>, we can expand the Poisson equation as</p>
+<p><span class="math notranslate nohighlight">\( -\frac{\partial^2 u}{\partial x^2} - \frac{\partial^2 u}{\partial y^2} = f(x,y)\)</span></p>
+<p>The unknown <span class="math notranslate nohighlight">\(u\)</span> is now a function of two variables, <span class="math notranslate nohighlight">\(u=u(x,y)\)</span>, defined over the two-dimensional domain <span class="math notranslate nohighlight">\(\Omega\)</span>.</p>
+<p>The Poisson equation arises in numerous physical contexts, including
+heat conduction, electrostatics, diffusion of substances, twisting of
+elastic rods, inviscid fluid flow, and water waves. Moreover, the
+equation appears in numerical splitting strategies for more complicated
+systems of PDEs, in particular the Navier–Stokes equations.</p>
+<p>Solving a boundary value problem in FEniCS consists of the following steps:</p>
+<ol class="simple">
+<li><p>Identify the computational domain <span class="math notranslate nohighlight">\(\Omega\)</span>, the PDE, and its corresponding boundary conditions and source terms <span class="math notranslate nohighlight">\(f\)</span>.</p></li>
+<li><p>Reformulate the PDE as a finite element variational problem.</p></li>
+<li><p>Write a Python program defining the computational domain, the boundary conditions, the variational problem and the source terms, using FEniCS.</p></li>
+<li><p>Run the Python program to solve the boundary-value problem. Optionally, you can extend the program to derive quantities such as fluxes and averages,
+and visualize the results.</p></li>
+</ol>
+<p>As we have already covered step 1., we shall now cover step 2-4.</p>
+<div class="section" id="finite-element-variational-formulation">
+<h2>Finite element variational formulation<a class="headerlink" href="#finite-element-variational-formulation" title="Permalink to this headline">¶</a></h2>
+<p>FEniCS is based on the finite element method, which is a general and
+efficient mathematical machinery for the numerical solution of
+PDEs. The starting point for the finite element methods is a PDE
+expressed in \emph{variational form}. For readers not familiar with variational problems, it is suggested to reading a proper book on the finite element method in addition, as this tutorial is meant as a brief introduction to the subject. See the [original tutorial](<a class="reference external" href="https://www.springer.com/gp/book/9783319524610">The FEniCS tutorial</a>) (Chapter 1.6.2).</p>
+<p>The basic recipe for turning a PDE into a variational problem is:</p>
+<ul class="simple">
+<li><p>Multiply the PDE by a function <span class="math notranslate nohighlight">\(v\)</span></p></li>
+<li><p>Integrate the resulting equation over the domain <span class="math notranslate nohighlight">\(\Omega\)</span></p></li>
+<li><p>Perform integration by parts of terms with second order derivatives.</p></li>
+</ul>
+<p>The function <span class="math notranslate nohighlight">\(v\)</span> which multiplies the PDE is called a <em>test function</em>. The unknown function <span class="math notranslate nohighlight">\(u\)</span> that is to be approximated is referred to as a <em>trial function</em>.
+The terms trial and test functions are used in FEniCS-X too. The test and trial functions belong to certain <em>function spaces</em> that specify the properties of the functions.</p>
+<p>In the present case, we multiply the equation by a test function <span class="math notranslate nohighlight">\(v\)</span> and  integrate over <span class="math notranslate nohighlight">\(\Omega\)</span>:</p>
+<p><span class="math notranslate nohighlight">\(\int_\Omega -\nabla^2 u v \mathrm{d} x = \int_\Omega f v \mathrm{d} x\)</span></p>
+<p>Here <span class="math notranslate nohighlight">\(\mathrm{d} x\)</span> denotes the differential element for integration over the domain <span class="math notranslate nohighlight">\(\Omega\)</span>. We will later let <span class="math notranslate nohighlight">\(\mathrm{d} s\)</span> denote the differential element for integration over the boundary of <span class="math notranslate nohighlight">\(\Omega\)</span>.</p>
+<p>A rule of thumb is that when we derive variational formulations is that one tries to keep the order of derivatives of <span class="math notranslate nohighlight">\(u\)</span> and <span class="math notranslate nohighlight">\(v\)</span> as small as possible.
+Here, we have a second-order differential of <span class="math notranslate nohighlight">\(u\)</span>, which can be transformed to a first derivative by employing the technique of
+<a class="reference external" href="https://en.wikipedia.org/wiki/Integration_by_parts">integration by parts</a>.
+The formula reads</p>
+<p><span class="math notranslate nohighlight">\( -\int_\Omega (\nabla^2 u)v \mathrm{d}x
+= \int_\Omega\nabla u\cdot\nabla v \mathrm{d}x - \int_{\partial\Omega}\frac{\partial u}{\partial n}v \mathrm{d}s ,\)</span></p>
+<p>where <span class="math notranslate nohighlight">\(\frac{\partial u}{\partial n}=\nabla u \cdot n\)</span> is the derivative of <span class="math notranslate nohighlight">\(u\)</span> in the outward normal direction <span class="math notranslate nohighlight">\(n\)</span> on the boundary.</p>
+<p>Another feature of variational formulations is that the test function <span class="math notranslate nohighlight">\(v\)</span> is required to vanish on the parts of the boundary where the solution <span class="math notranslate nohighlight">\(u\)</span> is known. See for instance [Langtangen, Mardal 2019]<a class="bibtex reference internal" href="#langtangen-mardal-fem-2019" id="id1">[LM19]</a>.</p>
+<p>In the present problem, this means that <span class="math notranslate nohighlight">\(v\)</span> is <span class="math notranslate nohighlight">\(0\)</span> on the whole boundary <span class="math notranslate nohighlight">\(\partial\Omega\)</span>. In the present problem, it means that the second term in the integration by parts formula is zero, and we have that</p>
+<p><span class="math notranslate nohighlight">\(\int_\Omega \nabla u \cdot \nabla v \mathrm{d} x = \int_\Omega f v\mathrm{d} x\)</span></p>
+<p>If we require that this equation holds for all test functions <span class="math notranslate nohighlight">\(v\)</span> in some suitable space <span class="math notranslate nohighlight">\(\hat{V}\)</span>, the so-called <em>test space</em>, we obtain a well-defined mathematical problem that uniquely determines the solution <span class="math notranslate nohighlight">\(u\)</span> which lies in some function space <span class="math notranslate nohighlight">\(V\)</span>. Note that <span class="math notranslate nohighlight">\(V\)</span> does not have to be the same space as
+<span class="math notranslate nohighlight">\(\hat{V}\)</span>. We call the space <span class="math notranslate nohighlight">\(V\)</span> the <em>trial space</em>. We refer to the equation above as the <em>weak form</em>/<em>variational form</em> of the original boundary value problem. We now properly state our variational problem:
+Find <span class="math notranslate nohighlight">\(u\in V\)</span> such that</p>
+<p><span class="math notranslate nohighlight">\(\int_\Omega \nabla u \cdot \nabla v \mathrm{d} x = \int_\Omega f v\mathrm{d} x\qquad \forall v \in \hat{V}.\)</span></p>
+<p>For the present problem, the test and trial spaces <span class="math notranslate nohighlight">\(V\)</span> and <span class="math notranslate nohighlight">\(\hat{V}\)</span> is defined  as</p>
+<p><span class="math notranslate nohighlight">\( V=\{v\in H^1(\Omega) \vert v=u_D \quad \text{on } \partial \Omega \},\)</span></p>
+<p><span class="math notranslate nohighlight">\( \hat{V}=\{v\in H^1(\Omega) \vert v=0 \quad \text{on } \partial \Omega \}.\)</span></p>
+<p>In short, <span class="math notranslate nohighlight">\(H^1(\Omega)\)</span> is the Sobolev space containing functions <span class="math notranslate nohighlight">\(v\)</span> such that <span class="math notranslate nohighlight">\(v^2\)</span> and <span class="math notranslate nohighlight">\(\vert \nabla v \vert ^2\)</span> have finite integrals over <span class="math notranslate nohighlight">\(\Omega\)</span>. The solution of the underlying
+PDE must line in a function space where the derivatives are
+also continuous, but the Sobolev space <span class="math notranslate nohighlight">\(H^1(\Omega)\)</span> allows functions with discontinuous derivatives.
+This weaker continuity requirement in our weak formulation (caused by the integration by parts) is of great importance when it comes to constructing the finite element function space. In particular, it allows the use of piecewise polynomial function spaces. This means that the function spaces are constructed
+by stitching together polynomial functions on simple domains
+such as intervals, triangles, quadrilaterals, tetrahedrons and
+hexahedrons.</p>
+<p>The variational problem is a <em>continuous problem</em>: it defines the solution <span class="math notranslate nohighlight">\(u\)</span> in the infinite-dimensional function space <span class="math notranslate nohighlight">\(V\)</span>.
+The finite element method for the  Poisson equation finds an approximate solution of the variational problem by replacing the infinite-dimensional function spaces <span class="math notranslate nohighlight">\(V\)</span> and <span class="math notranslate nohighlight">\(\hat V\)</span> by <em>discrete</em> (finite dimensional) trial and test spaces <span class="math notranslate nohighlight">\(V_h\subset V\)</span> and <span class="math notranslate nohighlight">\(\hat{V}_h \subset \hat{V}\)</span>. The discrete
+variational problem reads: Find <span class="math notranslate nohighlight">\(u_h\in V_h\)</span> such that</p>
+<p><span class="math notranslate nohighlight">\(\int_\Omega \nabla u_h \cdot \nabla v \mathrm{d} x = \int_\Omega fv \mathrm{d} x \quad \forall v \in \hat{V}_h.\)</span></p>
+<p>This variational problem, together with suitable definitions of <span class="math notranslate nohighlight">\(V_h\)</span> and <span class="math notranslate nohighlight">\(\hat{V}_h\)</span> uniquely define our approximate numerical solution of the Poisson equation.
+Note that the boundary condition is encoded as part of the test and trial spaces. This might seem complicated at first glance,
+but means that the finite element variational problem and the continuous variational problem looks the same.</p>
+</div>
+<div class="section" id="abstract-finite-element-variational-formulation">
+<h2>Abstract finite element variational formulation<a class="headerlink" href="#abstract-finite-element-variational-formulation" title="Permalink to this headline">¶</a></h2>
+<p>We will introduce the following notations for variational problems:
+Find <span class="math notranslate nohighlight">\(u\in V\)</span> such that</p>
+<p><span class="math notranslate nohighlight">\( a(u,v)=L(v)\qquad \forall v \in \hat{V}.\)</span></p>
+<p>For the Poisson equation, we have:</p>
+<p><span class="math notranslate nohighlight">\( a(u,v)= \int_{\Omega} \nabla u \cdot \nabla v \mathrm{d} x,\)</span></p>
+<p><span class="math notranslate nohighlight">\( L(v)= \int_{\Omega} fv \mathrm{d} x.\)</span></p>
+<p>From literature <span class="math notranslate nohighlight">\(a(u,v)\)</span> is known as the <em>bilinear form</em> and <span class="math notranslate nohighlight">\(L(V)\)</span> as a <em>linear form</em>.
+For every linear problem, we will identify all terms with the unknown <span class="math notranslate nohighlight">\(u\)</span> and collect them in <span class="math notranslate nohighlight">\(a(u,v)\)</span>, and collect all terms with only  known functions in <span class="math notranslate nohighlight">\(L(v)\)</span>.</p>
+<p>To solve a linear PDE in FEniCS-X, such as the Poisson equation, a user thus needs to perform two steps:</p>
+<ol class="simple">
+<li><p>Choose the finite element spaces <span class="math notranslate nohighlight">\(V\)</span> and <span class="math notranslate nohighlight">\(\hat{V}\)</span> by specifying the domain (the mesh) and the type of function space (polynomial degree and type).</p></li>
+<li><p>Express the PDE as a (discrete) variational problem: Find <span class="math notranslate nohighlight">\(u\in V\)</span> such that <span class="math notranslate nohighlight">\(a(u,v)=L(v)\)</span> for all <span class="math notranslate nohighlight">\(v \in \hat{V}\)</span>.</p></li>
+</ol>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<p id="bibtex-bibliography-chapter1/fundamentals-0"><dl class="citation">
+<dt class="bibtex label" id="langtangen-mardal-fem-2019"><span class="brackets"><a class="fn-backref" href="#id1">LM19</a></span></dt>
+<dd><p>Hans Petter Langtangen and Kent-Andre Mardal. <em>Introduction to Numerical Methods for Variational Problems</em>. Springer International Publishing, Cham, 2019. ISBN 978-3-030-23788-2. <a class="reference external" href="https://doi.org/10.1007/978-3-030-23788-2_1">doi:10.1007/978-3-030-23788-2_1</a>.</p>
+</dd>
+</dl>
+</p>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./chapter1"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+    <a class='left-prev' id="prev-link" href="../fem.html" title="previous page">An overview of the FEniCS Project</a>
+    <a class='right-next' id="next-link" href="fundamentals_code.html" title="next page">Implementation</a>
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Jørgen S. Dokken<br/>
+        
+            &copy; Copyright 2020.<br/>
+          <div class="extra_footer">
+            <div>
+    This webpage is an adaptation of <a href=https://www.springer.com/gp/book/9783319524610>The FEniCS tutorial</a> and 
+    is distributed under the terms of the      <a href=http://creativecommons.org/licenses/by/4.0/>Creative Commons Attribution 4.0 International License  </a>
+    which permits use, duplication, adaptation, distribution and reproduction in any medium or format, as long as you give appropriate credit to the original author(s) and the source,
+    provide a link to the Creative Commons license and indicate if changes were made.
+</div>
+
+          </div>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="../_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
+</html>
