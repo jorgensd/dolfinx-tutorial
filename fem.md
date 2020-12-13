@@ -54,7 +54,7 @@ If you are a beginner in Python, we suggest reading [A Primer on Scientific Prog
 There has been written many good text-books on the finite element method, and we refer to the original FEniCS tutorial, for references to these, (see Chapter 1.6.2 of [The FEniCS tutorial](https://www.springer.com/gp/book/9783319524610)).
 
 
-(UFL2){cite}`ufl2014`.
-<!-- ## References
-```{bibliography} references.bib
+<!-- {cite}`ufl2014`.
+## References
+```{bibliography} references_fem.bib
 ``` -->
