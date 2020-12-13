@@ -27,3 +27,6 @@
         - file: chapter2/nonlinpoisson
           sections:
                 - file: chapter2/nonlinpoisson_code
+        - file: chapter2/linearelasticity
+          sections:
+                - file: chapter2/linearelasticity_code
