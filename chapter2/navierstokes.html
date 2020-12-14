@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Using Paraview for visualization &#8212; FEniCS-X tutorial</title>
+    <title>The Navier-Stokes equations &#8212; FEniCS-X tutorial</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -57,8 +57,7 @@
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="A Gallery of finite element solvers" href="../chapter2/intro.html" />
-    <link rel="prev" title="Implementation" href="membrane_code.html" />
+    <link rel="prev" title="Scaling" href="elasticity_scaling.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -122,14 +121,14 @@
   Fundamentals
  </span>
 </p>
-<ul class="current nav sidenav_l1">
+<ul class="nav sidenav_l1">
  <li class="toctree-l1 collapsible-parent">
-  <a class="reference internal" href="fundamentals.html">
+  <a class="reference internal" href="../chapter1/fundamentals.html">
    Solving the Poisson equation
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="fundamentals_code.html">
+    <a class="reference internal" href="../chapter1/fundamentals_code.html">
      Implementation
     </a>
    </li>
@@ -137,18 +136,18 @@
   <i class="fas fa-chevron-down">
   </i>
  </li>
- <li class="toctree-l1 current active collapsible-parent">
-  <a class="reference internal" href="membrane.html">
+ <li class="toctree-l1 collapsible-parent">
+  <a class="reference internal" href="../chapter1/membrane.html">
    Deflection of a membrane
   </a>
-  <ul class="current collapse-ul">
+  <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="membrane_code.html">
+    <a class="reference internal" href="../chapter1/membrane_code.html">
      Implementation
     </a>
    </li>
-   <li class="toctree-l2 current active">
-    <a class="current reference internal" href="#">
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter1/membrane_paraview.html">
      Using Paraview for visualization
     </a>
    </li>
@@ -162,24 +161,24 @@
   A Gallery of finite element solvers
  </span>
 </p>
-<ul class="nav sidenav_l1">
+<ul class="current nav sidenav_l1">
  <li class="toctree-l1">
-  <a class="reference internal" href="../chapter2/intro.html">
+  <a class="reference internal" href="intro.html">
    A Gallery of finite element solvers
   </a>
  </li>
  <li class="toctree-l1 collapsible-parent">
-  <a class="reference internal" href="../chapter2/heat_equation.html">
+  <a class="reference internal" href="heat_equation.html">
    The heat equation
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="../chapter2/heat_code.html">
+    <a class="reference internal" href="heat_code.html">
      Test problem 1: A known analytical solution
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="../chapter2/diffusion_code.html">
+    <a class="reference internal" href="diffusion_code.html">
      Test Problem 2: Diffusion of a Gaussian function
     </a>
    </li>
@@ -188,12 +187,12 @@
   </i>
  </li>
  <li class="toctree-l1 collapsible-parent">
-  <a class="reference internal" href="../chapter2/nonlinpoisson.html">
+  <a class="reference internal" href="nonlinpoisson.html">
    A nonlinear Poisson equation
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="../chapter2/nonlinpoisson_code.html">
+    <a class="reference internal" href="nonlinpoisson_code.html">
      Implementation
     </a>
    </li>
@@ -202,17 +201,17 @@
   </i>
  </li>
  <li class="toctree-l1 collapsible-parent">
-  <a class="reference internal" href="../chapter2/linearelasticity.html">
+  <a class="reference internal" href="linearelasticity.html">
    The equations of linear elasiticity
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="../chapter2/linearelasticity_code.html">
+    <a class="reference internal" href="linearelasticity_code.html">
      Implementation
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="../chapter2/elasticity_scaling.html">
+    <a class="reference internal" href="elasticity_scaling.html">
      Scaling
     </a>
    </li>
@@ -220,8 +219,8 @@
   <i class="fas fa-chevron-down">
   </i>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../chapter2/navierstokes.html">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
    The Navier-Stokes equations
   </a>
  </li>
@@ -265,7 +264,7 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../_sources/chapter1/membrane_paraview.md"><button type="button"
+        <a class="dropdown-buttons" href="../_sources/chapter2/navierstokes.md"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
                 data-placement="left">.md</button></a>
         <!-- Download PDF via print -->
@@ -285,7 +284,7 @@
                 data-toggle="tooltip" data-placement="left" title="Source repository"><i
                     class="fab fa-github"></i>repository</button></a>
         <a class="issues-button"
-            href="https://github.com/jorgensd/dolfinx-tutorial/issues/new?title=Issue%20on%20page%20%2Fchapter1/membrane_paraview.html&body=Your%20issue%20content%20here."><button
+            href="https://github.com/jorgensd/dolfinx-tutorial/issues/new?title=Issue%20on%20page%20%2Fchapter2/navierstokes.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
         
@@ -306,6 +305,30 @@
     <!-- Table of contents -->
     <div class="d-none d-md-block col-md-2 bd-toc show">
         
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-pde-problem">
+   The PDE problem
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#variational-formulation">
+   Variational formulation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#references">
+   References
+  </a>
+ </li>
+</ul>
+
+        </nav>
+        
     </div>
 </div>
     <div id="main-content" class="row">
@@ -313,17 +336,45 @@
         
               <div>
                 
-  <div class="section" id="using-paraview-for-visualization">
-<h1>Using Paraview for visualization<a class="headerlink" href="#using-paraview-for-visualization" title="Permalink to this headline">¶</a></h1>
-<p>We start by opening <a class="reference external" href="https://www.paraview.org/">Paraview</a>. We start by opening the file by pressing <code class="docutils literal notranslate"><span class="pre">File-&gt;Open</span></code>.
-The next step is to visualize each of the functions. To do this, we choose <code class="docutils literal notranslate"><span class="pre">Filters-&gt;Alphabetic-&gt;ExtractBlock</span></code>. The next step is to select the first Unstructured Grid and press <code class="docutils literal notranslate"><span class="pre">Apply</span></code> as shown below:</p>
-<p><img alt="Select Block" src="../_images/select_block.png" /></p>
-<p>We can select the other block to visualize the deflection. There are also options to visualize the deflection in three dimensions using <code class="docutils literal notranslate"><span class="pre">Filters-&gt;Alphabetical-&gt;Warp</span> <span class="pre">By</span> <span class="pre">Scalar</span></code>, and change the layout to 3D by pressing the <code class="docutils literal notranslate"><span class="pre">2D</span></code>-button.</p>
-<p><img alt="Change interactive layout" src="../_images/2Dto3D.png" /></p>
-<p>Finally, press the <code class="docutils literal notranslate"><span class="pre">Set</span> <span class="pre">view</span> <span class="pre">direction</span> <span class="pre">button</span></code>.</p>
-<p><img alt="Set view direction" src="../_images/axis.png" /></p>
-<p>With these instructions, you can obtain the following figures</p>
-<p><img alt="Results for membrane" src="../_images/result_membrane.png" /></p>
+  <div class="section" id="the-navier-stokes-equations">
+<h1>The Navier-Stokes equations<a class="headerlink" href="#the-navier-stokes-equations" title="Permalink to this headline">¶</a></h1>
+<p>Authors: Anders Logg and Hans Petter Langtangen</p>
+<p>In this section, we will solve the incompressible Navier-Stokes equations. This problem combines many of the challenges from our previously studied problems: time-dependencies, nonlinearity, and vector-valued variables.</p>
+<div class="section" id="the-pde-problem">
+<h2>The PDE problem<a class="headerlink" href="#the-pde-problem" title="Permalink to this headline">¶</a></h2>
+<p>The incompressible Navier-Stokes equations form a system of equations for the velocity <span class="math notranslate nohighlight">\(u\)</span> and pressure <span class="math notranslate nohighlight">\(p\)</span> in an  incompressible fluid</p>
+<div class="math notranslate nohighlight" id="equation-navier-stokes">
+<span class="eqno">(29)<a class="headerlink" href="#equation-navier-stokes" title="Permalink to this equation">¶</a></span>\[\begin{split}\rho \left( \frac{\partial u }{\partial t} + u \cdot \nabla u \right) &amp;= \nabla \cdot \sigma (u, p) + f,\\
+\nabla \cdot u &amp;= 0 \end{split}\]</div>
+<p>The right-hand side of <span class="math notranslate nohighlight">\(f\)</span> is a given force per unit volume and just as for the equations of linear elasticity, <span class="math notranslate nohighlight">\(\sigma(u,p)\)</span> denotes the stress tensor, which for a Newtonian fluid is given by</p>
+<div class="math notranslate nohighlight" id="equation-navier-stokes-stress">
+<span class="eqno">(30)<a class="headerlink" href="#equation-navier-stokes-stress" title="Permalink to this equation">¶</a></span>\[\sigma(u, p)=2\mu \epsilon (u) - pI,\]</div>
+<p>where <span class="math notranslate nohighlight">\(\epsilon(u)\)</span> is the strain-rate tensor</p>
+<div class="math notranslate nohighlight">
+\[    \epsilon(u)=\frac{1}{2}\left(\nabla u + (\nabla u)^T\right).\]</div>
+<p>The parameter <span class="math notranslate nohighlight">\(\mu\)</span> is the dynamic viscosity. Note that the momementum equation <a class="reference internal" href="#equation-navier-stokes">(29)</a> is very similar to the elasticity equation <a class="reference internal" href="linearelasticity.html#equation-elasticity-pde">(25)</a>. The difference is in the two additional terms <span class="math notranslate nohighlight">\(\rho\left(\frac{\partial u}{\partial t}+ u\cdot \nabla u\right)\)</span> and the different expression for the stress tensor. The two extra terms express the acceleration balanced by the force <span class="math notranslate nohighlight">\(F=\nabla \cdot \sigma + f\)</span> per unit volume in Newton’s second law of motion.</p>
+</div>
+<div class="section" id="variational-formulation">
+<h2>Variational formulation<a class="headerlink" href="#variational-formulation" title="Permalink to this headline">¶</a></h2>
+<p>The Navier-Stokes equationsare different from the time-dependent heat equation in that we need to solve a system of equations and ths system of a special type. If we apply the same technique as for the heat equation; that is, replacing the time derivative with a simple difference quotient, we obtain a nonlinear system of equations. This in itself is not a problem as we saw for the <a class="reference internal" href="nonlinpoisson.html"><span class="doc std std-doc">non-linear Poisson equation</span></a>, but the system has a so-called <em>saddle point structure</em> and requires special techniques (special preconditioners and iterative methods) to be solved efficiently.</p>
+<p>Instead we will apply a simpler and often very efficient approach, known as a <em>splitting method</em>. The idea is to consider the two equations in <a class="reference internal" href="#equation-navier-stokes">(29)</a> separately. There exist many splitting strategies for the incompressible Navier-Stokes equations. One of the oldest is the method proposed by Chorin <a class="bibtex reference internal" href="#chorin1968numerical" id="id1">[Cho68]</a> and Temam <a class="bibtex reference internal" href="#temam1969" id="id2">[Tem69]</a>, often referred to as <em>Chorin’s method</em>. We will use a modified version of Chorin’s method, the so-called incremental pressure correction scheme (IPCS) due to <a class="bibtex reference internal" href="#goda1979multistep" id="id3">[God79]</a> which gives improved accuracy compared to the original scheme at little extra cost.</p>
+<p>The IPCS scheme involves three steps. First, we compute a <em>tentative velocity <span class="math notranslate nohighlight">\(u\)</span></em></p>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<p id="bibtex-bibliography-chapter2/navierstokes-0"><dl class="citation">
+<dt class="bibtex label" id="chorin1968numerical"><span class="brackets"><a class="fn-backref" href="#id1">Cho68</a></span></dt>
+<dd><p>Alexandre Joel Chorin. Numerical solution of the Navier-Stokes equations. <em>Mathematics of Computation</em>, 22(104):745–762, 1968. <a class="reference external" href="https://doi.org/10.1090/S0025-5718-1968-0242392-2">doi:10.1090/S0025-5718-1968-0242392-2</a>.</p>
+</dd>
+<dt class="bibtex label" id="goda1979multistep"><span class="brackets"><a class="fn-backref" href="#id3">God79</a></span></dt>
+<dd><p>Katuhiko Goda. A multistep technique with implicit difference schemes for calculating two- or three-dimensional cavity flows. <em>Journal of computational physics</em>, 30(1):76–95, 1979. <a class="reference external" href="https://doi.org/10.1016/0021-9991(79)90088-3">doi:10.1016/0021-9991(79)90088-3</a>.</p>
+</dd>
+<dt class="bibtex label" id="temam1969"><span class="brackets"><a class="fn-backref" href="#id2">Tem69</a></span></dt>
+<dd><p>Roger Temam. Sur l’approximation de la solution des équations de Navier-Stokes par la méthode des pas fractionnaires (I). <em>Archive for Rational Mechanics and Analysis</em>, 32(2):135–153, 1969. <a class="reference external" href="https://doi.org/10.1007/BF00247696">doi:10.1007/BF00247696</a>.</p>
+</dd>
+</dl>
+</p>
+</div>
 </div>
 
     <script type="text/x-thebe-config">
@@ -339,7 +390,7 @@ The next step is to visualize each of the functions. To do this, we choose <code
         },
         kernelOptions: {
             kernelName: "python3",
-            path: "./chapter1"
+            path: "./chapter2"
         },
         predefinedOutput: true
     }
@@ -354,8 +405,7 @@ The next step is to visualize each of the functions. To do this, we choose <code
     
     <div class='prev-next-bottom'>
         
-    <a class='left-prev' id="prev-link" href="membrane_code.html" title="previous page">Implementation</a>
-    <a class='right-next' id="next-link" href="../chapter2/intro.html" title="next page">A Gallery of finite element solvers</a>
+    <a class='left-prev' id="prev-link" href="elasticity_scaling.html" title="previous page">Scaling</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">
