@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The heat equation &#8212; FEniCS-X tutorial</title>
+    <title>Test problem 1: Channel flow &#8212; FEniCS-X tutorial</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -57,8 +57,7 @@
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Test problem 1: A known analytical solution" href="heat_code.html" />
-    <link rel="prev" title="A Gallery of finite element solvers" href="intro.html" />
+    <link rel="prev" title="The Navier-Stokes equations" href="navierstokes.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -168,8 +167,8 @@
    A Gallery of finite element solvers
   </a>
  </li>
- <li class="toctree-l1 current active collapsible-parent">
-  <a class="current reference internal" href="#">
+ <li class="toctree-l1 collapsible-parent">
+  <a class="reference internal" href="heat_equation.html">
    The heat equation
   </a>
   <ul class="collapse-ul">
@@ -220,13 +219,13 @@
   <i class="fas fa-chevron-down">
   </i>
  </li>
- <li class="toctree-l1 collapsible-parent">
+ <li class="toctree-l1 current active collapsible-parent">
   <a class="reference internal" href="navierstokes.html">
    The Navier-Stokes equations
   </a>
-  <ul class="collapse-ul">
-   <li class="toctree-l2">
-    <a class="reference internal" href="ns_code1.html">
+  <ul class="current collapse-ul">
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
      Test problem 1: Channel flow
     </a>
    </li>
@@ -274,9 +273,9 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../_sources/chapter2/heat_equation.md"><button type="button"
+        <a class="dropdown-buttons" href="../_sources/chapter2/ns_code1.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
-                data-placement="left">.md</button></a>
+                data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
             onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
@@ -294,7 +293,7 @@
                 data-toggle="tooltip" data-placement="left" title="Source repository"><i
                     class="fab fa-github"></i>repository</button></a>
         <a class="issues-button"
-            href="https://github.com/jorgensd/dolfinx-tutorial/issues/new?title=Issue%20on%20page%20%2Fchapter2/heat_equation.html&body=Your%20issue%20content%20here."><button
+            href="https://github.com/jorgensd/dolfinx-tutorial/issues/new?title=Issue%20on%20page%20%2Fchapter2/ns_code1.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
         
@@ -315,30 +314,6 @@
     <!-- Table of contents -->
     <div class="d-none d-md-block col-md-2 bd-toc show">
         
-        <div class="tocsection onthispage pt-5 pb-3">
-            <i class="fas fa-list"></i> Contents
-        </div>
-        <nav id="bd-toc-nav">
-            <ul class="nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#the-pde-problem">
-   The PDE problem
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#the-variational-formulation">
-   The variational formulation
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#projection-or-interpolation-of-the-initial-condition">
-   Projection or interpolation of the initial condition
-  </a>
- </li>
-</ul>
-
-        </nav>
-        
     </div>
 </div>
     <div id="main-content" class="row">
@@ -346,79 +321,23 @@
         
               <div>
                 
-  <div class="section" id="the-heat-equation">
-<h1>The heat equation<a class="headerlink" href="#the-heat-equation" title="Permalink to this headline">¶</a></h1>
-<p>Authors: Anders Logg and Hans Petter Langtangen</p>
-<p>Minor modifications by: Jørgen S. Dokken</p>
-<p>As a first extension of the Poisson problem from the previous chapter, weconsider the time-dependent heat equation, or the time-dependent diffusion equation. This is the natural extension of the Poisson equation describing the stationary distribution of heat in a body to a time-dependent problem. We will see that by discretizing time into small time intervals and applying standard time-stepping methods, we can solve the heat equation by solvinga sequence of variational problems, much like the one we encountered for the Poisson equation.</p>
-<div class="section" id="the-pde-problem">
-<h2>The PDE problem<a class="headerlink" href="#the-pde-problem" title="Permalink to this headline">¶</a></h2>
-<p>The model problem for the time-dependent PDE reads</p>
-<div class="amsmath math notranslate nohighlight" id="equation-bbf5a15c-9d3f-45fc-8c3e-9514849345c5">
-<span class="eqno">(9)<a class="headerlink" href="#equation-bbf5a15c-9d3f-45fc-8c3e-9514849345c5" title="Permalink to this equation">¶</a></span>\[\begin{align}
-    \frac{\partial u}{\partial t}&amp;=\nabla^2 u + f &amp;&amp; \text{in } \Omega \times (0, T],\\
-    u &amp;= u_D &amp;&amp; \text{n } \partial\Omega \times (0,T],\\
-    u &amp;= u_0 &amp;&amp; \text{at } t=0.
-\end{align}\]</div>
-<p>Here <span class="math notranslate nohighlight">\(u\)</span> varies with space and time, e.g. <span class="math notranslate nohighlight">\(u=u(x,y,t)\)</span> if the spatial domain <span class="math notranslate nohighlight">\(\Omega\)</span> is two-dimensional. The source function <span class="math notranslate nohighlight">\(f\)</span> and the boundary values <span class="math notranslate nohighlight">\(u_D\)</span> may also vary with space and time. The initial condition <span class="math notranslate nohighlight">\(u_0\)</span> is a function of space only.</p>
-</div>
-<div class="section" id="the-variational-formulation">
-<h2>The variational formulation<a class="headerlink" href="#the-variational-formulation" title="Permalink to this headline">¶</a></h2>
-<p>A straightforward approach to solving time-dependent PDEs by the finite element method is to first discretize the time derivative by a finite difference approximation, which yields a sequence of stationary problems, and then turn each stationary problem into a variational formulation.
-We will let the superscript <span class="math notranslate nohighlight">\(n\)</span> denote a quantity at time <span class="math notranslate nohighlight">\(t_n\)</span>, where <span class="math notranslate nohighlight">\(n\)</span> is an integer counting time levels. For example, <span class="math notranslate nohighlight">\(u^n\)</span> means <span class="math notranslate nohighlight">\(u\)</span> at time level <span class="math notranslate nohighlight">\(n\)</span>. The first step of a finite difference discretization in time consists of sampling the PDE at some time  level, for instance <span class="math notranslate nohighlight">\(t_{n+1}\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-212e1bbe-f96e-468c-aef3-18a11225cc73">
-<span class="eqno">(10)<a class="headerlink" href="#equation-212e1bbe-f96e-468c-aef3-18a11225cc73" title="Permalink to this equation">¶</a></span>\[\begin{align}
-    \left(\frac{\partial u }{\partial t}\right)^{n+1}= \nabla^2 u^{n+1}+ f^{n+1}.
-\end{align}\]</div>
-<p>The time-derivative can be  approximated by a difference quotient. For simplicity and stability reasons, we choose a simple backward difference:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-92f4a687-fdbc-4921-a12a-8f758d66d106">
-<span class="eqno">(11)<a class="headerlink" href="#equation-92f4a687-fdbc-4921-a12a-8f758d66d106" title="Permalink to this equation">¶</a></span>\[\begin{align}
-    \left(\frac{\partial u }{\partial t}\right)^{n+1}\approx \frac{u^{n+1}-u^n}{\Delta t},
-\end{align}\]</div>
-<p>where <span class="math notranslate nohighlight">\(\Delta t\)</span> is the time discretization paramter. Inserting the latter expression into our equation at time step <span class="math notranslate nohighlight">\(n+1\)</span> yields</p>
-<div class="amsmath math notranslate nohighlight" id="equation-688285cc-477b-4ea4-86c9-083cd14b284d">
-<span class="eqno">(12)<a class="headerlink" href="#equation-688285cc-477b-4ea4-86c9-083cd14b284d" title="Permalink to this equation">¶</a></span>\[\begin{align}
-    \frac{u^{n+1}-u^n}{\Delta t}= \nabla^2 u^{n+1}+ f^{n+1}.
-\end{align}\]</div>
-<p>This is our time-discrete version of the heat equation. It is called a \textit{backward Euler} or a \textit{implicit Euler} discretization.</p>
-<p>We reorder the equation such that the left-hand side contains the terms with only the unknown <span class="math notranslate nohighlight">\(u^{n+1}\)</span> and right-hand side contains only computed terms. The resulting equation is a sequence of stationary problems for <span class="math notranslate nohighlight">\(u^{n+1}\)</span>, assuming <span class="math notranslate nohighlight">\(u^{n}\)</span> is known from the previous time step:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-808d184b-d903-4e4a-ad60-cdf332805dd7">
-<span class="eqno">(13)<a class="headerlink" href="#equation-808d184b-d903-4e4a-ad60-cdf332805dd7" title="Permalink to this equation">¶</a></span>\[\begin{align}
-    u^0&amp;=u_0 &amp;&amp;\\
-    u^{n+1}-\Delta t \nabla^2 u^{n+1}&amp;= u^{n} + \Delta t f^{n+1}, &amp;&amp; n = 0,1,2,\dots
-\end{align}\]</div>
-<p>Given <span class="math notranslate nohighlight">\(u_0\)</span>, we can solve for <span class="math notranslate nohighlight">\(u^0, u^1, u^2\)</span> and so on.</p>
-<p>We then in turn use the finite element method. This means that we have to turn the equation into its weak formulation. We multiply by the test-function of <span class="math notranslate nohighlight">\(v\in \hat{V}\)</span> and integrate second-order derivatives by parts. we now introduce the symbol <span class="math notranslate nohighlight">\(u\)</span> for <span class="math notranslate nohighlight">\(u^{n+1}\)</span> and we write the resulting weak formulation as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2950b9c4-5b03-44d5-9c17-3ea7daa8574e">
-<span class="eqno">(14)<a class="headerlink" href="#equation-2950b9c4-5b03-44d5-9c17-3ea7daa8574e" title="Permalink to this equation">¶</a></span>\[\begin{align}
-    a(u,v)&amp;=L_{n+1}(v),
-\end{align}\]</div>
-<p>where</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b86010f3-ee4e-43a2-8ebb-660c7c7ae111">
-<span class="eqno">(15)<a class="headerlink" href="#equation-b86010f3-ee4e-43a2-8ebb-660c7c7ae111" title="Permalink to this equation">¶</a></span>\[\begin{align}
-    a(u,v)&amp;=\int_{\Omega}(uv + \Delta t \nabla u \cdot \nabla v )\mathrm{d} x\\
-    L_{n+1}(v)&amp;=\int_{\Omega} (u^n+\Delta t f^{n+1})\mathrm{d} x.
-\end{align}\]</div>
-</div>
-<div class="section" id="projection-or-interpolation-of-the-initial-condition">
-<h2>Projection or interpolation of the initial condition<a class="headerlink" href="#projection-or-interpolation-of-the-initial-condition" title="Permalink to this headline">¶</a></h2>
-<p>In addition to the variational problem to be solved in each  time step, we also need to approximate the initial condition. This equation can also be turned into a variational problem</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5074dc8a-c180-4dbd-8e02-a3fd0bc2b55a">
-<span class="eqno">(16)<a class="headerlink" href="#equation-5074dc8a-c180-4dbd-8e02-a3fd0bc2b55a" title="Permalink to this equation">¶</a></span>\[\begin{align}
-    a_0(u,v)&amp;=L_0(V),
-\end{align}\]</div>
-<p>with</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0ab21df7-42e5-4923-800f-020af0d79370">
-<span class="eqno">(17)<a class="headerlink" href="#equation-0ab21df7-42e5-4923-800f-020af0d79370" title="Permalink to this equation">¶</a></span>\[\begin{align}
-    a_0(u,v)&amp;=\int_{\Omega}uv\mathrm{d} x,\\
-    L_0(v)&amp;=\int_{\Omega}u_0v\mathrm{d} x.
-\end{align}\]</div>
-<p>When solving this variational problem <span class="math notranslate nohighlight">\(u^0\)</span> becomes the <span class="math notranslate nohighlight">\(L^2\)</span>-projection of the given initial value <span class="math notranslate nohighlight">\(u_0\)</span> into the finite element space.</p>
-<p>The alternative is to construct <span class="math notranslate nohighlight">\(u^0\)</span> by just interpolating the intitial value <span class="math notranslate nohighlight">\(u_0\)</span>. We covered how to use interpolation in dolfin-X in the <a class="reference internal" href="../chapter1/membrane_code.html"><span class="doc">membrane chapter</span></a>.</p>
-<p>We can use dolfin-X to either project or interpolate the initial condition. The most common choice is to use an projection, which computes an approximation to <span class="math notranslate nohighlight">\(u_0\)</span>. However, in some applications where we want to verify the code by reproducing exact solutions, one must use interpolate. In this chapter, we will use such a problem.</p>
-<div class="toctree-wrapper compound">
-</div>
-</div>
+  <div class="section" id="test-problem-1-channel-flow">
+<h1>Test problem 1: Channel flow<a class="headerlink" href="#test-problem-1-channel-flow" title="Permalink to this headline">¶</a></h1>
+<p>Authors: Jørgen S. Dokken, Anders Logg and Hans Petter Langtangen</p>
+<p>In this section, we will compute the flow bewteen two infinite plates, so-called channel or Poiseuille flow.
+As we shall see, this problem has an analytical solution.
+Let <span class="math notranslate nohighlight">\(H\)</span> be the distance between the plates and  <span class="math notranslate nohighlight">\(L\)</span> the length of the channel. There are no body forces.</p>
+<p>We may scale the problem first to get rid of seemingly independent physical paramters. The physics of this problem is governed by viscous effects only, in the direction perpendicularr to the flow, so a time scale should be based on diffusin accross the channel: <span class="math notranslate nohighlight">\(t_v=H^2/\nu\)</span>. We let <span class="math notranslate nohighlight">\(U\)</span>, some characteristic inflow velocity, be the velocity scale and <span class="math notranslate nohighlight">\(H\)</span> the spatial scale. The pressure scale is taken as the characteristic shear stress, <span class="math notranslate nohighlight">\(\mu U/H\)</span>, since this is a primary example of shear flow. Inserting <span class="math notranslate nohighlight">\(\bar{x}=x/H, \bar{y}=y/H, \bar{z}=z/H, \bar{u}=u/U, \bar{p}=Hp/{\mu U}\)</span>, and <span class="math notranslate nohighlight">\(\bar{t}=H^2/\nu\)</span> in the equations results in the scaled Navier-Stokes equations (dropping the bars after scaling)</p>
+<div class="math notranslate nohighlight" id="equation-ns-scaled">
+<span class="eqno">(34)<a class="headerlink" href="#equation-ns-scaled" title="Permalink to this equation">¶</a></span>\[\begin{split}\frac{\partial u}{\partial t}+ \mathrm{Re} u \cdot \nabla u &amp;= -\nabla p + \nabla^2 u,\\
+\nabla \cdot u &amp;=0.\end{split}\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(\mathrm{Re}=\rho UH/\mu\)</span> is the Reynolds number. Because of the time and pressure scales, which are different from convection dominated fluid flow, the Reynolds number is associated with the convective term and not the viscity term.</p>
+<p>The exact solution is derived by assuming <span class="math notranslate nohighlight">\(u=(u_x(x,y,z),0,0)\)</span> with the <span class="math notranslate nohighlight">\(x\)</span>-axis pointing along the channel. Since <span class="math notranslate nohighlight">\(\nabla \cdot u = 0\)</span>, <span class="math notranslate nohighlight">\(u\)</span> cannot be dependent on <span class="math notranslate nohighlight">\(x\)</span>.</p>
+<p>The physics of channel flow is also two-dimensional so we can omit the <span class="math notranslate nohighlight">\(z\)</span>-coordinate (more precisely: <span class="math notranslate nohighlight">\(\partial/\partial z = 0\)</span>). Inserting <span class="math notranslate nohighlight">\(u=(u_x, 0, 0)\)</span> in the (scaled) governing equations gives <span class="math notranslate nohighlight">\(u_x''(y)=\frac{\partial p}{\partial x)}\)</span>.
+Differentiating this equation with respect to <span class="math notranslate nohighlight">\(x\)</span> shows that
+<span class="math notranslate nohighlight">\(\frac{\partial^2p}{\partial^2x}=0\)</span> so <span class="math notranslate nohighlight">\(\partial p/\partial x\)</span> s a constant here called <span class="math notranslate nohighlight">\(-\beta\)</span>. This is the driving force of the flow and can be specified as a known parameter in the problem. Integrating <span class="math notranslate nohighlight">\(u_x''(x)=-\beta\)</span> over the width of the channel, <span class="math notranslate nohighlight">\([0,1]\)</span>, and requiring <span class="math notranslate nohighlight">\(u=(0,0,0)\)</span> at the channel walls, results in <span class="math notranslate nohighlight">\(u_x=\frac{1}{2}\beta y(1-y)\)</span>. The characteristic inlet velocity <span class="math notranslate nohighlight">\(U\)</span> can be taken as the maximum inflow at <span class="math notranslate nohighlight">\(y=0.5\)</span>, implying <span class="math notranslate nohighlight">\(\beta=8\)</span>. The length of the  channel, <span class="math notranslate nohighlight">\(L/H\)</span> in the scaled model, has no impact on the result, so for simplicity we just compute on the unit square. Mathematically, the pressure must be prescribed at a point, but since <span class="math notranslate nohighlight">\(p\)</span> does not depend on <span class="math notranslate nohighlight">\(y\)</span>, we can set <span class="math notranslate nohighlight">\(p\)</span> to a known value, e.g. zero, along the outlet boundary <span class="math notranslate nohighlight">\(x=1\)</span>. The result is
+<span class="math notranslate nohighlight">\(p(x)=8(1-x)\)</span> and <span class="math notranslate nohighlight">\(u_x=4y(1-y)\)</span>.</p>
+<p>The boundary conditions can be set as <span class="math notranslate nohighlight">\(p=8\)</span> at <span class="math notranslate nohighlight">\(x=0\)</span>, <span class="math notranslate nohighlight">\(p=0\)</span> at <span class="math notranslate nohighlight">\(x=1\)</span> and <span class="math notranslate nohighlight">\(u=(0,0,0)\)</span> on the walls <span class="math notranslate nohighlight">\(y=0.1\)</span>. This defines the pressure drop and should result in unit maximum velocity at the inlet and outlet and a parabolic velocity profile without no further specifications. Note that it is only meaningful to solve the Navier-Stokes equations i n 2D or 3D geometries, although the underlying mathematical problem collapses to two <span class="math notranslate nohighlight">\(1D\)</span> problems, one for <span class="math notranslate nohighlight">\(u_x(y)\)</span> and one for <span class="math notranslate nohighlight">\(p(x)\)</span>.</p>
 </div>
 
     <script type="text/x-thebe-config">
@@ -449,8 +368,7 @@ We will let the superscript <span class="math notranslate nohighlight">\(n\)</sp
     
     <div class='prev-next-bottom'>
         
-    <a class='left-prev' id="prev-link" href="intro.html" title="previous page">A Gallery of finite element solvers</a>
-    <a class='right-next' id="next-link" href="heat_code.html" title="next page">Test problem 1: A known analytical solution</a>
+    <a class='left-prev' id="prev-link" href="navierstokes.html" title="previous page">The Navier-Stokes equations</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">

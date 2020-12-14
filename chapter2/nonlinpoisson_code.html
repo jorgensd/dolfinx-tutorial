@@ -220,10 +220,19 @@
   <i class="fas fa-chevron-down">
   </i>
  </li>
- <li class="toctree-l1">
+ <li class="toctree-l1 collapsible-parent">
   <a class="reference internal" href="navierstokes.html">
    The Navier-Stokes equations
   </a>
+  <ul class="collapse-ul">
+   <li class="toctree-l2">
+    <a class="reference internal" href="ns_code1.html">
+     Test problem 1: Channel flow
+    </a>
+   </li>
+  </ul>
+  <i class="fas fa-chevron-down">
+  </i>
  </li>
 </ul>
 
@@ -491,8 +500,8 @@ If we think of the problem in terms of finite differences on a uniform mesh, <sp
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>L2-error: 6.38e-16
-Error_max = 1.78e-15
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>L2-error: 3.92e-16
+Error_max = 8.88e-16
 </pre></div>
 </div>
 </div>
