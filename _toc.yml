@@ -31,3 +31,4 @@
           sections:
                 - file: chapter2/linearelasticity_code
                 - file: chapter2/elasticity_scaling
+        - file: chapter2/navierstokes
