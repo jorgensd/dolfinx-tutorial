@@ -461,11 +461,14 @@
 </div>
 </div>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>Note that we used <code class="docutils literal notranslate"><span class="pre">nabla_grad</span></code> and optionally <code class="docutils literal notranslate"><span class="pre">nabla_div</span></code> for the variational formulation, as oposed to our previous usage of
 <code class="docutils literal notranslate"><span class="pre">div</span></code> and <code class="docutils literal notranslate"><span class="pre">grad</span></code>. This is because for scalar functions <span class="math notranslate nohighlight">\(\nabla u\)</span> has a clear meaning
 <span class="math notranslate nohighlight">\(\nabla u = \left(\frac{\partial u}{\partial x}, \frac{\partial u}{\partial y}, \frac{\partial u}{\partial z} \right)\)</span>.</p>
-<p>However, if <span class="math notranslate nohighlight">\(u\)</span> is vecotr valued, the meaning is less clear. Some sources define <span class="math notranslate nohighlight">\(\nabla u\)</span> as a matrix with the elements <span class="math notranslate nohighlight">\(\frac{\partial u_j}{\partial x_i}\)</span>, while other  sources prefer
+<p>However, if <span class="math notranslate nohighlight">\(u\)</span> is vector valued, the meaning is less clear. Some sources define <span class="math notranslate nohighlight">\(\nabla u\)</span> as a matrix with the elements <span class="math notranslate nohighlight">\(\frac{\partial u_j}{\partial x_i}\)</span>, while other  sources prefer
 <span class="math notranslate nohighlight">\(\frac{\partial u_i}{\partial x_j}\)</span>. In dolfin-X <code class="docutils literal notranslate"><span class="pre">grad(u)</span></code> is defined as the amtrix with element <span class="math notranslate nohighlight">\(\frac{\partial u_i}{\partial x_j}\)</span>. However, as it is common in continuum mechanics to use the other definition, <code class="docutils literal notranslate"><span class="pre">ufl</span></code> supplies us with <code class="docutils literal notranslate"><span class="pre">nabla_grad</span></code> for this purpose.</p>
+</div>
 </div>
 <div class="section" id="solve-the-linear-variational-problem">
 <h2>Solve the linear variational problem<a class="headerlink" href="#solve-the-linear-variational-problem" title="Permalink to this headline">¶</a></h2>
