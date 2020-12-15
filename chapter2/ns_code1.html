@@ -309,10 +309,41 @@
 
         <!-- Launch buttons -->
 
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/jorgensd/dolfinx-tutorial/dokken/jupyterbook?urlpath=tree/./chapter2/ns_code1.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="../_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
     </div>
 
     <!-- Table of contents -->
     <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#implementation">
+   Implementation
+  </a>
+ </li>
+</ul>
+
+        </nav>
         
     </div>
 </div>
@@ -323,11 +354,11 @@
                 
   <div class="section" id="test-problem-1-channel-flow">
 <h1>Test problem 1: Channel flow<a class="headerlink" href="#test-problem-1-channel-flow" title="Permalink to this headline">¶</a></h1>
-<p>Authors: Jørgen S. Dokken, Anders Logg and Hans Petter Langtangen</p>
+<p>Authors: Anders Logg and Hans Petter Langtangen</p>
 <p>In this section, we will compute the flow bewteen two infinite plates, so-called channel or Poiseuille flow.
 As we shall see, this problem has an analytical solution.
 Let <span class="math notranslate nohighlight">\(H\)</span> be the distance between the plates and  <span class="math notranslate nohighlight">\(L\)</span> the length of the channel. There are no body forces.</p>
-<p>We may scale the problem first to get rid of seemingly independent physical paramters. The physics of this problem is governed by viscous effects only, in the direction perpendicularr to the flow, so a time scale should be based on diffusin accross the channel: <span class="math notranslate nohighlight">\(t_v=H^2/\nu\)</span>. We let <span class="math notranslate nohighlight">\(U\)</span>, some characteristic inflow velocity, be the velocity scale and <span class="math notranslate nohighlight">\(H\)</span> the spatial scale. The pressure scale is taken as the characteristic shear stress, <span class="math notranslate nohighlight">\(\mu U/H\)</span>, since this is a primary example of shear flow. Inserting <span class="math notranslate nohighlight">\(\bar{x}=x/H, \bar{y}=y/H, \bar{z}=z/H, \bar{u}=u/U, \bar{p}=Hp/{\mu U}\)</span>, and <span class="math notranslate nohighlight">\(\bar{t}=H^2/\nu\)</span> in the equations results in the scaled Navier-Stokes equations (dropping the bars after scaling)</p>
+<p>We may scale the problem first to get rid of seemingly independent physical parameters. The physics of this problem is governed by viscous effects only, in the direction perpendicularr to the flow, so a time scale should be based on diffusin accross the channel: <span class="math notranslate nohighlight">\(t_v=H^2/\nu\)</span>. We let <span class="math notranslate nohighlight">\(U\)</span>, some characteristic inflow velocity, be the velocity scale and <span class="math notranslate nohighlight">\(H\)</span> the spatial scale. The pressure scale is taken as the characteristic shear stress, <span class="math notranslate nohighlight">\(\mu U/H\)</span>, since this is a primary example of shear flow. Inserting <span class="math notranslate nohighlight">\(\bar{x}=x/H, \bar{y}=y/H, \bar{z}=z/H, \bar{u}=u/U, \bar{p}=Hp/{\mu U}\)</span>, and <span class="math notranslate nohighlight">\(\bar{t}=H^2/\nu\)</span> in the equations results in the scaled Navier-Stokes equations (dropping the bars after scaling)</p>
 <div class="math notranslate nohighlight" id="equation-ns-scaled">
 <span class="eqno">(34)<a class="headerlink" href="#equation-ns-scaled" title="Permalink to this equation">¶</a></span>\[\begin{split}\frac{\partial u}{\partial t}+ \mathrm{Re} u \cdot \nabla u &amp;= -\nabla p + \nabla^2 u,\\
 \nabla \cdot u &amp;=0.\end{split}\]</div>
@@ -338,6 +369,181 @@ Differentiating this equation with respect to <span class="math notranslate nohi
 <span class="math notranslate nohighlight">\(\frac{\partial^2p}{\partial^2x}=0\)</span> so <span class="math notranslate nohighlight">\(\partial p/\partial x\)</span> s a constant here called <span class="math notranslate nohighlight">\(-\beta\)</span>. This is the driving force of the flow and can be specified as a known parameter in the problem. Integrating <span class="math notranslate nohighlight">\(u_x''(x)=-\beta\)</span> over the width of the channel, <span class="math notranslate nohighlight">\([0,1]\)</span>, and requiring <span class="math notranslate nohighlight">\(u=(0,0,0)\)</span> at the channel walls, results in <span class="math notranslate nohighlight">\(u_x=\frac{1}{2}\beta y(1-y)\)</span>. The characteristic inlet velocity <span class="math notranslate nohighlight">\(U\)</span> can be taken as the maximum inflow at <span class="math notranslate nohighlight">\(y=0.5\)</span>, implying <span class="math notranslate nohighlight">\(\beta=8\)</span>. The length of the  channel, <span class="math notranslate nohighlight">\(L/H\)</span> in the scaled model, has no impact on the result, so for simplicity we just compute on the unit square. Mathematically, the pressure must be prescribed at a point, but since <span class="math notranslate nohighlight">\(p\)</span> does not depend on <span class="math notranslate nohighlight">\(y\)</span>, we can set <span class="math notranslate nohighlight">\(p\)</span> to a known value, e.g. zero, along the outlet boundary <span class="math notranslate nohighlight">\(x=1\)</span>. The result is
 <span class="math notranslate nohighlight">\(p(x)=8(1-x)\)</span> and <span class="math notranslate nohighlight">\(u_x=4y(1-y)\)</span>.</p>
 <p>The boundary conditions can be set as <span class="math notranslate nohighlight">\(p=8\)</span> at <span class="math notranslate nohighlight">\(x=0\)</span>, <span class="math notranslate nohighlight">\(p=0\)</span> at <span class="math notranslate nohighlight">\(x=1\)</span> and <span class="math notranslate nohighlight">\(u=(0,0,0)\)</span> on the walls <span class="math notranslate nohighlight">\(y=0.1\)</span>. This defines the pressure drop and should result in unit maximum velocity at the inlet and outlet and a parabolic velocity profile without no further specifications. Note that it is only meaningful to solve the Navier-Stokes equations i n 2D or 3D geometries, although the underlying mathematical problem collapses to two <span class="math notranslate nohighlight">\(1D\)</span> problems, one for <span class="math notranslate nohighlight">\(u_x(y)\)</span> and one for <span class="math notranslate nohighlight">\(p(x)\)</span>.</p>
+<p>The scaled model is not so easy to simulate using a standard Navier-Stokes solver with dimensions. However, one can argue that the convection term is zero, so the Re coefficient in front of this term in the scaled PDEs is not important and can be set to unity. In that case, setting <span class="math notranslate nohighlight">\(\rho=\mu=1\)</span> in the original Navier-Stokes equations resembles the scaled model.</p>
+<p>For a specific engineering problem one wants to simulate a specific fluid and set corresponding parameters. A general solver is therefore most naturally implemented with dimensions and using the original physical paramters.
+However, scaling may greatly simplify numerical simulations.
+First of all, it shows that all fluids behave in the  same way; it does not matter whether we have oil, gas, or water flowing betwen two plates, and it does not matter how fast the flow is (up to some critical value of the Reynolds number where the flow becomes unstable and transitions  to a complicated turbulent flow of totally differnent nature.)
+This means that one simulation is enough to cover all types of channel flow!
+In other applications, scaling shows that it might be necessary to just set the fraction of some paramters (dimensionless numbers) rather than the parameters themselves. This simplifies exploring the input parameter space which is often the purpose of simulation. Frequently, the scaled problem is run by setting some of the input parameters with dimension to fixed values (often unity).</p>
+<div class="section" id="implementation">
+<h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h2>
+<p>Author: Jørgen S. Dokken</p>
+<p>As in the previous example, we load the <code class="docutils literal notranslate"><span class="pre">dolfinx</span></code>-module, along with the <code class="docutils literal notranslate"><span class="pre">mpi4py</span></code>-module, and create the unit square mesh and define the run-time and temporal discretization</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx</span>
+<span class="kn">from</span> <span class="nn">mpi4py</span> <span class="k">import</span> <span class="n">MPI</span>
+
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">UnitSquareMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">T</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">dt</span> <span class="o">=</span> <span class="mf">0.1</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>As oposed to the previous demos, we will create our two function spaces using the <code class="docutils literal notranslate"><span class="pre">ufl</span></code> element definitions as input</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ufl</span>
+<span class="n">v_cg2</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">VectorElement</span><span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">ufl_cell</span><span class="p">(),</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">s_cg1</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">ufl_cell</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">v_cg2</span><span class="p">)</span>
+<span class="n">Q</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">s_cg1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The first space <code class="docutils literal notranslate"><span class="pre">V</span></code> is a vector valued function space for the velocity, while <code class="docutils literal notranslate"><span class="pre">Q</span></code> is a scalar valued function space for pressure. We use piecewise quadratic elements for the velocity and piecewise linear elements for the pressure. When createing the vector finite element, the dimension of the vector element will be set to the geometric dimension of the mesh. One can easily create vector-valued function spaces with other dimensions by adding the keyword argument dim, i.e.
+<code class="docutils literal notranslate"><span class="pre">v_cg</span> <span class="pre">=</span> <span class="pre">ufl.VectorElement(&quot;CG&quot;,</span> <span class="pre">mesh.ufl_cell(),</span> <span class="pre">2,</span> <span class="pre">dim=10)</span></code>.</p>
+<div class="admonition-stable-finite-element-spaces-for-the-navier-stokes-equation admonition">
+<p class="admonition-title">Stable finite element spaces for the Navier-Stokes equation</p>
+<p>It is well-known that certain finite element spacces are not <em>stable</em> for the Navier-Stokes equations, or even for the  simpler Stokes equation. The prime example of an unstable pair of finite element spacecs is to use first order degree continuous piecewise polynomials for both the velocity and the pressure.
+Using an unstable pair of spaces typically results in a solution with <em>spurious</em> (unwanted, non-physical) oscillations in the pressure solution. The simple remedy is to use continuous piecewise quadratic elements for the velocity and continuous piecewise linear elements for the pressure. Together, these elements form the so-called <em>Taylor-Hood</em> element. Spurious oscillations may occur also for splitting methids if an unstable element pair is used.
+}
+Since we have two different function spaces, we need to create two sets of trial and test functions:</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">u</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">q</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>As we have seen in <a class="reference internal" href="linearelasticity_code.html"><span class="doc std std-doc">Linear elasticty problem</span></a> we can use Python-functions to create the different Dirichlet conditions. For this problem, we have three Dirichlet condition: First, we will set <span class="math notranslate nohighlight">\(u=0\)</span> at the walls of the channel, that is at <span class="math notranslate nohighlight">\(y=0\)</span> and <span class="math notranslate nohighlight">\(y=1\)</span>. In this case, we will use <code class="docutils literal notranslate"><span class="pre">dolfinx.fem.locate_dofs_geometrical</span></code></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">petsc4py</span> <span class="k">import</span> <span class="n">PETSc</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="k">def</span> <span class="nf">walls</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">wall_dofs</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_geometrical</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">walls</span><span class="p">)</span>
+<span class="n">u_noslip</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">u_noslip</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">u_noslip</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
+
+<span class="n">bc_noslip</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_noslip</span><span class="p">,</span> <span class="n">wall_dofs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Second, we will set <span class="math notranslate nohighlight">\(p=8\)</span> at the inflow (<span class="math notranslate nohighlight">\(x=0\)</span>)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">inflow</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">inflow_dofs</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_geometrical</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">inflow</span><span class="p">)</span>
+<span class="n">p_inflow</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">p_inflow</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">p_inflow</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
+<span class="n">bc_inflow</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">p_inflow</span><span class="p">,</span> <span class="n">inflow_dofs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>And finally, <span class="math notranslate nohighlight">\(p=0\)</span> at the outflow (<span class="math notranslate nohighlight">\(x=1\)</span>). This will result in a pressure gradient that will accelerate the flow from the initial state with zero velocity. At the end, we collect the boundary conditions for the velocity and pressure in Python lists so we can easily access them in the following computation.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">outflow</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">outflow_dofs</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_geometrical</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">inflow</span><span class="p">)</span>
+<span class="n">p_outflow</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">p_outflow</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">p_outflow</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
+<span class="n">bc_outflow</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">p_outflow</span><span class="p">,</span> <span class="n">outflow_dofs</span><span class="p">)</span>
+<span class="n">bcu</span> <span class="o">=</span> <span class="p">[</span><span class="n">bc_noslip</span><span class="p">]</span>
+<span class="n">bcp</span> <span class="o">=</span> <span class="p">[</span><span class="n">bc_inflow</span><span class="p">,</span> <span class="n">bc_outflow</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We now move on to the  definition of the three variational forms, one for each step in the IPCS scheme. Let us look at the definition of the first variational problem and the relevant parameters</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">u_n</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">u_n</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;u_n&quot;</span>
+<span class="n">U</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">u_n</span> <span class="o">+</span> <span class="n">u</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">FacetNormal</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">k</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+<span class="n">mu</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="n">rho</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The next step is to set up the variational form of the first step.
+As the variational problem contains a mix of known and unknown quantities, we will use the following naming convention: <code class="docutils literal notranslate"><span class="pre">u</span></code> is the known (mathematically <span class="math notranslate nohighlight">\(u^{n+1}\)</span>) as a trial function in the variational form. <code class="docutils literal notranslate"><span class="pre">u_</span></code> is the most recently computed approximation (<span class="math notranslate nohighlight">\(u^{n+1}\)</span> available as a <code class="docutils literal notranslate"><span class="pre">Function</span></code> object), <code class="docutils literal notranslate"><span class="pre">u_n</span></code> is <span class="math notranslate nohighlight">\(u^n\)</span>, and the same convetion goes for <code class="docutils literal notranslate"><span class="pre">p,p_</span></code> (<span class="math notranslate nohighlight">\(p^{n+1}\)</span>) and <code class="docutils literal notranslate"><span class="pre">p_n</span></code> (p^n).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ufl</span> <span class="k">import</span> <span class="n">Identity</span><span class="p">,</span> <span class="n">div</span><span class="p">,</span> <span class="n">dot</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">inner</span><span class="p">,</span> <span class="n">lhs</span><span class="p">,</span> <span class="n">nabla_grad</span><span class="p">,</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">sym</span>
+<span class="c1"># Define strain-rate tensor</span>
+<span class="k">def</span> <span class="nf">epsilon</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">sym</span><span class="p">(</span><span class="n">nabla_grad</span><span class="p">(</span><span class="n">u</span><span class="p">))</span>
+
+<span class="c1"># Define stress tensor</span>
+<span class="k">def</span> <span class="nf">sigma</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">2</span><span class="o">*</span><span class="n">mu</span><span class="o">*</span><span class="n">epsilon</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="o">-</span> <span class="n">p</span><span class="o">*</span><span class="n">Identity</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">geometric_dimension</span><span class="p">())</span>
+
+<span class="c1"># Define the variational problem for the first step</span>
+<span class="n">p_n</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">F1</span> <span class="o">=</span> <span class="n">rho</span><span class="o">*</span><span class="n">dot</span><span class="p">((</span><span class="n">u</span> <span class="o">-</span> <span class="n">u_n</span><span class="p">)</span> <span class="o">/</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span>
+<span class="n">F1</span> <span class="o">+=</span> <span class="n">rho</span><span class="o">*</span><span class="n">dot</span><span class="p">(</span><span class="n">dot</span><span class="p">(</span><span class="n">u_n</span><span class="p">,</span> <span class="n">nabla_grad</span><span class="p">(</span><span class="n">u_n</span><span class="p">)),</span> <span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span>
+<span class="n">F1</span> <span class="o">+=</span> <span class="n">inner</span><span class="p">(</span><span class="n">sigma</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">p_n</span><span class="p">),</span> <span class="n">epsilon</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="o">*</span><span class="n">dx</span>
+<span class="n">F1</span> <span class="o">+=</span> <span class="n">dot</span><span class="p">(</span><span class="n">p_n</span><span class="o">*</span><span class="n">n</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">ds</span> <span class="o">-</span> <span class="n">dot</span><span class="p">(</span><span class="n">mu</span><span class="o">*</span><span class="n">nabla_grad</span><span class="p">(</span><span class="n">U</span><span class="p">)</span><span class="o">*</span><span class="n">n</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">ds</span>
+<span class="n">F1</span> <span class="o">-=</span> <span class="n">dot</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span>
+<span class="n">a1</span> <span class="o">=</span> <span class="n">lhs</span><span class="p">(</span><span class="n">F1</span><span class="p">)</span>
+<span class="n">L1</span> <span class="o">=</span> <span class="n">rhs</span><span class="p">(</span><span class="n">F1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note that we have used the <code class="docutils literal notranslate"><span class="pre">ufl</span></code>-functions <code class="docutils literal notranslate"><span class="pre">lhs</span></code> and <code class="docutils literal notranslate"><span class="pre">rhs</span></code> to sort out the bilinear form <span class="math notranslate nohighlight">\(a(u,v)\)</span> and linear form <span class="math notranslate nohighlight">\(L(v)\)</span>. This is particulary convenient in longer and more complicated variational forms. With our particular discretization <span class="math notranslate nohighlight">\(a(u,v)\)</span> <code class="docutils literal notranslate"><span class="pre">a1</span></code> is not time dependent, and only has to be assembled once, while the right hand side is dependent on the solution from the previous time step (<code class="docutils literal notranslate"><span class="pre">u_n</span></code>). Thus, we do as for the <a class="reference internal" href="heat_code.html"><span class="doc std std-doc">Test problem 1: A known analytical solution</span></a>, and create the matrix outside the time-loop.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A1</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcu</span><span class="p">)</span>
+<span class="n">L1</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">L1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We now set up similar variational formulations and structures for the second and third step</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define variational problem for step 2</span>
+<span class="n">u_</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">a2</span> <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="n">nabla_grad</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">nabla_grad</span><span class="p">(</span><span class="n">q</span><span class="p">))</span><span class="o">*</span><span class="n">dx</span>
+<span class="n">L2</span> <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="n">nabla_grad</span><span class="p">(</span><span class="n">p_n</span><span class="p">),</span> <span class="n">nabla_grad</span><span class="p">(</span><span class="n">q</span><span class="p">))</span><span class="o">*</span><span class="n">dx</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">div</span><span class="p">(</span><span class="n">u_</span><span class="p">)</span><span class="o">*</span><span class="n">q</span><span class="o">*</span><span class="n">dx</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Argument(FunctionSpace(Mesh(VectorElement(FiniteElement(&#39;Lagrange&#39;, triangle, 1), dim=2), 0), FiniteElement(&#39;Lagrange&#39;, triangle, 1)), 1, None)
+</pre></div>
+</div>
+</div>
+</div>
+</div>
 </div>
 
     <script type="text/x-thebe-config">
