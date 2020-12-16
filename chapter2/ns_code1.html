@@ -384,10 +384,10 @@ In other applications, scaling shows that it might be necessary to just set the 
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="k">import</span> <span class="n">MPI</span>
 
-<span class="n">mesh</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">UnitSquareMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">UnitSquareMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 <span class="n">t</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="n">T</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="n">dt</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">dt</span> <span class="o">=</span> <span class="mf">0.02</span>
 </pre></div>
 </div>
 </div>
@@ -432,9 +432,8 @@ Since we have two different function spaces, we need to create two sets of trial
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">1</span><span class="p">))</span>
 <span class="n">wall_dofs</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_geometrical</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">walls</span><span class="p">)</span>
 <span class="n">u_noslip</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-<span class="n">u_noslip</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">u_noslip</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
-
+<span class="k">with</span> <span class="n">u_noslip</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
+    <span class="n">loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">bc_noslip</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_noslip</span><span class="p">,</span> <span class="n">wall_dofs</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -447,8 +446,8 @@ Since we have two different function spaces, we need to create two sets of trial
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">inflow_dofs</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_geometrical</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">inflow</span><span class="p">)</span>
 <span class="n">p_inflow</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
-<span class="n">p_inflow</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
-<span class="n">p_inflow</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">p_inflow</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
+    <span class="n">loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
 <span class="n">bc_inflow</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">p_inflow</span><span class="p">,</span> <span class="n">inflow_dofs</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -459,10 +458,10 @@ Since we have two different function spaces, we need to create two sets of trial
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">outflow</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">outflow_dofs</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_geometrical</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">inflow</span><span class="p">)</span>
+<span class="n">outflow_dofs</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_geometrical</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">outflow</span><span class="p">)</span>
 <span class="n">p_outflow</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
-<span class="n">p_outflow</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">p_outflow</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">p_outflow</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
+    <span class="n">loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">bc_outflow</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">p_outflow</span><span class="p">,</span> <span class="n">outflow_dofs</span><span class="p">)</span>
 <span class="n">bcu</span> <span class="o">=</span> <span class="p">[</span><span class="n">bc_noslip</span><span class="p">]</span>
 <span class="n">bcp</span> <span class="o">=</span> <span class="p">[</span><span class="n">bc_inflow</span><span class="p">,</span> <span class="n">bc_outflow</span><span class="p">]</span>
@@ -479,7 +478,7 @@ Since we have two different function spaces, we need to create two sets of trial
 <span class="n">n</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">FacetNormal</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
 <span class="n">f</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
 <span class="n">k</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
-<span class="n">mu</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="n">mu</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">rho</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -500,6 +499,7 @@ As the variational problem contains a mix of known and unknown quantities, we wi
 
 <span class="c1"># Define the variational problem for the first step</span>
 <span class="n">p_n</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">p_n</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;p_n&quot;</span>
 <span class="n">F1</span> <span class="o">=</span> <span class="n">rho</span><span class="o">*</span><span class="n">dot</span><span class="p">((</span><span class="n">u</span> <span class="o">-</span> <span class="n">u_n</span><span class="p">)</span> <span class="o">/</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span>
 <span class="n">F1</span> <span class="o">+=</span> <span class="n">rho</span><span class="o">*</span><span class="n">dot</span><span class="p">(</span><span class="n">dot</span><span class="p">(</span><span class="n">u_n</span><span class="p">,</span> <span class="n">nabla_grad</span><span class="p">(</span><span class="n">u_n</span><span class="p">)),</span> <span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span>
 <span class="n">F1</span> <span class="o">+=</span> <span class="n">inner</span><span class="p">(</span><span class="n">sigma</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">p_n</span><span class="p">),</span> <span class="n">epsilon</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="o">*</span><span class="n">dx</span>
@@ -515,7 +515,8 @@ As the variational problem contains a mix of known and unknown quantities, we wi
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A1</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcu</span><span class="p">)</span>
-<span class="n">L1</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">L1</span><span class="p">)</span>
+<span class="n">A1</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
+<span class="n">b1</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">L1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -527,18 +528,692 @@ As the variational problem contains a mix of known and unknown quantities, we wi
 <span class="n">u_</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">a2</span> <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="n">nabla_grad</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">nabla_grad</span><span class="p">(</span><span class="n">q</span><span class="p">))</span><span class="o">*</span><span class="n">dx</span>
 <span class="n">L2</span> <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="n">nabla_grad</span><span class="p">(</span><span class="n">p_n</span><span class="p">),</span> <span class="n">nabla_grad</span><span class="p">(</span><span class="n">q</span><span class="p">))</span><span class="o">*</span><span class="n">dx</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">div</span><span class="p">(</span><span class="n">u_</span><span class="p">)</span><span class="o">*</span><span class="n">q</span><span class="o">*</span><span class="n">dx</span>
+<span class="n">A2</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcp</span><span class="p">)</span>
+<span class="n">A2</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
+<span class="n">b2</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">L2</span><span class="p">)</span>
+
+<span class="c1"># Define variational problem for step 3</span>
+<span class="n">p_</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">a3</span> <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span>
+<span class="n">L3</span> <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="n">u_</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span> <span class="o">-</span> <span class="n">k</span><span class="o">*</span><span class="n">dot</span><span class="p">(</span><span class="n">nabla_grad</span><span class="p">(</span><span class="n">p_</span> <span class="o">-</span> <span class="n">p_n</span><span class="p">),</span> <span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span>
+<span class="n">A3</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a3</span><span class="p">)</span>
+<span class="n">A3</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
+<span class="n">b3</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">L3</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
+<p>As we have create all the linear structures for the problem, we can now create a solver for each of them using PETSc. We can therefore customize the solution strategy for each step. For the tentative velocity step and pressure correction step, we will use the Stabilized version of BiConjugate Gradient to solve the linear system, and using algebraic myltigrid for preconditioning. For the last step, the velocity update, we use a conjugate gradient method with successive over relaxation, Gauss Seidel (SOR) preconditioning.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Solver for step 1</span>
+<span class="n">solver1</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">KSP</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">mpi_comm</span><span class="p">())</span>
+<span class="n">solver1</span><span class="o">.</span><span class="n">setOperators</span><span class="p">(</span><span class="n">A1</span><span class="p">)</span>
+<span class="n">solver1</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">KSP</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">PREONLY</span><span class="p">)</span>
+<span class="n">solver1</span><span class="o">.</span><span class="n">getPC</span><span class="p">()</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">PC</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">LU</span><span class="p">)</span>
+<span class="c1"># solver1.setType(PETSc.KSP.Type.BCGS)</span>
+<span class="c1"># pc1 = solver1.getPC()</span>
+<span class="c1"># pc1.setType(PETSc.PC.Type.HYPRE)</span>
+<span class="c1"># pc1.setHYPREType(&quot;boomeramg&quot;)</span>
+<span class="c1"># Solver for step 2</span>
+<span class="n">solver2</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">KSP</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">mpi_comm</span><span class="p">())</span>
+<span class="n">solver2</span><span class="o">.</span><span class="n">setOperators</span><span class="p">(</span><span class="n">A2</span><span class="p">)</span>
+<span class="n">solver2</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">KSP</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">PREONLY</span><span class="p">)</span>
+<span class="n">solver2</span><span class="o">.</span><span class="n">getPC</span><span class="p">()</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">PC</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">LU</span><span class="p">)</span>
+
+<span class="c1"># solver2.setType(PETSc.KSP.Type.BCGS)</span>
+<span class="c1"># pc2 = solver2.getPC()</span>
+<span class="c1"># pc2.setType(PETSc.PC.Type.HYPRE)</span>
+<span class="c1"># pc2.setHYPREType(&quot;boomeramg&quot;)</span>
+
+<span class="c1"># Solver for step 3</span>
+<span class="n">solver3</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">KSP</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">mpi_comm</span><span class="p">())</span>
+<span class="n">solver3</span><span class="o">.</span><span class="n">setOperators</span><span class="p">(</span><span class="n">A3</span><span class="p">)</span>
+<span class="n">solver3</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">KSP</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">PREONLY</span><span class="p">)</span>
+<span class="n">solver3</span><span class="o">.</span><span class="n">getPC</span><span class="p">()</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">PC</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">LU</span><span class="p">)</span>
+
+<span class="c1"># solver3.setType(PETSc.KSP.Type.CG)</span>
+<span class="c1"># pc3 = solver3.getPC()</span>
+<span class="c1"># pc3.setType(PETSc.PC.Type.SOR)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We prepare output files for the velocity and pressure data, and write the mesh and initial conditions to file</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.io</span>
+<span class="n">xdmf</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">XDMFFile</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="s2">&quot;poiseuille.xdmf&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+<span class="n">xdmf</span><span class="o">.</span><span class="n">write_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">u_n</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+<span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">p_n</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We also interpolate the analytical solution into our function-space and create a variational formulation for the <span class="math notranslate nohighlight">\(L^2\)</span>-error.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="k">def</span> <span class="nf">u_exact</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScalarType</span><span class="p">)</span>
+    <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">values</span>
+<span class="n">u_ex</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">u_ex</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">u_exact</span><span class="p">)</span>
+<span class="n">u_ex</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT_VALUES</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
+
+<span class="n">L2_error</span> <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="n">u_</span> <span class="o">-</span> <span class="n">u_ex</span><span class="p">,</span> <span class="n">u_</span> <span class="o">-</span> <span class="n">u_ex</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The next step is to create the loop over time. Note that we for all three steps only have to assemble the right hand side and apply the boundary condition using lifting.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">while</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">T</span><span class="p">:</span>
+    <span class="c1"># Update current time step</span>
+    <span class="n">t</span> <span class="o">+=</span> <span class="n">dt</span>
+
+    <span class="c1"># Step 1: Tentative veolcity step</span>
+    <span class="n">b1</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span> <span class="n">L1</span><span class="p">)</span>
+    <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">apply_lifting</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span> <span class="p">[</span><span class="n">a1</span><span class="p">],</span> <span class="p">[</span><span class="n">bcu</span><span class="p">])</span>
+    <span class="n">b1</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">ADD_VALUES</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">)</span>
+    <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">set_bc</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span> <span class="n">bcu</span><span class="p">)</span>
+    <span class="n">solver1</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span> <span class="n">u_</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+
+    <span class="c1"># Step 2: Pressure corrrection step</span>
+    <span class="n">b2</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span> <span class="n">L2</span><span class="p">)</span>
+    <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">apply_lifting</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span> <span class="p">[</span><span class="n">a2</span><span class="p">],</span> <span class="p">[</span><span class="n">bcp</span><span class="p">])</span>
+    <span class="n">b2</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">ADD_VALUES</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">)</span>
+    <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">set_bc</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span> <span class="n">bcp</span><span class="p">)</span>
+    <span class="n">solver2</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span> <span class="n">p_</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+
+    <span class="c1"># Step 3: Velocity correction step</span>
+    <span class="n">b3</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">b3</span><span class="p">,</span> <span class="n">L3</span><span class="p">)</span>
+    <span class="n">solver3</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">b3</span><span class="p">,</span> <span class="n">u_</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+    
+    <span class="c1"># Update variable with solution form this time step</span>
+    <span class="k">with</span> <span class="n">u_</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc_</span><span class="p">,</span> <span class="n">u_n</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc_n</span><span class="p">:</span>
+        <span class="n">loc_</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">loc_n</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">p_</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc_</span><span class="p">,</span> <span class="n">p_n</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc_n</span><span class="p">:</span>
+        <span class="n">loc_</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">loc_n</span><span class="p">)</span>
+    <span class="c1"># Write solutions to file</span>
+    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">u_n</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">p_n</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+
+    <span class="c1"># Compute error at current time-step</span>
+    <span class="n">error_L2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span><span class="n">L2_error</span><span class="p">))</span>
+    <span class="n">error_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">u_</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span> <span class="o">-</span> <span class="n">u_ex</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Time </span><span class="si">{0:.2f}</span><span class="s2">, L2-error </span><span class="si">{1:.2e}</span><span class="s2">, Max error </span><span class="si">{2:.2e}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">error_L2</span><span class="p">,</span> <span class="n">error_max</span><span class="p">))</span>
+<span class="c1"># Close xmdf file</span>
+<span class="n">xdmf</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Argument(FunctionSpace(Mesh(VectorElement(FiniteElement(&#39;Lagrange&#39;, triangle, 1), dim=2), 0), FiniteElement(&#39;Lagrange&#39;, triangle, 1)), 1, None)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 0.02, L2-error 5.88e-01, Max error 1.60e-01
+Time 0.04, L2-error 4.68e-01, Max error 2.31e-04
+Time 0.06, L2-error 3.84e-01, Max error 3.41e-04
+Time 0.08, L2-error 3.15e-01, Max error 1.31e-04
+Time 0.10, L2-error 2.58e-01, Max error 2.62e-04
+Time 0.12, L2-error 2.12e-01, Max error 2.13e-04
+Time 0.14, L2-error 1.74e-01, Max error 2.09e-04
+Time 0.16, L2-error 1.43e-01, Max error 2.44e-04
+Time 0.18, L2-error 1.17e-01, Max error 1.76e-04
+Time 0.20, L2-error 9.59e-02, Max error 2.50e-04
+Time 0.22, L2-error 7.87e-02, Max error 1.54e-04
+Time 0.24, L2-error 6.45e-02, Max error 2.42e-04
+Time 0.26, L2-error 5.29e-02, Max error 1.38e-04
+Time 0.28, L2-error 4.34e-02, Max error 2.28e-04
+Time 0.30, L2-error 3.56e-02, Max error 1.27e-04
+Time 0.32, L2-error 2.92e-02, Max error 2.11e-04
+Time 0.34, L2-error 2.40e-02, Max error 1.28e-04
+Time 0.36, L2-error 1.97e-02, Max error 1.93e-04
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 0.38, L2-error 1.61e-02, Max error 1.30e-04
+Time 0.40, L2-error 1.32e-02, Max error 1.76e-04
+Time 0.42, L2-error 1.09e-02, Max error 1.28e-04
+Time 0.44, L2-error 8.91e-03, Max error 1.60e-04
+Time 0.46, L2-error 7.31e-03, Max error 1.24e-04
+Time 0.48, L2-error 6.00e-03, Max error 1.45e-04
+Time 0.50, L2-error 4.92e-03, Max error 1.19e-04
+Time 0.52, L2-error 4.04e-03, Max error 1.32e-04
+Time 0.54, L2-error 3.31e-03, Max error 1.12e-04
+Time 0.56, L2-error 2.72e-03, Max error 1.20e-04
+Time 0.58, L2-error 2.23e-03, Max error 1.06e-04
+Time 0.60, L2-error 1.83e-03, Max error 1.09e-04
+Time 0.62, L2-error 1.50e-03, Max error 9.89e-05
+Time 0.64, L2-error 1.23e-03, Max error 9.86e-05
+Time 0.66, L2-error 1.01e-03, Max error 9.34e-05
+Time 0.68, L2-error 8.31e-04, Max error 8.97e-05
+Time 0.70, L2-error 6.83e-04, Max error 1.72e-04
+Time 0.72, L2-error 5.61e-04, Max error 1.01e-04
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 0.74, L2-error 4.62e-04, Max error 2.24e-04
+Time 0.76, L2-error 3.80e-04, Max error 1.19e-04
+Time 0.78, L2-error 3.13e-04, Max error 2.50e-04
+Time 0.80, L2-error 2.58e-04, Max error 1.27e-04
+Time 0.82, L2-error 2.14e-04, Max error 2.59e-04
+Time 0.84, L2-error 1.77e-04, Max error 1.28e-04
+Time 0.86, L2-error 1.47e-04, Max error 2.57e-04
+Time 0.88, L2-error 1.23e-04, Max error 1.26e-04
+Time 0.90, L2-error 1.03e-04, Max error 2.50e-04
+Time 0.92, L2-error 8.70e-05, Max error 1.22e-04
+Time 0.94, L2-error 7.39e-05, Max error 2.39e-04
+Time 0.96, L2-error 6.35e-05, Max error 1.16e-04
+Time 0.98, L2-error 5.49e-05, Max error 2.26e-04
+Time 1.00, L2-error 4.82e-05, Max error 1.10e-04
+Time 1.02, L2-error 4.26e-05, Max error 2.12e-04
+Time 1.04, L2-error 3.82e-05, Max error 1.04e-04
+Time 1.06, L2-error 3.45e-05, Max error 1.98e-04
+Time 1.08, L2-error 3.16e-05, Max error 9.75e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 1.10, L2-error 2.91e-05, Max error 1.85e-04
+Time 1.12, L2-error 2.71e-05, Max error 9.16e-05
+Time 1.14, L2-error 2.53e-05, Max error 1.73e-04
+Time 1.16, L2-error 2.39e-05, Max error 8.60e-05
+Time 1.18, L2-error 2.25e-05, Max error 1.61e-04
+Time 1.20, L2-error 2.14e-05, Max error 8.09e-05
+Time 1.22, L2-error 2.03e-05, Max error 1.50e-04
+Time 1.24, L2-error 1.93e-05, Max error 7.60e-05
+Time 1.26, L2-error 1.84e-05, Max error 1.40e-04
+Time 1.28, L2-error 1.76e-05, Max error 7.16e-05
+Time 1.30, L2-error 1.69e-05, Max error 1.30e-04
+Time 1.32, L2-error 1.61e-05, Max error 6.75e-05
+Time 1.34, L2-error 1.55e-05, Max error 1.22e-04
+Time 1.36, L2-error 1.48e-05, Max error 6.37e-05
+Time 1.38, L2-error 1.42e-05, Max error 1.14e-04
+Time 1.40, L2-error 1.37e-05, Max error 6.03e-05
+Time 1.42, L2-error 1.31e-05, Max error 1.07e-04
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 1.44, L2-error 1.26e-05, Max error 5.74e-05
+Time 1.46, L2-error 1.22e-05, Max error 1.00e-04
+Time 1.48, L2-error 1.17e-05, Max error 5.47e-05
+Time 1.50, L2-error 1.13e-05, Max error 9.39e-05
+Time 1.52, L2-error 1.09e-05, Max error 5.22e-05
+Time 1.54, L2-error 1.05e-05, Max error 8.83e-05
+Time 1.56, L2-error 1.01e-05, Max error 4.99e-05
+Time 1.58, L2-error 9.74e-06, Max error 8.31e-05
+Time 1.60, L2-error 9.41e-06, Max error 4.77e-05
+Time 1.62, L2-error 9.08e-06, Max error 7.83e-05
+Time 1.64, L2-error 8.78e-06, Max error 4.56e-05
+Time 1.66, L2-error 8.48e-06, Max error 7.38e-05
+Time 1.68, L2-error 8.21e-06, Max error 4.37e-05
+Time 1.70, L2-error 7.94e-06, Max error 6.97e-05
+Time 1.72, L2-error 7.69e-06, Max error 4.19e-05
+Time 1.74, L2-error 7.44e-06, Max error 6.60e-05
+Time 1.76, L2-error 7.21e-06, Max error 4.03e-05
+Time 1.78, L2-error 6.99e-06, Max error 6.24e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 1.80, L2-error 6.78e-06, Max error 3.87e-05
+Time 1.82, L2-error 6.58e-06, Max error 5.92e-05
+Time 1.84, L2-error 6.39e-06, Max error 3.72e-05
+Time 1.86, L2-error 6.21e-06, Max error 5.62e-05
+Time 1.88, L2-error 6.03e-06, Max error 3.58e-05
+Time 1.90, L2-error 5.86e-06, Max error 5.33e-05
+Time 1.92, L2-error 5.70e-06, Max error 3.44e-05
+Time 1.94, L2-error 5.55e-06, Max error 5.07e-05
+Time 1.96, L2-error 5.40e-06, Max error 3.32e-05
+Time 1.98, L2-error 5.26e-06, Max error 4.83e-05
+Time 2.00, L2-error 5.12e-06, Max error 3.20e-05
+Time 2.02, L2-error 4.99e-06, Max error 4.60e-05
+Time 2.04, L2-error 4.87e-06, Max error 3.08e-05
+Time 2.06, L2-error 4.75e-06, Max error 4.39e-05
+Time 2.08, L2-error 4.63e-06, Max error 2.98e-05
+Time 2.10, L2-error 4.52e-06, Max error 4.19e-05
+Time 2.12, L2-error 4.42e-06, Max error 2.87e-05
+Time 2.14, L2-error 4.32e-06, Max error 4.00e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 2.16, L2-error 4.22e-06, Max error 2.77e-05
+Time 2.18, L2-error 4.12e-06, Max error 3.83e-05
+Time 2.20, L2-error 4.03e-06, Max error 2.68e-05
+Time 2.22, L2-error 3.95e-06, Max error 3.66e-05
+Time 2.24, L2-error 3.86e-06, Max error 2.59e-05
+Time 2.26, L2-error 3.78e-06, Max error 3.51e-05
+Time 2.28, L2-error 3.70e-06, Max error 2.51e-05
+Time 2.30, L2-error 3.63e-06, Max error 3.36e-05
+Time 2.32, L2-error 3.56e-06, Max error 2.42e-05
+Time 2.34, L2-error 3.49e-06, Max error 3.22e-05
+Time 2.36, L2-error 3.42e-06, Max error 2.35e-05
+Time 2.38, L2-error 3.35e-06, Max error 3.09e-05
+Time 2.40, L2-error 3.29e-06, Max error 2.27e-05
+Time 2.42, L2-error 3.23e-06, Max error 2.97e-05
+Time 2.44, L2-error 3.17e-06, Max error 2.20e-05
+Time 2.46, L2-error 3.11e-06, Max error 2.86e-05
+Time 2.48, L2-error 3.06e-06, Max error 2.13e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 2.50, L2-error 3.00e-06, Max error 2.75e-05
+Time 2.52, L2-error 2.95e-06, Max error 2.06e-05
+Time 2.54, L2-error 2.90e-06, Max error 2.64e-05
+Time 2.56, L2-error 2.85e-06, Max error 2.00e-05
+Time 2.58, L2-error 2.80e-06, Max error 2.54e-05
+Time 2.60, L2-error 2.76e-06, Max error 1.94e-05
+Time 2.62, L2-error 2.71e-06, Max error 2.45e-05
+Time 2.64, L2-error 2.67e-06, Max error 1.88e-05
+Time 2.66, L2-error 2.62e-06, Max error 2.36e-05
+Time 2.68, L2-error 2.58e-06, Max error 1.82e-05
+Time 2.70, L2-error 2.54e-06, Max error 2.28e-05
+Time 2.72, L2-error 2.50e-06, Max error 1.77e-05
+Time 2.74, L2-error 2.46e-06, Max error 2.20e-05
+Time 2.76, L2-error 2.43e-06, Max error 1.71e-05
+Time 2.78, L2-error 2.39e-06, Max error 2.12e-05
+Time 2.80, L2-error 2.35e-06, Max error 1.66e-05
+Time 2.82, L2-error 2.32e-06, Max error 2.05e-05
+Time 2.84, L2-error 2.28e-06, Max error 1.61e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 2.86, L2-error 2.25e-06, Max error 1.98e-05
+Time 2.88, L2-error 2.22e-06, Max error 1.57e-05
+Time 2.90, L2-error 2.19e-06, Max error 1.92e-05
+Time 2.92, L2-error 2.15e-06, Max error 1.52e-05
+Time 2.94, L2-error 2.12e-06, Max error 1.85e-05
+Time 2.96, L2-error 2.09e-06, Max error 1.48e-05
+Time 2.98, L2-error 2.07e-06, Max error 1.79e-05
+Time 3.00, L2-error 2.04e-06, Max error 1.43e-05
+Time 3.02, L2-error 2.01e-06, Max error 1.74e-05
+Time 3.04, L2-error 1.98e-06, Max error 1.39e-05
+Time 3.06, L2-error 1.95e-06, Max error 1.68e-05
+Time 3.08, L2-error 1.93e-06, Max error 1.35e-05
+Time 3.10, L2-error 1.90e-06, Max error 1.63e-05
+Time 3.12, L2-error 1.88e-06, Max error 1.31e-05
+Time 3.14, L2-error 1.85e-06, Max error 1.58e-05
+Time 3.16, L2-error 1.83e-06, Max error 1.28e-05
+Time 3.18, L2-error 1.80e-06, Max error 1.53e-05
+Time 3.20, L2-error 1.78e-06, Max error 1.24e-05
+Time 3.22, L2-error 1.76e-06, Max error 1.48e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 3.24, L2-error 1.73e-06, Max error 1.21e-05
+Time 3.26, L2-error 1.71e-06, Max error 1.44e-05
+Time 3.28, L2-error 1.69e-06, Max error 1.17e-05
+Time 3.30, L2-error 1.67e-06, Max error 1.39e-05
+Time 3.32, L2-error 1.65e-06, Max error 1.14e-05
+Time 3.34, L2-error 1.63e-06, Max error 1.35e-05
+Time 3.36, L2-error 1.61e-06, Max error 1.11e-05
+Time 3.38, L2-error 1.59e-06, Max error 1.31e-05
+Time 3.40, L2-error 1.57e-06, Max error 1.08e-05
+Time 3.42, L2-error 1.55e-06, Max error 1.27e-05
+Time 3.44, L2-error 1.53e-06, Max error 1.05e-05
+Time 3.46, L2-error 1.51e-06, Max error 1.24e-05
+Time 3.48, L2-error 1.49e-06, Max error 1.02e-05
+Time 3.50, L2-error 1.47e-06, Max error 1.20e-05
+Time 3.52, L2-error 1.46e-06, Max error 9.91e-06
+Time 3.54, L2-error 1.44e-06, Max error 1.17e-05
+Time 3.56, L2-error 1.42e-06, Max error 9.64e-06
+Time 3.58, L2-error 1.40e-06, Max error 1.14e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 3.60, L2-error 1.39e-06, Max error 9.37e-06
+Time 3.62, L2-error 1.37e-06, Max error 1.10e-05
+Time 3.64, L2-error 1.35e-06, Max error 9.12e-06
+Time 3.66, L2-error 1.34e-06, Max error 1.07e-05
+Time 3.68, L2-error 1.32e-06, Max error 8.87e-06
+Time 3.70, L2-error 1.31e-06, Max error 1.04e-05
+Time 3.72, L2-error 1.29e-06, Max error 8.63e-06
+Time 3.74, L2-error 1.28e-06, Max error 1.01e-05
+Time 3.76, L2-error 1.26e-06, Max error 8.40e-06
+Time 3.78, L2-error 1.25e-06, Max error 9.87e-06
+Time 3.80, L2-error 1.23e-06, Max error 8.17e-06
+Time 3.82, L2-error 1.22e-06, Max error 9.60e-06
+Time 3.84, L2-error 1.20e-06, Max error 7.95e-06
+Time 3.86, L2-error 1.19e-06, Max error 9.35e-06
+Time 3.88, L2-error 1.18e-06, Max error 7.74e-06
+Time 3.90, L2-error 1.16e-06, Max error 9.10e-06
+Time 3.92, L2-error 1.15e-06, Max error 7.53e-06
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 3.94, L2-error 1.14e-06, Max error 8.86e-06
+Time 3.96, L2-error 1.12e-06, Max error 7.33e-06
+Time 3.98, L2-error 1.11e-06, Max error 8.62e-06
+Time 4.00, L2-error 1.10e-06, Max error 7.14e-06
+Time 4.02, L2-error 1.08e-06, Max error 8.40e-06
+Time 4.04, L2-error 1.07e-06, Max error 6.95e-06
+Time 4.06, L2-error 1.06e-06, Max error 8.18e-06
+Time 4.08, L2-error 1.05e-06, Max error 6.77e-06
+Time 4.10, L2-error 1.04e-06, Max error 7.97e-06
+Time 4.12, L2-error 1.03e-06, Max error 6.59e-06
+Time 4.14, L2-error 1.01e-06, Max error 7.76e-06
+Time 4.16, L2-error 1.00e-06, Max error 6.41e-06
+Time 4.18, L2-error 9.91e-07, Max error 7.56e-06
+Time 4.20, L2-error 9.80e-07, Max error 6.24e-06
+Time 4.22, L2-error 9.69e-07, Max error 7.37e-06
+Time 4.24, L2-error 9.59e-07, Max error 6.08e-06
+Time 4.26, L2-error 9.48e-07, Max error 7.18e-06
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 4.28, L2-error 9.38e-07, Max error 5.92e-06
+Time 4.30, L2-error 9.27e-07, Max error 7.00e-06
+Time 4.32, L2-error 9.17e-07, Max error 5.77e-06
+Time 4.34, L2-error 9.07e-07, Max error 6.83e-06
+Time 4.36, L2-error 8.97e-07, Max error 5.62e-06
+Time 4.38, L2-error 8.87e-07, Max error 6.66e-06
+Time 4.40, L2-error 8.78e-07, Max error 5.47e-06
+Time 4.42, L2-error 8.68e-07, Max error 6.49e-06
+Time 4.44, L2-error 8.59e-07, Max error 5.34e-06
+Time 4.46, L2-error 8.49e-07, Max error 6.33e-06
+Time 4.48, L2-error 8.40e-07, Max error 5.21e-06
+Time 4.50, L2-error 8.31e-07, Max error 6.18e-06
+Time 4.52, L2-error 8.22e-07, Max error 5.09e-06
+Time 4.54, L2-error 8.13e-07, Max error 6.02e-06
+Time 4.56, L2-error 8.05e-07, Max error 4.97e-06
+Time 4.58, L2-error 7.96e-07, Max error 5.88e-06
+Time 4.60, L2-error 7.87e-07, Max error 4.86e-06
+Time 4.62, L2-error 7.79e-07, Max error 5.73e-06
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 4.64, L2-error 7.71e-07, Max error 4.74e-06
+Time 4.66, L2-error 7.62e-07, Max error 5.59e-06
+Time 4.68, L2-error 7.54e-07, Max error 4.63e-06
+Time 4.70, L2-error 7.46e-07, Max error 5.46e-06
+Time 4.72, L2-error 7.38e-07, Max error 4.53e-06
+Time 4.74, L2-error 7.31e-07, Max error 5.33e-06
+Time 4.76, L2-error 7.23e-07, Max error 4.42e-06
+Time 4.78, L2-error 7.15e-07, Max error 5.20e-06
+Time 4.80, L2-error 7.08e-07, Max error 4.32e-06
+Time 4.82, L2-error 7.00e-07, Max error 5.08e-06
+Time 4.84, L2-error 6.93e-07, Max error 4.22e-06
+Time 4.86, L2-error 6.86e-07, Max error 4.96e-06
+Time 4.88, L2-error 6.78e-07, Max error 4.12e-06
+Time 4.90, L2-error 6.71e-07, Max error 4.84e-06
+Time 4.92, L2-error 6.64e-07, Max error 4.03e-06
+Time 4.94, L2-error 6.57e-07, Max error 4.73e-06
+Time 4.96, L2-error 6.50e-07, Max error 3.94e-06
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 4.98, L2-error 6.44e-07, Max error 4.61e-06
+Time 5.00, L2-error 6.37e-07, Max error 3.85e-06
+Time 5.02, L2-error 6.30e-07, Max error 4.51e-06
+Time 5.04, L2-error 6.24e-07, Max error 3.76e-06
+Time 5.06, L2-error 6.17e-07, Max error 4.40e-06
+Time 5.08, L2-error 6.11e-07, Max error 3.67e-06
+Time 5.10, L2-error 6.05e-07, Max error 4.30e-06
+Time 5.12, L2-error 5.98e-07, Max error 3.59e-06
+Time 5.14, L2-error 5.92e-07, Max error 4.20e-06
+Time 5.16, L2-error 5.86e-07, Max error 3.51e-06
+Time 5.18, L2-error 5.80e-07, Max error 4.10e-06
+Time 5.20, L2-error 5.74e-07, Max error 3.43e-06
+Time 5.22, L2-error 5.68e-07, Max error 4.01e-06
+Time 5.24, L2-error 5.62e-07, Max error 3.35e-06
+Time 5.26, L2-error 5.57e-07, Max error 3.92e-06
+Time 5.28, L2-error 5.51e-07, Max error 3.28e-06
+Time 5.30, L2-error 5.45e-07, Max error 3.83e-06
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 5.32, L2-error 5.40e-07, Max error 3.21e-06
+Time 5.34, L2-error 5.34e-07, Max error 3.74e-06
+Time 5.36, L2-error 5.29e-07, Max error 3.13e-06
+Time 5.38, L2-error 5.23e-07, Max error 3.65e-06
+Time 5.40, L2-error 5.18e-07, Max error 3.06e-06
+Time 5.42, L2-error 5.13e-07, Max error 3.57e-06
+Time 5.44, L2-error 5.07e-07, Max error 3.00e-06
+Time 5.46, L2-error 5.02e-07, Max error 3.49e-06
+Time 5.48, L2-error 4.97e-07, Max error 2.93e-06
+Time 5.50, L2-error 4.92e-07, Max error 3.41e-06
+Time 5.52, L2-error 4.87e-07, Max error 2.86e-06
+Time 5.54, L2-error 4.82e-07, Max error 3.34e-06
+Time 5.56, L2-error 4.77e-07, Max error 2.80e-06
+Time 5.58, L2-error 4.73e-07, Max error 3.26e-06
+Time 5.60, L2-error 4.68e-07, Max error 2.74e-06
+Time 5.62, L2-error 4.63e-07, Max error 3.19e-06
+Time 5.64, L2-error 4.59e-07, Max error 2.68e-06
+Time 5.66, L2-error 4.54e-07, Max error 3.12e-06
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 5.68, L2-error 4.49e-07, Max error 2.62e-06
+Time 5.70, L2-error 4.45e-07, Max error 3.05e-06
+Time 5.72, L2-error 4.40e-07, Max error 2.56e-06
+Time 5.74, L2-error 4.36e-07, Max error 2.98e-06
+Time 5.76, L2-error 4.32e-07, Max error 2.51e-06
+Time 5.78, L2-error 4.27e-07, Max error 2.91e-06
+Time 5.80, L2-error 4.23e-07, Max error 2.45e-06
+Time 5.82, L2-error 4.19e-07, Max error 2.85e-06
+Time 5.84, L2-error 4.15e-07, Max error 2.40e-06
+Time 5.86, L2-error 4.11e-07, Max error 2.79e-06
+Time 5.88, L2-error 4.06e-07, Max error 2.35e-06
+Time 5.90, L2-error 4.02e-07, Max error 2.73e-06
+Time 5.92, L2-error 3.98e-07, Max error 2.29e-06
+Time 5.94, L2-error 3.94e-07, Max error 2.67e-06
+Time 5.96, L2-error 3.91e-07, Max error 2.24e-06
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 5.98, L2-error 3.87e-07, Max error 2.61e-06
+Time 6.00, L2-error 3.83e-07, Max error 2.20e-06
+Time 6.02, L2-error 3.79e-07, Max error 2.55e-06
+Time 6.04, L2-error 3.75e-07, Max error 2.15e-06
+Time 6.06, L2-error 3.72e-07, Max error 2.50e-06
+Time 6.08, L2-error 3.68e-07, Max error 2.10e-06
+Time 6.10, L2-error 3.64e-07, Max error 2.44e-06
+Time 6.12, L2-error 3.61e-07, Max error 2.06e-06
+Time 6.14, L2-error 3.57e-07, Max error 2.39e-06
+Time 6.16, L2-error 3.54e-07, Max error 2.01e-06
+Time 6.18, L2-error 3.50e-07, Max error 2.34e-06
+Time 6.20, L2-error 3.47e-07, Max error 1.97e-06
+Time 6.22, L2-error 3.43e-07, Max error 2.29e-06
+Time 6.24, L2-error 3.40e-07, Max error 1.93e-06
+Time 6.26, L2-error 3.37e-07, Max error 2.24e-06
+Time 6.28, L2-error 3.33e-07, Max error 1.88e-06
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 6.30, L2-error 3.30e-07, Max error 2.19e-06
+Time 6.32, L2-error 3.27e-07, Max error 1.84e-06
+Time 6.34, L2-error 3.24e-07, Max error 2.14e-06
+Time 6.36, L2-error 3.21e-07, Max error 1.80e-06
+Time 6.38, L2-error 3.17e-07, Max error 2.10e-06
+Time 6.40, L2-error 3.14e-07, Max error 1.77e-06
+Time 6.42, L2-error 3.11e-07, Max error 2.05e-06
+Time 6.44, L2-error 3.08e-07, Max error 1.73e-06
+Time 6.46, L2-error 3.05e-07, Max error 2.01e-06
+Time 6.48, L2-error 3.02e-07, Max error 1.69e-06
+Time 6.50, L2-error 2.99e-07, Max error 1.97e-06
+Time 6.52, L2-error 2.96e-07, Max error 1.66e-06
+Time 6.54, L2-error 2.94e-07, Max error 1.93e-06
+Time 6.56, L2-error 2.91e-07, Max error 1.62e-06
+Time 6.58, L2-error 2.88e-07, Max error 1.89e-06
+Time 6.60, L2-error 2.85e-07, Max error 1.59e-06
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 6.62, L2-error 2.82e-07, Max error 1.85e-06
+Time 6.64, L2-error 2.80e-07, Max error 1.55e-06
+Time 6.66, L2-error 2.77e-07, Max error 1.81e-06
+Time 6.68, L2-error 2.74e-07, Max error 1.52e-06
+Time 6.70, L2-error 2.72e-07, Max error 1.77e-06
+Time 6.72, L2-error 2.69e-07, Max error 1.49e-06
+Time 6.74, L2-error 2.66e-07, Max error 1.73e-06
+Time 6.76, L2-error 2.64e-07, Max error 1.46e-06
+Time 6.78, L2-error 2.61e-07, Max error 1.70e-06
+Time 6.80, L2-error 2.59e-07, Max error 1.42e-06
+Time 6.82, L2-error 2.56e-07, Max error 1.66e-06
+Time 6.84, L2-error 2.54e-07, Max error 1.39e-06
+Time 6.86, L2-error 2.51e-07, Max error 1.63e-06
+Time 6.88, L2-error 2.49e-07, Max error 1.37e-06
+Time 6.90, L2-error 2.47e-07, Max error 1.59e-06
+Time 6.92, L2-error 2.44e-07, Max error 1.34e-06
+Time 6.94, L2-error 2.42e-07, Max error 1.56e-06
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 6.96, L2-error 2.40e-07, Max error 1.31e-06
+Time 6.98, L2-error 2.37e-07, Max error 1.53e-06
+Time 7.00, L2-error 2.35e-07, Max error 1.28e-06
+Time 7.02, L2-error 2.33e-07, Max error 1.50e-06
+Time 7.04, L2-error 2.30e-07, Max error 1.25e-06
+Time 7.06, L2-error 2.28e-07, Max error 1.46e-06
+Time 7.08, L2-error 2.26e-07, Max error 1.23e-06
+Time 7.10, L2-error 2.24e-07, Max error 1.43e-06
+Time 7.12, L2-error 2.22e-07, Max error 1.20e-06
+Time 7.14, L2-error 2.20e-07, Max error 1.40e-06
+Time 7.16, L2-error 2.18e-07, Max error 1.18e-06
+Time 7.18, L2-error 2.16e-07, Max error 1.38e-06
+Time 7.20, L2-error 2.13e-07, Max error 1.15e-06
+Time 7.22, L2-error 2.11e-07, Max error 1.35e-06
+Time 7.24, L2-error 2.09e-07, Max error 1.13e-06
+Time 7.26, L2-error 2.07e-07, Max error 1.32e-06
+Time 7.28, L2-error 2.05e-07, Max error 1.11e-06
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 7.30, L2-error 2.04e-07, Max error 1.29e-06
+Time 7.32, L2-error 2.02e-07, Max error 1.08e-06
+Time 7.34, L2-error 2.00e-07, Max error 1.27e-06
+Time 7.36, L2-error 1.98e-07, Max error 1.06e-06
+Time 7.38, L2-error 1.96e-07, Max error 1.24e-06
+Time 7.40, L2-error 1.94e-07, Max error 1.04e-06
+Time 7.42, L2-error 1.92e-07, Max error 1.22e-06
+Time 7.44, L2-error 1.90e-07, Max error 1.02e-06
+Time 7.46, L2-error 1.89e-07, Max error 1.19e-06
+Time 7.48, L2-error 1.87e-07, Max error 9.96e-07
+Time 7.50, L2-error 1.85e-07, Max error 1.17e-06
+Time 7.52, L2-error 1.83e-07, Max error 9.78e-07
+Time 7.54, L2-error 1.82e-07, Max error 1.14e-06
+Time 7.56, L2-error 1.80e-07, Max error 9.61e-07
+Time 7.58, L2-error 1.78e-07, Max error 1.12e-06
+Time 7.60, L2-error 1.76e-07, Max error 9.43e-07
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 7.62, L2-error 1.75e-07, Max error 1.10e-06
+Time 7.64, L2-error 1.73e-07, Max error 9.26e-07
+Time 7.66, L2-error 1.72e-07, Max error 1.08e-06
+Time 7.68, L2-error 1.70e-07, Max error 9.10e-07
+Time 7.70, L2-error 1.68e-07, Max error 1.05e-06
+Time 7.72, L2-error 1.67e-07, Max error 8.94e-07
+Time 7.74, L2-error 1.65e-07, Max error 1.03e-06
+Time 7.76, L2-error 1.64e-07, Max error 8.77e-07
+Time 7.78, L2-error 1.62e-07, Max error 1.01e-06
+Time 7.80, L2-error 1.61e-07, Max error 8.62e-07
+Time 7.82, L2-error 1.59e-07, Max error 9.91e-07
+Time 7.84, L2-error 1.58e-07, Max error 8.46e-07
+Time 7.86, L2-error 1.56e-07, Max error 9.71e-07
+Time 7.88, L2-error 1.55e-07, Max error 8.31e-07
+Time 7.90, L2-error 1.53e-07, Max error 9.52e-07
+Time 7.92, L2-error 1.52e-07, Max error 8.16e-07
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 7.94, L2-error 1.50e-07, Max error 9.33e-07
+Time 7.96, L2-error 1.49e-07, Max error 8.01e-07
+Time 7.98, L2-error 1.47e-07, Max error 9.14e-07
+Time 8.00, L2-error 1.46e-07, Max error 7.87e-07
+Time 8.02, L2-error 1.45e-07, Max error 8.96e-07
+Time 8.04, L2-error 1.43e-07, Max error 7.73e-07
+Time 8.06, L2-error 1.42e-07, Max error 8.78e-07
+Time 8.08, L2-error 1.41e-07, Max error 7.59e-07
+Time 8.10, L2-error 1.39e-07, Max error 8.61e-07
+Time 8.12, L2-error 1.38e-07, Max error 7.45e-07
+Time 8.14, L2-error 1.37e-07, Max error 8.44e-07
+Time 8.16, L2-error 1.36e-07, Max error 7.31e-07
+Time 8.18, L2-error 1.34e-07, Max error 8.27e-07
+Time 8.20, L2-error 1.33e-07, Max error 7.18e-07
+Time 8.22, L2-error 1.32e-07, Max error 8.11e-07
+Time 8.24, L2-error 1.31e-07, Max error 7.05e-07
+Time 8.26, L2-error 1.29e-07, Max error 7.95e-07
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 8.28, L2-error 1.28e-07, Max error 6.92e-07
+Time 8.30, L2-error 1.27e-07, Max error 7.79e-07
+Time 8.32, L2-error 1.26e-07, Max error 6.80e-07
+Time 8.34, L2-error 1.25e-07, Max error 7.64e-07
+Time 8.36, L2-error 1.23e-07, Max error 6.67e-07
+Time 8.38, L2-error 1.22e-07, Max error 7.48e-07
+Time 8.40, L2-error 1.21e-07, Max error 6.55e-07
+Time 8.42, L2-error 1.20e-07, Max error 7.34e-07
+Time 8.44, L2-error 1.19e-07, Max error 6.43e-07
+Time 8.46, L2-error 1.18e-07, Max error 7.19e-07
+Time 8.48, L2-error 1.17e-07, Max error 6.31e-07
+Time 8.50, L2-error 1.16e-07, Max error 7.05e-07
+Time 8.52, L2-error 1.15e-07, Max error 6.20e-07
+Time 8.54, L2-error 1.13e-07, Max error 6.91e-07
+Time 8.56, L2-error 1.12e-07, Max error 6.08e-07
+Time 8.58, L2-error 1.11e-07, Max error 6.78e-07
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 8.60, L2-error 1.10e-07, Max error 5.97e-07
+Time 8.62, L2-error 1.09e-07, Max error 6.64e-07
+Time 8.64, L2-error 1.08e-07, Max error 5.86e-07
+Time 8.66, L2-error 1.07e-07, Max error 6.51e-07
+Time 8.68, L2-error 1.06e-07, Max error 5.76e-07
+Time 8.70, L2-error 1.05e-07, Max error 6.39e-07
+Time 8.72, L2-error 1.04e-07, Max error 5.65e-07
+Time 8.74, L2-error 1.03e-07, Max error 6.26e-07
+Time 8.76, L2-error 1.02e-07, Max error 5.55e-07
+Time 8.78, L2-error 1.02e-07, Max error 6.14e-07
+Time 8.80, L2-error 1.01e-07, Max error 5.45e-07
+Time 8.82, L2-error 9.96e-08, Max error 6.02e-07
+Time 8.84, L2-error 9.87e-08, Max error 5.35e-07
+Time 8.86, L2-error 9.78e-08, Max error 5.90e-07
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 8.88, L2-error 9.69e-08, Max error 5.25e-07
+Time 8.90, L2-error 9.60e-08, Max error 5.79e-07
+Time 8.92, L2-error 9.51e-08, Max error 5.15e-07
+Time 8.94, L2-error 9.42e-08, Max error 5.68e-07
+Time 8.96, L2-error 9.34e-08, Max error 5.06e-07
+Time 8.98, L2-error 9.25e-08, Max error 5.57e-07
+Time 9.00, L2-error 9.17e-08, Max error 4.96e-07
+Time 9.02, L2-error 9.08e-08, Max error 5.46e-07
+Time 9.04, L2-error 9.00e-08, Max error 4.87e-07
+Time 9.06, L2-error 8.92e-08, Max error 5.35e-07
+Time 9.08, L2-error 8.83e-08, Max error 4.78e-07
+Time 9.10, L2-error 8.75e-08, Max error 5.25e-07
+Time 9.12, L2-error 8.67e-08, Max error 4.69e-07
+Time 9.14, L2-error 8.59e-08, Max error 5.15e-07
+Time 9.16, L2-error 8.51e-08, Max error 4.61e-07
+Time 9.18, L2-error 8.44e-08, Max error 5.05e-07
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 9.20, L2-error 8.36e-08, Max error 4.53e-07
+Time 9.22, L2-error 8.28e-08, Max error 4.95e-07
+Time 9.24, L2-error 8.21e-08, Max error 4.45e-07
+Time 9.26, L2-error 8.13e-08, Max error 4.85e-07
+Time 9.28, L2-error 8.06e-08, Max error 4.37e-07
+Time 9.30, L2-error 7.98e-08, Max error 4.76e-07
+Time 9.32, L2-error 7.91e-08, Max error 4.29e-07
+Time 9.34, L2-error 7.84e-08, Max error 4.67e-07
+Time 9.36, L2-error 7.76e-08, Max error 4.22e-07
+Time 9.38, L2-error 7.69e-08, Max error 4.58e-07
+Time 9.40, L2-error 7.62e-08, Max error 4.14e-07
+Time 9.42, L2-error 7.55e-08, Max error 4.49e-07
+Time 9.44, L2-error 7.48e-08, Max error 4.07e-07
+Time 9.46, L2-error 7.41e-08, Max error 4.40e-07
+Time 9.48, L2-error 7.35e-08, Max error 4.00e-07
+Time 9.50, L2-error 7.28e-08, Max error 4.32e-07
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 9.52, L2-error 7.21e-08, Max error 3.93e-07
+Time 9.54, L2-error 7.15e-08, Max error 4.24e-07
+Time 9.56, L2-error 7.08e-08, Max error 3.86e-07
+Time 9.58, L2-error 7.02e-08, Max error 4.16e-07
+Time 9.60, L2-error 6.95e-08, Max error 3.79e-07
+Time 9.62, L2-error 6.89e-08, Max error 4.08e-07
+Time 9.64, L2-error 6.83e-08, Max error 3.72e-07
+Time 9.66, L2-error 6.76e-08, Max error 4.00e-07
+Time 9.68, L2-error 6.70e-08, Max error 3.66e-07
+Time 9.70, L2-error 6.64e-08, Max error 3.92e-07
+Time 9.72, L2-error 6.58e-08, Max error 3.59e-07
+Time 9.74, L2-error 6.52e-08, Max error 3.85e-07
+Time 9.76, L2-error 6.46e-08, Max error 3.53e-07
+Time 9.78, L2-error 6.40e-08, Max error 3.77e-07
+Time 9.80, L2-error 6.34e-08, Max error 3.47e-07
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 9.82, L2-error 6.29e-08, Max error 3.70e-07
+Time 9.84, L2-error 6.23e-08, Max error 3.40e-07
+Time 9.86, L2-error 6.17e-08, Max error 3.63e-07
+Time 9.88, L2-error 6.12e-08, Max error 3.34e-07
+Time 9.90, L2-error 6.06e-08, Max error 3.56e-07
+Time 9.92, L2-error 6.01e-08, Max error 3.28e-07
+Time 9.94, L2-error 5.95e-08, Max error 3.49e-07
+Time 9.96, L2-error 5.90e-08, Max error 3.23e-07
+Time 9.98, L2-error 5.84e-08, Max error 3.43e-07
+Time 10.00, L2-error 5.79e-08, Max error 3.17e-07
+Time 10.02, L2-error 5.74e-08, Max error 3.36e-07
 </pre></div>
 </div>
 </div>
