@@ -1,4 +1,5 @@
-FROM dolfinx/lab
+#FROM dolfinx/lab
+FROM dokken92/dolfinx_custom:tutorials
 USER root
 ARG NB_USER=jovyan
 ARG NB_UID=1000
