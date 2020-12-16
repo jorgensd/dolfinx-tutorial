@@ -13,7 +13,10 @@ RUN adduser --disabled-password \
     --gecos "Default user" \
     --uid ${NB_UID} \
     ${NB_USER}
+
+
 WORKDIR ${HOME}
+COPY . ${HOME}
 USER ${USER}
 
 # FROM dolfinx/lab
