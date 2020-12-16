@@ -1,11 +1,28 @@
-#FROM dolfinx/lab
-FROM dokken92/dolfinx_custom:tutorials
-USER root
-ARG NB_USER=jovyan
-ARG NB_UID=1000
+FROM python:3.8-slim
+# install the notebook package
+RUN pip install --no-cache --upgrade pip && \
+    pip install --no-cache notebook
+
+# create user with a home directory
+ARG NB_USER
+ARG NB_UID
 ENV USER ${NB_USER}
-ENV NB_UID ${NB_UID}
 ENV HOME /home/${NB_USER}
+
+RUN adduser --disabled-password \
+    --gecos "Default user" \
+    --uid ${NB_UID} \
+    ${NB_USER}
+WORKDIR ${HOME}
+USER ${USER}
+
+# FROM dolfinx/lab
+# USER root
+# ARG NB_USER=jovyan
+# ARG NB_UID=1000
+# ENV USER ${NB_USER}
+# ENV NB_UID ${NB_UID}
+# ENV HOME /home/${NB_USER}
 
 # RUN adduser --disabled-password \
 #     --gecos "Default user" \
@@ -13,10 +30,10 @@ ENV HOME /home/${NB_USER}
 #     ${NB_USER}
 
 
-# Make sure the contents of our repo are in ${HOME}
-WORKDIR ${HOME}
-COPY . ${HOME}
+# # Make sure the contents of our repo are in ${HOME}
+# WORKDIR ${HOME}
+# COPY . ${HOME}
 
-RUN chown -R ${NB_UID} ${HOME}
-USER ${NB_USER}
-ENTRYPOINT []
+# RUN chown -R ${NB_UID} ${HOME}
+# USER ${NB_USER}
+# ENTRYPOINT []
