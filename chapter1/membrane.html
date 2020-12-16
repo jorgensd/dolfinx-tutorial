@@ -342,19 +342,19 @@
 <p>Modified to dolfin-X by Jørgen S. Dokken</p>
 <p>In the first FEniCS program, we solved a simple problem which we could easily use to verify the implementation. In this section, we will turn our attentition to a physically more relevant problem with solutions of a somewhat more exciting shape.</p>
 <p>We would like to compute the deflection <span class="math notranslate nohighlight">\(D(x,y)\)</span> of a two-dimensional, circular membrane of radius <span class="math notranslate nohighlight">\(R\)</span>, subject to a load <span class="math notranslate nohighlight">\(p\)</span> over the membrane. The appropriate PDE model is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4e6cd0b5-33fe-46ea-8ba3-5d71bd4c00e5">
-<span class="eqno">(3)<a class="headerlink" href="#equation-4e6cd0b5-33fe-46ea-8ba3-5d71bd4c00e5" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-96e8998c-f6c1-4e06-b92f-32221dc893e7">
+<span class="eqno">(3)<a class="headerlink" href="#equation-96e8998c-f6c1-4e06-b92f-32221dc893e7" title="Permalink to this equation">¶</a></span>\[\begin{align}
      -T \nabla^2D&amp;=p \quad\text{in }\quad \Omega=\{(x,y)\vert x^2+y^2\leq R \}.
 \end{align}\]</div>
 <p>Here, <span class="math notranslate nohighlight">\(T\)</span> is the tension in the membrane (constant), and  <span class="math notranslate nohighlight">\(p\)</span> is the external pressure load. The boundary of the membrane has no deflection. This implies that <span class="math notranslate nohighlight">\(D=0\)</span> is the boundary condition. We model a localized load as a Gaussian function:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4d7b3f59-ffc8-4efe-9555-c26bd79849c1">
-<span class="eqno">(4)<a class="headerlink" href="#equation-4d7b3f59-ffc8-4efe-9555-c26bd79849c1" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-3bd43819-b311-44da-b739-09ed10a8fc07">
+<span class="eqno">(4)<a class="headerlink" href="#equation-3bd43819-b311-44da-b739-09ed10a8fc07" title="Permalink to this equation">¶</a></span>\[\begin{align}
      p(x,y)&amp;=\frac{A}{2\pi\sigma}e^{-\frac{1}{2}\left(\frac{x-x_0}{\sigma}\right)^2-\frac{1}{2}\left(\frac{y-y_0}{\sigma}\right)^2}
 \end{align}\]</div>
 <p>The parameter <span class="math notranslate nohighlight">\(A\)</span> is the amplitude of the pressure, <span class="math notranslate nohighlight">\((x_0, y_0)\)</span> the localization of the maximum point of the load, and <span class="math notranslate nohighlight">\(\sigma\)</span> the “width” of <span class="math notranslate nohighlight">\(p\)</span>. We will take the center <span class="math notranslate nohighlight">\((x_0,y_0)\)</span> to be <span class="math notranslate nohighlight">\((0,R_0)\)</span> for some <span class="math notranslate nohighlight">\(0&lt;R_0&lt;R\)</span>.
 Then we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8a2dda98-3754-48b1-9d36-4984147cd3ab">
-<span class="eqno">(5)<a class="headerlink" href="#equation-8a2dda98-3754-48b1-9d36-4984147cd3ab" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-246a1098-d49c-41d7-8705-daea4ed08231">
+<span class="eqno">(5)<a class="headerlink" href="#equation-246a1098-d49c-41d7-8705-daea4ed08231" title="Permalink to this equation">¶</a></span>\[\begin{align}
      p(x,y)&amp;=\frac{A}{2\pi\sigma}e^{-\frac{1}{2}\left(\left(\frac{x}{\sigma}\right)^2
      +\left(\frac{y-R_0}{\sigma}\right)^2\right)}
 \end{align}\]</div>
@@ -362,8 +362,8 @@ Then we have</p>
 <h2>Scaling the  equation<a class="headerlink" href="#scaling-the-equation" title="Permalink to this headline">¶</a></h2>
 <p>There are many physical parameters in this problem, and we can benefit from grouping them by means of scaling. Let us introduce dimensionless coordinates
 <span class="math notranslate nohighlight">\(\bar{x}=\frac{x}{R}\)</span>, <span class="math notranslate nohighlight">\(\bar{y}=\frac{y}{R}\)</span>, and a dimensionless deflection <span class="math notranslate nohighlight">\(w=\frac{D}{D_e}\)</span>, where <span class="math notranslate nohighlight">\(D_e\)</span> is a characteristic size of the deflection. Introducing <span class="math notranslate nohighlight">\(\bar{R}_0=\frac{R_0}{R}\)</span>, we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3b2edb95-5055-4cef-9db7-391de7d6ceb1">
-<span class="eqno">(6)<a class="headerlink" href="#equation-3b2edb95-5055-4cef-9db7-391de7d6ceb1" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-12afda34-aee0-4c34-800d-0067287ca825">
+<span class="eqno">(6)<a class="headerlink" href="#equation-12afda34-aee0-4c34-800d-0067287ca825" title="Permalink to this equation">¶</a></span>\[\begin{align}
     -\frac{\partial^2 w}{\partial \bar{x}^2} -\frac{\partial^2 w}{\partial \bar{y}^2}
     &amp;=\frac{R^2A}{2\pi\sigma TD_e}e^{-\frac{R^2}{2\sigma^2}\left(\bar{x}^2+(\bar{y}-\bar{R}_0)^2\right)}\\
     &amp;=\alpha e^{-\beta^2(\bar{x}^2+(\bar{y}-\bar{R}_0)^2}
@@ -371,13 +371,13 @@ Then we have</p>
 <p>for <span class="math notranslate nohighlight">\(\bar{x}^2+\bar{y}^2&lt;1\)</span> where <span class="math notranslate nohighlight">\(\alpha = \frac{R^2A}{2\pi\sigma TD_e}\)</span> and <span class="math notranslate nohighlight">\(\beta=\frac{R}{\sqrt{2}\sigma}\)</span>.</p>
 <p>With an appropriate scaling, <span class="math notranslate nohighlight">\(w\)</span> and its derivatives are of size unity, so the left-hand side of the scaled PDE is about unity in size, while the right hand side has <span class="math notranslate nohighlight">\(\alpha\)</span> as its characteristic size. This suggests choosing alpha to be unity, or around unity. In this particular case, we choose <span class="math notranslate nohighlight">\(\alpha=4\)</span>. (One can also find  the analytical solution in scaled coordinates and show that the maximum deflection <span class="math notranslate nohighlight">\(D(0,0)\)</span> is <span class="math notranslate nohighlight">\(D_e\)</span> if we choose <span class="math notranslate nohighlight">\(\alpha=4\)</span> to determine <span class="math notranslate nohighlight">\(D_e\)</span>.)
 With <span class="math notranslate nohighlight">\(D_e=\frac{AR^2}{8\pi\sigma T}\)</span> and dropping the bars we obtain the scaled problem</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c11c53e4-0708-4e02-8eb0-658f8478e831">
-<span class="eqno">(7)<a class="headerlink" href="#equation-c11c53e4-0708-4e02-8eb0-658f8478e831" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-eb2e8f50-ff4b-4b4c-b7b8-2f35a929064c">
+<span class="eqno">(7)<a class="headerlink" href="#equation-eb2e8f50-ff4b-4b4c-b7b8-2f35a929064c" title="Permalink to this equation">¶</a></span>\[\begin{align}
     -\nabla^2 w = 4e^{-\beta^2(x^2+(y-R_0)^2)}
 \end{align}\]</div>
 <p>to be solved over the unit disc with <span class="math notranslate nohighlight">\(w=0\)</span> on the boundary. Now there are only two parameters to varyl the dimensionelss extent of the pressure, <span class="math notranslate nohighlight">\(\beta\)</span>, and the localization of the pressure peak, <span class="math notranslate nohighlight">\(R_0\in[0,1]\)</span>. As <span class="math notranslate nohighlight">\(\beta\to 0\)</span>, the solution will approach the special case <span class="math notranslate nohighlight">\(1-x^2-y^2\)</span>. Given a computed scaed solution <span class="math notranslate nohighlight">\(w\)</span>, the physical deflection can be computed by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c777de9e-58d2-46a0-bbd7-aca3189c8ce8">
-<span class="eqno">(8)<a class="headerlink" href="#equation-c777de9e-58d2-46a0-bbd7-aca3189c8ce8" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-06034de2-6593-4b25-aec3-427a6ff58399">
+<span class="eqno">(8)<a class="headerlink" href="#equation-06034de2-6593-4b25-aec3-427a6ff58399" title="Permalink to this equation">¶</a></span>\[\begin{align}
     D=\frac{AR^2}{8\pi\sigma T}w
 \end{align}\]</div>
 <div class="toctree-wrapper compound">
