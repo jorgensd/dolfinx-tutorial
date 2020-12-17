@@ -1,6 +1,6 @@
 # An overview of the FEniCS Project
 
-The FEniCS project is a research and software project aimed at creating mathematical methods and software for solving partial differential equations. This includes creating intuitive, efficient and flexible software. The project was initiated in 2003, and is developed in collaboration between researchers from a number of universities and research institutes around the world. For the latest updates and more information about the FEniCS project, visit the [FEniCS](https://fenicsproject.org) webpage.
+The FEniCS project is a research and software project aimed at creating mathematical methods and software for solving partial differential equations. This includes creating intuitive, efficient and flexible software. The project was initiated in 2003, and is developed in collaboration between researchers from a number of universities and research institutes around the world. For the latest updates and more information about the FEniCS project, visit the [FEniCS](https://fenicsproject.org) web-page.
 
 The latest version of the FEniCS project, FEniCS-X, consists of several building blocks, namely [FIAT](https://github.com/FEniCS/fiat)/[LibTab](https://github.com/FEniCS/libtab), [UFL](https://github.com/FEniCS/ufl), [FFC-X](https://github.com/FEniCS/ffcx) and [Dolfin-X](https://github.com/FEniCS/dolfinx). We will now go through the main objectives of each of these building blocks. Dolfin-X is the high performance C++ backend of FEniCS-X, where structures such as meshes, function spaces and functions are implemented. 
 Additionally, Dolfin-X also contains compute intensive functions such as finite element assembly and mesh refinement algorithms. It also provides an interface to linear algebra solvers and data-structures, such as [PETSc](https://www.mcs.anl.gov/petsc/). UFL is a high-level form language for describing variational formulations with a high-level mathematical syntax. FFC-X is the form compiler of FEniCS; given variational formulations written with UFL, it generates efficient C code. FIAT/LibTab is the finite element backend of FEniCS, responsible for generating finite element basis functions. 
@@ -11,10 +11,10 @@ The goal of this tutorial is to demonstrate how to apply the finite element to s
 
 - Solve linear PDEs (such as the Poisson equation),
 - Solve time-dependent PDEs (such as the heat equation),
-- Solve nonlinear PDEs,
-- Solve systems of time-dependent nonlinear PDEs.
+- Solve non-linear PDEs,
+- Solve systems of time-dependent non-linear PDEs.
 
-Important topics involve how to set boundary conditions of various types (Dirichlet, Neumann, Robin), how to create meshes, how to define variable coefficients, how to interact with linear and nonlinear solvers, and how to postprocess and visualize solutions.
+Important topics involve how to set boundary conditions of various types (Dirichlet, Neumann, Robin), how to create meshes, how to define variable coefficients, how to interact with linear and non-linear solvers, and how to post-process and visualize solutions.
 
 # How to use this tutorial
 
@@ -31,7 +31,7 @@ Fortunately, we supply a pre-built docker image at [https://hub.docker.com/r/dol
 The [Dockerfile](https://github.com/FEniCS/dolfinx/blob/master/Dockerfile)
 provides a definitive build recipe. 
 
-Docker is a software that uses \textit{containers} to supply software across different kinds of operating systems (Linux, Mac, Windows). The first step is to install docker, following the instructions at their [web-page](https://docs.docker.com/get-started/). 
+Docker is a software that uses *containers* to supply software across different kinds of operating systems (Linux, Mac, Windows). The first step is to install docker, following the instructions at their [web-page](https://docs.docker.com/get-started/). 
 As the dolfinx docker images are hosted at Docker-hub, one can directly access the image 
 ```
 docker run dolfinx/dolfin

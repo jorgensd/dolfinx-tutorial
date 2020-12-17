@@ -1,10 +1,10 @@
 # A nonlinear Poisson equation
 Authors: Anders Logg and Hans Petter Langtangen
 
-We shall now adress how to solve nonlinear PDEs. We will see that non-linear problems introduce some subtle differences on how we define the variational form.
+We shall now address how to solve non-linear PDEs. We will see that non-linear problems introduce some subtle differences on how we define the variational form.
 
 ## The PDE problem
-As a model for the solution of nonlinear PDEs, we take the following non-linear Poisson equation
+As a model for the solution of non-linear PDEs, we take the following non-linear Poisson equation
 \begin{align}
     - \nabla \cdot (q(u) \nabla u)&=f && \text{in } \Omega,\\
     u&=u_D && \text{on } \partial \Omega,
@@ -12,7 +12,7 @@ As a model for the solution of nonlinear PDEs, we take the following non-linear 
 and the coefficients $q(u)$ makes the problem non-linear (unless q(u) is constant in $u$).
 
 ## Variational  formulation
-As usual, we multiply the PDE by a test function $v\in \hat{V}$, integrate over the domain, and integrate second-order derivatives byparts. The boundary integrals arisng from integration by parts vanishes wherever we employ Dirichlet conditions. The resulting variational formulation of our model problem becomes:
+As usual, we multiply the PDE by a test function $v\in \hat{V}$, integrate over the domain, and integrate second-order derivatives by parts. The boundary integrals arising from integration by parts vanishes wherever we employ Dirichlet conditions. The resulting variational formulation of our model problem becomes:
 
 Find $u\in V$ such that
 \begin{align}
