@@ -1,4 +1,5 @@
-FROM dolfinx/lab
+FROM dokken92/dolfinx_custom:tutorials
+#FROM dolfinx/lab
 # install the notebook package
 RUN pip3 install --no-cache --upgrade pip && \
     pip3 install --no-cache notebook
