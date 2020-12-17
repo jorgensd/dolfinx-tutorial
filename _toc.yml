@@ -34,3 +34,4 @@
         - file: chapter2/navierstokes
           sections:
                 - file: chapter2/ns_code1
+                - file: chapter2/ns_code2
