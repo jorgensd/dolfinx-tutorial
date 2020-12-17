@@ -1,6 +1,5 @@
 FROM fenicsproject/test-env:mpich
 
-#FROM dolfinx/lab
 # install the notebook package
 RUN apt-get update && \
 	apt-get install python3-pip -y
@@ -23,24 +22,19 @@ WORKDIR ${HOME}
 COPY . ${HOME}
 USER ${USER}
 
-# FROM dolfinx/lab
-# USER root
-# ARG NB_USER=jovyan
-# ARG NB_UID=1000
-# ENV USER ${NB_USER}
-# ENV NB_UID ${NB_UID}
-# ENV HOME /home/${NB_USER}
+# Install python components
+RUN pip3 install git+https://github.com/FEniCS/fiat.git --upgrade && \
+	pip3 install git+https://github.com/FEniCS/ufl.git --upgrade && \
+	pip3 install git+https://github.com/FEniCS/ffcx.git --upgrade && \
+	rm -rf /usr/local/include/dolfin /usr/local/include/dolfin.h
 
-# RUN adduser --disabled-password \
-#     --gecos "Default user" \
-#     --uid ${NB_UID} \
-#     ${NB_USER}
+# Build C++ layer
+RUN  mkdir -p build && \
+	 cd build && \
+	 cmake -G Ninja -DCMAKE_BUILD_TYPE=Relase ../cpp/ && \
+	 cd build && \
+	 ninja -j3 install
 
-
-# # Make sure the contents of our repo are in ${HOME}
-# WORKDIR ${HOME}
-# COPY . ${HOME}
-
-# RUN chown -R ${NB_UID} ${HOME}
-# USER ${NB_USER}
-# ENTRYPOINT []
+# Build Python layer
+RUN cd python && \
+	pip3 -v install . --user
