@@ -29,12 +29,14 @@ RUN pip3 install git+https://github.com/FEniCS/fiat.git --upgrade && \
 	rm -rf /usr/local/include/dolfin /usr/local/include/dolfin.h
 
 # Build C++ layer
-RUN  mkdir -p build && \
+RUN	 git clone https://github.com/FEniCS/dolfinx.git && \
+	 cd dolfinx/cpp && \
+	 mkdir -p build && \
 	 cd build && \
 	 cmake -G Ninja -DCMAKE_BUILD_TYPE=Relase ../cpp/ && \
 	 cd build && \
 	 ninja -j3 install
 
 # Build Python layer
-RUN cd python && \
+RUN cd dolfinx/python && \
 	pip3 -v install . --user
