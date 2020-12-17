@@ -1,5 +1,5 @@
 FROM ubuntu:20.04
-FROM dolfinx/lab
+
 #FROM dolfinx/lab
 # install the notebook package
 RUN pip3 install --no-cache --upgrade pip && \
