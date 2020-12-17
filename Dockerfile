@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM fenicsproject/test-env:mpich
 
 #FROM dolfinx/lab
 # install the notebook package
