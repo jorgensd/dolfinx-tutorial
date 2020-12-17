@@ -63,7 +63,7 @@ $pn - \mu \nabla u \cdot n$, which is the term appearing in the variational prob
 We here choose the  latter, $\frac{\partial u_j}{\partial x_i}$,
 which means that we must use the UFL-operator `nabla_grad`. If we use the operator `grad` and the definition $\frac{\partial u_i}{\partial x_j}$, we must instead keep the terms $pn-\mu(\nabla u)^T \cdot n$.
 
-```{note}
+```{admonition} The usage of "nabla_grad" and "grad"
 As mentioned in the note in [Linear elasticity implementation](./linearelasticity_code) the usage of `nabla_grad` and `grad` has to be interpreted with care. For the Navier-Stokes equations it is important to consider the term $u\cdot \nabla u$ which should be interpreted as the vector $w$ with elements
 $w_i=\sum_{j}\left(u_j\frac{\partial}{\partial x_j}\right)u_i = \sum_j u_j\frac{\partial u_i}{\partial x_j}$. 
 This term can be  implemented in  FEniCS-X as either 
