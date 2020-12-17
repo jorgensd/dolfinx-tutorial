@@ -34,7 +34,6 @@ RUN	 git clone https://github.com/FEniCS/dolfinx.git && \
 	 mkdir -p build && \
 	 cd build && \
 	 cmake -G Ninja -DCMAKE_BUILD_TYPE=Relase ../cpp/ && \
-	 cd build && \
 	 ninja -j3 install
 
 # Build Python layer
