@@ -17,11 +17,6 @@ RUN adduser --disabled-password \
     --uid ${NB_UID} \
     ${NB_USER}
 
-
-WORKDIR ${HOME}
-COPY . ${HOME}
-USER ${USER}
-
 # Install python components
 RUN pip3 install git+https://github.com/FEniCS/fiat.git --upgrade && \
 	pip3 install git+https://github.com/FEniCS/ufl.git --upgrade && \
@@ -38,4 +33,9 @@ RUN	 git clone https://github.com/FEniCS/dolfinx.git && \
 
 # Build Python layer
 RUN cd dolfinx/python && \
-	pip3 -v install . --user
+	pip3 -v install .
+
+
+WORKDIR ${HOME}
+COPY . ${HOME}
+USER ${USER}
