@@ -29,7 +29,8 @@ RUN	 git clone https://github.com/FEniCS/dolfinx.git && \
 	 mkdir -p build && \
 	 cd build && \
 	 cmake -G Ninja -DCMAKE_BUILD_TYPE=Relase ../cpp/ && \
-	 ninja -j3 install
+	 ninja -j3 install && \
+	 source /usr/local/share/dolfinx/dolfinx.conf
 
 # Build Python layer
 RUN cd dolfinx/python && \

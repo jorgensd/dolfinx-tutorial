@@ -3,7 +3,7 @@ Authors: Anders Logg and Hans Petter Langtangen
 
 Minor modifications by: Jørgen S. Dokken
 
-As a first extension of the Poisson problem from the previous chapter, weconsider the time-dependent heat equation, or the time-dependent diffusion equation. This is the natural extension of the Poisson equation describing the stationary distribution of heat in a body to a time-dependent problem. We will see that by discretizing time into small time intervals and applying standard time-stepping methods, we can solve the heat equation by solvinga sequence of variational problems, much like the one we encountered for the Poisson equation.
+As a first extension of the Poisson problem from the previous chapter, we consider the time-dependent heat equation, or the time-dependent diffusion equation. This is the natural extension of the Poisson equation describing the stationary distribution of heat in a body to a time-dependent problem. We will see that by discretizing time into small time intervals and applying standard time-stepping methods, we can solve the heat equation by solving a sequence of variational problems, much like the one we encountered for the Poisson equation.
 
 ## The PDE problem
 The model problem for the time-dependent PDE reads
@@ -25,11 +25,11 @@ The time-derivative can be  approximated by a difference quotient. For simplicit
 \begin{align}
     \left(\frac{\partial u }{\partial t}\right)^{n+1}\approx \frac{u^{n+1}-u^n}{\Delta t},
 \end{align}
-where $\Delta t$ is the time discretization paramter. Inserting the latter expression into our equation at time step $n+1$ yields
+where $\Delta t$ is the time discretization parameter. Inserting the latter expression into our equation at time step $n+1$ yields
 \begin{align}
     \frac{u^{n+1}-u^n}{\Delta t}= \nabla^2 u^{n+1}+ f^{n+1}.
 \end{align}
-This is our time-discrete version of the heat equation. It is called a \textit{backward Euler} or a \textit{implicit Euler} discretization.
+This is our time-discrete version of the heat equation. It is called a *backward Euler* or a *implicit Euler* discretization.
 
 We reorder the equation such that the left-hand side contains the terms with only the unknown $u^{n+1}$ and right-hand side contains only computed terms. The resulting equation is a sequence of stationary problems for $u^{n+1}$, assuming $u^{n}$ is known from the previous time step:
 \begin{align}
@@ -62,6 +62,6 @@ with
 \end{align}
 When solving this variational problem $u^0$ becomes the $L^2$-projection of the given initial value $u_0$ into the finite element space. 
 
-The alternative is to construct $u^0$ by just interpolating the intitial value $u_0$. We covered how to use interpolation in dolfin-X in the {doc}`membrane chapter <../chapter1/membrane_code>`.
+The alternative is to construct $u^0$ by just interpolating the initial value $u_0$. We covered how to use interpolation in dolfin-X in the {doc}`membrane chapter <../chapter1/membrane_code>`.
 
 We can use dolfin-X to either project or interpolate the initial condition. The most common choice is to use an projection, which computes an approximation to $u_0$. However, in some applications where we want to verify the code by reproducing exact solutions, one must use interpolate. In this chapter, we will use such a problem.
