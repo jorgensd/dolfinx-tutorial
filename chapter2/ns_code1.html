@@ -341,6 +341,11 @@
    Implementation
   </a>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#verification">
+   Verification
+  </a>
+ </li>
 </ul>
 
         </nav>
@@ -470,7 +475,7 @@ Since we have two different function spaces, we need to create two sets of trial
 </div>
 </div>
 </div>
-<p>We now move on to the  definition of the three variational forms, one for each step in the IPCS scheme. Let us look at the definition of the first variational problem and the relevant parameters</p>
+<p>We now move on to the  definition of the three variational forms, one for each step in the IPCS scheme. Let us look at the definition of the first variational problem and the relevant parameters.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">u_n</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
@@ -484,6 +489,10 @@ Since we have two different function spaces, we need to create two sets of trial
 </pre></div>
 </div>
 </div>
+</div>
+<div class="admonition-usage-of-dolfinx-constant admonition">
+<p class="admonition-title">Usage of “dolfinx.Constant”</p>
+<p>Note that we have wrapped several parameters as constants. This is to reduce the compilation-time of the variational formulations. By wrapping them as a constant, we can change the variable</p>
 </div>
 <p>The next step is to set up the variational form of the first step.
 As the variational problem contains a mix of known and unknown quantities, we will use the following naming convention: <code class="docutils literal notranslate"><span class="pre">u</span></code> is the known (mathematically <span class="math notranslate nohighlight">\(u^{n+1}\)</span>) as a trial function in the variational form. <code class="docutils literal notranslate"><span class="pre">u_</span></code> is the most recently computed approximation (<span class="math notranslate nohighlight">\(u^{n+1}\)</span> available as a <code class="docutils literal notranslate"><span class="pre">Function</span></code> object), <code class="docutils literal notranslate"><span class="pre">u_n</span></code> is <span class="math notranslate nohighlight">\(u^n\)</span>, and the same convetion goes for <code class="docutils literal notranslate"><span class="pre">p,p_</span></code> (<span class="math notranslate nohighlight">\(p^{n+1}\)</span>) and <code class="docutils literal notranslate"><span class="pre">p_n</span></code> (p^n).</p>
@@ -731,6 +740,10 @@ As the variational problem contains a mix of known and unknown quantities, we wi
 </div>
 </div>
 </div>
+</div>
+<div class="section" id="verification">
+<h2>Verification<a class="headerlink" href="#verification" title="Permalink to this headline">¶</a></h2>
+<p>As for the previous problems we compute the error at each degree of freedom and the <span class="math notranslate nohighlight">\(L^2(\Omega)\)</span>-error. We start with the  initial condition <span class="math notranslate nohighlight">\(u=(0,0)\)</span>. We have not specified the initial condition explicitly, and FEniCS-X wil initialize all <code class="docutils literal notranslate"><span class="pre">Function</span></code>s including <code class="docutils literal notranslate"><span class="pre">u_n</span></code> and <code class="docutils literal notranslate"><span class="pre">u_</span></code> to zero. Since the exact solution is quadratic, we expect to reach machine precision within finite time. For our implementation, we observe that the error quickly approaches zero, and is of order <span class="math notranslate nohighlight">\(10^{-6}\)</span> at <span class="math notranslate nohighlight">\(T=10\)</span>.</p>
 </div>
 </div>
 
