@@ -30,7 +30,7 @@ RUN pip3 install git+https://github.com/FEniCS/fiat.git --upgrade && \
 
 # Build C++ layer
 RUN	 git clone https://github.com/FEniCS/dolfinx.git && \
-	 cd dolfinx/cpp && \
+	 cd dolfinx/ && \
 	 mkdir -p build && \
 	 cd build && \
 	 cmake -G Ninja -DCMAKE_BUILD_TYPE=Relase ../cpp/ && \
