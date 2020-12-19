@@ -23,6 +23,9 @@ RUN pip3 install git+https://github.com/FEniCS/fiat.git --upgrade && \
 	pip3 install git+https://github.com/FEniCS/ffcx.git --upgrade && \
 	rm -rf /usr/local/include/dolfin /usr/local/include/dolfin.h
 
+# Install progress-bar 
+RUN pip3 install tqdm
+
 # Build C++ layer
 RUN	 git clone https://github.com/FEniCS/dolfinx.git && \
 	 cd dolfinx/ && \
