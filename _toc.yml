@@ -35,3 +35,4 @@
           sections:
                 - file: chapter2/ns_code1
                 - file: chapter2/ns_code2
+        - file: chapter2/advdiffreac
