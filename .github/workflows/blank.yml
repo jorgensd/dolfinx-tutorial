@@ -28,6 +28,28 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      - name: Test notebooks in parallel
+        run: |
+          pip3 install jupyter nbconvert
+          cd chapter1
+          jupyter-nbconvert --to python fundamentals_code.ipynb
+          mpirun -n 2 python3 fundamentals_code.py
+          jupyter-nbconvert --to python membrane_code.ipynb
+          mpirun -n 2 python3 membrane_code.py
+          cd ../chapter2
+          jupyter-nbconvert --to python diffusion_code.ipynb
+          mpirun -n 2 python3 diffusion_code.py
+          jupyter-nbconvert --to python heat_code.ipynb
+          mpirun -n 2 python3 heat_code.py
+          jupyter-nbconvert --to python linearelasticity_code.ipynb
+          mpirun -n 2 python3 linearelasticity_code.py
+          jupyter-nbconvert --to python nonlinpoisson_code.ipynb
+          mpirun -n 2 python3 nonlinpoisson_code.py
+          jupyter-nbconvert --to python ns_code1.ipynb
+          mpirun -n 2 python3 ns_code2.py
+          jupyter-nbconvert --to python ns_code1.ipynb
+          mpirun -n 2 python3 ns_code2.py
+
       # Runs a single command using the runners shell
       - name: Build the book
         run: |
