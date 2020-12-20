@@ -33,6 +33,11 @@ jobs:
         run: |
           pip3 install -U jupyter-book sphinxcontrib-bibtex==1.0.0
           jupyter-book build -W .
+      - name: Archive error log
+        uses: actions/upload-artifact@v2
+        with:
+          path: ./_build/html/reports/ns_code2.log
+
       # Pusb book to HTML to github pages
       - name: GitHub Pages action
         uses: peaceiris/actions-gh-pages@v3.5.9
