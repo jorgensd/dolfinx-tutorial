@@ -241,6 +241,11 @@
   <i class="fas fa-chevron-down">
   </i>
  </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter2/advdiffreac.html">
+   TO BE IMPLEMETED: A system of advection-diffusion-reaction equations
+  </a>
+ </li>
 </ul>
 
 </nav> <!-- To handle the deprecated key -->
@@ -412,13 +417,13 @@ Therefore, we need to make specific choices of <span class="math notranslate noh
 <!-- Particularly, piecewise linear continuous Galerkin finite elements are able to exactly reproduce a quadratic polynomial on 
 a uniformly partitioned mesh. -->
 <p>We use this fact to construct a quadratic function in <span class="math notranslate nohighlight">\(2D\)</span>. In particular we choose</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0b7345ba-9097-4ad1-8da4-8a42298d4b70">
-<span class="eqno">(1)<a class="headerlink" href="#equation-0b7345ba-9097-4ad1-8da4-8a42298d4b70" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-a55bf827-6383-4022-8a87-5b26f17b5776">
+<span class="eqno">(1)<a class="headerlink" href="#equation-a55bf827-6383-4022-8a87-5b26f17b5776" title="Permalink to this equation">¶</a></span>\[\begin{align}
  u_e(x,y)=1+x^2+2y^2
  \end{align}\]</div>
 <p>Inserting <span class="math notranslate nohighlight">\(u_e\)</span> in the original boundary problem, we find that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-36484e6f-3317-4d0b-9569-0e517e3448a8">
-<span class="eqno">(2)<a class="headerlink" href="#equation-36484e6f-3317-4d0b-9569-0e517e3448a8" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-a3a056d6-ea10-484e-9c0e-a94b182f7958">
+<span class="eqno">(2)<a class="headerlink" href="#equation-a3a056d6-ea10-484e-9c0e-a94b182f7958" title="Permalink to this equation">¶</a></span>\[\begin{align}
     f(x,y)= -6,\qquad u_d(x,y)=u_e(x,y)=1+x^2+2y^2,
 \end{align}\]</div>
 <p>regardless of the shape of the domain as long as we prescribe
