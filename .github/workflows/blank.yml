@@ -30,7 +30,7 @@ jobs:
 
       - name: Test notebooks in parallel
         run: |
-          pip3 install jupyter nbconvert
+          pip3 install jupyter nbconvert tqdm
           cd chapter1
           jupyter-nbconvert --to python fundamentals_code.ipynb
           mpirun -n 2 python3 fundamentals_code.py
@@ -53,7 +53,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: Build the book
         run: |
-          pip3 install -U jupyter-book sphinxcontrib-bibtex==1.0.0 tqdm
+          pip3 install -U jupyter-book sphinxcontrib-bibtex==1.0.0
           jupyter-book build -W .
 
       # Pusb book to HTML to github pages
