@@ -36,3 +36,8 @@
                 - file: chapter2/ns_code1
                 - file: chapter2/ns_code2
         - file: chapter2/advdiffreac
+- part: Subdomains and boundary conditions
+   chapters:
+        - file: chapter3/neumann_and_dirichlet
+          sections:
+                - file: chapter3/neumann_dirichlet_code
