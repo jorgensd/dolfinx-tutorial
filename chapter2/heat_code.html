@@ -237,16 +237,6 @@
      Test problem 2: Flow past a cylinder (DFG 2D-3 benchmark)
     </a>
    </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="ns_code2.html#mesh-generation">
-     Mesh generation
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="ns_code2.html#verification-using-data-from-featflow">
-     Verification using data from FEATFLOW
-    </a>
-   </li>
   </ul>
   <i class="fas fa-chevron-down">
   </i>
@@ -405,8 +395,8 @@
 <p>Author: Jørgen S. Dokken</p>
 <p>Just as for the Poisson problem from the previous chapter, we construct a test problem which makes it easy to determine if the calculations are correct.</p>
 <p>Since we know that our first-order time-stepping scheme is exact for linear functions, we create a problem which has linear variation in time. We combine this with a quadratic variation in space. Therefore, we choose the analytical solution to be</p>
-<div class="amsmath math notranslate nohighlight" id="equation-866b30b7-89a9-4f85-9b27-2c955bdb2c6c">
-<span class="eqno">(18)<a class="headerlink" href="#equation-866b30b7-89a9-4f85-9b27-2c955bdb2c6c" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-7cd16f45-b221-4248-b859-5c6b035162e9">
+<span class="eqno">(18)<a class="headerlink" href="#equation-7cd16f45-b221-4248-b859-5c6b035162e9" title="Permalink to this equation">¶</a></span>\[\begin{align}
 u = 1 + x^2+\alpha y^2 + \beta t
 \end{align}\]</div>
 <p>which yields a function whose computed values at the degrees of freedom will be exact, regardless of the mesh size and <span class="math notranslate nohighlight">\(\Delta t\)</span> as long as the mesh is uniformly partitioned.
@@ -597,7 +587,7 @@ to verify our implementation.</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>L2-error: 2.83e-02
-Error_max = 2.66e-15
+Error_max = 1.78e-15
 </pre></div>
 </div>
 </div>
