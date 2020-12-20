@@ -453,7 +453,8 @@
 <p>The topology data is a dictionary, where the key is the gmsh cell type (an integer). Each key accesses a dictionary with the topology data and corresponding topology markers. As this mesh only contains one cell type (triangles), as we did not mark any facets, we do not need to loop over the keys of this dictionary, only extract the first one.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="k">if</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
     <span class="c1"># Extract the cell type and number of nodes per cell and broadcast</span>
     <span class="c1"># it to the other processors </span>
     <span class="n">gmsh_cell_type</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">topology_data</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>    
@@ -463,7 +464,7 @@
     <span class="n">cell_id</span><span class="p">,</span> <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">bcast</span><span class="p">([</span><span class="n">gmsh_cell_type</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">],</span> <span class="n">root</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>        
     <span class="n">cell_id</span><span class="p">,</span> <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">bcast</span><span class="p">([</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">root</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">cells</span><span class="p">,</span> <span class="n">geometry_data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">]),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">gdim</span><span class="p">])</span>
+    <span class="n">cells</span><span class="p">,</span> <span class="n">geometry_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">gdim</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -505,8 +506,7 @@
 Python-classes. The class will have an initializer, where we store the two physical parameters, and an evaluation function which has a physical coordinate <code class="docutils literal notranslate"><span class="pre">x</span></code> as input.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="k">class</span> <span class="nc">Pressure</span><span class="p">():</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Pressure</span><span class="p">():</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">R0</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">R0</span> <span class="o">=</span> <span class="n">R0</span>
@@ -567,6 +567,7 @@ Python-classes. The class will have an initializer, where we store the two physi
 <span class="n">L</span> <span class="o">=</span> <span class="n">p</span><span class="o">*</span><span class="n">v</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
 <span class="n">uh</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">dolfinx</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">a</span><span class="o">==</span><span class="n">L</span><span class="p">,</span> <span class="n">uh</span><span class="p">,</span> <span class="n">bc</span><span class="p">)</span>
+<span class="n">uh</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT_VALUES</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -593,7 +594,7 @@ Python-classes. The class will have an initializer, where we store the two physi
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.tri.tricontour.TriContourSet at 0x7f0e8312d8b0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.tri.tricontour.TriContourSet at 0x7f0437c9a1c0&gt;
 </pre></div>
 </div>
 <img alt="../_images/membrane_code_27_1.png" src="../_images/membrane_code_27_1.png" />
@@ -602,41 +603,51 @@ Python-classes. The class will have an initializer, where we store the two physi
 </div>
 <div class="section" id="making-curve-plots-throughout-the-domain">
 <h2>Making curve plots throughout the domain<a class="headerlink" href="#making-curve-plots-throughout-the-domain" title="Permalink to this headline">¶</a></h2>
-<p>Another way to compare the deflection and the load is to make a plot along the line <span class="math notranslate nohighlight">\(x=0\)</span>. This is just a matter of defining a set of points along the <span class="math notranslate nohighlight">\(y\)</span>-axis and evaluating the finite element functions <span class="math notranslate nohighlight">\(u\)</span> and <span class="math notranslate nohighlight">\(p\)</span> at these points:</p>
+<p>Another way to compare the deflection and the load is to make a plot along the line <span class="math notranslate nohighlight">\(x=0\)</span>. This is just a matter of defining a set of points along the <span class="math notranslate nohighlight">\(y\)</span>-axis and evaluating the finite element functions <span class="math notranslate nohighlight">\(u\)</span> and <span class="math notranslate nohighlight">\(p\)</span> at these points. As we would like our code to run in parallel, where the mesh is distributed over multiple processors, we need some additional checks. As every point is not guaranteed to be found on each processor, we loop through the points and only evaluate our functions for those that has the point inside a cell owned by the processor.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tol</span> <span class="o">=</span> <span class="mf">0.001</span> <span class="c1"># Avoid hitting the outside of the domain</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.geometry</span>
+<span class="n">tol</span> <span class="o">=</span> <span class="mf">0.001</span> <span class="c1"># Avoid hitting the outside of the domain</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="n">tol</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">tol</span><span class="p">,</span> <span class="mi">101</span><span class="p">)</span>
 <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">101</span><span class="p">))</span>
 <span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
 <span class="n">u_values</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">p_values</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="kn">import</span> <span class="nn">dolfinx.geometry</span>
 <span class="n">bb_tree</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">BoundingBoxTree</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
 <span class="n">cells</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">points_on_proc</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">points</span><span class="o">.</span><span class="n">T</span><span class="p">:</span>
     <span class="c1"># Find cells that are close to the point</span>
     <span class="n">cell_candidates</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">compute_collisions_point</span><span class="p">(</span><span class="n">bb_tree</span><span class="p">,</span> <span class="n">point</span><span class="p">)</span>
     <span class="c1"># Choose one of the cells that contains the point</span>
-    <span class="n">cell</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">cpp</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">select_colliding_cells</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">cell_candidates</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">cells</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span>
-<span class="n">u_values</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">cells</span><span class="p">)</span>
-<span class="n">p_values</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">cells</span><span class="p">)</span>
-
-<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mf">7.5</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">50</span><span class="o">*</span><span class="n">u_values</span><span class="p">,</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Deflection ($</span><span class="se">\\</span><span class="s2">times 50$)&quot;</span><span class="p">)</span> <span class="c1"># Magnify w</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">p_values</span><span class="p">,</span> <span class="s2">&quot;b--&quot;</span><span class="p">,</span> <span class="n">linewidth</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Load&quot;</span><span class="p">)</span>
+    <span class="n">cell</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">cpp</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">select_colliding_cells</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">cell_candidates</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># Only search for points on current processor</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">points_on_proc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+        <span class="n">cells</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">points_on_proc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">points_on_proc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="n">u_values</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">points_on_proc</span><span class="p">,</span> <span class="n">cells</span><span class="p">)</span>
+<span class="n">p_values</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">points_on_proc</span><span class="p">,</span> <span class="n">cells</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>As we now have an array of coordinates and two arrays of function values, we use matplotlib to plot them</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mf">7.5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">points_on_proc</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="mi">50</span><span class="o">*</span><span class="n">u_values</span><span class="p">,</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Deflection ($</span><span class="se">\\</span><span class="s2">times 50$)&quot;</span><span class="p">)</span> <span class="c1"># Magnify w</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">points_on_proc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">p_values</span><span class="p">,</span> <span class="s2">&quot;b--&quot;</span><span class="p">,</span> <span class="n">linewidth</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Load&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="c1"># If ran in parallel as a python file, we save a plot per processor</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;membrane_rank</span><span class="si">{0:d}</span><span class="s2">.png&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">rank</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f0e81f20f40&gt;
-</pre></div>
-</div>
-<img alt="../_images/membrane_code_29_1.png" src="../_images/membrane_code_29_1.png" />
+<img alt="../_images/membrane_code_31_0.png" src="../_images/membrane_code_31_0.png" />
 </div>
 </div>
 </div>

@@ -475,6 +475,7 @@ Note that as we have already defined the exact solution, we only have to convert
 <span class="n">solver</span><span class="o">.</span><span class="n">convergence_criterion</span> <span class="o">=</span> <span class="s2">&quot;residual&quot;</span>
 <span class="n">dolfinx</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">set_log_level</span><span class="p">(</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">LogLevel</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 <span class="n">n</span><span class="p">,</span> <span class="n">converged</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">uh</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+<span class="n">uh</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
 <span class="k">assert</span><span class="p">(</span><span class="n">converged</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of interations: </span><span class="si">{0:d}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
 </pre></div>
@@ -507,8 +508,8 @@ If we think of the problem in terms of finite differences on a uniform mesh, <sp
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>L2-error: 3.92e-16
-Error_max = 8.88e-16
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>L2-error: 6.38e-16
+Error_max = 1.78e-15
 </pre></div>
 </div>
 </div>

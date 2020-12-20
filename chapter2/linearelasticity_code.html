@@ -434,7 +434,8 @@
     <span class="n">mesh</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">clamped_boundary</span><span class="p">)</span>
 
 <span class="n">u_D</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-<span class="n">u_D</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">u_D</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
+    <span class="n">loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">bc</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_D</span><span class="p">,</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">boundary_facets</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -508,6 +509,7 @@
 <span class="n">solver</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">KSP</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">PREONLY</span><span class="p">)</span>
 <span class="n">solver</span><span class="o">.</span><span class="n">getPC</span><span class="p">()</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">PC</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">LU</span><span class="p">)</span>
 <span class="n">solver</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">uh</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+<span class="n">uh</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT_VALUES</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -554,6 +556,8 @@ After opening the file <code class="docutils literal notranslate"><span class="p
 <span class="n">L_v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">von_Mises</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
 <span class="n">stresses</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V_von_mises</span><span class="p">)</span>
 <span class="n">dolfinx</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">a_v</span> <span class="o">==</span> <span class="n">L_v</span><span class="p">,</span> <span class="n">stresses</span><span class="p">)</span>
+<span class="n">stresses</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT_VALUES</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
+
 <span class="c1"># FIXME: Add way to visualize DG 0 functions</span>
 </pre></div>
 </div>

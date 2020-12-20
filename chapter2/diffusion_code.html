@@ -379,8 +379,8 @@
 <h1>Test Problem 2: Diffusion of a Gaussian function<a class="headerlink" href="#test-problem-2-diffusion-of-a-gaussian-function" title="Permalink to this headline">¶</a></h1>
 <p>Author: Jørgen S. Dokken</p>
 <p>Let us now solve a more interesting problem, namely the diffusion of a Gaussian hill. We take the initial value to be</p>
-<div class="amsmath math notranslate nohighlight" id="equation-73e15376-6ead-4da0-b9ec-ced0164b80e4">
-<span class="eqno">(19)<a class="headerlink" href="#equation-73e15376-6ead-4da0-b9ec-ced0164b80e4" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-2289471c-8a6c-41c5-9ba3-09b66d76c02e">
+<span class="eqno">(19)<a class="headerlink" href="#equation-2289471c-8a6c-41c5-9ba3-09b66d76c02e" title="Permalink to this equation">¶</a></span>\[\begin{align}
     u_0(x,y)&amp;= e^{-ax^2-ay^2}
 \end{align}\]</div>
 <p>for <span class="math notranslate nohighlight">\(a=5\)</span> on the domain <span class="math notranslate nohighlight">\([-2,-2]\times[2,2]\)</span>. For this problem we will use homogeneous Dirichlet boundary conditions (<span class="math notranslate nohighlight">\(u_D=0\)</span>).</p>
@@ -485,8 +485,7 @@ this could be read (<code class="docutils literal notranslate"><span class="pre"
 <h2>Solve time-dependent problem<a class="headerlink" href="#solve-time-dependent-problem" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="kn">import</span> <span class="nn">dolfinx.plotting</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.plotting</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="c1"># Define minimum and maximum values for plotting</span>
 <span class="n">min_color</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">u_n</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
@@ -500,7 +499,8 @@ this could be read (<code class="docutils literal notranslate"><span class="pre"
     <span class="n">t</span> <span class="o">+=</span> <span class="n">dt</span>
 
     <span class="c1"># Update the right hand side reusing the initial vector</span>
-    <span class="n">b</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">b</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
+        <span class="n">loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">L</span><span class="p">)</span>
     
     <span class="c1"># Apply Dirichlet boundary condition to the vector</span>
@@ -510,9 +510,12 @@ this could be read (<code class="docutils literal notranslate"><span class="pre"
 
     <span class="c1"># Solve linear problem</span>
     <span class="n">solver</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">uh</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
-    
+    <span class="n">uh</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT_VALUES</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
+
     <span class="c1"># Update solution at previous time step (u_n)</span>
-    <span class="n">uh</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">u_n</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">uh</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">,</span> <span class="n">u_n</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc_n</span><span class="p">:</span>
+        <span class="n">loc</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">loc_n</span><span class="p">)</span>
+
     <span class="c1"># Write solution to file</span>
     <span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">uh</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
     <span class="c1"># Plot every 20th time step</span>
