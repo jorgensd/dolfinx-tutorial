@@ -46,8 +46,8 @@ jobs:
           jupyter-nbconvert --to python nonlinpoisson_code.ipynb
           mpirun -n 2 python3 nonlinpoisson_code.py
           jupyter-nbconvert --to python ns_code1.ipynb
-          mpirun -n 2 python3 ns_code2.py
-          jupyter-nbconvert --to python ns_code1.ipynb
+          mpirun -n 2 python3 ns_code1.py
+          jupyter-nbconvert --to python ns_code2.ipynb
           mpirun -n 2 python3 ns_code2.py
 
       # Runs a single command using the runners shell
