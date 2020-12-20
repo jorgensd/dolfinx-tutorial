@@ -48,6 +48,8 @@
     <script src="../_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.18.0/dist/embed-amd.js"></script>
     <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
     <script >
         const thebe_selector = ".thebe"
@@ -232,12 +234,17 @@
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="../chapter2/ns_code2.html">
-     Test problem 2: Flow past a cylinder
+     Test problem 2: Flow past a cylinder (DFG 2D-3 benchmark)
     </a>
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="../chapter2/ns_code2.html#mesh-generation">
      Mesh generation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter2/ns_code2.html#verification-using-data-from-featflow">
+     Verification using data from FEATFLOW
     </a>
    </li>
   </ul>
@@ -415,13 +422,13 @@ Therefore, we need to make specific choices of <span class="math notranslate noh
 <!-- Particularly, piecewise linear continuous Galerkin finite elements are able to exactly reproduce a quadratic polynomial on 
 a uniformly partitioned mesh. -->
 <p>We use this fact to construct a quadratic function in <span class="math notranslate nohighlight">\(2D\)</span>. In particular we choose</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3a3c5998-e4f2-4358-bfc1-2417331931b7">
-<span class="eqno">(1)<a class="headerlink" href="#equation-3a3c5998-e4f2-4358-bfc1-2417331931b7" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-113a101d-09cb-403a-93b0-89dafce0b55d">
+<span class="eqno">(1)<a class="headerlink" href="#equation-113a101d-09cb-403a-93b0-89dafce0b55d" title="Permalink to this equation">¶</a></span>\[\begin{align}
  u_e(x,y)=1+x^2+2y^2
  \end{align}\]</div>
 <p>Inserting <span class="math notranslate nohighlight">\(u_e\)</span> in the original boundary problem, we find that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-47b95253-d018-4800-83b6-b7af102ef623">
-<span class="eqno">(2)<a class="headerlink" href="#equation-47b95253-d018-4800-83b6-b7af102ef623" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-6adc2301-3a5f-4c82-8c43-63ab2ade472f">
+<span class="eqno">(2)<a class="headerlink" href="#equation-6adc2301-3a5f-4c82-8c43-63ab2ade472f" title="Permalink to this equation">¶</a></span>\[\begin{align}
     f(x,y)= -6,\qquad u_d(x,y)=u_e(x,y)=1+x^2+2y^2,
 \end{align}\]</div>
 <p>regardless of the shape of the domain as long as we prescribe
@@ -445,8 +452,8 @@ be produces to machine precision by the program.</p>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span>
 <span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">import</span> <span class="nn">ufl</span>
-<span class="kn">from</span> <span class="nn">mpi4py</span> <span class="k">import</span> <span class="n">MPI</span>
-<span class="kn">from</span> <span class="nn">petsc4py</span> <span class="k">import</span> <span class="n">PETSc</span>
+<span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+<span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
 </pre></div>
 </div>
 </div>
@@ -702,7 +709,7 @@ Error_max = 2.22e-15
             &copy; Copyright 2020.<br/>
           <div class="extra_footer">
             <div>
-    This webpage is an adaptation of <a href=https://www.springer.com/gp/book/9783319524610>The FEniCS tutorial</a> and 
+    This webpage is an adaptation of <a href=https://www.springer.com/gp/book/9783319524610>The FEniCS tutorial</a> and
     is distributed under the terms of the      <a href=http://creativecommons.org/licenses/by/4.0/>Creative Commons Attribution 4.0 International License  </a>
     which permits use, duplication, adaptation, distribution and reproduction in any medium or format, as long as you give appropriate credit to the original author(s) and the source,
     provide a link to the Creative Commons license and indicate if changes were made.

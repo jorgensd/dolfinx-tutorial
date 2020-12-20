@@ -48,6 +48,8 @@
     <script src="../_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.18.0/dist/embed-amd.js"></script>
     <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
     <script >
         const thebe_selector = ".thebe"
@@ -57,7 +59,7 @@
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Test problem 2: Flow past a cylinder" href="ns_code2.html" />
+    <link rel="next" title="Test problem 2: Flow past a cylinder (DFG 2D-3 benchmark)" href="ns_code2.html" />
     <link rel="prev" title="The Navier-Stokes equations" href="navierstokes.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -232,12 +234,17 @@
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="ns_code2.html">
-     Test problem 2: Flow past a cylinder
+     Test problem 2: Flow past a cylinder (DFG 2D-3 benchmark)
     </a>
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="ns_code2.html#mesh-generation">
      Mesh generation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ns_code2.html#verification-using-data-from-featflow">
+     Verification using data from FEATFLOW
     </a>
    </li>
   </ul>
@@ -398,7 +405,7 @@ In other applications, scaling shows that it might be necessary to just set the 
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx</span>
-<span class="kn">from</span> <span class="nn">mpi4py</span> <span class="k">import</span> <span class="n">MPI</span>
+<span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
 
 <span class="n">mesh</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">UnitSquareMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 <span class="n">t</span> <span class="o">=</span> <span class="mi">0</span>
@@ -443,7 +450,7 @@ Since we have two different function spaces, we need to create two sets of trial
 <p>As we have seen in <a class="reference internal" href="linearelasticity_code.html"><span class="doc std std-doc">Linear elasticty problem</span></a> we can use Python-functions to create the different Dirichlet conditions. For this problem, we have three Dirichlet condition: First, we will set <span class="math notranslate nohighlight">\(u=0\)</span> at the walls of the channel, that is at <span class="math notranslate nohighlight">\(y=0\)</span> and <span class="math notranslate nohighlight">\(y=1\)</span>. In this case, we will use <code class="docutils literal notranslate"><span class="pre">dolfinx.fem.locate_dofs_geometrical</span></code></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">petsc4py</span> <span class="k">import</span> <span class="n">PETSc</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="k">def</span> <span class="nf">walls</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">1</span><span class="p">))</span>
@@ -509,7 +516,7 @@ Since we have two different function spaces, we need to create two sets of trial
 As the variational problem contains a mix of known and unknown quantities, we will use the following naming convention: <code class="docutils literal notranslate"><span class="pre">u</span></code> is the known (mathematically <span class="math notranslate nohighlight">\(u^{n+1}\)</span>) as a trial function in the variational form. <code class="docutils literal notranslate"><span class="pre">u_</span></code> is the most recently computed approximation (<span class="math notranslate nohighlight">\(u^{n+1}\)</span> available as a <code class="docutils literal notranslate"><span class="pre">Function</span></code> object), <code class="docutils literal notranslate"><span class="pre">u_n</span></code> is <span class="math notranslate nohighlight">\(u^n\)</span>, and the same convetion goes for <code class="docutils literal notranslate"><span class="pre">p,p_</span></code> (<span class="math notranslate nohighlight">\(p^{n+1}\)</span>) and <code class="docutils literal notranslate"><span class="pre">p_n</span></code> (p^n).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ufl</span> <span class="k">import</span> <span class="n">Identity</span><span class="p">,</span> <span class="n">div</span><span class="p">,</span> <span class="n">dot</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">inner</span><span class="p">,</span> <span class="n">lhs</span><span class="p">,</span> <span class="n">nabla_grad</span><span class="p">,</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">sym</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ufl</span> <span class="kn">import</span> <span class="n">Identity</span><span class="p">,</span> <span class="n">div</span><span class="p">,</span> <span class="n">dot</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">inner</span><span class="p">,</span> <span class="n">lhs</span><span class="p">,</span> <span class="n">nabla_grad</span><span class="p">,</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">sym</span>
 <span class="c1"># Define strain-rate tensor</span>
 <span class="k">def</span> <span class="nf">epsilon</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">sym</span><span class="p">(</span><span class="n">nabla_grad</span><span class="p">(</span><span class="n">u</span><span class="p">))</span>
@@ -537,7 +544,7 @@ As the variational problem contains a mix of known and unknown quantities, we wi
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A1</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcu</span><span class="p">)</span>
 <span class="n">A1</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
-<span class="n">b1</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">L1</span><span class="p">)</span>
+<span class="n">b1</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">create_vector</span><span class="p">(</span><span class="n">L1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -551,7 +558,7 @@ As the variational problem contains a mix of known and unknown quantities, we wi
 <span class="n">L2</span> <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="n">nabla_grad</span><span class="p">(</span><span class="n">p_n</span><span class="p">),</span> <span class="n">nabla_grad</span><span class="p">(</span><span class="n">q</span><span class="p">))</span><span class="o">*</span><span class="n">dx</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">div</span><span class="p">(</span><span class="n">u_</span><span class="p">)</span><span class="o">*</span><span class="n">q</span><span class="o">*</span><span class="n">dx</span>
 <span class="n">A2</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcp</span><span class="p">)</span>
 <span class="n">A2</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
-<span class="n">b2</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">L2</span><span class="p">)</span>
+<span class="n">b2</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">create_vector</span><span class="p">(</span><span class="n">L2</span><span class="p">)</span>
 
 <span class="c1"># Define variational problem for step 3</span>
 <span class="n">p_</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
@@ -559,7 +566,7 @@ As the variational problem contains a mix of known and unknown quantities, we wi
 <span class="n">L3</span> <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="n">u_</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span> <span class="o">-</span> <span class="n">k</span><span class="o">*</span><span class="n">dot</span><span class="p">(</span><span class="n">nabla_grad</span><span class="p">(</span><span class="n">p_</span> <span class="o">-</span> <span class="n">p_n</span><span class="p">),</span> <span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span>
 <span class="n">A3</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a3</span><span class="p">)</span>
 <span class="n">A3</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
-<span class="n">b3</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">L3</span><span class="p">)</span>
+<span class="n">b3</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">create_vector</span><span class="p">(</span><span class="n">L3</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -672,27 +679,39 @@ As the variational problem contains a mix of known and unknown quantities, we wi
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 0.02, L2-error 5.88e-01, Max error 1.60e-01
-Time 0.42, L2-error 1.09e-02, Max error 1.28e-04
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 0.42, L2-error 1.09e-02, Max error 1.28e-04
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 0.82, L2-error 2.11e-04, Max error 2.61e-04
-Time 1.22, L2-error 2.00e-05, Max error 1.52e-04
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 1.22, L2-error 2.00e-05, Max error 1.52e-04
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 1.62, L2-error 9.53e-06, Max error 8.04e-05
-Time 2.02, L2-error 5.79e-06, Max error 4.82e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 2.02, L2-error 5.79e-06, Max error 4.82e-05
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 2.42, L2-error 4.37e-06, Max error 3.19e-05
-Time 2.82, L2-error 3.76e-06, Max error 2.27e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 2.82, L2-error 3.76e-06, Max error 2.27e-05
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 3.22, L2-error 3.45e-06, Max error 1.71e-05
-Time 3.62, L2-error 3.28e-06, Max error 1.33e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 3.62, L2-error 3.28e-06, Max error 1.33e-05
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 4.02, L2-error 3.17e-06, Max error 1.07e-05
-Time 4.42, L2-error 3.11e-06, Max error 8.79e-06
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 4.42, L2-error 3.11e-06, Max error 8.79e-06
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 4.82, L2-error 3.07e-06, Max error 7.38e-06
@@ -775,7 +794,7 @@ Time 4.42, L2-error 3.11e-06, Max error 8.79e-06
     <div class='prev-next-bottom'>
         
     <a class='left-prev' id="prev-link" href="navierstokes.html" title="previous page">The Navier-Stokes equations</a>
-    <a class='right-next' id="next-link" href="ns_code2.html" title="next page">Test problem 2: Flow past a cylinder</a>
+    <a class='right-next' id="next-link" href="ns_code2.html" title="next page">Test problem 2: Flow past a cylinder (DFG 2D-3 benchmark)</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">
@@ -787,7 +806,7 @@ Time 4.42, L2-error 3.11e-06, Max error 8.79e-06
             &copy; Copyright 2020.<br/>
           <div class="extra_footer">
             <div>
-    This webpage is an adaptation of <a href=https://www.springer.com/gp/book/9783319524610>The FEniCS tutorial</a> and 
+    This webpage is an adaptation of <a href=https://www.springer.com/gp/book/9783319524610>The FEniCS tutorial</a> and
     is distributed under the terms of the      <a href=http://creativecommons.org/licenses/by/4.0/>Creative Commons Attribution 4.0 International License  </a>
     which permits use, duplication, adaptation, distribution and reproduction in any medium or format, as long as you give appropriate credit to the original author(s) and the source,
     provide a link to the Creative Commons license and indicate if changes were made.

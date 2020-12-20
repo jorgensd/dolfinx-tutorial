@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Test problem 2: Flow past a cylinder &#8212; FEniCS-X tutorial</title>
+    <title>Test problem 2: Flow past a cylinder (DFG 2D-3 benchmark) &#8212; FEniCS-X tutorial</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -48,6 +48,8 @@
     <script src="../_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.18.0/dist/embed-amd.js"></script>
     <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
     <script >
         const thebe_selector = ".thebe"
@@ -231,12 +233,17 @@
    </li>
    <li class="toctree-l2 current active">
     <a class="current reference internal" href="#">
-     Test problem 2: Flow past a cylinder
+     Test problem 2: Flow past a cylinder (DFG 2D-3 benchmark)
     </a>
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="#mesh-generation">
      Mesh generation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="#verification-using-data-from-featflow">
+     Verification using data from FEATFLOW
     </a>
    </li>
   </ul>
@@ -348,7 +355,7 @@
             <ul class="nav section-nav flex-column">
  <li class="toc-h1 nav-item toc-entry">
   <a class="reference internal nav-link" href="#">
-   Test problem 2: Flow past a cylinder
+   Test problem 2: Flow past a cylinder (DFG 2D-3 benchmark)
   </a>
  </li>
  <li class="toc-h1 nav-item toc-entry">
@@ -357,11 +364,46 @@
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#generating-the-mesh">
+     Generating the mesh
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
     <a class="reference internal nav-link" href="#loading-mesh-and-boundary-markers">
      Loading mesh and boundary markers
     </a>
    </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#physical-and-discretization-parameters">
+     Physical and discretization parameters
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#boundary-conditions">
+     Boundary conditions
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#variational-form">
+     Variational form
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#verification-of-the-implementation-compute-known-physical-quantities">
+     Verification of the implementation compute known physical quantities
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#solving-the-time-dependent-problem">
+     Solving the time-dependent problem
+    </a>
+   </li>
   </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#verification-using-data-from-featflow">
+   Verification using data from FEATFLOW
+  </a>
  </li>
 </ul>
 
@@ -374,15 +416,21 @@
         
               <div>
                 
-  <div class="section" id="test-problem-2-flow-past-a-cylinder">
-<h1>Test problem 2: Flow past a cylinder<a class="headerlink" href="#test-problem-2-flow-past-a-cylinder" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="test-problem-2-flow-past-a-cylinder-dfg-2d-3-benchmark">
+<h1>Test problem 2: Flow past a cylinder (DFG 2D-3 benchmark)<a class="headerlink" href="#test-problem-2-flow-past-a-cylinder-dfg-2d-3-benchmark" title="Permalink to this headline">¶</a></h1>
 <p>Author: Jørgen S. Dokken</p>
-<p>In this section, we will turn our attention to a slightly more challenging problem: flow past a cylinder. The geometry and parameters are taken from the <a class="reference external" href="http://www.featflow.de/en/benchmarks/cfdbenchmarking/flow/dfg_benchmark2_re100.html">DFG 2D-2 benchmark</a> in FeatFlow.</p>
+<p>In this section, we will turn our attention to a slightly more challenging problem: flow past a cylinder. The geometry and parameters are taken from the <a class="reference external" href="http://www.featflow.de/en/benchmarks/cfdbenchmarking/flow/dfg_benchmark3_re100.html">DFG 2D-3 benchmark</a> in FeatFlow.</p>
+<p>To be able to solve this problem efficiently and ensure numerical stability, we will subsitute our first order backward difference scheme with a second order backward difference approximation, and use an explicit Adams-Bashforth approximation of the non-linear term.</p>
+<div class="admonition-computationally-demanding-demo admonition">
+<p class="admonition-title">Computationally demanding demo</p>
+<p>This demo is computationally demanding, with a run-time up to 25 minutes, as it is using parameters from the DFG 2D-3 benchmark, which consists of 12800 time steps. It is adviced to download this demo and  not run it in a browser. Please also see the last part of the tutorial on how to use <code class="docutils literal notranslate"><span class="pre">mpirun</span></code> to speedup the run-time of the program.</p>
+</div>
 <p>The computational geometry we would like to use is
 <img alt="Fluid channel with a circular obstacle" src="../_images/turek.png" /></p>
 <p>The kinematic velocity is given by <span class="math notranslate nohighlight">\(\nu=0.001=\frac{\mu}{\rho}\)</span> and the inflow velocity profile is specified as</p>
 <div class="math notranslate nohighlight">
-\[    u(x,y,t) = \left( 1.5\cdot \frac{4y(0.41-y)}{0.41^2}, 0 \right)\]</div>
+\[\begin{split}    u(x,y,t) &amp;= \left( \frac{4Uy(0.41-y)}{0.41^2}, 0 \right)\\
+    U&amp;=U(t) = 1.5\sin(\pi t/8)\end{split}\]</div>
 <p>which has a maximum magnitude of <span class="math notranslate nohighlight">\(1.5\)</span> at <span class="math notranslate nohighlight">\(y=0.41/2\)</span>. We do not use any scaling for this problem since all exact parameters are known.</p>
 </div>
 <div class="section" id="mesh-generation">
@@ -390,15 +438,19 @@
 <p>As in the <a class="reference internal" href="../chapter1/membrane_code.html"><span class="doc std std-doc">Deflection of a membrane</span></a> we use GMSH to generate the mesh. We fist create the rectangle and obstacle.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gmsh</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+<span class="kn">import</span> <span class="nn">gmsh</span>
 <span class="n">gmsh</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
 <span class="n">L</span> <span class="o">=</span> <span class="mf">2.2</span>
 <span class="n">H</span> <span class="o">=</span> <span class="mf">0.41</span>
 <span class="n">c_x</span> <span class="o">=</span> <span class="n">c_y</span> <span class="o">=</span><span class="mf">0.2</span>
 <span class="n">r</span> <span class="o">=</span> <span class="mf">0.05</span>
 <span class="n">gdim</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="n">rectangle</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">addRectangle</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">obstacle</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">addDisk</span><span class="p">(</span><span class="n">c_x</span><span class="p">,</span> <span class="n">c_y</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+<span class="n">rank</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">rank</span>
+<span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">rectangle</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">addRectangle</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">obstacle</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">addDisk</span><span class="p">(</span><span class="n">c_x</span><span class="p">,</span> <span class="n">c_y</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -406,8 +458,9 @@
 <p>The next step is to subtract the obstacle from the channel, such that we do not mesh the interior of the circle.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fluid</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">cut</span><span class="p">([(</span><span class="n">gdim</span><span class="p">,</span> <span class="n">rectangle</span><span class="p">)],</span> <span class="p">[(</span><span class="n">gdim</span><span class="p">,</span> <span class="n">obstacle</span><span class="p">)])</span>
-<span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">synchronize</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">fluid</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">cut</span><span class="p">([(</span><span class="n">gdim</span><span class="p">,</span> <span class="n">rectangle</span><span class="p">)],</span> <span class="p">[(</span><span class="n">gdim</span><span class="p">,</span>     <span class="n">obstacle</span><span class="p">)])</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">synchronize</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -416,46 +469,86 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fluid_marker</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">volumes</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">getEntities</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">gdim</span><span class="p">)</span>
-<span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">addPhysicalGroup</span><span class="p">(</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]],</span> <span class="n">fluid_marker</span><span class="p">)</span>
-<span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setPhysicalName</span><span class="p">(</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">fluid_marker</span><span class="p">,</span> <span class="s2">&quot;Fluid&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">volumes</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">getEntities</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">gdim</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">addPhysicalGroup</span><span class="p">(</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]],</span>     <span class="n">fluid_marker</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setPhysicalName</span><span class="p">(</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">fluid_marker</span><span class="p">,</span> <span class="s2">&quot;Fluid&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>To tag the different surfaces of the mesh, we tag the inflow (left hand side) with marker 2, the outflow (right hand side) with marker 3 and the fluid walls and obstacles with marker 4. We will do this by compute the center of mass for each geometrical entitiy.</p>
+<p>To tag the different surfaces of the mesh, we tag the inflow (left hand side) with marker 2, the outflow (right hand side) with marker 3 and the fluid walls with 4 and obstacle with 5. We will do this by compute the center of mass for each geometrical entitiy.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="n">inlet_marker</span><span class="p">,</span> <span class="n">outlet_marker</span><span class="p">,</span> <span class="n">wall_marker</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span>
-<span class="n">inflow</span><span class="p">,</span> <span class="n">outflow</span><span class="p">,</span> <span class="n">walls</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
-<span class="n">boundaries</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">getBoundary</span><span class="p">(</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="k">for</span> <span class="n">boundary</span> <span class="ow">in</span> <span class="n">boundaries</span><span class="p">:</span>
-    <span class="n">center_of_mass</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">getCenterOfMass</span><span class="p">(</span><span class="n">boundary</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">boundary</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">center_of_mass</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">H</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]):</span>
-        <span class="n">inflow</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">boundary</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-    <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">center_of_mass</span><span class="p">,</span> <span class="p">[</span><span class="n">L</span><span class="p">,</span> <span class="n">H</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]):</span>
-        <span class="n">outflow</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">boundary</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">walls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">boundary</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">addPhysicalGroup</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">walls</span><span class="p">,</span> <span class="n">wall_marker</span><span class="p">)</span>
-<span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setPhysicalName</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">wall_marker</span><span class="p">,</span> <span class="s2">&quot;Walls&quot;</span><span class="p">)</span>
-<span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">addPhysicalGroup</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">inflow</span><span class="p">,</span> <span class="n">inlet_marker</span><span class="p">)</span>
-<span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setPhysicalName</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">inlet_marker</span><span class="p">,</span> <span class="s2">&quot;Inlet&quot;</span><span class="p">)</span>
-<span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">addPhysicalGroup</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">outflow</span><span class="p">,</span> <span class="n">outlet_marker</span><span class="p">)</span>
-<span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setPhysicalName</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">outlet_marker</span><span class="p">,</span> <span class="s2">&quot;Outlet&quot;</span><span class="p">)</span>
+<span class="n">inlet_marker</span><span class="p">,</span> <span class="n">outlet_marker</span><span class="p">,</span> <span class="n">wall_marker</span><span class="p">,</span> <span class="n">obstacle_marker</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span>
+<span class="n">inflow</span><span class="p">,</span> <span class="n">outflow</span><span class="p">,</span> <span class="n">walls</span><span class="p">,</span> <span class="n">obstacle</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+<span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">boundaries</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">getBoundary</span><span class="p">(</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">boundary</span> <span class="ow">in</span> <span class="n">boundaries</span><span class="p">:</span>
+        <span class="n">center_of_mass</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">getCenterOfMass</span><span class="p">(</span><span class="n">boundary</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">boundary</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">center_of_mass</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">H</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]):</span>
+            <span class="n">inflow</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">boundary</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">center_of_mass</span><span class="p">,</span> <span class="p">[</span><span class="n">L</span><span class="p">,</span> <span class="n">H</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]):</span>
+            <span class="n">outflow</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">boundary</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">center_of_mass</span><span class="p">,</span> <span class="p">[</span><span class="n">L</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">center_of_mass</span><span class="p">,</span> <span class="p">[</span><span class="n">L</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]):</span>
+            <span class="n">walls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">boundary</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">obstacle</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">boundary</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">addPhysicalGroup</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">walls</span><span class="p">,</span> <span class="n">wall_marker</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setPhysicalName</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">wall_marker</span><span class="p">,</span> <span class="s2">&quot;Walls&quot;</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">addPhysicalGroup</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">inflow</span><span class="p">,</span> <span class="n">inlet_marker</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setPhysicalName</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">inlet_marker</span><span class="p">,</span> <span class="s2">&quot;Inlet&quot;</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">addPhysicalGroup</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">outflow</span><span class="p">,</span> <span class="n">outlet_marker</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setPhysicalName</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">outlet_marker</span><span class="p">,</span> <span class="s2">&quot;Outlet&quot;</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">addPhysicalGroup</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">obstacle</span><span class="p">,</span> <span class="n">obstacle_marker</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setPhysicalName</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">obstacle_marker</span><span class="p">,</span> <span class="s2">&quot;Obstacle&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>We are now ready to generate the mesh</p>
+<p>In our previous meshes, we have used uniform mesh sizes. In this example, we will have variable mesh sizes to resolve the flow solution in  the area of interest; close to the circular obstacle. To do this, we use GMSH Fields.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gmsh</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="s2">&quot;Mesh.CharacteristicLengthMin&quot;</span><span class="p">,</span><span class="n">r</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">gmsh</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="s2">&quot;Mesh.CharacteristicLengthMax&quot;</span><span class="p">,</span><span class="n">r</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">gdim</span><span class="p">)</span>
-<span class="n">gmsh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;mesh.msh&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create distance field from obstacle.</span>
+<span class="c1"># Add threshold of mesh sizes based on the distance field</span>
+<span class="c1"># LcMax -                  /--------</span>
+<span class="c1">#                      /</span>
+<span class="c1"># LcMin -o---------/</span>
+<span class="c1">#        |         |       |</span>
+<span class="c1">#       Point    DistMin DistMax</span>
+<span class="n">res_min</span> <span class="o">=</span> <span class="n">r</span> <span class="o">/</span> <span class="mf">3.7</span>
+<span class="n">res_max</span> <span class="o">=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">r</span>
+<span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;Distance&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">setNumbers</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;EdgesList&quot;</span><span class="p">,</span> <span class="n">obstacle</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;Threshold&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;IField&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;LcMin&quot;</span><span class="p">,</span> <span class="n">res_min</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;LcMax&quot;</span><span class="p">,</span> <span class="n">res_max</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;DistMin&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="o">*</span><span class="n">r</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;DistMax&quot;</span><span class="p">,</span> <span class="mi">8</span><span class="o">*</span><span class="n">r</span><span class="p">)</span>
+
+    <span class="c1"># We take the minimum of the two fields as the mesh size</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;Min&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">setNumbers</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;FieldsList&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">setAsBackgroundMesh</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="generating-the-mesh">
+<h2>Generating the mesh<a class="headerlink" href="#generating-the-mesh" title="Permalink to this headline">¶</a></h2>
+<p>We are now ready to generate the mesh. However, we have to decide if our mesh should consist of triangles or quadrilaterals. In this demo, to match the DFG 2D-3 benchmark, we use quadrilateral elements. This is done by recombining the mesh, setting two gmsh options.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="s2">&quot;Mesh.RecombinationAlgorithm&quot;</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="s2">&quot;Mesh.RecombineAll&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">gdim</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span><span class="s2">&quot;netgen&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </div>
 </div>
@@ -465,12 +558,11 @@
 To load the mesh, we follow the same structure as in  <a class="reference internal" href="../chapter1/membrane_code.html"><span class="doc std std-doc">Deflection of a membrane</span></a>, with slight modifications to include the facet markers. To learn more about the specifics of the function below, see <a class="reference external" href="http://jsdokken.com/converted_files/tutorial_gmsh.html">A GMSH tutorial for dolfin-X</a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mpi4py</span> <span class="k">import</span> <span class="n">MPI</span>
-<span class="kn">from</span> <span class="nn">dolfinx.io</span> <span class="k">import</span> <span class="n">extract_gmsh_geometry</span><span class="p">,</span> <span class="n">extract_gmsh_topology_and_markers</span><span class="p">,</span> <span class="n">ufl_mesh_from_gmsh</span>
-<span class="kn">from</span> <span class="nn">dolfinx.cpp.io</span> <span class="k">import</span> <span class="n">perm_gmsh</span><span class="p">,</span> <span class="n">extract_local_entities</span>
-<span class="kn">from</span> <span class="nn">dolfinx.cpp.mesh</span> <span class="k">import</span> <span class="n">to_type</span><span class="p">,</span> <span class="n">cell_entity_type</span>
-<span class="kn">from</span> <span class="nn">dolfinx.cpp.graph</span> <span class="k">import</span> <span class="n">AdjacencyList_int32</span>
-<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="k">import</span> <span class="n">create_meshtags</span><span class="p">,</span> <span class="n">create_mesh</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.io</span> <span class="kn">import</span> <span class="n">extract_gmsh_geometry</span><span class="p">,</span> <span class="n">extract_gmsh_topology_and_markers</span><span class="p">,</span> <span class="n">ufl_mesh_from_gmsh</span>
+<span class="kn">from</span> <span class="nn">dolfinx.cpp.io</span> <span class="kn">import</span> <span class="n">perm_gmsh</span><span class="p">,</span> <span class="n">extract_local_entities</span>
+<span class="kn">from</span> <span class="nn">dolfinx.cpp.mesh</span> <span class="kn">import</span> <span class="n">to_type</span><span class="p">,</span> <span class="n">cell_entity_type</span>
+<span class="kn">from</span> <span class="nn">dolfinx.cpp.graph</span> <span class="kn">import</span> <span class="n">AdjacencyList_int32</span>
+<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">create_meshtags</span><span class="p">,</span> <span class="n">create_mesh</span>
 <span class="k">if</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
     <span class="c1"># Get mesh geometry</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">extract_gmsh_geometry</span><span class="p">(</span><span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
@@ -487,14 +579,14 @@ To load the mesh, we follow the same structure as in  <a class="reference intern
         <span class="n">cell_information</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">element</span><span class="p">,</span> <span class="s2">&quot;dim&quot;</span><span class="p">:</span> <span class="n">dim</span><span class="p">,</span> <span class="s2">&quot;num_nodes&quot;</span><span class="p">:</span> <span class="n">num_nodes</span><span class="p">}</span>
         <span class="n">cell_dimensions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dim</span>
 
-        <span class="c1"># Sort elements by ascending dimension</span>
-        <span class="n">perm_sort</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">cell_dimensions</span><span class="p">)</span>
+    <span class="c1"># Sort elements by ascending dimension</span>
+    <span class="n">perm_sort</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">cell_dimensions</span><span class="p">)</span>
 
-        <span class="c1"># Broadcast cell type data and geometric dimension</span>
-        <span class="n">cell_id</span> <span class="o">=</span> <span class="n">cell_information</span><span class="p">[</span><span class="n">perm_sort</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
-        <span class="n">tdim</span> <span class="o">=</span> <span class="n">cell_information</span><span class="p">[</span><span class="n">perm_sort</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]][</span><span class="s2">&quot;dim&quot;</span><span class="p">]</span>
-        <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">cell_information</span><span class="p">[</span><span class="n">perm_sort</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]][</span><span class="s2">&quot;num_nodes&quot;</span><span class="p">]</span>
-        <span class="n">cell_id</span><span class="p">,</span> <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">bcast</span><span class="p">([</span><span class="n">cell_id</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">],</span> <span class="n">root</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># Broadcast cell type data and geometric dimension</span>
+    <span class="n">cell_id</span> <span class="o">=</span> <span class="n">cell_information</span><span class="p">[</span><span class="n">perm_sort</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+    <span class="n">tdim</span> <span class="o">=</span> <span class="n">cell_information</span><span class="p">[</span><span class="n">perm_sort</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]][</span><span class="s2">&quot;dim&quot;</span><span class="p">]</span>
+    <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">cell_information</span><span class="p">[</span><span class="n">perm_sort</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]][</span><span class="s2">&quot;num_nodes&quot;</span><span class="p">]</span>
+    <span class="n">cell_id</span><span class="p">,</span> <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">bcast</span><span class="p">([</span><span class="n">cell_id</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">],</span> <span class="n">root</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">tdim</span> <span class="o">-</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">cell_dimensions</span><span class="p">:</span>
         <span class="n">num_facet_nodes</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">bcast</span><span class="p">(</span> <span class="n">cell_information</span><span class="p">[</span><span class="n">perm_sort</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]][</span><span class="s2">&quot;num_nodes&quot;</span><span class="p">],</span> <span class="n">root</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">gmsh_facet_id</span> <span class="o">=</span> <span class="n">cell_information</span><span class="p">[</span><span class="n">perm_sort</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
@@ -506,12 +598,11 @@ To load the mesh, we follow the same structure as in  <a class="reference intern
 
 <span class="k">else</span><span class="p">:</span>
     <span class="n">cell_id</span><span class="p">,</span> <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">bcast</span><span class="p">([</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">root</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">cells</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">]),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">gdim</span><span class="p">])</span>
-    <span class="n">cell_values</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,))</span>
-    <span class="k">if</span> <span class="n">facet_data</span><span class="p">:</span>
-        <span class="n">num_facet_nodes</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">bcast</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">marked_facets</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_facet_nodes</span><span class="p">))</span>
-        <span class="n">facet_values</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,))</span>
+    <span class="n">cells</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">gdim</span><span class="p">])</span>
+    <span class="n">cell_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,))</span>
+    <span class="n">num_facet_nodes</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">bcast</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">marked_facets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_facet_nodes</span><span class="p">))</span>
+    <span class="n">facet_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,))</span>
 
 <span class="c1"># Create distributed mesh</span>
 <span class="n">ufl_domain</span> <span class="o">=</span> <span class="n">ufl_mesh_from_gmsh</span><span class="p">(</span><span class="n">cell_id</span><span class="p">,</span> <span class="n">gdim</span><span class="p">)</span>
@@ -531,10 +622,6 @@ To load the mesh, we follow the same structure as in  <a class="reference intern
 <span class="c1"># Create dolfin-X MeshTags</span>
 <span class="n">ft</span> <span class="o">=</span> <span class="n">create_meshtags</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">adj</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="n">local_values</span><span class="p">))</span>
 <span class="n">ft</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Facet tags&quot;</span>
-<span class="kn">import</span> <span class="nn">dolfinx.plotting</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
-<span class="n">mesh_plot</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -543,11 +630,390 @@ To load the mesh, we follow the same structure as in  <a class="reference intern
   return array(obj, copy=False)
 </pre></div>
 </div>
-<img alt="../_images/ns_code2_11_1.png" src="../_images/ns_code2_11_1.png" />
+</div>
+</div>
+</div>
+<div class="section" id="physical-and-discretization-parameters">
+<h2>Physical and discretization parameters<a class="headerlink" href="#physical-and-discretization-parameters" title="Permalink to this headline">¶</a></h2>
+<p>Following the DGF-2 benchmark, we define our problem specific parameters</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx</span>
+<span class="n">t</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">T</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1">#8                    # Final time</span>
+<span class="n">dt</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">1600</span>                 <span class="c1"># Time step size</span>
+<span class="n">num_steps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">T</span><span class="o">/</span><span class="n">dt</span><span class="p">)</span>
+<span class="n">k</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>        
+<span class="n">mu</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">)</span>  <span class="c1"># Dynamic viscosity</span>
+<span class="n">rho</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>     <span class="c1"># Density</span>
+</pre></div>
 </div>
 </div>
 </div>
 </div>
+<div class="section" id="boundary-conditions">
+<h2>Boundary conditions<a class="headerlink" href="#boundary-conditions" title="Permalink to this headline">¶</a></h2>
+<p>As we have created the mesh and relevant mesh tags, we can now specify the function spaces <code class="docutils literal notranslate"><span class="pre">V</span></code> and <code class="docutils literal notranslate"><span class="pre">Q</span></code> along with the boundary conditions. As the <code class="docutils literal notranslate"><span class="pre">ft</span></code> contains markers for facets, we use this class to find the facets for the inlet and walls.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ufl</span>
+<span class="n">v_cg2</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">VectorElement</span><span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">ufl_cell</span><span class="p">(),</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">s_cg1</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">ufl_cell</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">v_cg2</span><span class="p">)</span>
+<span class="n">Q</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">s_cg1</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
+<span class="n">fdim</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span> <span class="mi">1</span>
+
+<span class="c1"># Define boundary conditions</span>
+<span class="k">class</span> <span class="nc">InletVelocity</span><span class="p">():</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">t</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">gdim</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span><span class="n">dtype</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScalarType</span><span class="p">)</span>
+        <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">8</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.41</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="mf">0.41</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">values</span>
+
+<span class="c1"># Inlet</span>
+<span class="n">u_inlet</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">inlet_velocity</span> <span class="o">=</span> <span class="n">InletVelocity</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="n">u_inlet</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">inlet_velocity</span><span class="p">)</span>
+<span class="n">u_inlet</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT_VALUES</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
+<span class="n">inlet_facets</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">ft</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">inlet_marker</span><span class="p">]</span>
+
+<span class="n">bcu_inflow</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_inlet</span><span class="p">,</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">inlet_facets</span><span class="p">))</span>
+<span class="c1"># Walls</span>
+<span class="n">u_nonslip</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">u_nonslip</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
+    <span class="n">loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">wall_facets</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">ft</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">wall_marker</span><span class="p">]</span>
+<span class="n">bcu_walls</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_nonslip</span><span class="p">,</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">wall_facets</span><span class="p">))</span>
+<span class="c1"># Obstacle</span>
+<span class="n">obstacle_facets</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">ft</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">obstacle_marker</span><span class="p">]</span>
+<span class="n">bcu_obstacle</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_nonslip</span><span class="p">,</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">obstacle_facets</span><span class="p">))</span>
+<span class="n">bcu</span> <span class="o">=</span> <span class="p">[</span><span class="n">bcu_inflow</span><span class="p">,</span> <span class="n">bcu_obstacle</span><span class="p">,</span> <span class="n">bcu_walls</span><span class="p">]</span>
+<span class="c1"># Outlet</span>
+<span class="n">p_outlet</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">p_outlet</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
+    <span class="n">loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">outlet_facets</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">ft</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">outlet_marker</span><span class="p">]</span>
+<span class="n">bcp_outlet</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">p_outlet</span><span class="p">,</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">outlet_facets</span><span class="p">))</span>
+<span class="n">bcp</span> <span class="o">=</span> <span class="p">[</span><span class="n">bcp_outlet</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="variational-form">
+<h2>Variational form<a class="headerlink" href="#variational-form" title="Permalink to this headline">¶</a></h2>
+<p>As opposed to <a class="reference internal" href="ns_code1.html"><span class="doc std std-doc">Pouseille flow</span></a>, we will use a Crank-Nicolson discretization, and an explicitAdams-Bashforth approximation.
+The first step can be written as</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}rho\left(\frac{u^*- u^n}{\delta t} + \frac{3}{2} u^n \cdot \nabla u^n - \frac{1}{2} u^{n-1} \cdot \nabla u^{n-1} 
+- \frac{1}{2}\mu \Delta( u^*+ u^n )+ \nabla p^{n-1/2} &amp;= f^{n+\frac{1}{2}} &amp;&amp; \text{ in } \Omega\\
+u^*&amp;=g(\cdot, t^{n+1}) &amp;&amp; \text{ on } \partial \Omega_{D}\\
+\frac{1}{2}\nu \nabla (u^*+u^n) \cdot n &amp;= p^{n-\frac{1}{2}} &amp;&amp; \text{ on } \partial \Omega_{N}\end{split}\]</div>
+<p>where we have used the two previous time steps in the temporal derivative for the velocity, and compute the pressure staggered in time, at the time between the previous and current solution. The second step becomes</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}-\nabla \phi &amp;= -\frac{1}{\delta t} \nabla \cdot u^* &amp;&amp;\text{in } \Omega,\\
+\nabla \phi \cdot n &amp;= 0 &amp;&amp; \text{on } \partial \Omega_D,\\
+\phi &amp;= 0 &amp;&amp;\text{on } \partial\Omega_N\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(p^{n+\frac{1}{2}}=p^{n-\frac{1}{2}} + \phi\)</span>.
+Finally, the third step is</p>
+<div class="math notranslate nohighlight">
+\[u^{n+1} = u^{*}-\delta t \phi. \]</div>
+<p>We start by defining all the variables used in the variational formulations.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">u</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">u_</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">u_</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;u&quot;</span>
+<span class="n">u_s</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">u_n</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">u_n1</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">q</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">p_</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">p_</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;p&quot;</span>
+<span class="n">phi</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next, we define the variational formulation for the first step, where we have integrated the diffusion term, as well as the pressure term by parts. As we have used an explicit approximation of the non-linear term we only have to assemble the matrix once, but we have to save the two previous solutions.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ufl</span> <span class="kn">import</span> <span class="n">Identity</span><span class="p">,</span> <span class="n">div</span><span class="p">,</span> <span class="n">dot</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">inner</span><span class="p">,</span> <span class="n">lhs</span><span class="p">,</span> <span class="n">grad</span><span class="p">,</span> <span class="n">nabla_grad</span><span class="p">,</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">sym</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">F1</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">/</span> <span class="n">k</span> <span class="o">*</span> <span class="n">dot</span><span class="p">(</span><span class="n">u</span> <span class="o">-</span> <span class="n">u_n</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span> 
+<span class="n">F1</span> <span class="o">+=</span> <span class="n">inner</span><span class="p">(</span><span class="mf">1.5</span> <span class="o">*</span> <span class="n">dot</span><span class="p">(</span><span class="n">u_n</span><span class="p">,</span> <span class="n">nabla_grad</span><span class="p">(</span><span class="n">u_n</span><span class="p">))</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">dot</span><span class="p">(</span><span class="n">u_n1</span><span class="p">,</span> <span class="n">nabla_grad</span><span class="p">(</span><span class="n">u_n1</span><span class="p">)),</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span>
+<span class="n">F1</span> <span class="o">+=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">inner</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="o">+</span><span class="n">u_n</span><span class="p">),</span> <span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="o">*</span><span class="n">dx</span> <span class="o">-</span> <span class="n">dot</span><span class="p">(</span><span class="n">p_</span><span class="p">,</span> <span class="n">div</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="o">*</span><span class="n">dx</span>
+<span class="n">F1</span> <span class="o">+=</span> <span class="n">dot</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span>
+<span class="n">a1</span> <span class="o">=</span> <span class="n">lhs</span><span class="p">(</span><span class="n">F1</span><span class="p">)</span>
+<span class="n">L1</span> <span class="o">=</span> <span class="n">rhs</span><span class="p">(</span><span class="n">F1</span><span class="p">)</span>
+<span class="n">A1</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcu</span><span class="p">)</span>
+<span class="n">A1</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
+<span class="n">b1</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">create_vector</span><span class="p">(</span><span class="n">L1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next we define the second step</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">a2</span> <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">grad</span><span class="p">(</span><span class="n">q</span><span class="p">))</span><span class="o">*</span><span class="n">dx</span>
+<span class="n">L2</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="n">k</span> <span class="o">*</span> <span class="n">dot</span><span class="p">(</span><span class="n">div</span><span class="p">(</span><span class="n">u_s</span><span class="p">),</span> <span class="n">q</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span>
+<span class="n">A2</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcp</span><span class="p">)</span>
+<span class="n">A2</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
+<span class="n">b2</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">create_vector</span><span class="p">(</span><span class="n">L2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We finally create the last step</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">a3</span> <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span>
+<span class="n">L3</span> <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="n">u_s</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span> <span class="o">-</span> <span class="n">k</span> <span class="o">*</span> <span class="n">dot</span><span class="p">(</span><span class="n">nabla_grad</span><span class="p">(</span><span class="n">phi</span><span class="p">),</span> <span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span>
+<span class="n">A3</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a3</span><span class="p">)</span>
+<span class="n">A3</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
+<span class="n">b3</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">create_vector</span><span class="p">(</span><span class="n">L3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>As in the previous tutorials, we use PETSc as a linear algebra backend.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Solver for step 1</span>
+<span class="n">solver1</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">KSP</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">mpi_comm</span><span class="p">())</span>
+<span class="n">solver1</span><span class="o">.</span><span class="n">setOperators</span><span class="p">(</span><span class="n">A1</span><span class="p">)</span>
+<span class="n">solver1</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">KSP</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">BCGS</span><span class="p">)</span>
+<span class="n">pc1</span> <span class="o">=</span> <span class="n">solver1</span><span class="o">.</span><span class="n">getPC</span><span class="p">()</span>
+<span class="n">pc1</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">PC</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">JACOBI</span><span class="p">)</span>
+
+<span class="c1"># Solver for step 2</span>
+<span class="n">solver2</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">KSP</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">mpi_comm</span><span class="p">())</span>
+<span class="n">solver2</span><span class="o">.</span><span class="n">setOperators</span><span class="p">(</span><span class="n">A2</span><span class="p">)</span>
+<span class="n">solver2</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">KSP</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">MINRES</span><span class="p">)</span>
+<span class="n">pc2</span> <span class="o">=</span> <span class="n">solver2</span><span class="o">.</span><span class="n">getPC</span><span class="p">()</span>
+<span class="n">pc2</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">PC</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">HYPRE</span><span class="p">)</span>
+<span class="n">pc2</span><span class="o">.</span><span class="n">setHYPREType</span><span class="p">(</span><span class="s2">&quot;boomeramg&quot;</span><span class="p">)</span>
+
+<span class="c1"># Solver for step 3</span>
+<span class="n">solver3</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">KSP</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">mpi_comm</span><span class="p">())</span>
+<span class="n">solver3</span><span class="o">.</span><span class="n">setOperators</span><span class="p">(</span><span class="n">A3</span><span class="p">)</span>
+<span class="n">solver3</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">KSP</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">CG</span><span class="p">)</span>
+<span class="n">pc3</span> <span class="o">=</span> <span class="n">solver3</span><span class="o">.</span><span class="n">getPC</span><span class="p">()</span>
+<span class="n">pc3</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">PC</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">SOR</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="verification-of-the-implementation-compute-known-physical-quantities">
+<h2>Verification of the implementation compute known physical quantities<a class="headerlink" href="#verification-of-the-implementation-compute-known-physical-quantities" title="Permalink to this headline">¶</a></h2>
+<p>As a further verification of our implementation, we compute the drag and lift coefficients over the obstacle, defined as</p>
+<div class="math notranslate nohighlight">
+\[    C_{\text{D}}(u,p,t,\partial\Omega_S) &amp;= \frac{2}{\rho L U_{mean}^2}\int_{\partial\Omega_S}\rho \nu \n \cdot \nabla u_{t_S}(t)n_y -p(t)n_x~\mathrm{d} s
+        C_{\text{L}}(u,p,t,\partial\Omega_S) &amp;= -\frac{2}{\rho L U_{mean}^2}\int_{\partial\Omega_S}\rho \nu n \cdot \nabla u_{t_S}(t)n_x + p(t)n_y~\mathrm{d} s,\]</div>
+<p>where <span class="math notranslate nohighlight">\(u_{t_S}\)</span> is the tangential velocity component at the interface of the obstacle <span class="math notranslate nohighlight">\(\partial\Omega_S\)</span>, defined as <span class="math notranslate nohighlight">\(u_{t_S}=u\cdot (n_y,-n_x)\)</span>, <span class="math notranslate nohighlight">\(U_{mean}=1\)</span> the average inflow velocity, and <span class="math notranslate nohighlight">\(L\)</span> the length of the channel. We use <code class="docutils literal notranslate"><span class="pre">UFL</span></code> to create the relevant integrals, and assemble them at each time step.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>    <span class="n">n</span> <span class="o">=</span> <span class="o">-</span><span class="n">ufl</span><span class="o">.</span><span class="n">FacetNormal</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span> <span class="c1">#Normal pointing out of obstacle</span>
+    <span class="n">dObs</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">Measure</span><span class="p">(</span><span class="s2">&quot;ds&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">mesh</span><span class="p">,</span> <span class="n">subdomain_data</span><span class="o">=</span><span class="n">ft</span><span class="p">,</span> <span class="n">subdomain_id</span><span class="o">=</span><span class="n">obstacle_marker</span><span class="p">)</span>
+    <span class="n">u_t</span> <span class="o">=</span> <span class="n">inner</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">as_vector</span><span class="p">((</span><span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span> <span class="n">u_</span><span class="p">)</span>
+    <span class="n">drag</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">/</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="p">(</span><span class="n">mu</span> <span class="o">/</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">inner</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u_t</span><span class="p">),</span> <span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">p_</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">dObs</span>
+    <span class="n">lift</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">/</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="p">(</span><span class="n">mu</span> <span class="o">/</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">inner</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u_t</span><span class="p">),</span> <span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">p_</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">dObs</span>
+    <span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">C_D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_steps</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScalarType</span><span class="p">)</span>
+        <span class="n">C_L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_steps</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScalarType</span><span class="p">)</span>
+        <span class="n">t_u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_steps</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">t_p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_steps</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We will also evaluate the pressure at two points, on in front of the obstacle, <span class="math notranslate nohighlight">\((0.15, 0.2)\)</span>, and one behind the obstacle, <span class="math notranslate nohighlight">\((0.25, 0.2)\)</span>. To do this, we have to find which cell is containing each of the points, so that we can create a linear combination of the local basis functions and coefficients.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.geometry</span>
+<span class="n">tree</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">BoundingBoxTree</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
+<span class="n">point_front</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.15</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="c1"># Use the bounding box tree of the cells to create a set of candidates colliding with the point.</span>
+<span class="n">cell_candidates_front</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">compute_collisions_point</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">point_front</span><span class="p">)</span>
+<span class="c1"># Select one cell that is actually colliding with the point</span>
+<span class="n">cell_front</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">cpp</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">select_colliding_cells</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">cell_candidates_front</span><span class="p">,</span> <span class="n">point_front</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">point_back</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">cell_candidates_back</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">compute_collisions_point</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">point_back</span><span class="p">)</span>
+<span class="n">cell_back</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">cpp</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">select_colliding_cells</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">cell_candidates_back</span><span class="p">,</span> <span class="n">point_back</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">p_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_steps</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScalarType</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="solving-the-time-dependent-problem">
+<h2>Solving the time-dependent problem<a class="headerlink" href="#solving-the-time-dependent-problem" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-stability-of-the-navier-stokes-equation admonition">
+<p class="admonition-title">Stability of the Navier-Stokes equation</p>
+<p>Note that the current splitting scheme has to fullfil the a <a class="reference external" href="https://en.wikipedia.org/wiki/Courant%E2%80%93Friedrichs%E2%80%93Lewy_condition">Courant–Friedrichs–Lewy condition</a>. This limits the spatial discretization with respect to the inlet velocity and temporal discretization.
+Other temporal discretization schemes such as the second order backward difference discretization or Crank-Nicholson discretization with Adams-Bashforth linearization are better behaved than our simple backward differnce scheme.```
+As in the previous example, we create output files for the velocity and pressure and solve the time-dependent problem. As we are solving a time dependent problem with many time steps, we use the <code class="docutils literal notranslate"><span class="pre">tqdm</span></code>-package to visualize the progress. This package can be install with <code class="docutils literal notranslate"><span class="pre">pip3</span></code>.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tqdm.notebook</span>
+<span class="kn">import</span> <span class="nn">dolfinx.io</span>
+<span class="n">xdmf</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">XDMFFile</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="s2">&quot;dfg2D-3.xdmf&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+<span class="n">xdmf</span><span class="o">.</span><span class="n">write_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">u_</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+<span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">p_</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+
+<span class="n">progress</span> <span class="o">=</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">notebook</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Solving PDE&quot;</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">num_steps</span><span class="p">)</span>
+<span class="c1"># If running this as a python script, you should use the Progressbar command below</span>
+<span class="c1"># progress = tqdm.tqdm(desc=&quot;Solving PDE&quot;, total=num_steps)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_steps</span><span class="p">):</span>
+    <span class="n">progress</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># Update current time step</span>
+    <span class="n">t</span> <span class="o">+=</span> <span class="n">dt</span>
+    <span class="c1"># Update inlet velocity</span>
+    <span class="n">inlet_velocity</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">t</span>
+    <span class="n">u_inlet</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">inlet_velocity</span><span class="p">)</span>
+    <span class="n">u_inlet</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT_VALUES</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
+    <span class="c1"># Step 1: Tentative veolcity step</span>
+    <span class="k">with</span> <span class="n">b1</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
+        <span class="n">loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span> <span class="n">L1</span><span class="p">)</span>
+    <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">apply_lifting</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span> <span class="p">[</span><span class="n">a1</span><span class="p">],</span> <span class="p">[</span><span class="n">bcu</span><span class="p">])</span>
+    <span class="n">b1</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">ADD_VALUES</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">)</span>
+    <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">set_bc</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span> <span class="n">bcu</span><span class="p">)</span>
+    <span class="n">solver1</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span> <span class="n">u_s</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+    <span class="n">u_s</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT_VALUES</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
+
+    <span class="c1"># Step 2: Pressure corrrection step</span>
+    <span class="k">with</span> <span class="n">b2</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
+        <span class="n">loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span> <span class="n">L2</span><span class="p">)</span>
+    <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">apply_lifting</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span> <span class="p">[</span><span class="n">a2</span><span class="p">],</span> <span class="p">[</span><span class="n">bcp</span><span class="p">])</span>
+    <span class="n">b2</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">ADD_VALUES</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">)</span>
+    <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">set_bc</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span> <span class="n">bcp</span><span class="p">)</span>
+    <span class="n">solver2</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span> <span class="n">phi</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+    <span class="n">phi</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT_VALUES</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
+
+    <span class="n">p_</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">axpy</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">phi</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+    <span class="n">p_</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT_VALUES</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
+    <span class="c1"># Step 3: Velocity correction step</span>
+    <span class="k">with</span> <span class="n">b3</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
+        <span class="n">loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">b3</span><span class="p">,</span> <span class="n">L3</span><span class="p">)</span>
+    <span class="n">b3</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">ADD_VALUES</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">)</span>
+    <span class="n">solver3</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">b3</span><span class="p">,</span> <span class="n">u_</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+    <span class="n">u_</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT_VALUES</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
+
+    <span class="c1"># Write solutions to file</span>
+    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">u_</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">p_</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+
+    <span class="c1"># Update variable with solution form this time step</span>
+    <span class="k">with</span> <span class="n">u_</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc_</span><span class="p">,</span> <span class="n">u_n</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc_n</span><span class="p">,</span> <span class="n">u_n1</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc_n1</span><span class="p">:</span>
+        <span class="n">loc_n</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">loc_n1</span><span class="p">)</span>
+        <span class="n">loc_</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">loc_n</span><span class="p">)</span>
+
+    <span class="c1"># Compute physical quantities</span>
+    <span class="c1"># For this to work in paralell, we gather contributions from all processors</span>
+    <span class="c1"># to processor zero and sum the contributions. </span>
+    <span class="n">drag_coeff</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span><span class="n">drag</span><span class="p">),</span> <span class="n">root</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">lift_coeff</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span><span class="n">lift</span><span class="p">),</span> <span class="n">root</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">p_front</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cell_front</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">p_front</span> <span class="o">=</span> <span class="n">p_</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">point_front</span><span class="p">,</span> <span class="n">cell_front</span><span class="p">)</span>
+    <span class="n">p_front</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">p_front</span><span class="p">,</span> <span class="n">root</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">p_back</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cell_back</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">p_back</span> <span class="o">=</span> <span class="n">p_</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">point_back</span><span class="p">,</span> <span class="n">cell_back</span><span class="p">)</span>
+    <span class="n">p_back</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">p_back</span><span class="p">,</span> <span class="n">root</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">t_u</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
+        <span class="n">t_p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="o">-</span><span class="n">dt</span><span class="o">/</span><span class="mi">2</span>
+        <span class="n">C_D</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">drag_coeff</span><span class="p">)</span>
+        <span class="n">C_L</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">lift_coeff</span><span class="p">)</span>
+        <span class="c1"># Choose first pressure that is found from the different processors</span>
+        <span class="k">for</span> <span class="n">pressure</span> <span class="ow">in</span> <span class="n">p_front</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pressure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">p_diff</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">pressure</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">break</span>
+        <span class="k">for</span> <span class="n">pressure</span> <span class="ow">in</span> <span class="n">p_back</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pressure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">p_diff</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">pressure</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">break</span>
+<span class="c1"># Close xmdf file</span>
+<span class="n">xdmf</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">
+{"version_major": 2, "version_minor": 0, "model_id": "9f2916ed5fea4fb78beadb9d08d0bd63"}
+</script></div>
+</div>
+</div>
+</div>
+<div class="section" id="verification-using-data-from-featflow">
+<h1>Verification using data from FEATFLOW<a class="headerlink" href="#verification-using-data-from-featflow" title="Permalink to this headline">¶</a></h1>
+<p>As FEATFLOW has provided data for different  discretization levels, we compare our numerical data with the data provided using <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">turek</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s2">&quot;bdforces_lv4&quot;</span><span class="p">)</span>
+    <span class="n">turek_p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s2">&quot;pointvalues_lv4&quot;</span><span class="p">)</span>
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+    <span class="n">l1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t_u</span><span class="p">,</span> <span class="n">C_D</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;FEniCS-X  (</span><span class="si">{0:d}</span><span class="s2"> dofs)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">V</span><span class="o">.</span><span class="n">dim</span><span class="o">+</span><span class="n">Q</span><span class="o">.</span><span class="n">dim</span><span class="p">),</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">l2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">turek</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">turek</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span><span class="mi">3</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">markevery</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> 
+                <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;FEATFLOW (42016 dofs)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Drag coefficient&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;drag_comparison.png&quot;</span><span class="p">)</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+    <span class="n">l1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t_u</span><span class="p">,</span> <span class="n">C_L</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;FEniCS-X  (</span><span class="si">{0:d}</span><span class="s2"> dofs)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">V</span><span class="o">.</span><span class="n">dim</span><span class="o">+</span><span class="n">Q</span><span class="o">.</span><span class="n">dim</span><span class="p">),</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">l2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">turek</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">turek</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span><span class="mi">4</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">markevery</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> 
+                <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;FEATFLOW (42016 dofs)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Lift coefficient&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;lift_comparison.png&quot;</span><span class="p">)</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+    <span class="n">l1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t_p</span><span class="p">,</span> <span class="n">p_diff</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;FEniCS-X (</span><span class="si">{0:d}</span><span class="s2"> dofs)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">V</span><span class="o">.</span><span class="n">dim</span><span class="o">+</span><span class="n">Q</span><span class="o">.</span><span class="n">dim</span><span class="p">),</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">l2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">turek</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">turek_p</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span><span class="mi">6</span><span class="p">]</span><span class="o">-</span><span class="n">turek_p</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">markevery</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> 
+                <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;FEATFLOW (42016 dofs)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Pressure difference&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;pressure_comparison.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ns_code2_35_0.png" src="../_images/ns_code2_35_0.png" />
+<img alt="../_images/ns_code2_35_1.png" src="../_images/ns_code2_35_1.png" />
+<img alt="../_images/ns_code2_35_2.png" src="../_images/ns_code2_35_2.png" />
+</div>
+</div>
+<p>We observe an offset in amplitude. This is due to the reduced number of degrees of freedom compared to FEATFLOW. If we change the parameters <code class="docutils literal notranslate"><span class="pre">res_min</span></code> to <code class="docutils literal notranslate"><span class="pre">r/5</span></code>, and <code class="docutils literal notranslate"><span class="pre">res_max</span></code> to <code class="docutils literal notranslate"><span class="pre">r</span></code>, we can obtain a result closer to the FEATFLOW benchmark. It is recommended to convert the notebook to a python-script using <a class="reference external" href="https://nbconvert.readthedocs.io/en/latest/">nbconvert</a> and using <code class="docutils literal notranslate"><span class="pre">mpirun</span> <span class="pre">-n</span> <span class="pre">4</span> <span class="pre">python3</span> <span class="pre">ns_code2.py</span></code> to run the python program distributed over 4 processors.</p>
+</div>
+
+
+<script type="application/vnd.jupyter.widget-state+json">
+{"state": {"1bb4e5e32de64294be5ba2d971a0a33a": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "7ef314fed6524203b9f227077a502a10": {"model_name": "ProgressStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "bar_color": null, "description_width": ""}}, "d21bc8dc43f4480cac24bbf89fab73dc": {"model_name": "FloatProgressModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "ProgressView", "bar_style": "", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_1bb4e5e32de64294be5ba2d971a0a33a", "max": 1600.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_7ef314fed6524203b9f227077a502a10", "value": 1600.0}}, "f8a4370781b34b0e9a2a82523fba1a1e": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "5a5a9b18eaed41ce86857efe2b060db2": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "9cea3f77f30b45b1b2f025e7822aaf1e": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_f8a4370781b34b0e9a2a82523fba1a1e", "placeholder": "\u200b", "style": "IPY_MODEL_5a5a9b18eaed41ce86857efe2b060db2", "value": "Solving PDE: 100%"}}, "76ad498e295a4d6d903c99af04f14b54": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "8d069e65a63541c0bc40cd6a7c82fd00": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "dead8701caa144ec9b9544f70b2a662a": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_76ad498e295a4d6d903c99af04f14b54", "placeholder": "\u200b", "style": "IPY_MODEL_8d069e65a63541c0bc40cd6a7c82fd00", "value": " 1600/1600 [02:03&lt;00:00, 12.69it/s]"}}, "5f1fc1a76c924248bcf13c49f3680476": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "9f2916ed5fea4fb78beadb9d08d0bd63": {"model_name": "HBoxModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_9cea3f77f30b45b1b2f025e7822aaf1e", "IPY_MODEL_d21bc8dc43f4480cac24bbf89fab73dc", "IPY_MODEL_dead8701caa144ec9b9544f70b2a662a"], "layout": "IPY_MODEL_5f1fc1a76c924248bcf13c49f3680476"}}}, "version_major": 2, "version_minor": 0}
+</script>
+
 
     <script type="text/x-thebe-config">
     {
@@ -589,7 +1055,7 @@ To load the mesh, we follow the same structure as in  <a class="reference intern
             &copy; Copyright 2020.<br/>
           <div class="extra_footer">
             <div>
-    This webpage is an adaptation of <a href=https://www.springer.com/gp/book/9783319524610>The FEniCS tutorial</a> and 
+    This webpage is an adaptation of <a href=https://www.springer.com/gp/book/9783319524610>The FEniCS tutorial</a> and
     is distributed under the terms of the      <a href=http://creativecommons.org/licenses/by/4.0/>Creative Commons Attribution 4.0 International License  </a>
     which permits use, duplication, adaptation, distribution and reproduction in any medium or format, as long as you give appropriate credit to the original author(s) and the source,
     provide a link to the Creative Commons license and indicate if changes were made.
