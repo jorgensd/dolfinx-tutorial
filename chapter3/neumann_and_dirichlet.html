@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TO BE IMPLEMETED: A system of advection-diffusion-reaction equations &#8212; FEniCS-X tutorial</title>
+    <title>Subdomains and boundary conditions &#8212; FEniCS-X tutorial</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -58,8 +58,8 @@
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Subdomains and boundary conditions" href="../chapter3/neumann_and_dirichlet.html" />
-    <link rel="prev" title="Test problem 2: Flow past a cylinder (DFG 2D-3 benchmark)" href="ns_code2.html" />
+    <link rel="next" title="Implemenetation of Neumann and Dirichlet conditions" href="neumann_dirichlet_code.html" />
+    <link rel="prev" title="TO BE IMPLEMETED: A system of advection-diffusion-reaction equations" href="../chapter2/advdiffreac.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -163,24 +163,24 @@
   A Gallery of finite element solvers
  </span>
 </p>
-<ul class="current nav sidenav_l1">
+<ul class="nav sidenav_l1">
  <li class="toctree-l1">
-  <a class="reference internal" href="intro.html">
+  <a class="reference internal" href="../chapter2/intro.html">
    A Gallery of finite element solvers
   </a>
  </li>
  <li class="toctree-l1 collapsible-parent">
-  <a class="reference internal" href="heat_equation.html">
+  <a class="reference internal" href="../chapter2/heat_equation.html">
    The heat equation
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="heat_code.html">
+    <a class="reference internal" href="../chapter2/heat_code.html">
      Test problem 1: A known analytical solution
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="diffusion_code.html">
+    <a class="reference internal" href="../chapter2/diffusion_code.html">
      Test Problem 2: Diffusion of a Gaussian function
     </a>
    </li>
@@ -189,12 +189,12 @@
   </i>
  </li>
  <li class="toctree-l1 collapsible-parent">
-  <a class="reference internal" href="nonlinpoisson.html">
+  <a class="reference internal" href="../chapter2/nonlinpoisson.html">
    A nonlinear Poisson equation
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="nonlinpoisson_code.html">
+    <a class="reference internal" href="../chapter2/nonlinpoisson_code.html">
      Implementation
     </a>
    </li>
@@ -203,17 +203,17 @@
   </i>
  </li>
  <li class="toctree-l1 collapsible-parent">
-  <a class="reference internal" href="linearelasticity.html">
+  <a class="reference internal" href="../chapter2/linearelasticity.html">
    The equations of linear elasticity
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="linearelasticity_code.html">
+    <a class="reference internal" href="../chapter2/linearelasticity_code.html">
      Implementation
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="elasticity_scaling.html">
+    <a class="reference internal" href="../chapter2/elasticity_scaling.html">
      Scaling
     </a>
    </li>
@@ -222,17 +222,17 @@
   </i>
  </li>
  <li class="toctree-l1 collapsible-parent">
-  <a class="reference internal" href="navierstokes.html">
+  <a class="reference internal" href="../chapter2/navierstokes.html">
    The Navier-Stokes equations
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="ns_code1.html">
+    <a class="reference internal" href="../chapter2/ns_code1.html">
      Test problem 1: Channel flow (Poiseuille flow)
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="ns_code2.html">
+    <a class="reference internal" href="../chapter2/ns_code2.html">
      Test problem 2: Flow past a cylinder (DFG 2D-3 benchmark)
     </a>
    </li>
@@ -240,8 +240,8 @@
   <i class="fas fa-chevron-down">
   </i>
  </li>
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter2/advdiffreac.html">
    TO BE IMPLEMETED: A system of advection-diffusion-reaction equations
   </a>
  </li>
@@ -251,14 +251,14 @@
   Subdomains and boundary conditions
  </span>
 </p>
-<ul class="nav sidenav_l1">
- <li class="toctree-l1 collapsible-parent">
-  <a class="reference internal" href="../chapter3/neumann_and_dirichlet.html">
+<ul class="current nav sidenav_l1">
+ <li class="toctree-l1 current active collapsible-parent">
+  <a class="current reference internal" href="#">
    Subdomains and boundary conditions
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="../chapter3/neumann_dirichlet_code.html">
+    <a class="reference internal" href="neumann_dirichlet_code.html">
      Implemenetation of Neumann and Dirichlet conditions
     </a>
    </li>
@@ -306,7 +306,7 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../_sources/chapter2/advdiffreac.md"><button type="button"
+        <a class="dropdown-buttons" href="../_sources/chapter3/neumann_and_dirichlet.md"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
                 data-placement="left">.md</button></a>
         <!-- Download PDF via print -->
@@ -326,7 +326,7 @@
                 data-toggle="tooltip" data-placement="left" title="Source repository"><i
                     class="fab fa-github"></i>repository</button></a>
         <a class="issues-button"
-            href="https://github.com/jorgensd/dolfinx-tutorial/issues/new?title=Issue%20on%20page%20%2Fchapter2/advdiffreac.html&body=Your%20issue%20content%20here."><button
+            href="https://github.com/jorgensd/dolfinx-tutorial/issues/new?title=Issue%20on%20page%20%2Fchapter3/neumann_and_dirichlet.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
         
@@ -353,8 +353,18 @@
         <nav id="bd-toc-nav">
             <ul class="nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#combining-dirichlet-and-neumann-conditions">
+   Combining Dirichlet and Neumann conditions
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#the-pde-problem">
    The PDE problem
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-variational-formulation">
+   The variational formulation
   </a>
  </li>
 </ul>
@@ -368,34 +378,62 @@
         
               <div>
                 
-  <div class="section" id="to-be-implemeted-a-system-of-advection-diffusion-reaction-equations">
-<h1>TO BE IMPLEMETED: A system of advection-diffusion-reaction equations<a class="headerlink" href="#to-be-implemeted-a-system-of-advection-diffusion-reaction-equations" title="Permalink to this headline">¶</a></h1>
-<p>Authors: Hans Petter Langtangen and Anders Logg</p>
-<p>Most of the problems we have encountered so far have a common feature: they all invlove models expressed by a single scalar or vector PDE.
-In many situations the model is instead expressed as a system of PDEs, describing different quantities possibly govered by (very) different physics.
-As we saw for the Navier-Stokes equations, one way to solve one equation a system of PDEs in FEniCS-X is to use a splitting method where we solve one equation at a time and feed the solution from one  equation into the next. However, one of the strengths with FEniCS-X  is the ease by which one can instead define variational problems that couple several PDEs into one compound system. In this system, we will look at how to use FEniCS-X to write solvers for such a system of coupled PDEs. The goal is to demonstrate how easy it is to implement fully implicit, also known as monolithic, solvers in FEniCS-X.</p>
+  <div class="section" id="subdomains-and-boundary-conditions">
+<h1>Subdomains and boundary conditions<a class="headerlink" href="#subdomains-and-boundary-conditions" title="Permalink to this headline">¶</a></h1>
+<p>Authors: Anders Logg and Hans Petter Langtangen</p>
+<p>So far, we have only looked briefly at how to specify boundary conditions.
+In this chapter, we look more closely at how to specify boundary conditions on specific (subdomains) of the boundary and how to combine multiple boundary conditions.
+We will also look at how to generate meshes with subdomains and how to define coefficients with different values in different
+subdomains.</p>
+<div class="section" id="combining-dirichlet-and-neumann-conditions">
+<h2>Combining Dirichlet and Neumann conditions<a class="headerlink" href="#combining-dirichlet-and-neumann-conditions" title="Permalink to this headline">¶</a></h2>
+<p>Let’s return to the Poisson problem from the <a class="reference internal" href="../chapter1/fundamentals.html"><span class="doc std std-doc">Fundamentals chapter</span></a> and see how to extend the mathematics and the implementation to handle Dirichlet condition in combination with a Neumann condition.
+The domain is still the unit square, but now we set the Dirichlet condition <span class="math notranslate nohighlight">\(u=u_D\)</span> at the left and right sides, while the Neumann condition</p>
+<div class="math notranslate nohighlight">
+\[-\frac{\partial u}{\partial n}=g\]</div>
+<p>is applied to the  remaining sides <span class="math notranslate nohighlight">\(y=0\)</span> and <span class="math notranslate nohighlight">\(y=1\)</span>.</p>
+</div>
 <div class="section" id="the-pde-problem">
 <h2>The PDE problem<a class="headerlink" href="#the-pde-problem" title="Permalink to this headline">¶</a></h2>
-<p>Our model problem is the following system of advection-diffusion-reaction equations:</p>
-<div class="math notranslate nohighlight" id="equation-adv-diff-reac">
-<span class="eqno">(35)<a class="headerlink" href="#equation-adv-diff-reac" title="Permalink to this equation">¶</a></span>\[\begin{split}\frac{\partial u_1}{\partial t} + w \cdot \nabla u_1 - \nabla \cdot (\epsilon \nabla u_1) &amp;= f_1 - Ku_1 u_2,\\
-\frac{\partial u_2}{\partial t} + w \cdot \nabla u_2 - \nabla \cdot (\epsilon \nabla u_2) &amp;= f_2 - Ku_1 u_2,\\
-\frac{\partial u_3}{\partial t} + w \cdot \nabla u_3 - \nabla \cdot (\epsilon \nabla u_3) &amp;= f_3 - Ku_1 u_2 - K u_3,\\\end{split}\]</div>
-<p>This system models the chemical reaction between two species <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span> in some domain <span class="math notranslate nohighlight">\(\Omega\)</span>:</p>
+<p>Let <span class="math notranslate nohighlight">\(\Lambda_D\)</span> and <span class="math notranslate nohighlight">\(\Lambda_N\)</span> denote parts of the boundary <span class="math notranslate nohighlight">\(\partial \Omega\)</span> where the Dirichlet and Neumann conditions apply, respectively.
+The complete boundary-value problem can be written as</p>
 <div class="math notranslate nohighlight">
-\[   A + B \rightarrow C.\]</div>
-<p>We assume that the  reaction is <em>first-order</em>, meaning that the reaction rate is proportional to concentrations <span class="math notranslate nohighlight">\([A]\)</span> and <span class="math notranslate nohighlight">\([B]\)</span> of the two species <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span>:</p>
+\[\begin{split}-\nabla^2 u &amp;=f &amp;&amp; \text{in } \Omega,\\
+u&amp;=u_D &amp;&amp;\text{on } \Lambda_D.\\
+-\frac{\partial u}{\partial n}&amp;=g &amp;&amp; \text{on }\Lambda_N\end{split}\]</div>
+<p>Again, we choose <span class="math notranslate nohighlight">\(u=1+x^2+2y^2\)</span> as the exact solution and adjust <span class="math notranslate nohighlight">\(f, g,\)</span> and <span class="math notranslate nohighlight">\(u_D\)</span> accordingly</p>
 <div class="math notranslate nohighlight">
-\[\frac{\mathrm{d}}{\mathrm{d}t}[C]= K[A][B].\]</div>
-<p>We also assume that the formed species <span class="math notranslate nohighlight">\(C\)</span> spontaneously decaas with a rate proportional to the concentration [C]. In the <a class="reference internal" href="#equation-adv-diff-reac">(35)</a>, we use the variatbles <span class="math notranslate nohighlight">\(u_1, u_2\)</span> and <span class="math notranslate nohighlight">\(u_3\)</span> to denote the concentrations of the three species:</p>
+\[\begin{split}f(x,y)&amp;=-6,\\
+g(x,y)&amp;=\begin{cases}
+0, &amp; y=0,\\
+-4, &amp; y=1,
+\end{cases}\\
+u_D(x,y)&amp;=1+x^2+2y^2.\end{split}\]</div>
+<p>For the ease of programming, we define <span class="math notranslate nohighlight">\(g\)</span> as a function over the whole domain <span class="math notranslate nohighlight">\(\Omega\)</span> such that <span class="math notranslate nohighlight">\(g\)</span> takes on the correct values at <span class="math notranslate nohighlight">\(y=0\)</span> and <span class="math notranslate nohighlight">\(y=1\)</span>. One possible extension is</p>
 <div class="math notranslate nohighlight">
-\[ u_1=[A],\qquad u_2=[B], \qquad u_3=[C].\]</div>
-<p>We see that the chemical reactions are accounted for in the right-hand sides of the PDE system.</p>
-<p>The chemical reactions takes part at each point in the domain <span class="math notranslate nohighlight">\(\Omega\)</span>.
-In addition, we assume that the species <span class="math notranslate nohighlight">\(A, B\)</span> and <span class="math notranslate nohighlight">\(C\)</span> diffuse throughout the domain with diffusivity <span class="math notranslate nohighlight">\(\epsilon\)</span>  (the terms <span class="math notranslate nohighlight">\(-\nabla \cdot (\epsilon \nabla u_i)\)</span>) and are advected with velocity <span class="math notranslate nohighlight">\(w\)</span> (the terms <span class="math notranslate nohighlight">\(w\cdot \nabla u_i\)</span>).</p>
-<div class="admonition-implementation-note admonition">
-<p class="admonition-title">Implementation note</p>
-<p>For this demo to work, we need to have checkpointing implemented</p>
+\[ g(x,y)=-4y.\]</div>
+</div>
+<div class="section" id="the-variational-formulation">
+<h2>The variational formulation<a class="headerlink" href="#the-variational-formulation" title="Permalink to this headline">¶</a></h2>
+<p>The first task is to derive the variational formulatin. This time we cannot omit the boundary term arising from integration by parts, because <span class="math notranslate nohighlight">\(v\)</span> is only zero on <span class="math notranslate nohighlight">\(\Lambda_D\)</span>. We have</p>
+<div class="math notranslate nohighlight">
+\[    -\int_\Omega (\nabla^2u)v\mathrm{d} x =
+    \int_\Omega \nabla u \cdot \nabla v \mathrm{d} x
+     - \int_{\partial\Omega}\frac{\partial u}{\partial n}v\mathrm{d}s,\]</div>
+<p>and since <span class="math notranslate nohighlight">\(v=0\)</span> on <span class="math notranslate nohighlight">\(\Lambda_D\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[  - \int_{\partial\Omega}\frac{\partial u}{\partial n}v\mathrm{d}s=
+    - \int_{\Lambda_N}\frac{\partial u}{\partial n}v\mathrm{d}s
+    =\int_{\Lambda_N} gv\mathrm{d}s,\]</div>
+<p>by applying the boundary condition on <span class="math notranslate nohighlight">\(\Lambda_N\)</span>.
+The resulting weak from reads</p>
+<div class="math notranslate nohighlight">
+\[    \int_\Omega \nabla u \cdot \nabla v \mathrm{d} x = \int_\Omega fv\mathrm{d} x - \int_{\Lambda_N}gv\mathrm{d}s.\]</div>
+<p>Expressing this equation in the standard notation <span class="math notranslate nohighlight">\(a(u,v)=L(v)\)</span> is straight-forward with</p>
+<div class="math notranslate nohighlight">
+\[    a(u,v) &amp;= \int_{\Omega}\nabla u \cdot \nabla v \mathrm{d} x,
+    L(v) &amp;= \int_{\Omega} fv\mathrm{d} x - \int_{\Lambda_N} gv\mathrm{d}s.\]</div>
+<div class="toctree-wrapper compound">
 </div>
 </div>
 </div>
@@ -413,7 +451,7 @@ In addition, we assume that the species <span class="math notranslate nohighligh
         },
         kernelOptions: {
             kernelName: "python3",
-            path: "./chapter2"
+            path: "./chapter3"
         },
         predefinedOutput: true
     }
@@ -428,8 +466,8 @@ In addition, we assume that the species <span class="math notranslate nohighligh
     
     <div class='prev-next-bottom'>
         
-    <a class='left-prev' id="prev-link" href="ns_code2.html" title="previous page">Test problem 2: Flow past a cylinder (DFG 2D-3 benchmark)</a>
-    <a class='right-next' id="next-link" href="../chapter3/neumann_and_dirichlet.html" title="next page">Subdomains and boundary conditions</a>
+    <a class='left-prev' id="prev-link" href="../chapter2/advdiffreac.html" title="previous page">TO BE IMPLEMETED: A system of advection-diffusion-reaction equations</a>
+    <a class='right-next' id="next-link" href="neumann_dirichlet_code.html" title="next page">Implemenetation of Neumann and Dirichlet conditions</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">
