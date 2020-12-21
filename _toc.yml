@@ -40,3 +40,4 @@
   chapters:
         - file: chapter3/neumann_dirichlet_code
         - file: chapter3/multiple_dirichlet
+        - file: chapter3/subdomains

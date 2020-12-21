@@ -28,9 +28,17 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      - name: Install dependencies
+        run: |
+          export HDF5_MPI="ON"
+          export CC=mpicc
+          export HDF5_DIR="/usr/lib/x86_64-linux-gnu/hdf5/mpich/"
+          pip3 install --no-cache-dir --no-binary=h5py h5py meshio
+          pip3 install tqdm
+
       - name: Test notebooks in parallel
         run: |
-          pip3 install jupyter nbconvert tqdm
+          pip3 install jupyter nbconvert
           cd chapter1
           jupyter-nbconvert --to python fundamentals_code.ipynb
           mpirun -n 2 python3 fundamentals_code.py
@@ -54,6 +62,8 @@ jobs:
           mpirun -n 3 python3 neumann_dirichlet_code.py
           jupyter-nbconvert --to python multiple_dirichlet.ipynb
           mpirun -n 3 python3 multiple_dirichlet.py
+          jupyter-nbconvert --to python subdomains.ipynb
+          mpirun -n 3 python3 subdomains.py
       # Runs a single command using the runners shell
       - name: Build the book
         run: |
