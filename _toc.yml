@@ -38,6 +38,4 @@
         - file: chapter2/advdiffreac
 - part: Subdomains and boundary conditions
   chapters:
-        - file: chapter3/neumann_and_dirichlet
-          sections:
-                - file: chapter3/neumann_dirichlet_code
+        - file: chapter3/neumann_dirichlet_code
