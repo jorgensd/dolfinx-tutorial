@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Implemenetation of Neumann and Dirichlet conditions &#8212; FEniCS-X tutorial</title>
+    <title>Combining Dirichlet and Neumann conditions &#8212; FEniCS-X tutorial</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -58,7 +58,7 @@
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="Subdomains and boundary conditions" href="neumann_and_dirichlet.html" />
+    <link rel="prev" title="TO BE IMPLEMETED: A system of advection-diffusion-reaction equations" href="../chapter2/advdiffreac.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -251,19 +251,10 @@
  </span>
 </p>
 <ul class="current nav sidenav_l1">
- <li class="toctree-l1 current active collapsible-parent">
-  <a class="reference internal" href="neumann_and_dirichlet.html">
-   Subdomains and boundary conditions
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Combining Dirichlet and Neumann conditions
   </a>
-  <ul class="current collapse-ul">
-   <li class="toctree-l2 current active">
-    <a class="current reference internal" href="#">
-     Implemenetation of Neumann and Dirichlet conditions
-    </a>
-   </li>
-  </ul>
-  <i class="fas fa-chevron-down">
-  </i>
  </li>
 </ul>
 
@@ -363,6 +354,30 @@
     <!-- Table of contents -->
     <div class="d-none d-md-block col-md-2 bd-toc show">
         
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-pde-problem">
+   The PDE problem
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-variational-formulation">
+   The variational formulation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#implementation">
+   Implementation
+  </a>
+ </li>
+</ul>
+
+        </nav>
+        
     </div>
 </div>
     <div id="main-content" class="row">
@@ -370,8 +385,56 @@
         
               <div>
                 
-  <div class="section" id="implemenetation-of-neumann-and-dirichlet-conditions">
-<h1>Implemenetation of Neumann and Dirichlet conditions<a class="headerlink" href="#implemenetation-of-neumann-and-dirichlet-conditions" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="combining-dirichlet-and-neumann-conditions">
+<h1>Combining Dirichlet and Neumann conditions<a class="headerlink" href="#combining-dirichlet-and-neumann-conditions" title="Permalink to this headline">¶</a></h1>
+<p>Let’s return to the Poisson problem from the <a class="reference internal" href="../chapter1/fundamentals.html"><span class="doc std std-doc">Fundamentals chapter</span></a> and see how to extend the mathematics and the implementation to handle Dirichlet condition in combination with a Neumann condition.
+The domain is still the unit square, but now we set the Dirichlet condition <span class="math notranslate nohighlight">\(u=u_D\)</span> at the left and right sides, while the Neumann condition</p>
+<div class="math notranslate nohighlight">
+\[-\frac{\partial u}{\partial n}=g\]</div>
+<p>is applied to the  remaining sides <span class="math notranslate nohighlight">\(y=0\)</span> and <span class="math notranslate nohighlight">\(y=1\)</span>.</p>
+<div class="section" id="the-pde-problem">
+<h2>The PDE problem<a class="headerlink" href="#the-pde-problem" title="Permalink to this headline">¶</a></h2>
+<p>Let <span class="math notranslate nohighlight">\(\Lambda_D\)</span> and <span class="math notranslate nohighlight">\(\Lambda_N\)</span> denote parts of the boundary <span class="math notranslate nohighlight">\(\partial \Omega\)</span> where the Dirichlet and Neumann conditions apply, respectively.
+The complete boundary-value problem can be written as</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}-\nabla^2 u &amp;=f &amp;&amp; \text{in } \Omega,\\
+u&amp;=u_D &amp;&amp;\text{on } \Lambda_D.\\
+-\frac{\partial u}{\partial n}&amp;=g &amp;&amp; \text{on }\Lambda_N\end{split}\]</div>
+<p>Again, we choose <span class="math notranslate nohighlight">\(u=1+x^2+2y^2\)</span> as the exact solution and adjust <span class="math notranslate nohighlight">\(f, g,\)</span> and <span class="math notranslate nohighlight">\(u_D\)</span> accordingly</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}f(x,y)&amp;=-6,\\
+g(x,y)&amp;=\begin{cases}
+0, &amp; y=0,\\
+-4, &amp; y=1,
+\end{cases}\\
+u_D(x,y)&amp;=1+x^2+2y^2.\end{split}\]</div>
+<p>For the ease of programming, we define <span class="math notranslate nohighlight">\(g\)</span> as a function over the whole domain <span class="math notranslate nohighlight">\(\Omega\)</span> such that <span class="math notranslate nohighlight">\(g\)</span> takes on the correct values at <span class="math notranslate nohighlight">\(y=0\)</span> and <span class="math notranslate nohighlight">\(y=1\)</span>. One possible extension is</p>
+<div class="math notranslate nohighlight">
+\[ g(x,y)=-4y.\]</div>
+</div>
+<div class="section" id="the-variational-formulation">
+<h2>The variational formulation<a class="headerlink" href="#the-variational-formulation" title="Permalink to this headline">¶</a></h2>
+<p>The first task is to derive the variational formulatin. This time we cannot omit the boundary term arising from integration by parts, because <span class="math notranslate nohighlight">\(v\)</span> is only zero on <span class="math notranslate nohighlight">\(\Lambda_D\)</span>. We have</p>
+<div class="math notranslate nohighlight">
+\[    -\int_\Omega (\nabla^2u)v\mathrm{d} x =
+    \int_\Omega \nabla u \cdot \nabla v \mathrm{d} x
+     - \int_{\partial\Omega}\frac{\partial u}{\partial n}v\mathrm{d}s,\]</div>
+<p>and since <span class="math notranslate nohighlight">\(v=0\)</span> on <span class="math notranslate nohighlight">\(\Lambda_D\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[  - \int_{\partial\Omega}\frac{\partial u}{\partial n}v\mathrm{d}s=
+    - \int_{\Lambda_N}\frac{\partial u}{\partial n}v\mathrm{d}s
+    =\int_{\Lambda_N} gv\mathrm{d}s,\]</div>
+<p>by applying the boundary condition on <span class="math notranslate nohighlight">\(\Lambda_N\)</span>.
+The resulting weak from reads</p>
+<div class="math notranslate nohighlight">
+\[    \int_\Omega \nabla u \cdot \nabla v \mathrm{d} x = \int_\Omega fv\mathrm{d} x - \int_{\Lambda_N}gv\mathrm{d}s.\]</div>
+<p>Expressing this equation in the standard notation <span class="math notranslate nohighlight">\(a(u,v)=L(v)\)</span> is straight-forward with</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}    a(u,v) &amp;= \int_{\Omega} \nabla u \cdot \nabla v \mathrm{d} x,\\
+    L(v) &amp;= \int_{\Omega} fv \mathrm{d} x - \int_{\Lambda_N} gv~\mathrm{d} s.\end{split}\]</div>
+</div>
+<div class="section" id="implementation">
+<h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h2>
 <p>Author: Jørgen S. Dokken
 As in the previous example, we define our mesh,function space and bilinear form <span class="math notranslate nohighlight">\(a(u,v)\)</span>.</p>
 <div class="cell docutils container">
@@ -459,10 +522,11 @@ As in the previous example, we define our mesh,function space and bilinear form 
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Error_L2 = 5.27e-03
-Error_max = 5.77e-15
+Error_max = 5.33e-15
 </pre></div>
 </div>
 <img alt="../_images/neumann_dirichlet_code_7_1.png" src="../_images/neumann_dirichlet_code_7_1.png" />
+</div>
 </div>
 </div>
 </div>
@@ -495,7 +559,7 @@ Error_max = 5.77e-15
     
     <div class='prev-next-bottom'>
         
-    <a class='left-prev' id="prev-link" href="neumann_and_dirichlet.html" title="previous page">Subdomains and boundary conditions</a>
+    <a class='left-prev' id="prev-link" href="../chapter2/advdiffreac.html" title="previous page">TO BE IMPLEMETED: A system of advection-diffusion-reaction equations</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">
