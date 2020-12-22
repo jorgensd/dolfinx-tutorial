@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Combining Dirichlet and Neumann conditions &#8212; FEniCS-X tutorial</title>
+    <title>Setting multiple Dirichlet condition &#8212; FEniCS-X tutorial</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -58,8 +58,8 @@
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Setting multiple Dirichlet condition" href="multiple_dirichlet.html" />
-    <link rel="prev" title="TO BE IMPLEMETED: A system of advection-diffusion-reaction equations" href="../chapter2/advdiffreac.html" />
+    <link rel="next" title="Defining subdomains for different materials" href="subdomains.html" />
+    <link rel="prev" title="Combining Dirichlet and Neumann conditions" href="neumann_dirichlet_code.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -252,13 +252,13 @@
  </span>
 </p>
 <ul class="current nav sidenav_l1">
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
+ <li class="toctree-l1">
+  <a class="reference internal" href="neumann_dirichlet_code.html">
    Combining Dirichlet and Neumann conditions
   </a>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="multiple_dirichlet.html">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
    Setting multiple Dirichlet condition
   </a>
  </li>
@@ -307,7 +307,7 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../_sources/chapter3/neumann_dirichlet_code.ipynb"><button type="button"
+        <a class="dropdown-buttons" href="../_sources/chapter3/multiple_dirichlet.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
                 data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
@@ -327,7 +327,7 @@
                 data-toggle="tooltip" data-placement="left" title="Source repository"><i
                     class="fab fa-github"></i>repository</button></a>
         <a class="issues-button"
-            href="https://github.com/jorgensd/dolfinx-tutorial/issues/new?title=Issue%20on%20page%20%2Fchapter3/neumann_dirichlet_code.html&body=Your%20issue%20content%20here."><button
+            href="https://github.com/jorgensd/dolfinx-tutorial/issues/new?title=Issue%20on%20page%20%2Fchapter3/multiple_dirichlet.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
         
@@ -348,7 +348,7 @@
         aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
     <div class="dropdown-buttons">
         
-        <a class="binder-button" href="https://mybinder.org/v2/gh/jorgensd/dolfinx-tutorial/dokken/jupyterbook?urlpath=tree/./chapter3/neumann_dirichlet_code.ipynb"><button type="button"
+        <a class="binder-button" href="https://mybinder.org/v2/gh/jorgensd/dolfinx-tutorial/dokken/jupyterbook?urlpath=tree/./chapter3/multiple_dirichlet.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
                 data-placement="left"><img class="binder-button-logo"
                     src="../_static/images/logo_binder.svg"
@@ -365,30 +365,6 @@
     <!-- Table of contents -->
     <div class="d-none d-md-block col-md-2 bd-toc show">
         
-        <div class="tocsection onthispage pt-5 pb-3">
-            <i class="fas fa-list"></i> Contents
-        </div>
-        <nav id="bd-toc-nav">
-            <ul class="nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#the-pde-problem">
-   The PDE problem
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#the-variational-formulation">
-   The variational formulation
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#implementation">
-   Implementation
-  </a>
- </li>
-</ul>
-
-        </nav>
-        
     </div>
 </div>
     <div id="main-content" class="row">
@@ -396,58 +372,17 @@
         
               <div>
                 
-  <div class="section" id="combining-dirichlet-and-neumann-conditions">
-<h1>Combining Dirichlet and Neumann conditions<a class="headerlink" href="#combining-dirichlet-and-neumann-conditions" title="Permalink to this headline">¶</a></h1>
-<p>Let’s return to the Poisson problem from the <a class="reference internal" href="../chapter1/fundamentals.html"><span class="doc std std-doc">Fundamentals chapter</span></a> and see how to extend the mathematics and the implementation to handle Dirichlet condition in combination with a Neumann condition.
-The domain is still the unit square, but now we set the Dirichlet condition <span class="math notranslate nohighlight">\(u=u_D\)</span> at the left and right sides, while the Neumann condition</p>
+  <div class="section" id="setting-multiple-dirichlet-condition">
+<h1>Setting multiple Dirichlet condition<a class="headerlink" href="#setting-multiple-dirichlet-condition" title="Permalink to this headline">¶</a></h1>
+<p>In the previous section, we used a single function to <span class="math notranslate nohighlight">\(u_d\)</span> to setting Dirichlet conditions on two parts of the boundary. However, it is often more practical to use multiple functins, one for each subdomain of the boundary. We consider a similar example to <a class="reference internal" href="neumann_dirichlet_code.html"><span class="doc std std-doc">the previous example</span></a> and redefine it consist of two Dirichlet boundary conditions</p>
 <div class="math notranslate nohighlight">
-\[-\frac{\partial u}{\partial n}=g\]</div>
-<p>is applied to the  remaining sides <span class="math notranslate nohighlight">\(y=0\)</span> and <span class="math notranslate nohighlight">\(y=1\)</span>.</p>
-<div class="section" id="the-pde-problem">
-<h2>The PDE problem<a class="headerlink" href="#the-pde-problem" title="Permalink to this headline">¶</a></h2>
-<p>Let <span class="math notranslate nohighlight">\(\Lambda_D\)</span> and <span class="math notranslate nohighlight">\(\Lambda_N\)</span> denote parts of the boundary <span class="math notranslate nohighlight">\(\partial \Omega\)</span> where the Dirichlet and Neumann conditions apply, respectively.
-The complete boundary-value problem can be written as</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}-\nabla^2 u &amp;=f &amp;&amp; \text{in } \Omega,\\
-u&amp;=u_D &amp;&amp;\text{on } \Lambda_D.\\
--\frac{\partial u}{\partial n}&amp;=g &amp;&amp; \text{on }\Lambda_N\end{split}\]</div>
-<p>Again, we choose <span class="math notranslate nohighlight">\(u=1+x^2+2y^2\)</span> as the exact solution and adjust <span class="math notranslate nohighlight">\(f, g,\)</span> and <span class="math notranslate nohighlight">\(u_D\)</span> accordingly</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}f(x,y)&amp;=-6,\\
-g(x,y)&amp;=\begin{cases}
-0, &amp; y=0,\\
--4, &amp; y=1,
-\end{cases}\\
-u_D(x,y)&amp;=1+x^2+2y^2.\end{split}\]</div>
-<p>For the ease of programming, we define <span class="math notranslate nohighlight">\(g\)</span> as a function over the whole domain <span class="math notranslate nohighlight">\(\Omega\)</span> such that <span class="math notranslate nohighlight">\(g\)</span> takes on the correct values at <span class="math notranslate nohighlight">\(y=0\)</span> and <span class="math notranslate nohighlight">\(y=1\)</span>. One possible extension is</p>
-<div class="math notranslate nohighlight">
-\[ g(x,y)=-4y.\]</div>
-</div>
-<div class="section" id="the-variational-formulation">
-<h2>The variational formulation<a class="headerlink" href="#the-variational-formulation" title="Permalink to this headline">¶</a></h2>
-<p>The first task is to derive the variational formulatin. This time we cannot omit the boundary term arising from integration by parts, because <span class="math notranslate nohighlight">\(v\)</span> is only zero on <span class="math notranslate nohighlight">\(\Lambda_D\)</span>. We have</p>
-<div class="math notranslate nohighlight">
-\[    -\int_\Omega (\nabla^2u)v\mathrm{d} x =
-    \int_\Omega \nabla u \cdot \nabla v \mathrm{d} x
-     - \int_{\partial\Omega}\frac{\partial u}{\partial n}v\mathrm{d}s,\]</div>
-<p>and since <span class="math notranslate nohighlight">\(v=0\)</span> on <span class="math notranslate nohighlight">\(\Lambda_D\)</span>,</p>
-<div class="math notranslate nohighlight">
-\[  - \int_{\partial\Omega}\frac{\partial u}{\partial n}v\mathrm{d}s=
-    - \int_{\Lambda_N}\frac{\partial u}{\partial n}v\mathrm{d}s
-    =\int_{\Lambda_N} gv\mathrm{d}s,\]</div>
-<p>by applying the boundary condition on <span class="math notranslate nohighlight">\(\Lambda_N\)</span>.
-The resulting weak from reads</p>
-<div class="math notranslate nohighlight">
-\[    \int_\Omega \nabla u \cdot \nabla v \mathrm{d} x = \int_\Omega fv\mathrm{d} x - \int_{\Lambda_N}gv\mathrm{d}s.\]</div>
-<p>Expressing this equation in the standard notation <span class="math notranslate nohighlight">\(a(u,v)=L(v)\)</span> is straight-forward with</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}    a(u,v) &amp;= \int_{\Omega} \nabla u \cdot \nabla v \mathrm{d} x,\\
-    L(v) &amp;= \int_{\Omega} fv \mathrm{d} x - \int_{\Lambda_N} gv~\mathrm{d} s.\end{split}\]</div>
-</div>
-<div class="section" id="implementation">
-<h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h2>
-<p>Author: Jørgen S. Dokken
-As in the previous example, we define our mesh,function space and bilinear form <span class="math notranslate nohighlight">\(a(u,v)\)</span>.</p>
+\[\begin{split}-\nabla^2 u &amp;=f &amp;&amp; \text{in } \Omega,
+u&amp;=u_L &amp;&amp; \text{on } \Lambda_D^L\\
+u&amp;=u_R &amp;&amp; \text{on } \Lambda_D^R\\
+-\frac{\partial u}{\partial n} &amp;= g &amp;&amp; \text{on } \Lambda_N.\end{split}\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(\Lambda_D^L\)</span> is the left boundary <span class="math notranslate nohighlight">\(x=0\)</span>,  while <span class="math notranslate nohighlight">\(\Lambda_D^R\)</span> is the right boundary <span class="math notranslate nohighlight">\(x=1\)</span>.
+We note that <span class="math notranslate nohighlight">\(u_L(y)=1+2y^2\)</span>, <span class="math notranslate nohighlight">\(u_R(y)=2+2y^2\)</span> and <span class="math notranslate nohighlight">\(g(y)=-4y\)</span> using the same analytical example as in the previous section.</p>
+<p>We start by defining the mesh, function space and variational formulation as in the previous exercise</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx</span>
@@ -457,52 +392,56 @@ As in the previous example, we define our mesh,function space and bilinear form 
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
 <span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
 
+<span class="k">def</span> <span class="nf">u_exact</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span>
+
 <span class="n">mesh</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">UnitSquareMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 <span class="n">V</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="n">u</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">a</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Now we get to the Neumann and Dirichlet boundary condition. As previously, we use a Python-function to define the boundary where we should have a Dirichlet condition. Then, with this function, we locate degrees of freedom that fullfils this condition.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">u_exact</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="k">return</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span>
-
-<span class="k">def</span> <span class="nf">boundary_D</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">))</span>
-<span class="n">dofs_D</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_geometrical</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">boundary_D</span><span class="p">)</span>
-<span class="n">u_bc</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-<span class="n">u_bc</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">u_exact</span><span class="p">)</span>
-<span class="n">u_bc</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT_VALUES</span><span class="p">,</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
-<span class="n">bc</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_bc</span><span class="p">,</span> <span class="n">dofs_D</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>The next step is to define the Neumann condition. We first define <span class="math notranslate nohighlight">\(g\)</span> uses <code class="docutils literal notranslate"><span class="pre">UFL</span></code>s <code class="docutils literal notranslate"><span class="pre">SpatialCoordinate</span></code>-function, and then in turn create a boundary integration measure <code class="docutils literal notranslate"><span class="pre">ds</span></code>. As the test function <span class="math notranslate nohighlight">\(v\)</span> is zero on the boundary integrals over the Dirichlet boundary dissapears, and wee can integrate <code class="docutils literal notranslate"><span class="pre">g*v*ds</span></code> over the entire boundary.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-<span class="n">g</span> <span class="o">=</span> <span class="o">-</span><span class="mi">4</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="o">-</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">f</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">)</span>
 <span class="n">L</span> <span class="o">=</span> <span class="n">f</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span> <span class="o">-</span> <span class="n">g</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">ds</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>We can now assemble and solve the linear system of equations</p>
+<p>We next mark the two boundaries separately, starting with the left boundary</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="p">[</span><span class="n">bc</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dofs_L</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_geometrical</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">u_L</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">u_L</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">u_L</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT_VALUES</span><span class="p">,</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
+<span class="n">bc_L</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_L</span><span class="p">,</span> <span class="n">dofs_L</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note that we have used <code class="docutils literal notranslate"><span class="pre">lambda</span></code>-functions to compactly define the functions returning the subdomain evaluation and function evaluation. We can use a similar procedure for the right boundary condition, and gather both boundary conditions in a vector <code class="docutils literal notranslate"><span class="pre">bcs</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dofs_R</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_geometrical</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">u_R</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">u_R</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">u_R</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT_VALUES</span><span class="p">,</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
+<span class="n">bc_R</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_R</span><span class="p">,</span> <span class="n">dofs_R</span><span class="p">)</span>
+<span class="n">bcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">bc_R</span><span class="p">,</span> <span class="n">bc_L</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We are now ready to again solve the problem, and check the <span class="math notranslate nohighlight">\(L^2\)</span> and max error at the mesh vertices.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcs</span><span class="p">)</span>
 <span class="n">A</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
 <span class="n">b</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
-<span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">apply_lifting</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="p">[[</span><span class="n">bc</span><span class="p">]])</span>
+<span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">apply_lifting</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="p">[</span><span class="n">bcs</span><span class="p">])</span>
 <span class="n">b</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">ADD_VALUES</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">)</span>
-<span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">set_bc</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="p">[</span><span class="n">bc</span><span class="p">])</span>
+<span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">set_bc</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">bcs</span><span class="p">)</span>
 
 <span class="n">uh</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">solver</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">KSP</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">)</span>
@@ -536,8 +475,7 @@ As in the previous example, we define our mesh,function space and bilinear form 
 Error_max = 5.77e-15
 </pre></div>
 </div>
-<img alt="../_images/neumann_dirichlet_code_7_1.png" src="../_images/neumann_dirichlet_code_7_1.png" />
-</div>
+<img alt="../_images/multiple_dirichlet_7_1.png" src="../_images/multiple_dirichlet_7_1.png" />
 </div>
 </div>
 </div>
@@ -570,8 +508,8 @@ Error_max = 5.77e-15
     
     <div class='prev-next-bottom'>
         
-    <a class='left-prev' id="prev-link" href="../chapter2/advdiffreac.html" title="previous page">TO BE IMPLEMETED: A system of advection-diffusion-reaction equations</a>
-    <a class='right-next' id="next-link" href="multiple_dirichlet.html" title="next page">Setting multiple Dirichlet condition</a>
+    <a class='left-prev' id="prev-link" href="neumann_dirichlet_code.html" title="previous page">Combining Dirichlet and Neumann conditions</a>
+    <a class='right-next' id="next-link" href="subdomains.html" title="next page">Defining subdomains for different materials</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">
