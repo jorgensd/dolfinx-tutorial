@@ -41,3 +41,4 @@
         - file: chapter3/neumann_dirichlet_code
         - file: chapter3/multiple_dirichlet
         - file: chapter3/subdomains
+        - file: chapter3/robin_neumann_dirichlet
