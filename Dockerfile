@@ -23,7 +23,7 @@ RUN pip3 install git+https://github.com/FEniCS/fiat.git --upgrade && \
 	pip3 install git+https://github.com/FEniCS/ffcx.git --upgrade && \
 	rm -rf /usr/local/include/dolfin /usr/local/include/dolfin.h
 
-# Install progress-bar 
+# Install progress-bar
 RUN pip3 install tqdm
 
 # Build C++ layer
@@ -37,6 +37,12 @@ RUN	 git clone https://github.com/FEniCS/dolfinx.git && \
 # Build Python layer
 RUN cd dolfinx/python && \
 	pip3 -v install .
+
+# Install meshio
+RUN export HDF5_MPI="ON" && \
+    export CC=mpicc && \
+    export HDF5_DIR="/usr/lib/x86_64-linux-gnu/hdf5/mpich/" && \
+    pip3 install --no-cache-dir --no-binary=h5py h5py meshio
 
 
 WORKDIR ${HOME}
