@@ -58,6 +58,7 @@
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Setting multiple Dirichlet, Neumann, and Robin conditions" href="robin_neumann_dirichlet.html" />
     <link rel="prev" title="Setting multiple Dirichlet condition" href="multiple_dirichlet.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -266,6 +267,16 @@
    Defining subdomains for different materials
   </a>
  </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="robin_neumann_dirichlet.html">
+   Setting multiple Dirichlet, Neumann, and Robin conditions
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="robin_neumann_dirichlet.html#the-pde-problem">
+   The PDE problem
+  </a>
+ </li>
 </ul>
 
 </nav> <!-- To handle the deprecated key -->
@@ -417,8 +428,7 @@ Such a function can be created over any mesh in the following way</p>
 <span class="math notranslate nohighlight">\(\Omega_0=[0,1]\times [0,1/2]\)</span> and <span class="math notranslate nohighlight">\(\Omega_1=[0,1]\times[1/2, 1]\)</span>. We start by creating two python functions, where each returns <code class="docutils literal notranslate"><span class="pre">True</span></code> if the input coordinate is inside its domain.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="k">def</span> <span class="nf">Omega_0</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">Omega_0</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">0.5</span>
 
 <span class="k">def</span> <span class="nf">Omega_1</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -427,6 +437,7 @@ Such a function can be created over any mesh in the following way</p>
 </div>
 </div>
 </div>
+<p>Note that both fucntion uses a <span class="math notranslate nohighlight">\(\leq\)</span> or <span class="math notranslate nohighlight">\(\geq\)</span>, as FEniCS-X will evaluate each cell at all of the vertices, and thus for has to return <code class="docutils literal notranslate"><span class="pre">True</span></code> for all vertices align with the interface to be marked properly.</p>
 <p>We will solve a variable-coefficient extension of the Poisson equation</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}-\nabla \cdot [\kappa (x,y)\nabla u(x, y)]&amp;= 1 &amp;&amp; \text{in } \Omega,\\
@@ -448,7 +459,8 @@ u&amp;=u_D=1 &amp;&amp; \text{on } \partial\Omega_D=[0,y], y\in[0,1]\\
 \end{cases}\)</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">kappa</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="k">with</span> <span class="n">kappa</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
     <span class="n">loc</span><span class="o">.</span><span class="n">setValues</span><span class="p">(</span><span class="n">cells_0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cells_0</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
     <span class="n">loc</span><span class="o">.</span><span class="n">setValues</span><span class="p">(</span><span class="n">cells_1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cells_1</span><span class="p">),</span> <span class="mf">0.1</span><span class="p">))</span>
 </pre></div>
@@ -501,7 +513,7 @@ u&amp;=u_D=1 &amp;&amp; \text{on } \partial\Omega_D=[0,y], y\in[0,1]\\
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7efe7b42f190&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7f0285461160&gt;
 </pre></div>
 </div>
 <img alt="../_images/subdomains_11_1.png" src="../_images/subdomains_11_1.png" />
@@ -520,8 +532,8 @@ u&amp;=u_D=1 &amp;&amp; \text{on } \partial\Omega_D=[0,y], y\in[0,1]\\
     <span class="c1"># that are in each domain</span>
     <span class="n">top_coords</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">&gt;</span><span class="mf">0.5</span> 
     <span class="n">bottom_coords</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">&lt;</span><span class="mf">0.5</span>
-    <span class="n">values</span><span class="p">[</span><span class="n">top_coords</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">top_coords</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">values</span><span class="p">[</span><span class="n">bottom_coords</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">bottom_coords</span><span class="p">),</span> <span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">values</span><span class="p">[</span><span class="n">top_coords</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">top_coords</span><span class="p">),</span> <span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">values</span><span class="p">[</span><span class="n">bottom_coords</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">bottom_coords</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">values</span>
 <span class="n">kappa2</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
 <span class="n">kappa2</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">eval_kappa</span><span class="p">)</span>
@@ -540,7 +552,7 @@ u&amp;=u_D=1 &amp;&amp; \text{on } \partial\Omega_D=[0,y], y\in[0,1]\\
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.8099999999999997
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.0
 </pre></div>
 </div>
 </div>
@@ -626,6 +638,7 @@ u&amp;=u_D=1 &amp;&amp; \text{on } \partial\Omega_D=[0,y], y\in[0,1]\\
 </div>
 </div>
 </div>
+<p>We have now written the mesh and the cell markers to one file, and the facet markers in a separate file. We can now read this data in dolfin-X using <code class="docutils literal notranslate"><span class="pre">XDMFFile.read_mesh</span></code> and <code class="docutils literal notranslate"><span class="pre">XDMFFile.read_meshtags</span></code>. The <code class="docutils literal notranslate"><span class="pre">dolfinx.MeshTags</span></code> stores the index of the entity, along with the value of the marker in two one dimensional arrays.</p>
 <p>Note that we have generated and written the mesh on only one processor. However, the <code class="docutils literal notranslate"><span class="pre">xdmf</span></code>-format supports parallel IO, and we can thus read the mesh in parallel.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -700,7 +713,7 @@ u&amp;=u_D=1 &amp;&amp; \text{on } \partial\Omega_D=[0,y], y\in[0,1]\\
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7efe747c4490&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7f027e7f3c40&gt;
 </pre></div>
 </div>
 <img alt="../_images/subdomains_28_1.png" src="../_images/subdomains_28_1.png" />
@@ -738,6 +751,7 @@ u&amp;=u_D=1 &amp;&amp; \text{on } \partial\Omega_D=[0,y], y\in[0,1]\\
     <div class='prev-next-bottom'>
         
     <a class='left-prev' id="prev-link" href="multiple_dirichlet.html" title="previous page">Setting multiple Dirichlet condition</a>
+    <a class='right-next' id="next-link" href="robin_neumann_dirichlet.html" title="next page">Setting multiple Dirichlet, Neumann, and Robin conditions</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">

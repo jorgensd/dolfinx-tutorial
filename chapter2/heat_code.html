@@ -267,6 +267,16 @@
    Defining subdomains for different materials
   </a>
  </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter3/robin_neumann_dirichlet.html">
+   Setting multiple Dirichlet, Neumann, and Robin conditions
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter3/robin_neumann_dirichlet.html#the-pde-problem">
+   The PDE problem
+  </a>
+ </li>
 </ul>
 
 </nav> <!-- To handle the deprecated key -->
@@ -421,8 +431,8 @@
 <p>Author: Jørgen S. Dokken</p>
 <p>Just as for the Poisson problem from the previous chapter, we construct a test problem which makes it easy to determine if the calculations are correct.</p>
 <p>Since we know that our first-order time-stepping scheme is exact for linear functions, we create a problem which has linear variation in time. We combine this with a quadratic variation in space. Therefore, we choose the analytical solution to be</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2d278450-8f77-4751-8174-1a3bdac9ceb2">
-<span class="eqno">(18)<a class="headerlink" href="#equation-2d278450-8f77-4751-8174-1a3bdac9ceb2" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-eef6698d-9059-4b68-989c-051083c55f12">
+<span class="eqno">(18)<a class="headerlink" href="#equation-eef6698d-9059-4b68-989c-051083c55f12" title="Permalink to this equation">¶</a></span>\[\begin{align}
 u = 1 + x^2+\alpha y^2 + \beta t
 \end{align}\]</div>
 <p>which yields a function whose computed values at the degrees of freedom will be exact, regardless of the mesh size and <span class="math notranslate nohighlight">\(\Delta t\)</span> as long as the mesh is uniformly partitioned.

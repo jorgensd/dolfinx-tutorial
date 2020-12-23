@@ -5,46 +5,46 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The FEniCS-X tutorial &#8212; FEniCS-X tutorial</title>
+    <title>Setting multiple Dirichlet, Neumann, and Robin conditions &#8212; FEniCS-X tutorial</title>
     
-  <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+  <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
     
   <link rel="stylesheet"
-    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
   <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
     
       
   <link rel="stylesheet"
-    href="_static/vendor/open-sans_all/1.44.1/index.css">
+    href="../_static/vendor/open-sans_all/1.44.1/index.css">
   <link rel="stylesheet"
-    href="_static/vendor/lato_latin-ext/1.44.1/index.css">
+    href="../_static/vendor/lato_latin-ext/1.44.1/index.css">
 
     
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
-    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     
-  <link rel="preload" as="script" href="_static/js/index.3da636dd464baa7582d2.js">
+  <link rel="preload" as="script" href="../_static/js/index.3da636dd464baa7582d2.js">
 
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/togglebutton.js"></script>
-    <script src="_static/clipboard.min.js"></script>
-    <script src="_static/copybutton.js"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/togglebutton.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
     <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
+    <script src="../_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -55,10 +55,10 @@
         const thebe_selector_input = "pre"
         const thebe_selector_output = ".output"
     </script>
-    <script async="async" src="_static/sphinx-thebe.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="An overview of the FEniCS Project" href="fem.html" />
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Defining subdomains for different materials" href="subdomains.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -75,22 +75,22 @@
 <div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
     
         <div class="navbar-brand-box">
-<a class="navbar-brand text-wrap" href="#">
+<a class="navbar-brand text-wrap" href="../index.html">
   
-  <img src="_static/logo.jpeg" class="logo" alt="logo">
+  <img src="../_static/logo.jpeg" class="logo" alt="logo">
   
   
   <h1 class="site-logo" id="site-title">FEniCS-X tutorial</h1>
   
 </a>
-</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
   <i class="icon fas fa-search"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
 </form>
 <nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
     <ul class="nav sidenav_l1">
- <li class="toctree-l1 current active">
-  <a class="reference internal" href="#">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../index.html">
    The FEniCS-X tutorial
   </a>
  </li>
@@ -102,17 +102,17 @@
 </p>
 <ul class="nav sidenav_l1">
  <li class="toctree-l1">
-  <a class="reference internal" href="fem.html">
+  <a class="reference internal" href="../fem.html">
    An overview of the FEniCS Project
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="fem.html#what-you-will-learn">
+  <a class="reference internal" href="../fem.html#what-you-will-learn">
    What you will learn
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="fem.html#how-to-use-this-tutorial">
+  <a class="reference internal" href="../fem.html#how-to-use-this-tutorial">
    How to use this tutorial
   </a>
  </li>
@@ -124,12 +124,12 @@
 </p>
 <ul class="nav sidenav_l1">
  <li class="toctree-l1 collapsible-parent">
-  <a class="reference internal" href="chapter1/fundamentals.html">
+  <a class="reference internal" href="../chapter1/fundamentals.html">
    Solving the Poisson equation
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="chapter1/fundamentals_code.html">
+    <a class="reference internal" href="../chapter1/fundamentals_code.html">
      Implementation
     </a>
    </li>
@@ -138,17 +138,17 @@
   </i>
  </li>
  <li class="toctree-l1 collapsible-parent">
-  <a class="reference internal" href="chapter1/membrane.html">
+  <a class="reference internal" href="../chapter1/membrane.html">
    Deflection of a membrane
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="chapter1/membrane_code.html">
+    <a class="reference internal" href="../chapter1/membrane_code.html">
      Implementation
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="chapter1/membrane_paraview.html">
+    <a class="reference internal" href="../chapter1/membrane_paraview.html">
      Using Paraview for visualization
     </a>
    </li>
@@ -164,22 +164,22 @@
 </p>
 <ul class="nav sidenav_l1">
  <li class="toctree-l1">
-  <a class="reference internal" href="chapter2/intro.html">
+  <a class="reference internal" href="../chapter2/intro.html">
    A Gallery of finite element solvers
   </a>
  </li>
  <li class="toctree-l1 collapsible-parent">
-  <a class="reference internal" href="chapter2/heat_equation.html">
+  <a class="reference internal" href="../chapter2/heat_equation.html">
    The heat equation
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="chapter2/heat_code.html">
+    <a class="reference internal" href="../chapter2/heat_code.html">
      Test problem 1: A known analytical solution
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="chapter2/diffusion_code.html">
+    <a class="reference internal" href="../chapter2/diffusion_code.html">
      Test Problem 2: Diffusion of a Gaussian function
     </a>
    </li>
@@ -188,12 +188,12 @@
   </i>
  </li>
  <li class="toctree-l1 collapsible-parent">
-  <a class="reference internal" href="chapter2/nonlinpoisson.html">
+  <a class="reference internal" href="../chapter2/nonlinpoisson.html">
    A nonlinear Poisson equation
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="chapter2/nonlinpoisson_code.html">
+    <a class="reference internal" href="../chapter2/nonlinpoisson_code.html">
      Implementation
     </a>
    </li>
@@ -202,17 +202,17 @@
   </i>
  </li>
  <li class="toctree-l1 collapsible-parent">
-  <a class="reference internal" href="chapter2/linearelasticity.html">
+  <a class="reference internal" href="../chapter2/linearelasticity.html">
    The equations of linear elasticity
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="chapter2/linearelasticity_code.html">
+    <a class="reference internal" href="../chapter2/linearelasticity_code.html">
      Implementation
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="chapter2/elasticity_scaling.html">
+    <a class="reference internal" href="../chapter2/elasticity_scaling.html">
      Scaling
     </a>
    </li>
@@ -221,17 +221,17 @@
   </i>
  </li>
  <li class="toctree-l1 collapsible-parent">
-  <a class="reference internal" href="chapter2/navierstokes.html">
+  <a class="reference internal" href="../chapter2/navierstokes.html">
    The Navier-Stokes equations
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="chapter2/ns_code1.html">
+    <a class="reference internal" href="../chapter2/ns_code1.html">
      Test problem 1: Channel flow (Poiseuille flow)
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="chapter2/ns_code2.html">
+    <a class="reference internal" href="../chapter2/ns_code2.html">
      Test problem 2: Flow past a cylinder (DFG 2D-3 benchmark)
     </a>
    </li>
@@ -240,7 +240,7 @@
   </i>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="chapter2/advdiffreac.html">
+  <a class="reference internal" href="../chapter2/advdiffreac.html">
    TO BE IMPLEMETED: A system of advection-diffusion-reaction equations
   </a>
  </li>
@@ -250,29 +250,29 @@
   Subdomains and boundary conditions
  </span>
 </p>
-<ul class="nav sidenav_l1">
+<ul class="current nav sidenav_l1">
  <li class="toctree-l1">
-  <a class="reference internal" href="chapter3/neumann_dirichlet_code.html">
+  <a class="reference internal" href="neumann_dirichlet_code.html">
    Combining Dirichlet and Neumann conditions
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="chapter3/multiple_dirichlet.html">
+  <a class="reference internal" href="multiple_dirichlet.html">
    Setting multiple Dirichlet condition
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="chapter3/subdomains.html">
+  <a class="reference internal" href="subdomains.html">
    Defining subdomains for different materials
   </a>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="chapter3/robin_neumann_dirichlet.html">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
    Setting multiple Dirichlet, Neumann, and Robin conditions
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="chapter3/robin_neumann_dirichlet.html#the-pde-problem">
+  <a class="reference internal" href="#the-pde-problem">
    The PDE problem
   </a>
  </li>
@@ -316,9 +316,9 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="_sources/index.md"><button type="button"
+        <a class="dropdown-buttons" href="../_sources/chapter3/robin_neumann_dirichlet.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
-                data-placement="left">.md</button></a>
+                data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
             onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
@@ -336,7 +336,7 @@
                 data-toggle="tooltip" data-placement="left" title="Source repository"><i
                     class="fab fa-github"></i>repository</button></a>
         <a class="issues-button"
-            href="https://github.com/jorgensd/dolfinx-tutorial/issues/new?title=Issue%20on%20page%20%2Findex.html&body=Your%20issue%20content%20here."><button
+            href="https://github.com/jorgensd/dolfinx-tutorial/issues/new?title=Issue%20on%20page%20%2Fchapter3/robin_neumann_dirichlet.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
         
@@ -362,12 +362,15 @@
         </div>
         <nav id="bd-toc-nav">
             <ul class="nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#interactive-tutorials">
-   Interactive tutorials
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   Setting multiple Dirichlet, Neumann, and Robin conditions
   </a>
-  <ul class="nav section-nav flex-column">
-  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-pde-problem">
+   The PDE problem
+  </a>
  </li>
 </ul>
 
@@ -380,24 +383,44 @@
         
               <div>
                 
-  <div class="section" id="the-fenics-x-tutorial">
-<h1>The FEniCS-X tutorial<a class="headerlink" href="#the-fenics-x-tutorial" title="Permalink to this headline">¶</a></h1>
-<p>Author: Jørgen S. Dokken</p>
-<p>This web-page gives a concise overview of the functionality of <a class="reference external" href="https://github.com/FEniCS/dolfinx/">Dolfin-X</a>, including a gentle introduction to the finite element method. This web-page is an adaptation of the <a class="reference external" href="https://www.springer.com/gp/book/9783319524610">FEniCS tutorial</a>.</p>
-<p>Dolfin-X can be used as either a C++ or Python software, but this tutorial will focus on Python programming, as it is the simplest and most effective approach for beginners. After having gone through this tutorial, the reader should familiarize themselves with the Dolfin-X <a class="reference external" href="https://fenicsproject.org/docs/dolfinx/dev/python/">documentation</a>, which includes the API and numerous demos.</p>
-<p>Comments and corrections to this web-page should be submitted to the issue tracker by going to the relevant page in the tutorial, then click the <img alt="git" src="_images/git.png" />-symbol in the top right corner and “open issue”.</p>
-<div class="section" id="interactive-tutorials">
-<h2>Interactive tutorials<a class="headerlink" href="#interactive-tutorials" title="Permalink to this headline">¶</a></h2>
-<p>As this book has been published as a Jupyter Book, we provide interactive notebooks that can be run in the browser. To start such a notebook click the <img alt="Binder symbol" src="_images/binder.png" />-symbol in the top right corner of the relevant tutorial.</p>
-<div class="toctree-wrapper compound">
+  <div class="section" id="setting-multiple-dirichlet-neumann-and-robin-conditions">
+<h1>Setting multiple Dirichlet, Neumann, and Robin conditions<a class="headerlink" href="#setting-multiple-dirichlet-neumann-and-robin-conditions" title="Permalink to this headline">¶</a></h1>
+<p>Author: Jørgen S. Dokken
+We consider the variable coefficient example from <a class="reference internal" href="subdomains.html"><span class="doc std std-doc">the previous section</span></a>. In this section we will cover how to apply a mixture of Dirichlet, Neumann and Robin type boundary conditions for this type of problem.</p>
+<p>We divide our boundary into three distinct sections:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\Gamma_D\)</span> for Dirichlet conditions:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[    u=u_D^0 \text{ on } \Gamma_D^0, \quad u=u_D^1 \text{ on } \Gamma_D^1, \dots\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Gamma_D=\Gamma_D^0\cup \Gamma_D^1 \cup \dots\)</span>.</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\Gamma_N\)</span> for Neumann conditions:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[    -\kappa \frac{\partial u}{\partial n}=g_0 \text{ on } \Gamma_N^0, 
+    -\kappa \frac{\partial u}{\partial n}=g_1 \text{ on } \Gamma_N^1\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Gamma_N=\Gamma_N^0\cup \Gamma_N^1 \cup \dots\)</span>.</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\Gamma_R\)</span> for Robin conditions:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[-\kappa \frac{\partial u}{\partial n}=r(u-s)\]</div>
+<p>where <span class="math notranslate nohighlight">\(r\)</span> and <span class="math notranslate nohighlight">\(s\)</span> are specified functions. The Robin condition is most often used to model heat transfer to the surroundings and arise naturally from Newton’s cooling law.
+In that case, <span class="math notranslate nohighlight">\(r\)</span> is a heat transfer coefficient, and <span class="math notranslate nohighlight">\(s\)</span> is the temperature of the surroundings.
+Both can be space and time-dependent. The Robin conditions apply at some parts $\Gamma_R^0,\Gamma_R^1,\dots, of the boundary:</p>
+<div class="math notranslate nohighlight">
+\[    -\kappa \frac{\partial u}{\partial n}=r_0(u-s_0) \text{ on } \Gamma_R^0
+    -\kappa \frac{\partial u}{\partial n}=r_1(u-s_1) \text{ on } \Gamma_R^1\]</div>
 </div>
-<div class="toctree-wrapper compound">
-</div>
-<div class="toctree-wrapper compound">
-</div>
-<div class="toctree-wrapper compound">
-</div>
-</div>
+<div class="section" id="the-pde-problem">
+<h1>The PDE problem<a class="headerlink" href="#the-pde-problem" title="Permalink to this headline">¶</a></h1>
+<p>We can summarize the PDE problem as</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}-\nabla (\kappa \nabla u) &amp;&amp;= f &amp; \text{in } \Omega,
+u&amp;=u_D^i &amp;&amp; \text{on } \Gamma_D^i, \qquad i=0,1,\dots\\
+-\kappa \frac{\partial u}{\partial n}&amp;=g_0 &amp;&amp;\text{on } \Gamma_N^0,\qquad i=0,1,\dots
+-\kappa \frac{\partial u}{\partial n}&amp;=r_i(u-s_i) \text{ on } \Gamma_R^i, \qquad i=0,1\end{split}\]</div>
 </div>
 
     <script type="text/x-thebe-config">
@@ -413,7 +436,7 @@
         },
         kernelOptions: {
             kernelName: "python3",
-            path: "./."
+            path: "./chapter3"
         },
         predefinedOutput: true
     }
@@ -428,7 +451,7 @@
     
     <div class='prev-next-bottom'>
         
-    <a class='right-next' id="next-link" href="fem.html" title="next page">An overview of the FEniCS Project</a>
+    <a class='left-prev' id="prev-link" href="subdomains.html" title="previous page">Defining subdomains for different materials</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">
@@ -457,7 +480,7 @@
     </div>
 
     
-  <script src="_static/js/index.3da636dd464baa7582d2.js"></script>
+  <script src="../_static/js/index.3da636dd464baa7582d2.js"></script>
 
 
     
