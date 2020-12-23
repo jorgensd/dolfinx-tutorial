@@ -22,8 +22,8 @@
         - file: chapter2/intro
         - file: chapter2/heat_equation
           sections:
-                - file: chapter2/heat_code
                 - file: chapter2/diffusion_code
+                - file: chapter2/heat_code
         - file: chapter2/nonlinpoisson
           sections:
                 - file: chapter2/nonlinpoisson_code
