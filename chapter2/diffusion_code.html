@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Test Problem 2: Diffusion of a Gaussian function &#8212; FEniCS-X tutorial</title>
+    <title>Diffusion of a Gaussian function &#8212; FEniCS-X tutorial</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -58,8 +58,8 @@
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="A nonlinear Poisson equation" href="nonlinpoisson.html" />
-    <link rel="prev" title="Test problem 1: A known analytical solution" href="heat_code.html" />
+    <link rel="next" title="A known analytical solution" href="heat_code.html" />
+    <link rel="prev" title="The heat equation" href="heat_equation.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -174,14 +174,14 @@
    The heat equation
   </a>
   <ul class="current collapse-ul">
-   <li class="toctree-l2">
-    <a class="reference internal" href="heat_code.html">
-     Test problem 1: A known analytical solution
-    </a>
-   </li>
    <li class="toctree-l2 current active">
     <a class="current reference internal" href="#">
-     Test Problem 2: Diffusion of a Gaussian function
+     Diffusion of a Gaussian function
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="heat_code.html">
+     A known analytical solution
     </a>
    </li>
   </ul>
@@ -391,8 +391,23 @@
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#solve-time-dependent-problem">
-   Solve time-dependent problem
+  <a class="reference internal nav-link" href="#preparing-linear-algebra-structures-for-time-dependent-problems">
+   Preparing linear algebra structures for time dependent problems
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#using-petsc4py-to-create-a-linear-solver">
+   Using petsc4py to create a linear solver
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#visualization-of-time-dependent-problem-using-matplotlib">
+   Visualization of time dependent problem using matplotlib
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#updating-the-solution-and-right-hand-side-per-time-step">
+   Updating the solution and right hand side per time step
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -411,12 +426,12 @@
         
               <div>
                 
-  <div class="section" id="test-problem-2-diffusion-of-a-gaussian-function">
-<h1>Test Problem 2: Diffusion of a Gaussian function<a class="headerlink" href="#test-problem-2-diffusion-of-a-gaussian-function" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="diffusion-of-a-gaussian-function">
+<h1>Diffusion of a Gaussian function<a class="headerlink" href="#diffusion-of-a-gaussian-function" title="Permalink to this headline">¶</a></h1>
 <p>Author: Jørgen S. Dokken</p>
 <p>Let us now solve a more interesting problem, namely the diffusion of a Gaussian hill. We take the initial value to be</p>
-<div class="amsmath math notranslate nohighlight" id="equation-82d9a3f3-eddf-4fa0-bcd8-ca5cfb7c8366">
-<span class="eqno">(19)<a class="headerlink" href="#equation-82d9a3f3-eddf-4fa0-bcd8-ca5cfb7c8366" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-e8083ece-eaa8-40f7-8113-93cf059a78f7">
+<span class="eqno">(18)<a class="headerlink" href="#equation-e8083ece-eaa8-40f7-8113-93cf059a78f7" title="Permalink to this equation">¶</a></span>\[\begin{align}
     u_0(x,y)&amp;= e^{-ax^2-ay^2}
 \end{align}\]</div>
 <p>for <span class="math notranslate nohighlight">\(a=5\)</span> on the domain <span class="math notranslate nohighlight">\([-2,-2]\times[2,2]\)</span>. For this problem we will use homogeneous Dirichlet boundary conditions (<span class="math notranslate nohighlight">\(u_D=0\)</span>).</p>
@@ -493,22 +508,35 @@ this could be read (<code class="docutils literal notranslate"><span class="pre"
 <p>As in the previous example, we prepare objects for time dependent problems, such that we do not have to recreate data-structures.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define variational problem</span>
-<span class="kn">import</span> <span class="nn">ufl</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ufl</span>
 <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">f</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-<span class="n">F</span> <span class="o">=</span> <span class="n">u</span><span class="o">*</span><span class="n">v</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">dx</span> <span class="o">+</span> <span class="n">dt</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">dx</span> <span class="o">-</span> <span class="p">(</span><span class="n">u_n</span> <span class="o">+</span> <span class="n">dt</span><span class="o">*</span><span class="n">f</span><span class="p">)</span><span class="o">*</span><span class="n">v</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">lhs</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
-<span class="n">L</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">rhs</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
-<span class="c1"># Compute matrix and vector for linear algebra problem</span>
-<span class="kn">import</span> <span class="nn">dolfinx.fem</span>
-<span class="n">A</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="p">[</span><span class="n">bc</span><span class="p">])</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">u</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span> <span class="o">+</span> <span class="n">dt</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span> 
+<span class="n">L</span> <span class="o">=</span> <span class="p">(</span><span class="n">u_n</span> <span class="o">+</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">f</span><span class="p">)</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="preparing-linear-algebra-structures-for-time-dependent-problems">
+<h2>Preparing linear algebra structures for time dependent problems<a class="headerlink" href="#preparing-linear-algebra-structures-for-time-dependent-problems" title="Permalink to this headline">¶</a></h2>
+<p>We observe that the left hand side of the system, the matrix <span class="math notranslate nohighlight">\(A\)</span> does not change from one time step to another, thus we only need to assemble it once. However, the right hand side, which is dependent on the previous time step <code class="docutils literal notranslate"><span class="pre">u_n</span></code>, we have to assemble it every time step. Therefore, we only create a vector <code class="docutils literal notranslate"><span class="pre">b</span></code> based on <code class="docutils literal notranslate"><span class="pre">L</span></code>, which we will reuse at every time step.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="p">[</span><span class="n">bc</span><span class="p">])</span>
 <span class="n">A</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
-<span class="n">b</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-<span class="c1"># Create solver</span>
-<span class="n">solver</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">KSP</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">mpi_comm</span><span class="p">())</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">create_vector</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="using-petsc4py-to-create-a-linear-solver">
+<h2>Using petsc4py to create a linear solver<a class="headerlink" href="#using-petsc4py-to-create-a-linear-solver" title="Permalink to this headline">¶</a></h2>
+<p>As we have already assembled <code class="docutils literal notranslate"><span class="pre">a</span></code> into the matrix <code class="docutils literal notranslate"><span class="pre">A</span></code>, we can no longer use the <code class="docutils literal notranslate"><span class="pre">dolfinx.fem.LinearProblem</span></code> class to solve the problem. Therefore, we create a linear algebra solver using PETSc, and assign the matrix <code class="docutils literal notranslate"><span class="pre">A</span></code> to the solver, and choose the solution strategy.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">solver</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">KSP</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">mpi_comm</span><span class="p">())</span>
 <span class="n">solver</span><span class="o">.</span><span class="n">setOperators</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 <span class="n">solver</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">KSP</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">PREONLY</span><span class="p">)</span>
 <span class="n">solver</span><span class="o">.</span><span class="n">getPC</span><span class="p">()</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">PC</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">LU</span><span class="p">)</span>
@@ -517,26 +545,46 @@ this could be read (<code class="docutils literal notranslate"><span class="pre"
 </div>
 </div>
 </div>
-<div class="section" id="solve-time-dependent-problem">
-<h2>Solve time-dependent problem<a class="headerlink" href="#solve-time-dependent-problem" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="visualization-of-time-dependent-problem-using-matplotlib">
+<h2>Visualization of time dependent problem using matplotlib<a class="headerlink" href="#visualization-of-time-dependent-problem-using-matplotlib" title="Permalink to this headline">¶</a></h2>
+<p>We use the dolfin-X plotting functionality, which is based on matplotlib to plot the solution at every <span class="math notranslate nohighlight">\(15\)</span>th time step. We would also like to visualize a colorbar reflecting the minimal and maximum value of <span class="math notranslate nohighlight">\(u\)</span> at each time step. We use the following convenience function <code class="docutils literal notranslate"><span class="pre">plot_with_colorbar</span></code> for this:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.plotting</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="c1"># Define minimum and maximum values for plotting</span>
-<span class="n">min_color</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">u_n</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="n">max_color</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">u_n</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="n">c</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">u_n</span><span class="p">,</span><span class="n">vmin</span><span class="o">=</span><span class="n">min_color</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">max_color</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Time: </span><span class="si">{0:.2e}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="c1"># Prepare for animation plot</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_steps</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">plot_with_colorbar</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>    
+    <span class="n">min_color</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">u_n</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+    <span class="n">max_color</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">u_n</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">u_n</span><span class="p">,</span><span class="n">vmin</span><span class="o">=</span><span class="n">min_color</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">max_color</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Time: </span><span class="si">{0:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># Plot initial condition</span>
+<span class="n">plot_with_colorbar</span><span class="p">(</span><span class="n">u_n</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/diffusion_code_13_0.png" src="../_images/diffusion_code_13_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="updating-the-solution-and-right-hand-side-per-time-step">
+<h2>Updating the solution and right hand side per time step<a class="headerlink" href="#updating-the-solution-and-right-hand-side-per-time-step" title="Permalink to this headline">¶</a></h2>
+<p>To be able to solve the variation problem at each time step, we have to assemble the right hand side and apply the boundary condition before calling
+<code class="docutils literal notranslate"><span class="pre">solver.solve(b,</span> <span class="pre">uh.vector)</span></code>. We start by resetting the values in <code class="docutils literal notranslate"><span class="pre">b</span></code> as we are reusing the vector at every time step.
+The next step is to assemble the vector, calling <code class="docutils literal notranslate"><span class="pre">dolfinx.fem.assemble(b,</span> <span class="pre">L)</span></code> which means that we are assemble the linear for <code class="docutils literal notranslate"><span class="pre">L(v)</span></code> into the vector <code class="docutils literal notranslate"><span class="pre">b</span></code>. Note that we do not supply the boundary conditions for assembly, as opposed to the left hand side.
+This is because we want to use lifting to apply the boundary condition, which preserves symmetry of the matrix <span class="math notranslate nohighlight">\(A\)</span> if the bilinear form <span class="math notranslate nohighlight">\(a(u,v)=a(v,u)\)</span> without Dirichlet boundary conditions.
+When we have applied the boundary condition, we can solve the linear system abd update values that are potentially shared between processors.
+Finally, before moving to the next time step, we update the solution at the previous time step to the solution at this time step.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_steps</span><span class="p">):</span>
     <span class="n">t</span> <span class="o">+=</span> <span class="n">dt</span>
 
     <span class="c1"># Update the right hand side reusing the initial vector</span>
-    <span class="k">with</span> <span class="n">b</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
-        <span class="n">loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">b</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc_b</span><span class="p">:</span>
+        <span class="n">loc_b</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">L</span><span class="p">)</span>
     
     <span class="c1"># Apply Dirichlet boundary condition to the vector</span>
@@ -556,23 +604,18 @@ this could be read (<code class="docutils literal notranslate"><span class="pre"
     <span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">uh</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
     <span class="c1"># Plot every 20th time step</span>
     <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">15</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">min_color</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">uh</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-        <span class="n">max_color</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">uh</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">uh</span><span class="p">,</span><span class="n">vmin</span><span class="o">=</span><span class="n">min_color</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">max_color</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Time: </span><span class="si">{0:.2e}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">plot_with_colorbar</span><span class="p">(</span><span class="n">uh</span><span class="p">)</span>
 
 <span class="n">xdmf</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/diffusion_code_9_0.png" src="../_images/diffusion_code_9_0.png" />
-<img alt="../_images/diffusion_code_9_1.png" src="../_images/diffusion_code_9_1.png" />
-<img alt="../_images/diffusion_code_9_2.png" src="../_images/diffusion_code_9_2.png" />
-<img alt="../_images/diffusion_code_9_3.png" src="../_images/diffusion_code_9_3.png" />
-<img alt="../_images/diffusion_code_9_4.png" src="../_images/diffusion_code_9_4.png" />
-<img alt="../_images/diffusion_code_9_5.png" src="../_images/diffusion_code_9_5.png" />
+<img alt="../_images/diffusion_code_15_0.png" src="../_images/diffusion_code_15_0.png" />
+<img alt="../_images/diffusion_code_15_1.png" src="../_images/diffusion_code_15_1.png" />
+<img alt="../_images/diffusion_code_15_2.png" src="../_images/diffusion_code_15_2.png" />
+<img alt="../_images/diffusion_code_15_3.png" src="../_images/diffusion_code_15_3.png" />
+<img alt="../_images/diffusion_code_15_4.png" src="../_images/diffusion_code_15_4.png" />
 </div>
 </div>
 </div>
@@ -612,8 +655,8 @@ this could be read (<code class="docutils literal notranslate"><span class="pre"
     
     <div class='prev-next-bottom'>
         
-    <a class='left-prev' id="prev-link" href="heat_code.html" title="previous page">Test problem 1: A known analytical solution</a>
-    <a class='right-next' id="next-link" href="nonlinpoisson.html" title="next page">A nonlinear Poisson equation</a>
+    <a class='left-prev' id="prev-link" href="heat_equation.html" title="previous page">The heat equation</a>
+    <a class='right-next' id="next-link" href="heat_code.html" title="next page">A known analytical solution</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">

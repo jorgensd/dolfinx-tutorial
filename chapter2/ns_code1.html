@@ -175,13 +175,13 @@
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="heat_code.html">
-     Test problem 1: A known analytical solution
+    <a class="reference internal" href="diffusion_code.html">
+     Diffusion of a Gaussian function
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="diffusion_code.html">
-     Test Problem 2: Diffusion of a Gaussian function
+    <a class="reference internal" href="heat_code.html">
+     A known analytical solution
     </a>
    </li>
   </ul>
@@ -565,7 +565,7 @@ As the variational problem contains a mix of known and unknown quantities, we wi
 </div>
 </div>
 </div>
-<p>Note that we have used the <code class="docutils literal notranslate"><span class="pre">ufl</span></code>-functions <code class="docutils literal notranslate"><span class="pre">lhs</span></code> and <code class="docutils literal notranslate"><span class="pre">rhs</span></code> to sort out the bilinear form <span class="math notranslate nohighlight">\(a(u,v)\)</span> and linear form <span class="math notranslate nohighlight">\(L(v)\)</span>. This is particulary convenient in longer and more complicated variational forms. With our particular discretization <span class="math notranslate nohighlight">\(a(u,v)\)</span> <code class="docutils literal notranslate"><span class="pre">a1</span></code> is not time dependent, and only has to be assembled once, while the right hand side is dependent on the solution from the previous time step (<code class="docutils literal notranslate"><span class="pre">u_n</span></code>). Thus, we do as for the <a class="reference internal" href="heat_code.html"><span class="doc std std-doc">Test problem 1: A known analytical solution</span></a>, and create the matrix outside the time-loop.</p>
+<p>Note that we have used the <code class="docutils literal notranslate"><span class="pre">ufl</span></code>-functions <code class="docutils literal notranslate"><span class="pre">lhs</span></code> and <code class="docutils literal notranslate"><span class="pre">rhs</span></code> to sort out the bilinear form <span class="math notranslate nohighlight">\(a(u,v)\)</span> and linear form <span class="math notranslate nohighlight">\(L(v)\)</span>. This is particulary convenient in longer and more complicated variational forms. With our particular discretization <span class="math notranslate nohighlight">\(a(u,v)\)</span> <code class="docutils literal notranslate"><span class="pre">a1</span></code> is not time dependent, and only has to be assembled once, while the right hand side is dependent on the solution from the previous time step (<code class="docutils literal notranslate"><span class="pre">u_n</span></code>). Thus, we do as for the <a class="reference internal" href="heat_code.html"><span class="doc std std-doc">A known analytical solution</span></a>, and create the matrix outside the time-loop.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A1</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcu</span><span class="p">)</span>
@@ -663,8 +663,8 @@ As the variational problem contains a mix of known and unknown quantities, we wi
     <span class="n">t</span> <span class="o">+=</span> <span class="n">dt</span>
 
     <span class="c1"># Step 1: Tentative veolcity step</span>
-    <span class="k">with</span> <span class="n">b1</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
-        <span class="n">loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">b1</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc_1</span><span class="p">:</span>
+        <span class="n">loc_1</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span> <span class="n">L1</span><span class="p">)</span>
     <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">apply_lifting</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span> <span class="p">[</span><span class="n">a1</span><span class="p">],</span> <span class="p">[</span><span class="n">bcu</span><span class="p">])</span>
     <span class="n">b1</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">ADD_VALUES</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">)</span>
@@ -673,8 +673,8 @@ As the variational problem contains a mix of known and unknown quantities, we wi
     <span class="n">u_</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
     
     <span class="c1"># Step 2: Pressure corrrection step</span>
-    <span class="k">with</span> <span class="n">b2</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
-        <span class="n">loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">b2</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc_2</span><span class="p">:</span>
+        <span class="n">loc_2</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span> <span class="n">L2</span><span class="p">)</span>
     <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">apply_lifting</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span> <span class="p">[</span><span class="n">a2</span><span class="p">],</span> <span class="p">[</span><span class="n">bcp</span><span class="p">])</span>
     <span class="n">b2</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">ADD_VALUES</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">)</span>
@@ -683,8 +683,8 @@ As the variational problem contains a mix of known and unknown quantities, we wi
     <span class="n">p_</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
 
     <span class="c1"># Step 3: Velocity correction step</span>
-    <span class="k">with</span> <span class="n">b3</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
-        <span class="n">loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">b3</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc_3</span><span class="p">:</span>
+        <span class="n">loc_3</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">b3</span><span class="p">,</span> <span class="n">L3</span><span class="p">)</span>
     <span class="n">b3</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">ADD_VALUES</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">)</span>
     <span class="n">solver3</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">b3</span><span class="p">,</span> <span class="n">u_</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>

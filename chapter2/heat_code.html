@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Test problem 1: A known analytical solution &#8212; FEniCS-X tutorial</title>
+    <title>A known analytical solution &#8212; FEniCS-X tutorial</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -58,8 +58,8 @@
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Test Problem 2: Diffusion of a Gaussian function" href="diffusion_code.html" />
-    <link rel="prev" title="The heat equation" href="heat_equation.html" />
+    <link rel="next" title="A nonlinear Poisson equation" href="nonlinpoisson.html" />
+    <link rel="prev" title="Diffusion of a Gaussian function" href="diffusion_code.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -174,14 +174,14 @@
    The heat equation
   </a>
   <ul class="current collapse-ul">
-   <li class="toctree-l2 current active">
-    <a class="current reference internal" href="#">
-     Test problem 1: A known analytical solution
-    </a>
-   </li>
    <li class="toctree-l2">
     <a class="reference internal" href="diffusion_code.html">
-     Test Problem 2: Diffusion of a Gaussian function
+     Diffusion of a Gaussian function
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     A known analytical solution
     </a>
    </li>
   </ul>
@@ -426,13 +426,13 @@
         
               <div>
                 
-  <div class="section" id="test-problem-1-a-known-analytical-solution">
-<h1>Test problem 1: A known analytical solution<a class="headerlink" href="#test-problem-1-a-known-analytical-solution" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="a-known-analytical-solution">
+<h1>A known analytical solution<a class="headerlink" href="#a-known-analytical-solution" title="Permalink to this headline">¶</a></h1>
 <p>Author: Jørgen S. Dokken</p>
-<p>Just as for the Poisson problem from the previous chapter, we construct a test problem which makes it easy to determine if the calculations are correct.</p>
+<p>Just as for the <a class="reference internal" href="../chapter1/fundamentals_code.html"><span class="doc std std-doc">Poisson problem</span></a>, we construct a test problem which makes it easy to determine if the calculations are correct.</p>
 <p>Since we know that our first-order time-stepping scheme is exact for linear functions, we create a problem which has linear variation in time. We combine this with a quadratic variation in space. Therefore, we choose the analytical solution to be</p>
-<div class="amsmath math notranslate nohighlight" id="equation-eef6698d-9059-4b68-989c-051083c55f12">
-<span class="eqno">(18)<a class="headerlink" href="#equation-eef6698d-9059-4b68-989c-051083c55f12" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-36727a70-2b2d-4543-b9c2-5b3acd1f29ef">
+<span class="eqno">(19)<a class="headerlink" href="#equation-36727a70-2b2d-4543-b9c2-5b3acd1f29ef" title="Permalink to this equation">¶</a></span>\[\begin{align}
 u = 1 + x^2+\alpha y^2 + \beta t
 \end{align}\]</div>
 <p>which yields a function whose computed values at the degrees of freedom will be exact, regardless of the mesh size and <span class="math notranslate nohighlight">\(\Delta t\)</span> as long as the mesh is uniformly partitioned.
@@ -539,8 +539,7 @@ By inserting this into our original PDE, we find that the right hand side <span 
 <p>To ensure that we are solving the variational problem efficiently, we will create several structures which can reuse data, such as matrix sparisty patterns. Especially note as the bilinear form <code class="docutils literal notranslate"><span class="pre">a</span></code> is independent of time, we only need to assemble the matrix once.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.fem</span>
-<span class="n">A</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="p">[</span><span class="n">bc</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="p">[</span><span class="n">bc</span><span class="p">])</span>
 <span class="n">A</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
 <span class="n">b</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">create_vector</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
 <span class="n">uh</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
@@ -580,8 +579,8 @@ Then we solve the problem using PETSc and update <code class="docutils literal n
     <span class="n">u_D</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
     
     <span class="c1"># Update the right hand side reusing the initial vector</span>
-    <span class="k">with</span> <span class="n">b</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
-        <span class="n">loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">b</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc_b</span><span class="p">:</span>
+        <span class="n">loc_b</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">L</span><span class="p">)</span>
     
     <span class="c1"># Apply Dirichlet boundary condition to the vector</span>
@@ -660,8 +659,8 @@ Error_max = 2.66e-15
     
     <div class='prev-next-bottom'>
         
-    <a class='left-prev' id="prev-link" href="heat_equation.html" title="previous page">The heat equation</a>
-    <a class='right-next' id="next-link" href="diffusion_code.html" title="next page">Test Problem 2: Diffusion of a Gaussian function</a>
+    <a class='left-prev' id="prev-link" href="diffusion_code.html" title="previous page">Diffusion of a Gaussian function</a>
+    <a class='right-next' id="next-link" href="nonlinpoisson.html" title="next page">A nonlinear Poisson equation</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">

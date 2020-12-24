@@ -175,13 +175,13 @@
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="../chapter2/heat_code.html">
-     Test problem 1: A known analytical solution
+    <a class="reference internal" href="../chapter2/diffusion_code.html">
+     Diffusion of a Gaussian function
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="../chapter2/diffusion_code.html">
-     Test Problem 2: Diffusion of a Gaussian function
+    <a class="reference internal" href="../chapter2/heat_code.html">
+     A known analytical solution
     </a>
    </li>
   </ul>
@@ -448,13 +448,13 @@ Therefore, we need to make specific choices of <span class="math notranslate noh
 <!-- Particularly, piecewise linear continuous Galerkin finite elements are able to exactly reproduce a quadratic polynomial on 
 a uniformly partitioned mesh. -->
 <p>We use this fact to construct a quadratic function in <span class="math notranslate nohighlight">\(2D\)</span>. In particular we choose</p>
-<div class="amsmath math notranslate nohighlight" id="equation-679e8c5d-6721-4be6-9e16-0fad35c8f29e">
-<span class="eqno">(1)<a class="headerlink" href="#equation-679e8c5d-6721-4be6-9e16-0fad35c8f29e" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-4beca847-3612-46d1-ae92-2c5722164657">
+<span class="eqno">(1)<a class="headerlink" href="#equation-4beca847-3612-46d1-ae92-2c5722164657" title="Permalink to this equation">¶</a></span>\[\begin{align}
  u_e(x,y)=1+x^2+2y^2
  \end{align}\]</div>
 <p>Inserting <span class="math notranslate nohighlight">\(u_e\)</span> in the original boundary problem, we find that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e09471d9-ff74-4d58-9980-f8c09a0a41c0">
-<span class="eqno">(2)<a class="headerlink" href="#equation-e09471d9-ff74-4d58-9980-f8c09a0a41c0" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-c7874ab7-6d49-4ea8-ace1-fc269eb84b07">
+<span class="eqno">(2)<a class="headerlink" href="#equation-c7874ab7-6d49-4ea8-ace1-fc269eb84b07" title="Permalink to this equation">¶</a></span>\[\begin{align}
     f(x,y)= -6,\qquad u_d(x,y)=u_e(x,y)=1+x^2+2y^2,
 \end{align}\]</div>
 <p>regardless of the shape of the domain as long as we prescribe
@@ -472,8 +472,6 @@ be produces to machine precision by the program.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx</span>
-<span class="kn">import</span> <span class="nn">dolfinx.cpp</span>
-<span class="kn">import</span> <span class="nn">dolfinx.mesh</span>
 <span class="kn">import</span> <span class="nn">dolfinx.plotting</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span>
 <span class="kn">import</span> <span class="nn">numpy</span>
@@ -601,12 +599,12 @@ This is the key strength of FEniCS-X: the formulas in the variational formulatio
 </div>
 <div class="section" id="forming-and-solving-the-linear-system">
 <h2>Forming and solving the linear system<a class="headerlink" href="#forming-and-solving-the-linear-system" title="Permalink to this headline">¶</a></h2>
-<p>Having defined the finite element variational problem and boundary condition, we can use dolfin-X to compute the solution:</p>
+<p>Having defined the finite element variational problem and boundary condition, we can create our <code class="docutils literal notranslate"><span class="pre">dolfinx.fem.LinearProblem</span></code>, as class for solving
+the variational problem: Find <span class="math notranslate nohighlight">\(u_h\in V\)</span> such that <span class="math notranslate nohighlight">\(a(u_h, v)==L(v) \quad \forall v \in \hat{V}\)</span>. We will use PETSc as our linear algebra backend, using a direct solver (LU-factorization).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">uh</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-<span class="n">dolfinx</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="n">L</span><span class="p">,</span> <span class="n">uh</span><span class="p">,</span> <span class="n">bc</span><span class="p">,</span> <span class="n">petsc_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ksp_type&quot;</span><span class="p">:</span> <span class="s2">&quot;preonly&quot;</span><span class="p">,</span> <span class="s2">&quot;pc_type&quot;</span><span class="p">:</span> <span class="s2">&quot;lu&quot;</span><span class="p">})</span>
-<span class="n">uh</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="p">[</span><span class="n">bc</span><span class="p">],</span> <span class="n">petsc_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ksp_type&quot;</span><span class="p">:</span> <span class="s2">&quot;preonly&quot;</span><span class="p">,</span> <span class="s2">&quot;pc_type&quot;</span><span class="p">:</span> <span class="s2">&quot;lu&quot;</span><span class="p">})</span>
+<span class="n">uh</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>

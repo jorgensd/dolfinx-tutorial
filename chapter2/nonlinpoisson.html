@@ -59,7 +59,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Implementation" href="nonlinpoisson_code.html" />
-    <link rel="prev" title="Test Problem 2: Diffusion of a Gaussian function" href="diffusion_code.html" />
+    <link rel="prev" title="A known analytical solution" href="heat_code.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -175,13 +175,13 @@
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="heat_code.html">
-     Test problem 1: A known analytical solution
+    <a class="reference internal" href="diffusion_code.html">
+     Diffusion of a Gaussian function
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="diffusion_code.html">
-     Test Problem 2: Diffusion of a Gaussian function
+    <a class="reference internal" href="heat_code.html">
+     A known analytical solution
     </a>
    </li>
   </ul>
@@ -391,8 +391,8 @@
 <div class="section" id="the-pde-problem">
 <h2>The PDE problem<a class="headerlink" href="#the-pde-problem" title="Permalink to this headline">¶</a></h2>
 <p>As a model for the solution of non-linear PDEs, we take the following non-linear Poisson equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-41bf5742-c3f5-4104-af6a-5570fb32eaec">
-<span class="eqno">(20)<a class="headerlink" href="#equation-41bf5742-c3f5-4104-af6a-5570fb32eaec" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-ae008c1e-1e18-4892-a229-8bd1807df293">
+<span class="eqno">(20)<a class="headerlink" href="#equation-ae008c1e-1e18-4892-a229-8bd1807df293" title="Permalink to this equation">¶</a></span>\[\begin{align}
     - \nabla \cdot (q(u) \nabla u)&amp;=f &amp;&amp; \text{in } \Omega,\\
     u&amp;=u_D &amp;&amp; \text{on } \partial \Omega,
 \end{align}\]</div>
@@ -402,25 +402,25 @@
 <h2>Variational  formulation<a class="headerlink" href="#variational-formulation" title="Permalink to this headline">¶</a></h2>
 <p>As usual, we multiply the PDE by a test function <span class="math notranslate nohighlight">\(v\in \hat{V}\)</span>, integrate over the domain, and integrate second-order derivatives by parts. The boundary integrals arising from integration by parts vanishes wherever we employ Dirichlet conditions. The resulting variational formulation of our model problem becomes:</p>
 <p>Find <span class="math notranslate nohighlight">\(u\in V\)</span> such that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-15a6f85b-7c1b-42a6-a247-61c28bf5deae">
-<span class="eqno">(21)<a class="headerlink" href="#equation-15a6f85b-7c1b-42a6-a247-61c28bf5deae" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-6ad725c4-dc98-4fff-b404-0f9480e1a1f2">
+<span class="eqno">(21)<a class="headerlink" href="#equation-6ad725c4-dc98-4fff-b404-0f9480e1a1f2" title="Permalink to this equation">¶</a></span>\[\begin{align}
     F(u; v)&amp;=0 &amp;&amp; \forall v \in \hat{V},
 \end{align}\]</div>
 <p>where</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3ba19f52-ee24-4407-b3e9-9368f109c941">
-<span class="eqno">(22)<a class="headerlink" href="#equation-3ba19f52-ee24-4407-b3e9-9368f109c941" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-0bd16f10-e4fb-456a-9ad1-fd4a7e7152c3">
+<span class="eqno">(22)<a class="headerlink" href="#equation-0bd16f10-e4fb-456a-9ad1-fd4a7e7152c3" title="Permalink to this equation">¶</a></span>\[\begin{align}
     F(u; v)&amp;=\int_{\Omega}(q(u)\nabla u \cdot \nabla v - fv)\mathrm{d}x,
 \end{align}\]</div>
 <p>and</p>
-<div class="amsmath math notranslate nohighlight" id="equation-61afb78c-de35-42bf-84c8-3ae3a81574da">
-<span class="eqno">(23)<a class="headerlink" href="#equation-61afb78c-de35-42bf-84c8-3ae3a81574da" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-0cea516d-84d0-4d14-a2b2-f58beb3ce14a">
+<span class="eqno">(23)<a class="headerlink" href="#equation-0cea516d-84d0-4d14-a2b2-f58beb3ce14a" title="Permalink to this equation">¶</a></span>\[\begin{align}
     V&amp;=\left\{v\in H^1(\Omega)\vert v=u_D \text{on } \partial \Omega \right\}\\
     \hat{V}&amp;=\left\{v\in H^1(\Omega)\vert v=0 \text{on } \partial \Omega \right\}
 \end{align}\]</div>
 <p>The discrete problem arises as usual by restricting <span class="math notranslate nohighlight">\(V\)</span> and <span class="math notranslate nohighlight">\(\hat{V}\)</span> to a pair of discrete spaces. The discrete non-linear problem can therefore be written as:</p>
 <p>Find <span class="math notranslate nohighlight">\(u_h \in V_h\)</span> such that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-46aa645e-0818-42fa-aba2-627531cd277a">
-<span class="eqno">(24)<a class="headerlink" href="#equation-46aa645e-0818-42fa-aba2-627531cd277a" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-87be5545-7f89-49e0-8baa-bc77f4ff9b79">
+<span class="eqno">(24)<a class="headerlink" href="#equation-87be5545-7f89-49e0-8baa-bc77f4ff9b79" title="Permalink to this equation">¶</a></span>\[\begin{align}
 F(u_h, v) &amp;=0 \quad \forall v \in \hat{V}_h,
 \end{align}\]</div>
 <p>with <span class="math notranslate nohighlight">\(u_h=\sum_{j=1}^N U_j\phi_j\)</span>. Since <span class="math notranslate nohighlight">\(F\)</span> is non-linear in <span class="math notranslate nohighlight">\(u\)</span>, the variational statement gives rise to a system of non-linear algebraic equation in  the unknowns <span class="math notranslate nohighlight">\(U_1,\dots,U_N\)</span>.</p>
@@ -457,7 +457,7 @@ F(u_h, v) &amp;=0 \quad \forall v \in \hat{V}_h,
     
     <div class='prev-next-bottom'>
         
-    <a class='left-prev' id="prev-link" href="diffusion_code.html" title="previous page">Test Problem 2: Diffusion of a Gaussian function</a>
+    <a class='left-prev' id="prev-link" href="heat_code.html" title="previous page">A known analytical solution</a>
     <a class='right-next' id="next-link" href="nonlinpoisson_code.html" title="next page">Implementation</a>
 
     </div>
