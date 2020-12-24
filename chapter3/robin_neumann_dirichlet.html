@@ -271,11 +271,6 @@
    Setting multiple Dirichlet, Neumann, and Robin conditions
   </a>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="#the-pde-problem">
-   The PDE problem
-  </a>
- </li>
 </ul>
 
 </nav> <!-- To handle the deprecated key -->
@@ -352,6 +347,23 @@
 
         <!-- Launch buttons -->
 
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/jorgensd/dolfinx-tutorial/dokken/jupyterbook?urlpath=tree/./chapter3/robin_neumann_dirichlet.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="../_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
     </div>
 
     <!-- Table of contents -->
@@ -362,14 +374,19 @@
         </div>
         <nav id="bd-toc-nav">
             <ul class="nav section-nav flex-column">
- <li class="toc-h1 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#">
-   Setting multiple Dirichlet, Neumann, and Robin conditions
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-pde-problem-and-variational-formulation">
+   The PDE problem and variational formulation
   </a>
  </li>
- <li class="toc-h1 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#the-pde-problem">
-   The PDE problem
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#implementation">
+   Implementation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#verification">
+   Verification
   </a>
  </li>
 </ul>
@@ -385,8 +402,8 @@
                 
   <div class="section" id="setting-multiple-dirichlet-neumann-and-robin-conditions">
 <h1>Setting multiple Dirichlet, Neumann, and Robin conditions<a class="headerlink" href="#setting-multiple-dirichlet-neumann-and-robin-conditions" title="Permalink to this headline">¶</a></h1>
-<p>Author: Jørgen S. Dokken
-We consider the variable coefficient example from <a class="reference internal" href="subdomains.html"><span class="doc std std-doc">the previous section</span></a>. In this section we will cover how to apply a mixture of Dirichlet, Neumann and Robin type boundary conditions for this type of problem.</p>
+<p>Author: Hans Petter Langtangen and Anders Logg</p>
+<p>We consider the variable coefficient example from <a class="reference internal" href="subdomains.html"><span class="doc std std-doc">the previous section</span></a>. In this section we will cover how to apply a mixture of Dirichlet, Neumann and Robin type boundary conditions for this type of problem.</p>
 <p>We divide our boundary into three distinct sections:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\Gamma_D\)</span> for Dirichlet conditions:</p></li>
@@ -398,8 +415,8 @@ We consider the variable coefficient example from <a class="reference internal" 
 <li><p><span class="math notranslate nohighlight">\(\Gamma_N\)</span> for Neumann conditions:</p></li>
 </ul>
 <div class="math notranslate nohighlight">
-\[    -\kappa \frac{\partial u}{\partial n}=g_0 \text{ on } \Gamma_N^0, 
-    -\kappa \frac{\partial u}{\partial n}=g_1 \text{ on } \Gamma_N^1\]</div>
+\[\begin{split}    -\kappa \frac{\partial u}{\partial n}&amp;=g_0 \text{ on } \Gamma_N^0,\\ 
+    -\kappa \frac{\partial u}{\partial n}&amp;=g_1 \text{ on } \Gamma_N^1\end{split}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\Gamma_N=\Gamma_N^0\cup \Gamma_N^1 \cup \dots\)</span>.</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\Gamma_R\)</span> for Robin conditions:</p></li>
@@ -410,17 +427,222 @@ We consider the variable coefficient example from <a class="reference internal" 
 In that case, <span class="math notranslate nohighlight">\(r\)</span> is a heat transfer coefficient, and <span class="math notranslate nohighlight">\(s\)</span> is the temperature of the surroundings.
 Both can be space and time-dependent. The Robin conditions apply at some parts $\Gamma_R^0,\Gamma_R^1,\dots, of the boundary:</p>
 <div class="math notranslate nohighlight">
-\[    -\kappa \frac{\partial u}{\partial n}=r_0(u-s_0) \text{ on } \Gamma_R^0
-    -\kappa \frac{\partial u}{\partial n}=r_1(u-s_1) \text{ on } \Gamma_R^1\]</div>
-</div>
-<div class="section" id="the-pde-problem">
-<h1>The PDE problem<a class="headerlink" href="#the-pde-problem" title="Permalink to this headline">¶</a></h1>
+\[\begin{split}    -\kappa \frac{\partial u}{\partial n}&amp;=r_0(u-s_0) \text{ on } \Gamma_R^0\\
+    -\kappa \frac{\partial u}{\partial n}&amp;=r_1(u-s_1) \text{ on } \Gamma_R^1\end{split}\]</div>
+<div class="section" id="the-pde-problem-and-variational-formulation">
+<h2>The PDE problem and variational formulation<a class="headerlink" href="#the-pde-problem-and-variational-formulation" title="Permalink to this headline">¶</a></h2>
 <p>We can summarize the PDE problem as</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}-\nabla (\kappa \nabla u) &amp;&amp;= f &amp; \text{in } \Omega,
+\[\begin{split}-\nabla (\kappa \nabla u) &amp;= f &amp;&amp; \text{in } \Omega,\\
 u&amp;=u_D^i &amp;&amp; \text{on } \Gamma_D^i, \qquad i=0,1,\dots\\
--\kappa \frac{\partial u}{\partial n}&amp;=g_0 &amp;&amp;\text{on } \Gamma_N^0,\qquad i=0,1,\dots
--\kappa \frac{\partial u}{\partial n}&amp;=r_i(u-s_i) \text{ on } \Gamma_R^i, \qquad i=0,1\end{split}\]</div>
+-\kappa \frac{\partial u}{\partial n}&amp;=g_0 &amp;&amp;\text{on } \Gamma_N^0,\qquad i=0,1,\dots\\
+-\kappa \frac{\partial u}{\partial n}&amp;=r_i(u-s_i)&amp;&amp; \text{ on } \Gamma_R^i, \qquad i=0,1\end{split}\]</div>
+<p>As usual, we multiply by a test function and integrate by parts.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="n">math</span><span class="p">}</span>
+<span class="o">-</span>\<span class="n">int_</span><span class="p">{</span>\<span class="n">Omega</span><span class="p">}</span>\<span class="n">nabla</span> \<span class="n">cdot</span> <span class="p">(</span>\<span class="n">kappa</span> \<span class="n">nabla</span> <span class="n">u</span><span class="p">)</span><span class="n">v</span> <span class="o">~</span>\<span class="n">mathrm</span><span class="p">{</span><span class="n">d</span><span class="p">}</span> <span class="n">x</span> <span class="o">=</span> 
+\<span class="n">int_</span><span class="p">{</span>\<span class="n">Omega</span><span class="p">}</span>\<span class="n">kappa</span> \<span class="n">nabla</span> <span class="n">u</span>\<span class="n">cdot</span> \<span class="n">nabla</span> <span class="n">v</span><span class="o">~</span>\<span class="n">mathrm</span><span class="p">{</span><span class="n">d</span><span class="p">}</span> <span class="n">x</span> <span class="o">-</span> 
+\<span class="n">int_</span><span class="p">{</span>\<span class="n">partial</span>\<span class="n">Omega</span><span class="p">}</span>\<span class="n">kappa</span> \<span class="n">frac</span><span class="p">{</span>\<span class="n">partial</span> <span class="n">u</span><span class="p">}{</span>\<span class="n">partial</span> <span class="n">n</span><span class="p">}</span> <span class="n">v</span> <span class="o">~</span>\<span class="n">mathrm</span><span class="p">{</span><span class="n">d</span><span class="p">}</span> <span class="n">s</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>On the dirichlet part (<span class="math notranslate nohighlight">\(\Gamma_D^i\)</span>), the boundary integral vanishes since <span class="math notranslate nohighlight">\(v=0\)</span>. On the remaining part of the boundary, we split the boundary into contributions from the Neumann parts (<span class="math notranslate nohighlight">\(\Gamma_N^i\)</span>) and Robin parts (<span class="math notranslate nohighlight">\(\Gamma_N^i\)</span>). Inserting the boundary conditions, we obtain</p>
+<div class="math notranslate nohighlight">
+\[-\int_{\Omega}\kappa\frac{\partial u }{\partial n }v~\mathrm{d} s=-\sum_i \int_{\Gamma_N^i} g_i~\mathrm{d} s + \sum_i\int_{\Gamma_R^i}r_i(u-s_i)~\mathrm{d}s.\]</div>
+<p>Thus we have the following variational problem</p>
+<div class="math notranslate nohighlight">
+\[F(u, v)=\int_\Omega \kappa \nabla u \cdot \nabla v~\mathrm{d} x
++ \sum_i\int_{\Gamma_N^i}g_i v~\mathrm{d}s
+\sum_i\int_{\Gamma_R^i}r_i(u-s_i)~\mathrm{d}s - \int_\Omega fv~\mathrm{d} x = 0.\]</div>
+<p>We have been used to writing the variational formulation as <span class="math notranslate nohighlight">\(a(u,v)=L(v)\)</span>, which requires that we identify the integrals dependent on the trial function <span class="math notranslate nohighlight">\(u\)</span> and collect these in <span class="math notranslate nohighlight">\(a(u,v)\)</span>, while the remaining terms form <span class="math notranslate nohighlight">\(L(v)\)</span>. We not that the Robin condition has a contribution to both <span class="math notranslate nohighlight">\(a(u,v)\)</span> and <span class="math notranslate nohighlight">\(L(v)\)</span>.
+We then have</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}a(u,v)&amp;= \int_{\Omega} \kappa \nabla u \cdot \nabla v ~\mathrm{d} x + \sum_i \int_{\Gamma_R^i}r_i u v~\mathrm{d} s,\\
+L(v) &amp;= \int_{\Omega} fv~\mathrm{d} x - \sum_i \int_{\Gamma_N^i}g_i v~\mathrm{d} s + \sum_i \int_{\Gamma_R^i}r_i s_i v ~\mathrm{d}s.\end{split}\]</div>
+</div>
+<div class="section" id="implementation">
+<h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h2>
+<p>Author: Jørgen S. Dokken</p>
+<p>We start by defining the domain <span class="math notranslate nohighlight">\(\Omega\)</span> as the unit square <span class="math notranslate nohighlight">\([0,1]\times[0,1]\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">ufl</span>
+<span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+<span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
+
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">UnitSquareMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>In this section, we will solve the Poisson problem for the manufactured solution <span class="math notranslate nohighlight">\(u_{ex} = 1+x^2+2y^2\)</span>, which yields <span class="math notranslate nohighlight">\(\kappa=1\)</span>, <span class="math notranslate nohighlight">\(f=-6\)</span>. The next step is to define the parameters of the boundary condition, and where we should apply them. In this example, we will apply the following</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}u &amp;= u_D &amp;&amp; \text{for } x=0 and x=1\\
+-\kappa \frac{\partial u}{\partial n} &amp;= r(u-s) &amp;&amp; \text{for } y=0\\
+-\kappa \frac{\partial u}{\partial n} &amp;=g_0 \text{for } y = 1\\\end{split}\]</div>
+<p>To reproduce the analytical solution, we have that</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}    u_D&amp;=u_{ex}=1+x^2+2y^2\\
+    g_0&amp;=\left.\frac{\partial u_{ex}}{y}\right\vert_{y=1}=4y\vert_{y=1}=-4\end{split}\]</div>
+<p>The Robin condition can be specified in many ways. As</p>
+<div class="math notranslate nohighlight">
+\[-\left\frac{\partial u_{ex}}{n}\right\vert_{x=0}=\left\frac{\partial u_{ex}}{\partial x}\right\vert_{x=0}=2x=0,\]</div>
+<p>we can specify <span class="math notranslate nohighlight">\(r\neq 0\)</span> arbitrarly and <span class="math notranslate nohighlight">\(s=u_{ex}\)</span>. We choose <span class="math notranslate nohighlight">\(r=1000\)</span>.
+We can now create all the necessary variable definitions and the traditional part of the variational form.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">u_ex</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<span class="c1"># Define physical parameters and boundary condtions</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">u_ex</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">f</span> <span class="o">=</span> <span class="o">-</span><span class="n">ufl</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u_ex</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">FacetNormal</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="o">-</span><span class="n">ufl</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u_ex</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+<span class="n">kappa</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="c1"># Define function space and standard part of variational form</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">F</span> <span class="o">=</span> <span class="n">kappa</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span> <span class="o">-</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We start by identifying the facets contained in each boundary and create a custom integration measure <code class="docutils literal notranslate"><span class="pre">ds</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">boundaries</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">)),</span>
+              <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)),</span>
+              <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">)),</span>
+              <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">))]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We now loop through all the boundary conditions and create <code class="docutils literal notranslate"><span class="pre">MeshTags</span></code> identifying the facets for each boundary condition.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">facet_indices</span><span class="p">,</span> <span class="n">facet_markers</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+<span class="n">fdim</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">marker</span><span class="p">,</span> <span class="n">locator</span><span class="p">)</span> <span class="ow">in</span> <span class="n">boundaries</span><span class="p">:</span>
+    <span class="n">facets</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">locate_entities</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">locator</span><span class="p">)</span>
+    <span class="n">facet_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">facets</span><span class="p">)</span>
+    <span class="n">facet_markers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">facets</span><span class="p">),</span> <span class="n">marker</span><span class="p">))</span>
+<span class="n">facet_tag</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">MeshTags</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">facet_indices</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">facet_markers</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we can create a custom integration measure <code class="docutils literal notranslate"><span class="pre">ds</span></code>, which can be used to restrict integration. If we integrate over <code class="docutils literal notranslate"><span class="pre">ds(1)</span></code>, we only integrate over facets marked with value 1 in the corresponding <code class="docutils literal notranslate"><span class="pre">facet_tag</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">Measure</span><span class="p">(</span><span class="s2">&quot;ds&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">mesh</span><span class="p">,</span> <span class="n">subdomain_data</span><span class="o">=</span><span class="n">facet_tag</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can now create a general boundary condition class.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">BoundaryCondition</span><span class="p">():</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">marker</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">=</span> <span class="nb">type</span>
+        <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s2">&quot;Dirichlet&quot;</span><span class="p">:</span>
+            <span class="n">u_D</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+            <span class="n">u_D</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+            <span class="n">u_D</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
+            <span class="n">facets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">facet_tag</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">facet_tag</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">marker</span><span class="p">])</span>
+            <span class="n">dofs</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">facets</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bc</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_D</span><span class="p">,</span> <span class="n">dofs</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">type</span> <span class="o">==</span> <span class="s2">&quot;Neumann&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_bc</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">ds</span><span class="p">(</span><span class="n">marker</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">type</span> <span class="o">==</span> <span class="s2">&quot;Robin&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bc</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">u</span><span class="o">-</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">v</span><span class="p">)</span><span class="o">*</span> <span class="n">ds</span><span class="p">(</span><span class="n">marker</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Unknown boundary condition: </span><span class="si">{0:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">))</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bc</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span>
+
+<span class="c1"># Define the Dirichlet condition</span>
+<span class="n">boundary_conditions</span> <span class="o">=</span> <span class="p">[</span><span class="n">BoundaryCondition</span><span class="p">(</span><span class="s2">&quot;Dirichlet&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">u_ex</span><span class="p">),</span>
+                       <span class="n">BoundaryCondition</span><span class="p">(</span><span class="s2">&quot;Dirichlet&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">u_ex</span><span class="p">),</span>
+                       <span class="n">BoundaryCondition</span><span class="p">(</span><span class="s2">&quot;Robin&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="p">)),</span>
+                       <span class="n">BoundaryCondition</span><span class="p">(</span><span class="s2">&quot;Neumann&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">g</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can now loop through the boundary condition and append them to <code class="docutils literal notranslate"><span class="pre">L(v)</span></code> or the list of Dirichlet boundary conditions</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bcs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">condition</span> <span class="ow">in</span> <span class="n">boundary_conditions</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">condition</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;Dirichlet&quot;</span><span class="p">:</span>
+        <span class="n">bcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">condition</span><span class="o">.</span><span class="n">bc</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">F</span> <span class="o">+=</span> <span class="n">condition</span><span class="o">.</span><span class="n">bc</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can now create the bilinear form <span class="math notranslate nohighlight">\(a\)</span> and linear form <span class="math notranslate nohighlight">\(L\)</span> by using the <code class="docutils literal notranslate"><span class="pre">ufl</span></code>-functions <code class="docutils literal notranslate"><span class="pre">lhs</span></code> and <code class="docutils literal notranslate"><span class="pre">rhs</span></code></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">lhs</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
+<span class="n">L</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">rhs</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcs</span><span class="p">,</span>
+<span class="n">petsc_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ksp_type&quot;</span><span class="p">:</span> <span class="s2">&quot;preonly&quot;</span><span class="p">,</span> <span class="s2">&quot;pc_type&quot;</span><span class="p">:</span> <span class="s2">&quot;lu&quot;</span><span class="p">})</span>
+<span class="n">uh</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="kn">import</span> <span class="nn">dolfinx.plotting</span>
+<span class="n">min_color</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">uh</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="n">max_color</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">uh</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">uh</span><span class="p">,</span><span class="n">vmin</span><span class="o">=</span><span class="n">min_color</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">max_color</span><span class="p">)</span>
+<span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/robin_neumann_dirichlet_16_0.png" src="../_images/robin_neumann_dirichlet_16_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="verification">
+<h2>Verification<a class="headerlink" href="#verification" title="Permalink to this headline">¶</a></h2>
+<p>As for the previous probles, we compute the error of our computed solution and compare it to the analytical solution.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute L2 error and error at nodes</span>
+<span class="n">V_ex</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">u_exact</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V_ex</span><span class="p">)</span>
+<span class="n">u_exact</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">u_ex</span><span class="p">)</span>
+<span class="n">u_exact</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
+<span class="n">error_L2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">((</span><span class="n">uh</span> <span class="o">-</span> <span class="n">u_exact</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span><span class="p">),</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;L2-error: </span><span class="si">{0:.2e}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">error_L2</span><span class="p">))</span>
+<span class="c1"># Compute values at mesh vertices</span>
+<span class="n">u_vertex_values</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">compute_point_values</span><span class="p">()</span>
+<span class="n">u_ex_vertex_values</span> <span class="o">=</span> <span class="n">u_exact</span><span class="o">.</span><span class="n">compute_point_values</span><span class="p">()</span>
+<span class="n">max_local</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">u_vertex_values</span> <span class="o">-</span> <span class="n">u_ex_vertex_values</span><span class="p">))</span>
+<span class="n">error_max</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">mpi_comm</span><span class="p">()</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">max_local</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">MAX</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error_max = </span><span class="si">{0:.2e}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">error_max</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>L2-error: 4.86e-03
+Error_max = 2.07e-03
+</pre></div>
+</div>
+</div>
+</div>
+</div>
 </div>
 
     <script type="text/x-thebe-config">
