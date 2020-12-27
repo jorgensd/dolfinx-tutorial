@@ -43,3 +43,6 @@
         - file: chapter3/subdomains
         - file: chapter3/robin_neumann_dirichlet
         - file: chapter3/em
+- part: Improving your FEniCS-X code
+  chapters:
+        - file: chapter4/solvers
