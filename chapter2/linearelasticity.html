@@ -48,7 +48,7 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.18.0/dist/embed-amd.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
     <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
     <script >
         const thebe_selector = ".thebe"
@@ -272,6 +272,23 @@
    Setting multiple Dirichlet, Neumann, and Robin conditions
   </a>
  </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter3/em.html">
+   Electromagnetics example
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Improving your FEniCS-X code
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter4/solvers.html">
+   Solver configuration and error control
+  </a>
+ </li>
 </ul>
 
 </nav> <!-- To handle the deprecated key -->
@@ -392,8 +409,8 @@
     \epsilon(u) &amp;= \frac{1}{2}\left(\nabla u + (\nabla u )^T\right)\end{split}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\sigma\)</span> is the stress tensor, <span class="math notranslate nohighlight">\(f\)</span> is the body force per unit volume, <span class="math notranslate nohighlight">\(\lambda\)</span> and <span class="math notranslate nohighlight">\(\mu\)</span> are Lamé’s elasticity parameters for the material in <span class="math notranslate nohighlight">\(\Omega\)</span>, <span class="math notranslate nohighlight">\(I\)</span> is the identity tensor, <span class="math notranslate nohighlight">\(\mathrm{tr}\)</span> is the trace operator on a tensor, <span class="math notranslate nohighlight">\(\epsilon\)</span> is the symmetric strain-rate tensor (symmetric gradient), and <span class="math notranslate nohighlight">\(u\)</span> is the displacement vector filed. Above we have assumed isotropic elastic conditions.
 By insertion of <span class="math notranslate nohighlight">\(\epsilon(u)\)</span> into <span class="math notranslate nohighlight">\(\sigma\)</span> we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-447681b2-d50e-432e-934e-978fa1f0764c">
-<span class="eqno">(26)<a class="headerlink" href="#equation-447681b2-d50e-432e-934e-978fa1f0764c" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-7e5542f0-11b5-40c0-b4bb-42bb3c9566ea">
+<span class="eqno">(26)<a class="headerlink" href="#equation-7e5542f0-11b5-40c0-b4bb-42bb3c9566ea" title="Permalink to this equation">¶</a></span>\[\begin{align}
     \sigma(u)&amp;=\lambda(\nabla \cdot u)I + \mu(\nabla u + (\nabla u)^T)
 \end{align}\]</div>
 <p>Note that we could have written the PDE above as a single vector PDE for <span class="math notranslate nohighlight">\(u\)</span>, which is the governing PDe for the unknown <span class="math notranslate nohighlight">\(u\)</span> (Navier’s) equation. However, it is convenient to keep the current representation of the PDE for the derivation of the variational formulation.</p>

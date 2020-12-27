@@ -1,0 +1,819 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Electromagnetics example &#8212; FEniCS-X tutorial</title>
+    
+  <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="../_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="../_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.3da636dd464baa7582d2.js">
+
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/togglebutton.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Solver configuration and error control" href="../chapter4/solvers.html" />
+    <link rel="prev" title="Setting multiple Dirichlet, Neumann, and Robin conditions" href="robin_neumann_dirichlet.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="../index.html">
+  
+  <img src="../_static/logo.jpeg" class="logo" alt="logo">
+  
+  
+  <h1 class="site-logo" id="site-title">FEniCS-X tutorial</h1>
+  
+</a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form>
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../index.html">
+   The FEniCS-X tutorial
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Introduction
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../fem.html">
+   An overview of the FEniCS Project
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../fem.html#what-you-will-learn">
+   What you will learn
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../fem.html#how-to-use-this-tutorial">
+   How to use this tutorial
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Fundamentals
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1 collapsible-parent">
+  <a class="reference internal" href="../chapter1/fundamentals.html">
+   Solving the Poisson equation
+  </a>
+  <ul class="collapse-ul">
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter1/fundamentals_code.html">
+     Implementation
+    </a>
+   </li>
+  </ul>
+  <i class="fas fa-chevron-down">
+  </i>
+ </li>
+ <li class="toctree-l1 collapsible-parent">
+  <a class="reference internal" href="../chapter1/membrane.html">
+   Deflection of a membrane
+  </a>
+  <ul class="collapse-ul">
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter1/membrane_code.html">
+     Implementation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter1/membrane_paraview.html">
+     Using Paraview for visualization
+    </a>
+   </li>
+  </ul>
+  <i class="fas fa-chevron-down">
+  </i>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  A Gallery of finite element solvers
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter2/intro.html">
+   A Gallery of finite element solvers
+  </a>
+ </li>
+ <li class="toctree-l1 collapsible-parent">
+  <a class="reference internal" href="../chapter2/heat_equation.html">
+   The heat equation
+  </a>
+  <ul class="collapse-ul">
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter2/diffusion_code.html">
+     Diffusion of a Gaussian function
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter2/heat_code.html">
+     A known analytical solution
+    </a>
+   </li>
+  </ul>
+  <i class="fas fa-chevron-down">
+  </i>
+ </li>
+ <li class="toctree-l1 collapsible-parent">
+  <a class="reference internal" href="../chapter2/nonlinpoisson.html">
+   A nonlinear Poisson equation
+  </a>
+  <ul class="collapse-ul">
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter2/nonlinpoisson_code.html">
+     Implementation
+    </a>
+   </li>
+  </ul>
+  <i class="fas fa-chevron-down">
+  </i>
+ </li>
+ <li class="toctree-l1 collapsible-parent">
+  <a class="reference internal" href="../chapter2/linearelasticity.html">
+   The equations of linear elasticity
+  </a>
+  <ul class="collapse-ul">
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter2/linearelasticity_code.html">
+     Implementation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter2/elasticity_scaling.html">
+     Scaling
+    </a>
+   </li>
+  </ul>
+  <i class="fas fa-chevron-down">
+  </i>
+ </li>
+ <li class="toctree-l1 collapsible-parent">
+  <a class="reference internal" href="../chapter2/navierstokes.html">
+   The Navier-Stokes equations
+  </a>
+  <ul class="collapse-ul">
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter2/ns_code1.html">
+     Test problem 1: Channel flow (Poiseuille flow)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter2/ns_code2.html">
+     Test problem 2: Flow past a cylinder (DFG 2D-3 benchmark)
+    </a>
+   </li>
+  </ul>
+  <i class="fas fa-chevron-down">
+  </i>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter2/advdiffreac.html">
+   TO BE IMPLEMETED: A system of advection-diffusion-reaction equations
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Subdomains and boundary conditions
+ </span>
+</p>
+<ul class="current nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="neumann_dirichlet_code.html">
+   Combining Dirichlet and Neumann conditions
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="multiple_dirichlet.html">
+   Setting multiple Dirichlet condition
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="subdomains.html">
+   Defining subdomains for different materials
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="robin_neumann_dirichlet.html">
+   Setting multiple Dirichlet, Neumann, and Robin conditions
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Electromagnetics example
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Improving your FEniCS-X code
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter4/solvers.html">
+   Solver configuration and error control
+  </a>
+ </li>
+</ul>
+
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../_sources/chapter3/em.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+        <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/jorgensd/dolfinx-tutorial"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/jorgensd/dolfinx-tutorial/issues/new?title=Issue%20on%20page%20%2Fchapter3/em.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/jorgensd/dolfinx-tutorial/dokken/jupyterbook?urlpath=tree/./chapter3/em.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="../_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#meshing-a-complex-structure-with-subdomains">
+   Meshing a complex structure with subdomains
+  </a>
+ </li>
+</ul>
+
+        </nav>
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="electromagnetics-example">
+<h1>Electromagnetics example<a class="headerlink" href="#electromagnetics-example" title="Permalink to this headline">¶</a></h1>
+<p>Authors: Hans Petter Langtangen and Anders Logg</p>
+<p>Figure by: Jørgen S. Dokken</p>
+<p>In this example, we will consider an iron cylinder with copper wires wound around the cylinder, as shown below</p>
+<p><img alt="Cross section of wires" src="../_images/wire.png" /></p>
+<p>Through the copper wires a static current of <span class="math notranslate nohighlight">\(J=1A\)</span> is flowing.
+We would like to compute the magnetic field <span class="math notranslate nohighlight">\(B\)</span> in the iron cylinder, the copper wires, and the surrounding vaccum.</p>
+<p>We start by simplifying the problem to a 2D problem. We can do this by assuming that the cylinder extends far along the z-axis and as a consequence the field is virtually independent of the z-coordinate. Nesxt, we consder Maxwell’s equation to derive a Poisson equation for the magnetic field (or rather its potential)</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\nabla \cdot D &amp;= \rho,\\
+\nabla \cdot B &amp;= 0,\\
+\nabla \times E &amp;= -\frac{\partial B}{\partial t},\\
+\nabla \times H &amp;= \frac{\partial D}{\partial t}+ J.\end{split}\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(D\)</span> is the displacement field, <span class="math notranslate nohighlight">\(B\)</span> is the magnetic field, <span class="math notranslate nohighlight">\(E\)</span> is the electric field, and <span class="math notranslate nohighlight">\(H\)</span> is the magnetizing field.
+In addition to Maxwell’s equation, we need a constitutive relation between <span class="math notranslate nohighlight">\(B\)</span> and <span class="math notranslate nohighlight">\(H\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[B =\mu H,\]</div>
+<p>which holds for an isotropic linear magnetic medium.
+Here, <span class="math notranslate nohighlight">\(\mu\)</span> is the magnetic permability of the material.
+Now, since <span class="math notranslate nohighlight">\(B\)</span> is solenodial (divergence free) accoording to Maxwell’s equations, we known that <span class="math notranslate nohighlight">\(B\)</span> must be the curl of some vector field <span class="math notranslate nohighlight">\(A\)</span>. This field is called the magnetic vector potential. Since the problem is static and thus <span class="math notranslate nohighlight">\(\frac{\partial D}{\partial t}=0\)</span>, it follows that</p>
+<div class="math notranslate nohighlight">
+\[J = \nabla \times H = \nabla \times(\mu^{-1} B)=\nabla \times (\mu^{-1}\nabla \times A ) = -\nabla \cdot (\mu^{-1}\nabla A).\]</div>
+<p>In the last step, we have expanded the second derivatives and used the gauge freedom of <span class="math notranslate nohighlight">\(A\)</span> to simplify the equations to a simple vector-valued Poisson equation for the magnetic vector potential; if <span class="math notranslate nohighlight">\(B=\nabla \times A\)</span>, then <span class="math notranslate nohighlight">\(B=\nabla \times (A+\nabla \phi)\)</span> for any scalar field <span class="math notranslate nohighlight">\(\phi\)</span> (the gauge function).
+For the current problem, we thus need to solve the following 2D Poisson problem for the <span class="math notranslate nohighlight">\(z\)</span>-component <span class="math notranslate nohighlight">\(A_z\)</span> of the magnetic
+vector potential</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}    - \nabla \cdot (\mu^{-1} \nabla A_z) &amp;= J_z &amp;&amp; \text{in } \mathbb{R}^2,\\
+    \lim_{\vert(x,y)\vert\to \infty}A_z &amp;= 0.&amp;&amp;\end{split}\]</div>
+<p>Since we cannot solve the problem on an infinite domain, we will truncate the domain using a large disk, and set <span class="math notranslate nohighlight">\(A_z=0\)</span> on the boundary. The current <span class="math notranslate nohighlight">\(J_z\)</span> is set to <span class="math notranslate nohighlight">\(+1\)</span>A in the interior set of the circles (copper-wire cross sections) and to <span class="math notranslate nohighlight">\(-1\)</span> A in the exteriror set of circles in the cross section figure.
+Once the magnetic field vector potential has been computed, we can compute the magnetic field <span class="math notranslate nohighlight">\(B=B(x,y)\)</span> by</p>
+<div class="math notranslate nohighlight">
+\[    B(x,y)&amp;=\left(\frac{\partial A_z}{\partial y}, - \frac{\partial A_z}{\partial x} \right).\]</div>
+<p>The weak formulation is easily obtained by multiplication of a test function <span class="math notranslate nohighlight">\(v\)</span>, followed by integration by parts, where all boundary integrals vanishes due to the Dirichlet condition, we obtain <span class="math notranslate nohighlight">\(a(A_z,v)=L(v)\)</span> with</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}a(A_z, v)&amp;=\int_\Omega \mu^{-1}\nabla A_z \cdot \nabla v ~\mathrm{d}x,\\
+L(v)&amp;=\int_\Omega J_z v~\mathrm{d} x.\end{split}\]</div>
+<div class="section" id="meshing-a-complex-structure-with-subdomains">
+<h2>Meshing a complex structure with subdomains<a class="headerlink" href="#meshing-a-complex-structure-with-subdomains" title="Permalink to this headline">¶</a></h2>
+<p>Author: Jørgen S. Dokken</p>
+<p>We create the domain visualized in the cross section figure above using gmsh. Note that we are using the <code class="docutils literal notranslate"><span class="pre">gmsh.model.occ.fragment</span></code> commands to ensure that the boundaries of the wires are resolved in the mesh.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gmsh</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+
+<span class="n">rank</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">rank</span>
+
+<span class="n">gmsh</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+<span class="n">r</span> <span class="o">=</span> <span class="mf">0.1</span>   <span class="c1"># Radius of copper wires</span>
+<span class="n">R</span> <span class="o">=</span> <span class="mi">5</span>     <span class="c1"># Radius of domain</span>
+<span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>     <span class="c1"># Radius of inner iron cylinder</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mf">1.2</span>   <span class="c1"># Radius of outer iron cylinder</span>
+<span class="n">N</span> <span class="o">=</span> <span class="mi">8</span>     <span class="c1"># Number of windings</span>
+<span class="n">c_1</span> <span class="o">=</span> <span class="mf">0.8</span> <span class="c1"># Radius of inner copper wires</span>
+<span class="n">c_2</span> <span class="o">=</span> <span class="mf">1.4</span> <span class="c1"># Radius of outer copper wires</span>
+<span class="n">gdim</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># Geometric dimension of the mesh</span>
+<span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+    <span class="c1"># Define geometry for iron cylinder</span>
+    <span class="n">outer_iron</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">addCircle</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+    <span class="n">inner_iron</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">addCircle</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">addCurveLoop</span><span class="p">([</span><span class="n">outer_iron</span><span class="p">],</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">addCurveLoop</span><span class="p">([</span><span class="n">inner_iron</span><span class="p">],</span> <span class="mi">6</span><span class="p">)</span>
+    <span class="n">iron</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">addPlaneSurface</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">synchronize</span><span class="p">()</span>
+
+    <span class="c1"># Define geometry for background</span>
+    <span class="n">back</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">addCircle</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">addCurveLoop</span><span class="p">([</span><span class="n">back</span><span class="p">],</span> <span class="mi">7</span><span class="p">)</span>
+    <span class="n">background</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">addPlaneSurface</span><span class="p">([</span><span class="mi">7</span><span class="p">])</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">synchronize</span><span class="p">()</span>
+
+    <span class="c1"># Define the copper-wires inside iron cylinder</span>
+    <span class="n">angles_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">N</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
+    <span class="n">angles_S</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="o">+</span><span class="mf">0.5</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">N</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
+    <span class="n">wires_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">addCircle</span><span class="p">(</span><span class="n">c_1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">c_1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">angles_N</span><span class="p">]</span>
+    <span class="n">w_N</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">wire</span> <span class="ow">in</span> <span class="n">wires_N</span><span class="p">:</span>
+        <span class="n">loop</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">addCurveLoop</span><span class="p">([</span><span class="n">wire</span><span class="p">])</span>
+        <span class="n">w_N</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">addPlaneSurface</span><span class="p">([</span><span class="n">loop</span><span class="p">])))</span>
+    <span class="c1"># Define the copper-wires outside the iron cylinder</span>
+    <span class="n">wires_S</span> <span class="o">=</span> <span class="p">[</span><span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">addCircle</span><span class="p">(</span><span class="n">c_2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">c_2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">angles_S</span><span class="p">]</span>
+    <span class="n">w_S</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">wire</span> <span class="ow">in</span> <span class="n">wires_S</span><span class="p">:</span>
+        <span class="n">loop</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">addCurveLoop</span><span class="p">([</span><span class="n">wire</span><span class="p">])</span>
+        <span class="n">w_S</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">addPlaneSurface</span><span class="p">([</span><span class="n">loop</span><span class="p">])))</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">synchronize</span><span class="p">()</span>
+    <span class="c1"># Reslove all boundaries of the different wires in the background domain</span>
+    <span class="n">all_surfaces</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="n">iron</span><span class="p">)]</span>
+    <span class="n">all_surfaces</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">w_S</span><span class="p">)</span>
+    <span class="n">all_surfaces</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">w_N</span><span class="p">)</span>
+    <span class="n">whole_domain</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">fragment</span><span class="p">([(</span><span class="mi">2</span><span class="p">,</span> <span class="n">background</span><span class="p">)],</span> <span class="n">all_surfaces</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">synchronize</span><span class="p">()</span>
+    <span class="c1"># Create physical markers for the different wires.</span>
+    <span class="c1"># We use the following markers:</span>
+    <span class="c1"># - Vacuum: 0</span>
+    <span class="c1"># - Iron cylinder: 1</span>
+    <span class="c1"># - Inner copper wires: $[2,3,\dots,N+1]$</span>
+    <span class="c1"># - Outer copper wires: $[N+2,\dots, 2\cdot N+1]</span>
+    <span class="n">inner_tag</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">outer_tag</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">N</span>
+    <span class="n">background_surfaces</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">other_surfaces</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">domain</span> <span class="ow">in</span> <span class="n">whole_domain</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="n">com</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">getCenterOfMass</span><span class="p">(</span><span class="n">domain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">domain</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">mass</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">getMass</span><span class="p">(</span><span class="n">domain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">domain</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="c1"># Identify iron circle by its mass</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">mass</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="n">b</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="n">a</span><span class="o">**</span><span class="mi">2</span><span class="p">)):</span>
+            <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">addPhysicalGroup</span><span class="p">(</span><span class="n">domain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="n">domain</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">tag</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">other_surfaces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
+        <span class="c1"># Identify the background circle by its center of mass</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">com</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]):</span>
+            <span class="n">background_surfaces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">domain</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1"># Identify the inner circles by their center of mass</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">com</span><span class="p">),</span> <span class="n">c_1</span><span class="p">):</span>
+            <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">addPhysicalGroup</span><span class="p">(</span><span class="n">domain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="n">domain</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">inner_tag</span><span class="p">)</span>
+            <span class="n">inner_tag</span> <span class="o">+=</span><span class="mi">1</span>
+            <span class="n">other_surfaces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
+        <span class="c1"># Identify the outer circles by their center of mass</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">com</span><span class="p">),</span> <span class="n">c_2</span><span class="p">):</span>
+            <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">addPhysicalGroup</span><span class="p">(</span><span class="n">domain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="n">domain</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">outer_tag</span><span class="p">)</span>
+            <span class="n">outer_tag</span> <span class="o">+=</span><span class="mi">1</span>
+            <span class="n">other_surfaces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
+    <span class="c1"># Add marker for the vacuum</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">addPhysicalGroup</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">background_surfaces</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># Create mesh resolution that is fine around the wires and</span>
+    <span class="c1"># iron cylinder, coarser the further away you get</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;Distance&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">getBoundary</span><span class="p">(</span><span class="n">other_surfaces</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">setNumbers</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;EdgesList&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">])</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;Threshold&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;IField&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;LcMin&quot;</span><span class="p">,</span> <span class="n">r</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;LcMax&quot;</span><span class="p">,</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">r</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;DistMin&quot;</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">r</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;DistMax&quot;</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">r</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">setAsBackgroundMesh</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># Generate mesh</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="s2">&quot;Mesh.Algorithm&quot;</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">gdim</span><span class="p">)</span>    
+</pre></div>
+</div>
+</div>
+</div>
+<p>As in <a class="reference internal" href="../chapter2/ns_code2.html"><span class="doc std std-doc">the Navier-Stokes tutorial</span></a> we load the mesh directly into dolfin-X, without writing it to file. This time, we create <code class="docutils literal notranslate"><span class="pre">MeshTags</span></code> for the physical cell data.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.io</span> <span class="kn">import</span> <span class="n">extract_gmsh_geometry</span><span class="p">,</span> <span class="n">extract_gmsh_topology_and_markers</span><span class="p">,</span> <span class="n">ufl_mesh_from_gmsh</span>
+<span class="kn">from</span> <span class="nn">dolfinx.cpp.io</span> <span class="kn">import</span> <span class="n">perm_gmsh</span><span class="p">,</span> <span class="n">extract_local_entities</span>
+<span class="kn">from</span> <span class="nn">dolfinx.cpp.mesh</span> <span class="kn">import</span> <span class="n">to_type</span><span class="p">,</span> <span class="n">cell_entity_type</span>
+<span class="kn">from</span> <span class="nn">dolfinx.cpp.graph</span> <span class="kn">import</span> <span class="n">AdjacencyList_int32</span>
+<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">create_meshtags</span><span class="p">,</span> <span class="n">create_mesh</span>
+<span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="c1"># Get mesh geometry</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">extract_gmsh_geometry</span><span class="p">(</span><span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+
+    <span class="c1"># Get mesh topology for each element</span>
+    <span class="n">topologies</span> <span class="o">=</span> <span class="n">extract_gmsh_topology_and_markers</span><span class="p">(</span><span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+    <span class="c1"># Get information about each cell type from the msh files</span>
+    <span class="n">num_cell_types</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">topologies</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">cell_information</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">cell_dimensions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_cell_types</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">element</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">topologies</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="n">properties</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">getElementProperties</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+        <span class="n">name</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="n">local_coords</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">properties</span>
+        <span class="n">cell_information</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">element</span><span class="p">,</span> <span class="s2">&quot;dim&quot;</span><span class="p">:</span> <span class="n">dim</span><span class="p">,</span> <span class="s2">&quot;num_nodes&quot;</span><span class="p">:</span> <span class="n">num_nodes</span><span class="p">}</span>
+        <span class="n">cell_dimensions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dim</span>
+
+    <span class="c1"># Sort elements by ascending dimension</span>
+    <span class="n">perm_sort</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">cell_dimensions</span><span class="p">)</span>
+
+    <span class="c1"># Broadcast cell type data and geometric dimension</span>
+    <span class="n">cell_id</span> <span class="o">=</span> <span class="n">cell_information</span><span class="p">[</span><span class="n">perm_sort</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+    <span class="n">tdim</span> <span class="o">=</span> <span class="n">cell_information</span><span class="p">[</span><span class="n">perm_sort</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]][</span><span class="s2">&quot;dim&quot;</span><span class="p">]</span>
+    <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">cell_information</span><span class="p">[</span><span class="n">perm_sort</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]][</span><span class="s2">&quot;num_nodes&quot;</span><span class="p">]</span>
+    <span class="n">cell_id</span><span class="p">,</span> <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">bcast</span><span class="p">([</span><span class="n">cell_id</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">],</span> <span class="n">root</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">cells</span> <span class="o">=</span> <span class="n">topologies</span><span class="p">[</span><span class="n">cell_id</span><span class="p">][</span><span class="s2">&quot;topology&quot;</span><span class="p">]</span>
+    <span class="n">cell_values</span> <span class="o">=</span> <span class="n">topologies</span><span class="p">[</span><span class="n">cell_id</span><span class="p">][</span><span class="s2">&quot;cell_data&quot;</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">cell_id</span><span class="p">,</span> <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">bcast</span><span class="p">([</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">root</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">cells</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">gdim</span><span class="p">])</span>
+    <span class="n">cell_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,))</span>
+<span class="n">gmsh</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING:py.warnings:/usr/local/lib/python3.8/dist-packages/numpy/ctypeslib.py:521: RuntimeWarning: A builtin ctypes object gave a PEP3118 format string that does not match its itemsize, so a best-guess will be made of the data type. Newer versions of python may behave correctly.
+  return array(obj, copy=False)
+</pre></div>
+</div>
+</div>
+</div>
+<p>We now distribute the mesh over multiple processors</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create distributed mesh</span>
+<span class="n">ufl_domain</span> <span class="o">=</span> <span class="n">ufl_mesh_from_gmsh</span><span class="p">(</span><span class="n">cell_id</span><span class="p">,</span> <span class="n">gdim</span><span class="p">)</span>
+<span class="n">gmsh_cell_perm</span> <span class="o">=</span> <span class="n">perm_gmsh</span><span class="p">(</span><span class="n">to_type</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ufl_domain</span><span class="o">.</span><span class="n">ufl_cell</span><span class="p">())),</span> <span class="n">num_nodes</span><span class="p">)</span>
+<span class="n">cells</span> <span class="o">=</span> <span class="n">cells</span><span class="p">[:,</span> <span class="n">gmsh_cell_perm</span><span class="p">]</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">create_mesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">cells</span><span class="p">,</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:</span><span class="n">gdim</span><span class="p">],</span> <span class="n">ufl_domain</span><span class="p">)</span>
+<span class="n">tdim</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span>
+
+<span class="n">local_entities</span><span class="p">,</span> <span class="n">local_values</span> <span class="o">=</span> <span class="n">extract_local_entities</span><span class="p">(</span>
+            <span class="n">mesh</span><span class="p">,</span> <span class="n">tdim</span><span class="p">,</span> <span class="n">cells</span><span class="p">,</span> <span class="n">cell_values</span><span class="p">)</span>
+<span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">create_connectivity</span><span class="p">(</span><span class="n">tdim</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">adj</span> <span class="o">=</span> <span class="n">AdjacencyList_int32</span><span class="p">(</span><span class="n">local_entities</span><span class="p">)</span>
+<span class="n">ct</span> <span class="o">=</span> <span class="n">create_meshtags</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">tdim</span><span class="p">,</span> <span class="n">adj</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="n">local_values</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>To inspect the mesh, we use Paraview, and obtain the following mesh</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.io</span>
+<span class="k">with</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">XDMFFile</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="s2">&quot;mt.xdmf&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">xdmf</span><span class="p">:</span>
+    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_meshtags</span><span class="p">(</span><span class="n">ct</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next, we define the discontinous functions for the permability <span class="math notranslate nohighlight">\(\mu\)</span> and current <span class="math notranslate nohighlight">\(J_z\)</span> using the <code class="docutils literal notranslate"><span class="pre">MeshTags</span></code> as in <a class="reference internal" href="subdomains.html"><span class="doc std std-doc">Defining material parameters through subdomains</span></a></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Q</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">material_tags</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">ct</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+<span class="n">mu</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">J</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">mu</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc_mu</span><span class="p">,</span> <span class="n">J</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc_J</span><span class="p">:</span>
+    <span class="c1"># As we only set some values in J, initialize all as 0</span>
+    <span class="n">loc_J</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">material_tags</span><span class="p">:</span>
+        <span class="n">cells</span> <span class="o">=</span> <span class="n">ct</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">ct</span><span class="o">.</span><span class="n">values</span><span class="o">==</span><span class="n">tag</span><span class="p">]</span>
+        <span class="n">num_cells</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span>
+        <span class="c1"># Set values for mu</span>
+        <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">mu_</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="mf">1e-7</span> <span class="c1"># Vacuum</span>
+        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">mu_</span> <span class="o">=</span> <span class="mf">1e-5</span> <span class="c1"># Iron (This should really be 6.3e-3)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mu_</span> <span class="o">=</span> <span class="mf">1.26e-6</span> <span class="c1"># Copper</span>
+        <span class="n">loc_mu</span><span class="o">.</span><span class="n">setValues</span><span class="p">(</span><span class="n">cells</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">num_cells</span><span class="p">,</span> <span class="n">mu_</span><span class="p">))</span>
+        <span class="c1"># Set values for J</span>
+        <span class="k">if</span> <span class="n">tag</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="o">+</span><span class="n">N</span><span class="p">):</span>
+            <span class="n">loc_J</span><span class="o">.</span><span class="n">setValues</span><span class="p">(</span><span class="n">cells</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">num_cells</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">tag</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="o">+</span><span class="n">N</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">N</span> <span class="o">+</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">loc_J</span><span class="o">.</span><span class="n">setValues</span><span class="p">(</span><span class="n">cells</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">num_cells</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>In the code above, we have used a somewhat less extreme value for the magnetic permability of iron. This is to make the solution a little more interesting. It would otherwise be completely dminated by the field in the iron cylinder.</p>
+<p>We can now define the variational problem</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ufl</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">u_bc</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">u_bc</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">bc_loc</span><span class="p">:</span>
+    <span class="n">bc_loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">facets</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">locate_entities_boundary</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">tdim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="kc">True</span><span class="p">))</span>
+<span class="n">dofs</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">tdim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">facets</span><span class="p">)</span>
+<span class="n">bc</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_bc</span><span class="p">,</span> <span class="n">dofs</span><span class="p">)</span>
+
+<span class="n">u</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">mu</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
+<span class="n">L</span> <span class="o">=</span> <span class="n">J</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We are now ready to solve the linear problem</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A_z</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="n">A_z</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="p">[</span><span class="n">bc</span><span class="p">])</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Coefficient(FunctionSpace(Mesh(VectorElement(FiniteElement(&#39;Lagrange&#39;, triangle, 1), dim=2), 0), FiniteElement(&#39;Lagrange&#39;, triangle, 1)), 7)
+</pre></div>
+</div>
+</div>
+</div>
+<p>As we have computed the magnetic potential, we can now compute the magnetic field, by setting <code class="docutils literal notranslate"><span class="pre">B=curl(A_z)</span></code>. Note that as we have chosen a function space of first order piecewise linear function to describe our potential, the curl of a function in this space is a discontinous zeroth order function (a function of cell-wise constants). However, to simplify the visualization, we project the curl into a first order continous function space</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">W</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">VectorFunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
+<span class="n">q</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
+<span class="n">a_w</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
+<span class="n">L_w</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">as_vector</span><span class="p">((</span><span class="n">A_z</span><span class="o">.</span><span class="n">dx</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="o">-</span><span class="n">A_z</span><span class="o">.</span><span class="n">dx</span><span class="p">(</span><span class="mi">0</span><span class="p">))),</span> <span class="n">q</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
+<span class="n">projection</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">LinearProblem</span><span class="p">(</span><span class="n">a_w</span><span class="p">,</span> <span class="n">L_w</span><span class="p">)</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">projection</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note that we used <code class="docutils literal notranslate"><span class="pre">ufl.as_vector</span></code> to interpret the <code class="docutils literal notranslate"><span class="pre">Python</span></code>-tuple <code class="docutils literal notranslate"><span class="pre">(A_z.dx(1),</span> <span class="pre">-A_z.dx(0))</span></code> as a vector in the unified form language (UFL).</p>
+<p>We now plot the magnetic potential <span class="math notranslate nohighlight">\(A_z\)</span> and the magnetic field <span class="math notranslate nohighlight">\(B\)</span></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.plotting</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">A_z</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Magentic potential&quot;</span><span class="p">)</span>
+<span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">linewidth</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7fefb10a0190&gt;
+</pre></div>
+</div>
+<img alt="../_images/em_18_1.png" src="../_images/em_18_1.png" />
+</div>
+</div>
+<p>As it is easier to visualize vector fields in Paraview, we write our output to <code class="docutils literal notranslate"><span class="pre">XDMFFile</span></code></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">XDMFFile</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="s2">&quot;em.xdmf&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">xdmf</span><span class="p">:</span>
+    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+    <span class="n">A_z</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;A_z&quot;</span>
+    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">A_z</span><span class="p">)</span>
+    <span class="n">B</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;B&quot;</span>
+    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>For instance, we visualize the potential by using the <code class="docutils literal notranslate"><span class="pre">Warp</span> <span class="pre">by</span> <span class="pre">Scalar</span></code> source to obtain
+<img alt="Magnetic potential warped by scalar (and scaled to unity)" src="../_images/A_z.png" /></p>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./chapter3"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+    <a class='left-prev' id="prev-link" href="robin_neumann_dirichlet.html" title="previous page">Setting multiple Dirichlet, Neumann, and Robin conditions</a>
+    <a class='right-next' id="next-link" href="../chapter4/solvers.html" title="next page">Solver configuration and error control</a>
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Jørgen S. Dokken<br/>
+        
+            &copy; Copyright 2020.<br/>
+          <div class="extra_footer">
+            <div>
+    This webpage is an adaptation of <a href=https://www.springer.com/gp/book/9783319524610>The FEniCS tutorial</a> and
+    is distributed under the terms of the      <a href=http://creativecommons.org/licenses/by/4.0/>Creative Commons Attribution 4.0 International License  </a>
+    which permits use, duplication, adaptation, distribution and reproduction in any medium or format, as long as you give appropriate credit to the original author(s) and the source,
+    provide a link to the Creative Commons license and indicate if changes were made.
+</div>
+
+          </div>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="../_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
+</html>

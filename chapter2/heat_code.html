@@ -48,7 +48,7 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.18.0/dist/embed-amd.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
     <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
     <script >
         const thebe_selector = ".thebe"
@@ -272,6 +272,23 @@
    Setting multiple Dirichlet, Neumann, and Robin conditions
   </a>
  </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter3/em.html">
+   Electromagnetics example
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Improving your FEniCS-X code
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter4/solvers.html">
+   Solver configuration and error control
+  </a>
+ </li>
 </ul>
 
 </nav> <!-- To handle the deprecated key -->
@@ -426,8 +443,8 @@
 <p>Author: Jørgen S. Dokken</p>
 <p>Just as for the <a class="reference internal" href="../chapter1/fundamentals_code.html"><span class="doc std std-doc">Poisson problem</span></a>, we construct a test problem which makes it easy to determine if the calculations are correct.</p>
 <p>Since we know that our first-order time-stepping scheme is exact for linear functions, we create a problem which has linear variation in time. We combine this with a quadratic variation in space. Therefore, we choose the analytical solution to be</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7017a0fa-ec34-40e5-a180-90a9b4b95231">
-<span class="eqno">(19)<a class="headerlink" href="#equation-7017a0fa-ec34-40e5-a180-90a9b4b95231" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-c50117dd-a8e2-4bd4-bdee-ffed2eb13003">
+<span class="eqno">(19)<a class="headerlink" href="#equation-c50117dd-a8e2-4bd4-bdee-ffed2eb13003" title="Permalink to this equation">¶</a></span>\[\begin{align}
 u = 1 + x^2+\alpha y^2 + \beta t
 \end{align}\]</div>
 <p>which yields a function whose computed values at the degrees of freedom will be exact, regardless of the mesh size and <span class="math notranslate nohighlight">\(\Delta t\)</span> as long as the mesh is uniformly partitioned.
@@ -618,7 +635,7 @@ to verify our implementation.</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>L2-error: 2.83e-02
-Error_max = 1.78e-15
+Error_max = 2.66e-15
 </pre></div>
 </div>
 </div>

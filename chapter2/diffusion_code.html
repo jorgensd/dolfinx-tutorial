@@ -48,7 +48,7 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.18.0/dist/embed-amd.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
     <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
     <script >
         const thebe_selector = ".thebe"
@@ -272,6 +272,23 @@
    Setting multiple Dirichlet, Neumann, and Robin conditions
   </a>
  </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter3/em.html">
+   Electromagnetics example
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Improving your FEniCS-X code
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter4/solvers.html">
+   Solver configuration and error control
+  </a>
+ </li>
 </ul>
 
 </nav> <!-- To handle the deprecated key -->
@@ -425,8 +442,8 @@
 <h1>Diffusion of a Gaussian function<a class="headerlink" href="#diffusion-of-a-gaussian-function" title="Permalink to this headline">¶</a></h1>
 <p>Author: Jørgen S. Dokken</p>
 <p>Let us now solve a more interesting problem, namely the diffusion of a Gaussian hill. We take the initial value to be</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3671497e-ac80-4929-b390-d27074273467">
-<span class="eqno">(18)<a class="headerlink" href="#equation-3671497e-ac80-4929-b390-d27074273467" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-ed1852e8-c21a-43eb-bd8b-8e9314448254">
+<span class="eqno">(18)<a class="headerlink" href="#equation-ed1852e8-c21a-43eb-bd8b-8e9314448254" title="Permalink to this equation">¶</a></span>\[\begin{align}
     u_0(x,y)&amp;= e^{-ax^2-ay^2}
 \end{align}\]</div>
 <p>for <span class="math notranslate nohighlight">\(a=5\)</span> on the domain <span class="math notranslate nohighlight">\([-2,-2]\times[2,2]\)</span>. For this problem we will use homogeneous Dirichlet boundary conditions (<span class="math notranslate nohighlight">\(u_D=0\)</span>).</p>

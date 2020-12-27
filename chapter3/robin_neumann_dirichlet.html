@@ -48,7 +48,7 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.18.0/dist/embed-amd.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
     <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
     <script >
         const thebe_selector = ".thebe"
@@ -58,6 +58,7 @@
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Electromagnetics example" href="em.html" />
     <link rel="prev" title="Defining subdomains for different materials" href="subdomains.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -271,6 +272,23 @@
    Setting multiple Dirichlet, Neumann, and Robin conditions
   </a>
  </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="em.html">
+   Electromagnetics example
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Improving your FEniCS-X code
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter4/solvers.html">
+   Solver configuration and error control
+  </a>
+ </li>
 </ul>
 
 </nav> <!-- To handle the deprecated key -->
@@ -385,6 +403,11 @@
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#debugging-boundary-condition">
+   Debugging boundary condition
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#verification">
    Verification
   </a>
@@ -438,12 +461,10 @@ u&amp;=u_D^i &amp;&amp; \text{on } \Gamma_D^i, \qquad i=0,1,\dots\\
 -\kappa \frac{\partial u}{\partial n}&amp;=g_0 &amp;&amp;\text{on } \Gamma_N^0,\qquad i=0,1,\dots\\
 -\kappa \frac{\partial u}{\partial n}&amp;=r_i(u-s_i)&amp;&amp; \text{ on } \Gamma_R^i, \qquad i=0,1\end{split}\]</div>
 <p>As usual, we multiply by a test function and integrate by parts.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="n">math</span><span class="p">}</span>
-<span class="o">-</span>\<span class="n">int_</span><span class="p">{</span>\<span class="n">Omega</span><span class="p">}</span>\<span class="n">nabla</span> \<span class="n">cdot</span> <span class="p">(</span>\<span class="n">kappa</span> \<span class="n">nabla</span> <span class="n">u</span><span class="p">)</span><span class="n">v</span> <span class="o">~</span>\<span class="n">mathrm</span><span class="p">{</span><span class="n">d</span><span class="p">}</span> <span class="n">x</span> <span class="o">=</span> 
-\<span class="n">int_</span><span class="p">{</span>\<span class="n">Omega</span><span class="p">}</span>\<span class="n">kappa</span> \<span class="n">nabla</span> <span class="n">u</span>\<span class="n">cdot</span> \<span class="n">nabla</span> <span class="n">v</span><span class="o">~</span>\<span class="n">mathrm</span><span class="p">{</span><span class="n">d</span><span class="p">}</span> <span class="n">x</span> <span class="o">-</span> 
-\<span class="n">int_</span><span class="p">{</span>\<span class="n">partial</span>\<span class="n">Omega</span><span class="p">}</span>\<span class="n">kappa</span> \<span class="n">frac</span><span class="p">{</span>\<span class="n">partial</span> <span class="n">u</span><span class="p">}{</span>\<span class="n">partial</span> <span class="n">n</span><span class="p">}</span> <span class="n">v</span> <span class="o">~</span>\<span class="n">mathrm</span><span class="p">{</span><span class="n">d</span><span class="p">}</span> <span class="n">s</span><span class="o">.</span>
-</pre></div>
-</div>
+<div class="math notranslate nohighlight">
+\[-\int_{\Omega}\nabla \cdot (\kappa \nabla u)v ~\mathrm{d} x = 
+\int_{\Omega}\kappa \nabla u\cdot \nabla v~\mathrm{d} x - 
+\int_{\partial\Omega}\kappa \frac{\partial u}{\partial n} v ~\mathrm{d} s.\]</div>
 <p>On the dirichlet part (<span class="math notranslate nohighlight">\(\Gamma_D^i\)</span>), the boundary integral vanishes since <span class="math notranslate nohighlight">\(v=0\)</span>. On the remaining part of the boundary, we split the boundary into contributions from the Neumann parts (<span class="math notranslate nohighlight">\(\Gamma_N^i\)</span>) and Robin parts (<span class="math notranslate nohighlight">\(\Gamma_N^i\)</span>). Inserting the boundary conditions, we obtain</p>
 <div class="math notranslate nohighlight">
 \[-\int_{\Omega}\kappa\frac{\partial u }{\partial n }v~\mathrm{d} s=-\sum_i \int_{\Gamma_N^i} g_i~\mathrm{d} s + \sum_i\int_{\Gamma_R^i}r_i(u-s_i)~\mathrm{d}s.\]</div>
@@ -477,17 +498,16 @@ L(v) &amp;= \int_{\Omega} fv~\mathrm{d} x - \sum_i \int_{\Gamma_N^i}g_i v~\mathr
 </div>
 <p>In this section, we will solve the Poisson problem for the manufactured solution <span class="math notranslate nohighlight">\(u_{ex} = 1+x^2+2y^2\)</span>, which yields <span class="math notranslate nohighlight">\(\kappa=1\)</span>, <span class="math notranslate nohighlight">\(f=-6\)</span>. The next step is to define the parameters of the boundary condition, and where we should apply them. In this example, we will apply the following</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}u &amp;= u_D &amp;&amp; \text{for } x=0 and x=1\\
+\[\begin{split}u &amp;= u_D &amp;&amp; \text{for } x=0 \text{ and } x=1\\
 -\kappa \frac{\partial u}{\partial n} &amp;= r(u-s) &amp;&amp; \text{for } y=0\\
 -\kappa \frac{\partial u}{\partial n} &amp;=g_0 \text{for } y = 1\\\end{split}\]</div>
 <p>To reproduce the analytical solution, we have that</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}    u_D&amp;=u_{ex}=1+x^2+2y^2\\
     g_0&amp;=\left.\frac{\partial u_{ex}}{y}\right\vert_{y=1}=4y\vert_{y=1}=-4\end{split}\]</div>
-<p>The Robin condition can be specified in many ways. As</p>
-<div class="math notranslate nohighlight">
-\[-\left\frac{\partial u_{ex}}{n}\right\vert_{x=0}=\left\frac{\partial u_{ex}}{\partial x}\right\vert_{x=0}=2x=0,\]</div>
-<p>we can specify <span class="math notranslate nohighlight">\(r\neq 0\)</span> arbitrarly and <span class="math notranslate nohighlight">\(s=u_{ex}\)</span>. We choose <span class="math notranslate nohighlight">\(r=1000\)</span>.
+<p>The Robin condition can be specified in many ways. As
+<span class="math notranslate nohighlight">\(-\left.\frac{\partial u_{ex}}{n}\right\vert_{x=0}=\left.\frac{\partial u_{ex}}{\partial x}\right\vert_{x=0}=2x=0,\)</span>
+we can specify <span class="math notranslate nohighlight">\(r\neq 0\)</span> arbitrarly and <span class="math notranslate nohighlight">\(s=u_{ex}\)</span>. We choose <span class="math notranslate nohighlight">\(r=1000\)</span>.
 We can now create all the necessary variable definitions and the traditional part of the variational form.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -529,6 +549,21 @@ We can now create all the necessary variable definitions and the traditional par
     <span class="n">facet_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">facets</span><span class="p">)</span>
     <span class="n">facet_markers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">facets</span><span class="p">),</span> <span class="n">marker</span><span class="p">))</span>
 <span class="n">facet_tag</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">MeshTags</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">facet_indices</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">facet_markers</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="debugging-boundary-condition">
+<h2>Debugging boundary condition<a class="headerlink" href="#debugging-boundary-condition" title="Permalink to this headline">¶</a></h2>
+<p>To debug boundary conditions, the easiest thing to do is to visualize the boundary in Paraview by writing the <code class="docutils literal notranslate"><span class="pre">MeshTags</span></code> to file. We can then inspect individual boundaries using the <code class="docutils literal notranslate"><span class="pre">Threshold</span></code>-filter.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.io</span>
+<span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">create_connectivity</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">XDMFFile</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">mpi_comm</span><span class="p">(),</span> <span class="s2">&quot;facet_tags.xdmf&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">xdmf</span><span class="p">:</span>
+    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_meshtags</span><span class="p">(</span><span class="n">facet_tag</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -593,24 +628,28 @@ We can now create all the necessary variable definitions and the traditional par
 <p>We can now create the bilinear form <span class="math notranslate nohighlight">\(a\)</span> and linear form <span class="math notranslate nohighlight">\(L\)</span> by using the <code class="docutils literal notranslate"><span class="pre">ufl</span></code>-functions <code class="docutils literal notranslate"><span class="pre">lhs</span></code> and <code class="docutils literal notranslate"><span class="pre">rhs</span></code></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">lhs</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Solve linear variational problem</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">lhs</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
 <span class="n">L</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">rhs</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
 <span class="n">problem</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcs</span><span class="p">,</span>
 <span class="n">petsc_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ksp_type&quot;</span><span class="p">:</span> <span class="s2">&quot;preonly&quot;</span><span class="p">,</span> <span class="s2">&quot;pc_type&quot;</span><span class="p">:</span> <span class="s2">&quot;lu&quot;</span><span class="p">})</span>
 <span class="n">uh</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+
+<span class="c1"># Visualize solution</span>
 <span class="kn">import</span> <span class="nn">dolfinx.plotting</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="n">min_color</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">uh</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="n">max_color</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">uh</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">12</span><span class="p">))</span>
 <span class="n">c</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">uh</span><span class="p">,</span><span class="n">vmin</span><span class="o">=</span><span class="n">min_color</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">max_color</span><span class="p">)</span>
 <span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/robin_neumann_dirichlet_16_0.png" src="../_images/robin_neumann_dirichlet_16_0.png" />
+<img alt="../_images/robin_neumann_dirichlet_19_0.png" src="../_images/robin_neumann_dirichlet_19_0.png" />
 </div>
 </div>
 </div>
@@ -674,6 +713,7 @@ Error_max = 2.07e-03
     <div class='prev-next-bottom'>
         
     <a class='left-prev' id="prev-link" href="subdomains.html" title="previous page">Defining subdomains for different materials</a>
+    <a class='right-next' id="next-link" href="em.html" title="next page">Electromagnetics example</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">
