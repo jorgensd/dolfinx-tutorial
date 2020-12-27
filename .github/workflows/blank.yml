@@ -66,6 +66,8 @@ jobs:
           mpirun -n 3 python3 subdomains.py
           jupyter-nbconvert --to python robin_neumann_dirichlet.ipynb
           mpirun -n 3 python3 robin_neumann_dirichlet.py
+          jupyter-nbconvert --to python em.ipynb
+          mpirun -n 3 python3 em.py
       # Runs a single command using the runners shell
       - name: Build the book
         run: |
