@@ -58,6 +58,7 @@
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Error control: Computing convergence rates" href="convergence.html" />
     <link rel="prev" title="Electromagnetics example" href="../chapter3/em.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -288,6 +289,11 @@
    Solver configuration and error control
   </a>
  </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="convergence.html">
+   Error control: Computing convergence rates
+  </a>
+ </li>
 </ul>
 
 </nav> <!-- To handle the deprecated key -->
@@ -386,6 +392,20 @@
     <!-- Table of contents -->
     <div class="d-none d-md-block col-md-2 bd-toc show">
         
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#choosing-a-linear-solver-and-preconditioner">
+   Choosing a linear solver and preconditioner
+  </a>
+ </li>
+</ul>
+
+        </nav>
+        
     </div>
 </div>
     <div id="main-content" class="row">
@@ -437,13 +457,11 @@ We start by creating a generic module for evaluating the analytical solution  at
 <p>Next, we define our linear variational problem</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">petsc4py</span><span class="o">,</span> <span class="nn">sys</span>
-<span class="n">petsc4py</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
 <span class="n">V</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="n">u</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">u</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
 <span class="n">L</span> <span class="o">=</span> <span class="n">f</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
 <span class="n">u_bc</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">u_bc</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">u_numpy</span><span class="p">)</span>
@@ -455,7 +473,7 @@ We start by creating a generic module for evaluating the analytical solution  at
 </div>
 </div>
 </div>
-<p>We start by solving the problem with an LU factorization, a direct solver method.</p>
+<p>We start by solving the problem with an LU factorization, a direct solver method (similar to Gaussian elimination).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">default_problem</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcs</span><span class="p">,</span>
@@ -468,17 +486,17 @@ We start by creating a generic module for evaluating the analytical solution  at
 <p>We now look at the solver process by inspecting the <code class="docutils literal notranslate"><span class="pre">PETSc</span></code>-solver. As the view-options in PETSc are not adjusted for notebooks (<code class="docutils literal notranslate"><span class="pre">solver.view()</span></code> will print output to the terminal if used in a <code class="docutils literal notranslate"><span class="pre">.py</span></code> file), we write the solver output to file and read it in and print the output.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">solver</span> <span class="o">=</span> <span class="n">default_problem</span><span class="o">.</span><span class="n">solver</span>
-<span class="n">viewer</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">Viewer</span><span class="p">()</span><span class="o">.</span><span class="n">createASCII</span><span class="p">(</span><span class="s2">&quot;solver_output.txt&quot;</span><span class="p">)</span>
-<span class="n">solver</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">viewer</span><span class="p">)</span>
-<span class="n">solver_output</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;solver_output.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lu_solver</span> <span class="o">=</span> <span class="n">default_problem</span><span class="o">.</span><span class="n">solver</span>
+<span class="n">viewer</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">Viewer</span><span class="p">()</span><span class="o">.</span><span class="n">createASCII</span><span class="p">(</span><span class="s2">&quot;lu_output.txt&quot;</span><span class="p">)</span>
+<span class="n">lu_solver</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">viewer</span><span class="p">)</span>
+<span class="n">solver_output</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;lu_output.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">solver_output</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_140172530181216) 1 MPI processes
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_140191706849872) 1 MPI processes
 
   type: preonly
 
@@ -490,7 +508,7 @@ We start by creating a generic module for evaluating the analytical solution  at
 
   using NONE norm type for convergence test
 
-PC Object: (dolfinx_solve_140172530181216) 1 MPI processes
+PC Object: (dolfinx_solve_140191706849872) 1 MPI processes
 
   type: lu
 
@@ -533,6 +551,142 @@ PC Object: (dolfinx_solve_140172530181216) 1 MPI processes
 </div>
 </div>
 </div>
+<p>This is a very robust and simple method, and is the recommended method up to a few thousand unknowns and can be efficiently used for many 2D and smaller 3D problems. However, sparse LU decomposition quickly becomes slow, as for a <span class="math notranslate nohighlight">\(N\times N\)</span>-matrix the number of floating point operations scales as <span class="math notranslate nohighlight">\(\sim (2/3)N^3\)</span>.</p>
+<p>For large problems, we instead need to use an iterative method which are faster and require less memory.</p>
+<div class="section" id="choosing-a-linear-solver-and-preconditioner">
+<h2>Choosing a linear solver and preconditioner<a class="headerlink" href="#choosing-a-linear-solver-and-preconditioner" title="Permalink to this headline">¶</a></h2>
+<p>As the Poisson equation results in a symmetric, positive definite system matrix, the optimal Krylov solver is the conjugate gradient (CG) method. The default preconditioner is the incomplete LU factorization (ILU), which is a popular and robous overall preconditioner. We can change the preconditioner by setting <code class="docutils literal notranslate"><span class="pre">&quot;pc_type&quot;</span></code> to some of the other preconditioners in petsc, which you can find in the <a class="reference external" href="https://www.mcs.anl.gov/petsc/documentation/linearsolvertable.html">PETSc documentation</a>.
+You can set any opition in <code class="docutils literal notranslate"><span class="pre">PETSc</span></code> through the <code class="docutils literal notranslate"><span class="pre">petsc_options</span></code> input, such as the absolute tolerance (<code class="docutils literal notranslate"><span class="pre">&quot;ksp_atol&quot;</span></code>), relative tolerance (<code class="docutils literal notranslate"><span class="pre">&quot;ksp_rtol&quot;</span></code>) and maximum number of iterations (<code class="docutils literal notranslate"><span class="pre">&quot;ksp_max_it&quot;</span></code>).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cg_problem</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcs</span><span class="p">,</span>
+<span class="n">petsc_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ksp_type&quot;</span><span class="p">:</span> <span class="s2">&quot;cg&quot;</span><span class="p">,</span> <span class="s2">&quot;ksp_rtol&quot;</span><span class="p">:</span><span class="mf">1e-6</span><span class="p">,</span> <span class="s2">&quot;ksp_atol&quot;</span><span class="p">:</span><span class="mf">1e-10</span><span class="p">,</span> <span class="s2">&quot;ksp_max_it&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">})</span>
+<span class="n">uh</span> <span class="o">=</span> <span class="n">cg_problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="n">cg_solver</span> <span class="o">=</span> <span class="n">cg_problem</span><span class="o">.</span><span class="n">solver</span>
+<span class="n">viewer</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">Viewer</span><span class="p">()</span><span class="o">.</span><span class="n">createASCII</span><span class="p">(</span><span class="s2">&quot;cg_output.txt&quot;</span><span class="p">)</span>
+<span class="n">cg_solver</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">viewer</span><span class="p">)</span>
+<span class="n">solver_output</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;cg_output.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">solver_output</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_140191706889088) 1 MPI processes
+
+  type: cg
+
+  maximum iterations=1000, initial guess is zero
+
+  tolerances:  relative=1e-06, absolute=1e-10, divergence=10000.
+
+  left preconditioning
+
+  using PRECONDITIONED norm type for convergence test
+
+PC Object: (dolfinx_solve_140191706889088) 1 MPI processes
+
+  type: ilu
+
+    out-of-place factorization
+
+    0 levels of fill
+
+    tolerance for zero pivot 2.22045e-14
+
+    matrix ordering: natural
+
+    factor fill ratio given 1., needed 1.
+
+      Factored matrix follows:
+
+        Mat Object: 1 MPI processes
+
+          type: seqaij
+
+          rows=961, cols=961
+
+          package used to perform factorization: petsc
+
+          total: nonzeros=6481, allocated nonzeros=6481
+
+            not using I-node routines
+
+  linear system matrix = precond matrix:
+
+  Mat Object: 1 MPI processes
+
+    type: seqaij
+
+    rows=961, cols=961
+
+    total: nonzeros=6481, allocated nonzeros=6481
+
+    total number of mallocs used during MatSetValues calls=0
+
+      not using I-node routines
+</pre></div>
+</div>
+</div>
+</div>
+<p>For non-symmetrix problems, a Krylov solver for non-symmetrix systems, such as GMRES is a better.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gmres_problem</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcs</span><span class="p">,</span>
+<span class="n">petsc_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ksp_type&quot;</span><span class="p">:</span> <span class="s2">&quot;gmres&quot;</span><span class="p">,</span> <span class="s2">&quot;ksp_rtol&quot;</span><span class="p">:</span><span class="mf">1e-6</span><span class="p">,</span> <span class="s2">&quot;ksp_atol&quot;</span><span class="p">:</span><span class="mf">1e-10</span><span class="p">,</span> <span class="s2">&quot;ksp_max_it&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span> <span class="s2">&quot;pc_type&quot;</span><span class="p">:</span> <span class="s2">&quot;none&quot;</span><span class="p">})</span>
+<span class="n">uh</span> <span class="o">=</span> <span class="n">gmres_problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="n">gmres_solver</span> <span class="o">=</span> <span class="n">gmres_problem</span><span class="o">.</span><span class="n">solver</span>
+<span class="n">viewer</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">Viewer</span><span class="p">()</span><span class="o">.</span><span class="n">createASCII</span><span class="p">(</span><span class="s2">&quot;gmres_output.txt&quot;</span><span class="p">)</span>
+<span class="n">gmres_solver</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">viewer</span><span class="p">)</span>
+<span class="n">solver_output</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;gmres_output.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">solver_output</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_140191706852944) 1 MPI processes
+
+  type: gmres
+
+    restart=30, using Classical (unmodified) Gram-Schmidt Orthogonalization with no iterative refinement
+
+    happy breakdown tolerance 1e-30
+
+  maximum iterations=1000, initial guess is zero
+
+  tolerances:  relative=1e-06, absolute=1e-10, divergence=10000.
+
+  left preconditioning
+
+  using PRECONDITIONED norm type for convergence test
+
+PC Object: (dolfinx_solve_140191706852944) 1 MPI processes
+
+  type: none
+
+  linear system matrix = precond matrix:
+
+  Mat Object: 1 MPI processes
+
+    type: seqaij
+
+    rows=961, cols=961
+
+    total: nonzeros=6481, allocated nonzeros=6481
+
+    total number of mallocs used during MatSetValues calls=0
+
+      not using I-node routines
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition-a-remark-regarding-verification-using-iterative-solvers admonition">
+<p class="admonition-title">A remark regarding verification using iterative solvers</p>
+<p>When we consider manufactured solutions where we expect the resulting error to be of machine precision, it gets complicated when we use iterative methods. The problem is to keep the error due to the iterative solution smaller than the tolerance used in the iterative test. For linear elements and small meshes, a tolerance of between <span class="math notranslate nohighlight">\(10^{-11}\)</span> and <span class="math notranslate nohighlight">\(10^{-12}\)</span> works well in the case of Krylov solvers too.</p>
+</div>
+</div>
 </div>
 
     <script type="text/x-thebe-config">
@@ -564,6 +718,7 @@ PC Object: (dolfinx_solve_140172530181216) 1 MPI processes
     <div class='prev-next-bottom'>
         
     <a class='left-prev' id="prev-link" href="../chapter3/em.html" title="previous page">Electromagnetics example</a>
+    <a class='right-next' id="next-link" href="convergence.html" title="next page">Error control: Computing convergence rates</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">
