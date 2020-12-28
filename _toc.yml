@@ -46,3 +46,4 @@
 - part: Improving your FEniCS-X code
   chapters:
         - file: chapter4/solvers
+        - file: chapter4/convergence
