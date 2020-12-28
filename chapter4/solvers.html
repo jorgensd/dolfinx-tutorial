@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Solver configuration and error control &#8212; FEniCS-X tutorial</title>
+    <title>Solver configuration &#8212; FEniCS-X tutorial</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -286,7 +286,7 @@
 <ul class="current nav sidenav_l1">
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
-   Solver configuration and error control
+   Solver configuration
   </a>
  </li>
  <li class="toctree-l1">
@@ -413,13 +413,13 @@
         
               <div>
                 
-  <div class="section" id="solver-configuration-and-error-control">
-<h1>Solver configuration and error control<a class="headerlink" href="#solver-configuration-and-error-control" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="solver-configuration">
+<h1>Solver configuration<a class="headerlink" href="#solver-configuration" title="Permalink to this headline">¶</a></h1>
 <p>Author: Jørgen S. Dokken</p>
 <p>In this section, we will go through how to specify what linear algebra solver we would like to use to solve our PDEs, as well as how to verify the implemenation by considering convergence rates.</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}-\Delta u &amp;= f &amp;&amp;\text{in } \Omega\\
-u&amp;= u_D &amp;&amp;\text{on } \partial \Omega.\end{split}\]</div>
+\[\begin{split}-\Delta u &amp;= f &amp;&amp;\text{ in } \Omega\\
+u&amp;= u_D &amp;&amp;\text{ on } \partial \Omega.\end{split}\]</div>
 <p>Using the manufactured solution <span class="math notranslate nohighlight">\(u_D=\cos(2\pi x)\cos(2\pi y)\)</span>, we obtain <span class="math notranslate nohighlight">\(f=8\pi^2\cos(2\pi x)\cos(2\pi y)\)</span>.
 We start by creating a generic module for evaluating the analytical solution  at any point <span class="math notranslate nohighlight">\(x\)</span>.</p>
 <div class="cell docutils container">
@@ -496,7 +496,7 @@ We start by creating a generic module for evaluating the analytical solution  at
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_140191706849872) 1 MPI processes
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_140129658537488) 1 MPI processes
 
   type: preonly
 
@@ -508,7 +508,7 @@ We start by creating a generic module for evaluating the analytical solution  at
 
   using NONE norm type for convergence test
 
-PC Object: (dolfinx_solve_140191706849872) 1 MPI processes
+PC Object: (dolfinx_solve_140129658537488) 1 MPI processes
 
   type: lu
 
@@ -572,7 +572,7 @@ You can set any opition in <code class="docutils literal notranslate"><span clas
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_140191706889088) 1 MPI processes
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_140129658606640) 1 MPI processes
 
   type: cg
 
@@ -584,7 +584,7 @@ You can set any opition in <code class="docutils literal notranslate"><span clas
 
   using PRECONDITIONED norm type for convergence test
 
-PC Object: (dolfinx_solve_140191706889088) 1 MPI processes
+PC Object: (dolfinx_solve_140129658606640) 1 MPI processes
 
   type: ilu
 
@@ -645,7 +645,7 @@ PC Object: (dolfinx_solve_140191706889088) 1 MPI processes
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_140191706852944) 1 MPI processes
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_140129658607600) 1 MPI processes
 
   type: gmres
 
@@ -661,7 +661,7 @@ PC Object: (dolfinx_solve_140191706889088) 1 MPI processes
 
   using PRECONDITIONED norm type for convergence test
 
-PC Object: (dolfinx_solve_140191706852944) 1 MPI processes
+PC Object: (dolfinx_solve_140129658607600) 1 MPI processes
 
   type: none
 
