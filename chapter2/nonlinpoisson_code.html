@@ -458,7 +458,7 @@ Note that as we have already defined the exact solution, we only have to convert
 </div>
 </div>
 </div>
-<p>We are now ready to define the variational formulation. Note that as the problem is non-linear, we have replace the <code class="docutils literal notranslate"><span class="pre">TrialFunction</span></code> with a <code class="docutils literal notranslate"><span class="pre">Function</span></code>.</p>
+<p>We are now ready to define the variational formulation. Note that as the problem is non-linear, we have replace the <code class="docutils literal notranslate"><span class="pre">TrialFunction</span></code> with a <code class="docutils literal notranslate"><span class="pre">Function</span></code>, which serves as the unknown of our problem.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">uh</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
@@ -468,48 +468,68 @@ Note that as we have already defined the exact solution, we only have to convert
 </div>
 </div>
 </div>
-<p>The next step is to solve the non-linear problem. To do so, we use <a class="reference external" href="https://en.wikipedia.org/wiki/Newton%27s_method">Newtons method</a>. We start by creating a class containing the core functions that are required. Note that we keep a cache of the residual vector <code class="docutils literal notranslate"><span class="pre">_F</span></code> and the matrix <code class="docutils literal notranslate"><span class="pre">_J</span></code>. This is to reduce duplication of objects if the solver would be used multiple times, for instance for a time-dependent problem.</p>
+<p>The next step is to solve the non-linear problem. To do so, we use <a class="reference external" href="https://en.wikipedia.org/wiki/Newton%27s_method">Newtons method</a>.
+We start by creating a class containing the core functions that we require to solve the problem.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.cpp</span>
-<span class="k">class</span> <span class="nc">NonlinearPDEProblem</span><span class="p">(</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">cpp</span><span class="o">.</span><span class="n">nls</span><span class="o">.</span><span class="n">NonlinearProblem</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Nonlinear problem class for a PDE problem.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">bcs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="k">class</span> <span class="nc">NonlinearPDEProblem</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Nonlinear problem class for solving the non-linear problem</span>
+<span class="sd">    F(u, v) = 0 for all v in V</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">F</span><span class="p">:</span> <span class="n">ufl</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">Form</span><span class="p">,</span> <span class="n">u</span><span class="p">:</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">,</span> <span class="n">bcs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Input:</span>
+<span class="sd">        - F: The PDE residual F(u, v)</span>
+<span class="sd">        - u: The unknown</span>
+<span class="sd">        - bcs: List of Dirichlet boundary conditions</span>
+<span class="sd">        This class set up structures for solving the non-linear problem using Newton&#39;s method, </span>
+<span class="sd">        dF/du(u) du = -F(u)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">V</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">function_space</span>
         <span class="n">du</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">L</span> <span class="o">=</span> <span class="n">F</span>
+        <span class="c1"># Create the Jacobian matrix, dF/du</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">du</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bcs</span> <span class="o">=</span> <span class="n">bcs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_J</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">form</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1"># Create matrix and vector to be used for assembly</span>
+        <span class="c1"># of the non-linear problem</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">create_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vector</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">create_vector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">form</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">Vec</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function is called before the residual or Jacobian is computed. This is usually used to update ghost values.</span>
+<span class="sd">        Input: </span>
+<span class="sd">           x: The vector containing the latest solution</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">x</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">F</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Assemble residual vector.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_F</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_F</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_F</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">f_local</span><span class="p">:</span>
-                <span class="n">f_local</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_F</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">)</span>
-        <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">apply_lifting</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_F</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">],</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">bcs</span><span class="p">],</span> <span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_F</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">ADD</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">)</span>
-        <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">set_bc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcs</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">F</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">Vec</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">Vec</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Assemble the residual F into the vector b. </span>
+<span class="sd">        Input:</span>
+<span class="sd">           x: The vector containing the latest solution</span>
+<span class="sd">           b: Vector to assemble the residual into</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Reset the residual vector</span>
+        <span class="k">with</span> <span class="n">b</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">b_local</span><span class="p">:</span>
+            <span class="n">b_local</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">)</span>
+        <span class="c1"># Apply boundary condition</span>
+        <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">apply_lifting</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">],</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">bcs</span><span class="p">],</span> <span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">ADD</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">)</span>
+        <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">set_bc</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcs</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_F</span>
-
-    <span class="k">def</span> <span class="nf">J</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Assemble Jacobian matrix.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_J</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_J</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcs</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_J</span><span class="o">.</span><span class="n">zeroEntries</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_J</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_J</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_J</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_J</span>
+    <span class="k">def</span> <span class="nf">J</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">Vec</span><span class="p">,</span> <span class="n">A</span><span class="p">:</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">Mat</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Assemble the Jacobian matrix.</span>
+<span class="sd">        Input:</span>
+<span class="sd">          - x: The vector containing the latest solution</span>
+<span class="sd">          - A: The matrix to assemble the Jacobian into</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">A</span><span class="o">.</span><span class="n">zeroEntries</span><span class="p">()</span>
+        <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcs</span><span class="p">)</span>
+        <span class="n">A</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -520,13 +540,22 @@ Note that as we have already defined the exact solution, we only have to convert
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create nonlinear problem</span>
 <span class="n">problem</span> <span class="o">=</span> <span class="n">NonlinearPDEProblem</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">uh</span><span class="p">,</span> <span class="p">[</span><span class="n">bc</span><span class="p">])</span>
 
-<span class="c1"># Create Newton solver and solve</span>
+<span class="c1"># Create Newton solver</span>
 <span class="n">solver</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">cpp</span><span class="o">.</span><span class="n">nls</span><span class="o">.</span><span class="n">NewtonSolver</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">)</span>
+
+<span class="c1"># Set Newton solver options</span>
 <span class="n">solver</span><span class="o">.</span><span class="n">atol</span> <span class="o">=</span> <span class="mf">1e-8</span>
 <span class="n">solver</span><span class="o">.</span><span class="n">rtol</span> <span class="o">=</span> <span class="mf">1e-8</span>
 <span class="n">solver</span><span class="o">.</span><span class="n">convergence_criterion</span> <span class="o">=</span> <span class="s2">&quot;residual&quot;</span>
+
+<span class="c1"># Set non-linear problem for Newton solver</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">setF</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="n">problem</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">setJ</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">J</span><span class="p">,</span> <span class="n">problem</span><span class="o">.</span><span class="n">matrix</span><span class="p">)</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">set_form</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">form</span><span class="p">)</span>
+
+<span class="c1"># Solve non-linear problem</span>
 <span class="n">dolfinx</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">set_log_level</span><span class="p">(</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">LogLevel</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
-<span class="n">n</span><span class="p">,</span> <span class="n">converged</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">uh</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+<span class="n">n</span><span class="p">,</span> <span class="n">converged</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">uh</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
 <span class="n">uh</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
 <span class="k">assert</span><span class="p">(</span><span class="n">converged</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of interations: </span><span class="si">{0:d}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
@@ -560,8 +589,8 @@ If we think of the problem in terms of finite differences on a uniform mesh, <sp
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>L2-error: 3.92e-16
-Error_max = 8.88e-16
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>L2-error: 6.38e-16
+Error_max = 1.78e-15
 </pre></div>
 </div>
 </div>
