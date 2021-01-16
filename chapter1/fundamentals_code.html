@@ -460,18 +460,19 @@
                 
   <div class="section" id="implementation">
 <h1>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h1>
-<p>The Poisson problem has so far featured general domain <span class="math notranslate nohighlight">\(\Omega\)</span> and general functions <span class="math notranslate nohighlight">\(u_D\)</span> for the boundary conditions and <span class="math notranslate nohighlight">\(f\)</span> for the right hand side.
+<p>Author: Hans Petter Langtangen, Anders Logg and Jørgen Schartum Dokken</p>
+<p>The Poisson problem has so far featured a general domain <span class="math notranslate nohighlight">\(\Omega\)</span> and general functions <span class="math notranslate nohighlight">\(u_D\)</span> for the boundary conditions and <span class="math notranslate nohighlight">\(f\)</span> for the right hand side.
 Therefore, we need to make specific choices of <span class="math notranslate nohighlight">\(\Omega, u_D\)</span> and <span class="math notranslate nohighlight">\(f\)</span>. A wise choice is to construct a problem  with a known analytical solution, so that we can check that the computed solution is correct. The primary candidates are lower-order polynomials. The continuous Galerkin finite element spaces of degree <span class="math notranslate nohighlight">\(r\)</span> will exactly reproduce polynomials of degree <span class="math notranslate nohighlight">\(r\)</span>.</p>
 <!-- Particularly, piecewise linear continuous Galerkin finite elements are able to exactly reproduce a quadratic polynomial on 
 a uniformly partitioned mesh. -->
 <p>We use this fact to construct a quadratic function in <span class="math notranslate nohighlight">\(2D\)</span>. In particular we choose</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3adfdfd0-c81f-4678-b78b-b224dd163eea">
-<span class="eqno">(1)<a class="headerlink" href="#equation-3adfdfd0-c81f-4678-b78b-b224dd163eea" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-835e64fa-097d-46b5-8ac5-01909be980c4">
+<span class="eqno">(1)<a class="headerlink" href="#equation-835e64fa-097d-46b5-8ac5-01909be980c4" title="Permalink to this equation">¶</a></span>\[\begin{align}
  u_e(x,y)=1+x^2+2y^2
  \end{align}\]</div>
 <p>Inserting <span class="math notranslate nohighlight">\(u_e\)</span> in the original boundary problem, we find that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9fa6f641-e169-4ad4-901a-aa780c51b0af">
-<span class="eqno">(2)<a class="headerlink" href="#equation-9fa6f641-e169-4ad4-901a-aa780c51b0af" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-4ac550c1-31ba-4657-ba37-793aae4686e4">
+<span class="eqno">(2)<a class="headerlink" href="#equation-4ac550c1-31ba-4657-ba37-793aae4686e4" title="Permalink to this equation">¶</a></span>\[\begin{align}
     f(x,y)= -6,\qquad u_d(x,y)=u_e(x,y)=1+x^2+2y^2,
 \end{align}\]</div>
 <p>regardless of the shape of the domain as long as we prescribe
@@ -482,7 +483,7 @@ First pick a simple expression for the exact solution, plug into
 the equation to obtain the right-hand side (source term <span class="math notranslate nohighlight">\(f\)</span>). Then solve the equation with this right hand side, and using the exact solution as boundary condition. Finally, we create a program that tries to reproduce the exact solution.</p>
 <p>Note that in many cases, it can be hard to determine if the program works if it produces an error of size <span class="math notranslate nohighlight">\(10^{-5}\)</span> on a
 <span class="math notranslate nohighlight">\(20 \times 20\)</span> grid. However, since we are using Sobolev spaces,
-we usually known about the numerical errors <em>asymptotic properties</em>. For instance that it is proportional to <span class="math notranslate nohighlight">\(h^2\)</span> if <span class="math notranslate nohighlight">\(h\)</span> is the size of a cell in the mesh. We can then compare the error on meshes with different <span class="math notranslate nohighlight">\(h\)</span>-values to see if the asymptotic behavior is correct. This technique will be explained in detail in a later chapter <em>FIXME: add correct reference</em>.</p>
+we usually known about the numerical errors <em>asymptotic properties</em>. For instance that it is proportional to <span class="math notranslate nohighlight">\(h^2\)</span> if <span class="math notranslate nohighlight">\(h\)</span> is the size of a cell in the mesh. We can then compare the error on meshes with different <span class="math notranslate nohighlight">\(h\)</span>-values to see if the asymptotic behavior is correct. This technique will be explained in detail in the chapter <a class="reference internal" href="../chapter4/convergence.html"><span class="doc std std-doc">Improving your fenics code</span></a>.</p>
 <p>However, in cases where we have a solution we know that should have no approximation error, we know that the solution should
 be produces to machine precision by the program.</p>
 <p>The first eight lines of the program is importing the different modules required for solving the problem.</p>
@@ -543,35 +544,53 @@ and hexahedrons). For an overview, see:
 </div>
 <div class="section" id="defining-the-boundary-conditions">
 <h2>Defining the boundary conditions<a class="headerlink" href="#defining-the-boundary-conditions" title="Permalink to this headline">¶</a></h2>
-<p>The next step is to specify the boundary condition <span class="math notranslate nohighlight">\(u=u_D\)</span> on <span class="math notranslate nohighlight">\(\partial\Omega_D\)</span>, which is done by</p>
+<p>The next step is to specify the boundary condition <span class="math notranslate nohighlight">\(u=u_D\)</span> on <span class="math notranslate nohighlight">\(\partial\Omega_D\)</span>, which is done by over several steps. The first step is to define the function <span class="math notranslate nohighlight">\(u_D\)</span>. Into this function, we would like to interpolate the boundary condition <span class="math notranslate nohighlight">\(1 + x^2+2y^2\)</span>. We do this by first defining a <code class="docutils literal notranslate"><span class="pre">dolfinx.Function</span></code>, and then use a <a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions">lambda-function</a> in Python to define the
+spatially varying function. As we would like this program to work on one or multiple processors, we have to update the coefficients of <span class="math notranslate nohighlight">\(u_D\)</span> that data shared between the processors. We do this by updating the ghost values in the <code class="docutils literal notranslate"><span class="pre">PETScVector</span></code> storing this data.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">uD</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">uD</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">uD</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
-<span class="n">fdim</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span> <span class="mi">1</span>
-<span class="n">boundary_facets</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">locate_entities_boundary</span><span class="p">(</span>
-    <span class="n">mesh</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">bool</span><span class="p">))</span>
-<span class="n">bc</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">uD</span><span class="p">,</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">boundary_facets</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>As we observe here, this is done  over several steps. The first step is to define the function that will contain the boundary information, <code class="docutils literal notranslate"><span class="pre">uD</span></code>. The next step is to interpolate the spatially
-varying function into the function space. We use the <a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions">lambda-function</a> in Python to compactly define the
-spatially varying function. As we in our example distribute
-the the mesh the number of processors used, we need to
-update data on boundaries between processors. We do
-this by updating the underlying PETSc function.
-We now have the boundary data (and in this case the solution of
-the finite element problem) represented in the discrete function space. Next we would like to apply the boundary values to all degrees of freedom that is on the boundary of the discrete domain. We start by identifying the facets (line-segments)
-representing the outer boundary, using <code class="docutils literal notranslate"><span class="pre">locate_entities_boundary</span></code>. As one in most cases, as shown in later tutorials, only want to mark subsets of the outer boundary, we need to supply a function using a geometrical criteria for which facets should be marked. In this case, as we want to mark the whole boundary, we create a lambda-function that returns <code class="docutils literal notranslate"><span class="pre">True</span></code> for all facets on the boundary.
-Now that we have located the boundary facets, we locate the
-dofs contained on these facets, using <code class="docutils literal notranslate"><span class="pre">locate_dofs_topological</span></code> and create the Dirichlet boundary condition.</p>
+<p>We now have the boundary data (and in this case the solution of
+the finite element problem) represented in the discrete function space.
+Next we would like to apply the boundary values to all degrees of freedom that is on the boundary of the discrete domain. We start by identifying the facets (line-segments) representing the outer boundary, using <code class="docutils literal notranslate"><span class="pre">dolfinx.cpp.mesh.compute_boundary_facets</span></code>.
+This function returns an array booleans of the same size as the number of facets on this processor, where <code class="docutils literal notranslate"><span class="pre">True</span></code> indicates that the local facet <span class="math notranslate nohighlight">\(i\)</span> is on the boundary. To reduce this to only the indices that are <code class="docutils literal notranslate"><span class="pre">True</span></code>, we use <code class="docutils literal notranslate"><span class="pre">numpy.where</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fdim</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="c1"># Create facet to cell connectivity</span>
+<span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">create_entities</span><span class="p">(</span><span class="n">fdim</span><span class="p">)</span>
+<span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">create_connectivity</span><span class="p">(</span><span class="n">fdim</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
+<span class="n">boundary_facets</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">cpp</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">compute_boundary_facets</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>For the current problem, as we are using the “CG” 1 function space, the degrees of freedom are located at the vertices of each cell, thus each facet contains two degrees of freedom.</p>
+<p>To find the local indices of these degrees of freedom, we se <code class="docutils literal notranslate"><span class="pre">dolfinx.fem.locate_dofs_topological</span></code>, which takes in the function space, the dimension of entities in the mesh we would like to identify and the local entities.</p>
+<div class="admonition-local-ordering-of-degrees-of-freedom-and-mesh-vertices admonition">
+<p class="admonition-title">Local ordering of degrees of freedom and mesh vertices</p>
+<p>Many people expect there to be a 1-1 correspondence between the mesh coordinates and the coordinates of the degrees of freedom.
+However, this is only true in the case of <code class="docutils literal notranslate"><span class="pre">CG</span></code> 1 elements on a first order mesh. Therefore, in <code class="docutils literal notranslate"><span class="pre">dolfinx</span></code> we use separate local numbering for the mesh coordinates and the dof coordinates. To obtain the local dof coordinates we can use <code class="docutils literal notranslate"><span class="pre">V.tabulate_dof_coordinates()</span></code>, while the ordering of the local vertices can be obtained by <code class="docutils literal notranslate"><span class="pre">mesh.geometry.x</span></code>.</p>
+</div>
+<p>With this data at hand, we can create the Dirichlet boundary condition</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">boundary_dofs</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">boundary_facets</span><span class="p">)</span>
+<span class="n">bc</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">uD</span><span class="p">,</span> <span class="n">boundary_dofs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
 </div>
 <div class="section" id="defining-the-trial-and-test-function">
 <h2>Defining the trial and test function<a class="headerlink" href="#defining-the-trial-and-test-function" title="Permalink to this headline">¶</a></h2>
-<p>In mathematics, we distinguish between trial and test spaces <span class="math notranslate nohighlight">\(V\)</span> and <span class="math notranslate nohighlight">\(\hat{V}\)</span>. The only difference in the present problem is the boundary conditions. In FEniCS-X, we do not specify boundary conditions as part of the function space, so it is sufficient to use a common space for the trial and test function:</p>
+<p>In mathematics, we distinguish between trial and test spaces <span class="math notranslate nohighlight">\(V\)</span> and <span class="math notranslate nohighlight">\(\hat{V}\)</span>. The only difference in the present problem is the boundary conditions.
+In FEniCS-X, we do not specify boundary conditions as part of the function space, so it is sufficient to use a common space for the trial and test function:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">u</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
@@ -583,7 +602,7 @@ dofs contained on these facets, using <code class="docutils literal notranslate"
 </div>
 <div class="section" id="defining-the-source-term">
 <h2>Defining the source term<a class="headerlink" href="#defining-the-source-term" title="Permalink to this headline">¶</a></h2>
-<p>As the source term is constant over the domain, we can efficiently represent is as constant:</p>
+<p>As the source term is constant over the domain, we use <code class="docutils literal notranslate"><span class="pre">dolfinx.Constant</span></code></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">)</span>
@@ -591,13 +610,14 @@ dofs contained on these facets, using <code class="docutils literal notranslate"
 </div>
 </div>
 </div>
-<p>This will speed of compilation of high performance
-C code for creating the linear system, as opposed to
-<code class="docutils literal notranslate"><span class="pre">f</span> <span class="pre">=</span> <span class="pre">-6</span></code>.</p>
+<div class="admonition-compilation-speed-up admonition">
+<p class="admonition-title">Compilation speed-up</p>
+<p>Instead of wrapping <span class="math notranslate nohighlight">\(-6\)</span> in a <code class="docutils literal notranslate"><span class="pre">dolfinx.Constant,</span> <span class="pre">we</span> <span class="pre">could</span> <span class="pre">simply</span> <span class="pre">define</span> <span class="pre">$f$</span> <span class="pre">as</span> </code>f=-6<code class="docutils literal notranslate"><span class="pre">.</span> <span class="pre">However,</span> <span class="pre">if</span> <span class="pre">we</span> <span class="pre">would</span> <span class="pre">like</span> <span class="pre">to</span> <span class="pre">change</span> <span class="pre">this</span> <span class="pre">parameter</span> <span class="pre">at</span> <span class="pre">a</span> <span class="pre">later</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">simulation,</span> <span class="pre">we</span> <span class="pre">would</span> <span class="pre">have</span> <span class="pre">to</span> <span class="pre">redefine</span> <span class="pre">our</span> <span class="pre">variational</span> <span class="pre">formulation.</span> <span class="pre">The</span> </code>dolfinx.Constant<code class="docutils literal notranslate"><span class="pre">allows</span> <span class="pre">us</span> <span class="pre">to</span> <span class="pre">update</span> <span class="pre">the</span> <span class="pre">value</span> <span class="pre">in</span> <span class="pre">$f$</span> <span class="pre">by</span> <span class="pre">using</span></code>f.value=5`. Additionally, by indicating that <span class="math notranslate nohighlight">\(f\)</span> is a constant, we speed of compilation of the variational formulations required for created the linear system.</p>
+</div>
 </div>
 <div class="section" id="defining-the-variational-problem">
 <h2>Defining the variational problem<a class="headerlink" href="#defining-the-variational-problem" title="Permalink to this headline">¶</a></h2>
-<p>We now have all the ingredients to define the variational problem</p>
+<p>As we now have defined all variables used to describe our variational problem, we can create the weak formulation</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
@@ -607,17 +627,18 @@ C code for creating the linear system, as opposed to
 </div>
 </div>
 <p>Note that there is a very close correspondence between the Python syntax and the mathematical syntax
-<span class="math notranslate nohighlight">\(\nabla u \cdot \nabla v \mathrm{d} x\)</span> and <span class="math notranslate nohighlight">\(fv\mathrm{d} x\)</span>.
-This is the key strength of FEniCS-X: the formulas in the variational formulation translate directly to very similar Python code, a feature that makes it easy to specify and solve complicated PDE problems. The language used to express weak forms is the Unified Form Language <a class="reference external" href="https://doi.org/10.1145/2566630">UFL</a>.</p>
+<span class="math notranslate nohighlight">\(\int_{\Omega} \nabla u \cdot \nabla v ~\mathrm{d} x\)</span> and <span class="math notranslate nohighlight">\(\int_{\Omega}fv~\mathrm{d} x\)</span>.
+The integration over the domain <span class="math notranslate nohighlight">\(\Omega\)</span> is defined by using <code class="docutils literal notranslate"><span class="pre">ufl.dx</span></code>, an integration measure over all cells of the mesh.</p>
+<p>This is the key strength of FEniCS-X: the formulas in the variational formulation translate directly to very similar Python code, a feature that makes it easy to specify and solve complicated PDE problems. The language used to express weak forms is the Unified Form Language <a class="reference external" href="https://doi.org/10.1145/2566630">UFL</a>.</p>
 </div>
 <div class="section" id="expressing-inner-products">
 <h2>Expressing inner products<a class="headerlink" href="#expressing-inner-products" title="Permalink to this headline">¶</a></h2>
-<p>The inner product <span class="math notranslate nohighlight">\(\int_\Omega \nabla u \cdot \nabla v \mathrm{d} x\)</span> can be expressed in various ways in UFL. We have used the notation <code class="docutils literal notranslate"><span class="pre">ufl.dot(ufl.grad(u),</span> <span class="pre">ufl.grad(v))*uf.dx</span></code>. The dot product in UFL computes the sum (contraction) over the last index of the first factor and first index of the second factor. In this case, both factors are tensors of rank one (vectors) and so the sum is just over the single index of both <span class="math notranslate nohighlight">\(\nabla u\)</span> and <span class="math notranslate nohighlight">\(\nabla v\)</span>. To compute an inner product of matrices (with two indices), one must instead of <code class="docutils literal notranslate"><span class="pre">ufl.dot</span></code> use the function <code class="docutils literal notranslate"><span class="pre">ufl.inner</span></code>. For vectors, <code class="docutils literal notranslate"><span class="pre">ufl.dot</span></code> and <code class="docutils literal notranslate"><span class="pre">ufl.inner</span></code> are equivalent.</p>
+<p>The inner product <span class="math notranslate nohighlight">\(\int_\Omega \nabla u \cdot \nabla v ~\mathrm{d} x\)</span> can be expressed in various ways in UFL. We have used the notation <code class="docutils literal notranslate"><span class="pre">ufl.dot(ufl.grad(u),</span> <span class="pre">ufl.grad(v))*uf.dx</span></code>. The dot product in UFL computes the sum (contraction) over the last index of the first factor and first index of the second factor. In this case, both factors are tensors of rank one (vectors) and so the sum is just over the single index of both <span class="math notranslate nohighlight">\(\nabla u\)</span> and <span class="math notranslate nohighlight">\(\nabla v\)</span>. To compute an inner product of matrices (with two indices), one must instead of <code class="docutils literal notranslate"><span class="pre">ufl.dot</span></code> use the function <code class="docutils literal notranslate"><span class="pre">ufl.inner</span></code>. For vectors, <code class="docutils literal notranslate"><span class="pre">ufl.dot</span></code> and <code class="docutils literal notranslate"><span class="pre">ufl.inner</span></code> are equivalent.</p>
 </div>
 <div class="section" id="forming-and-solving-the-linear-system">
 <h2>Forming and solving the linear system<a class="headerlink" href="#forming-and-solving-the-linear-system" title="Permalink to this headline">¶</a></h2>
 <p>Having defined the finite element variational problem and boundary condition, we can create our <code class="docutils literal notranslate"><span class="pre">dolfinx.fem.LinearProblem</span></code>, as class for solving
-the variational problem: Find <span class="math notranslate nohighlight">\(u_h\in V\)</span> such that <span class="math notranslate nohighlight">\(a(u_h, v)==L(v) \quad \forall v \in \hat{V}\)</span>. We will use PETSc as our linear algebra backend, using a direct solver (LU-factorization).</p>
+the variational problem: Find <span class="math notranslate nohighlight">\(u_h\in V\)</span> such that <span class="math notranslate nohighlight">\(a(u_h, v)==L(v) \quad \forall v \in \hat{V}\)</span>. We will use PETSc as our linear algebra backend, using a direct solver (LU-factorization).  See the <a class="reference external" href="https://www.mcs.anl.gov/petsc/petsc-current/docs/linearsolvertable.html">PETSc-documentation</a> of the method for more information.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="p">[</span><span class="n">bc</span><span class="p">],</span> <span class="n">petsc_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ksp_type&quot;</span><span class="p">:</span> <span class="s2">&quot;preonly&quot;</span><span class="p">,</span> <span class="s2">&quot;pc_type&quot;</span><span class="p">:</span> <span class="s2">&quot;lu&quot;</span><span class="p">})</span>
@@ -626,22 +647,22 @@ the variational problem: Find <span class="math notranslate nohighlight">\(u_h\i
 </div>
 </div>
 </div>
-<p>Here we have defined our approximate function <code class="docutils literal notranslate"><span class="pre">uh</span></code>, which will store the solution. The <code class="docutils literal notranslate"><span class="pre">solve</span></code>-command takes in the variational equality, the discrete function, the boundary condition and options to the backend linear algebra solver PETSc. In this case, we would like to solve the problem with a direct solver. See the <a class="reference external" href="https://www.mcs.anl.gov/petsc/petsc-current/docs/manualpages/PC/PCLU.html">PETSc-documentation</a> of the method for more information.</p>
-<p>Then, as after interpolation, we update shared indices not owned by the processor.</p>
+<p>Using <code class="docutils literal notranslate"><span class="pre">problem.solve()</span></code> we solve the linear system of equations and return a <code class="docutils literal notranslate"><span class="pre">dolfinx.Function</span></code> containing the solution.</p>
 </div>
 <div class="section" id="plotting-the-solution-using-the-built-in-plotting">
 <h2>Plotting the solution using the built-in plotting<a class="headerlink" href="#plotting-the-solution-using-the-built-in-plotting" title="Permalink to this headline">¶</a></h2>
-<p>Once the solution has been computed, we visualize it with the plot command</p>
+<p>Once the solution has been computed, we visualize it with the plot command. We also add the colorbar to the plot using matplotlib.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">uh</span><span class="p">)</span>
-<span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">u_plot</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">uh</span><span class="p">)</span>
+<span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">u_plot</span><span class="p">)</span>
+<span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
 <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;uh.png&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/fundamentals_code_17_0.png" src="../_images/fundamentals_code_17_0.png" />
+<img alt="../_images/fundamentals_code_21_0.png" src="../_images/fundamentals_code_21_0.png" />
 </div>
 </div>
 <p>We start by plotting the solution of the function, and overlays it with the mesh. Finally, we save the plot with matplotlib.
