@@ -4,7 +4,8 @@ Authors: Hans Petter Langtangen and Anders Logg.
 
 Modified to dolfin-X by Jørgen S. Dokken
 
-In the first FEniCS program, we solved a simple problem which we could easily use to verify the implementation. In this section, we will turn our attentition to a physically more relevant problem with solutions of a somewhat more exciting shape.
+In the first FEniCS program, we solved a simple problem which we could easily use to verify the implementation.
+In this section, we will turn our attentition to a physically more relevant problem with solutions of a somewhat more exciting shape.
 
 We would like to compute the deflection $D(x,y)$ of a two-dimensional, circular membrane of radius $R$, subject to a load $p$ over the membrane. The appropriate PDE model is 
 \begin{align}
