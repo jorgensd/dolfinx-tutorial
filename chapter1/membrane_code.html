@@ -403,18 +403,29 @@
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#defining-the-load">
-   Defining the load
+  <a class="reference internal nav-link" href="#defining-a-spatially-varying-load">
+   Defining a spatially varying load
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#interpolation-of-the-pressure">
-   Interpolation of the pressure
+  <a class="reference internal nav-link" href="#create-a-dirichlet-boundary-condition-using-geometrical-conditions">
+   Create a Dirichlet boundary condition using geometrical conditions
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#defining-the-variational-problem">
    Defining the variational problem
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#projection-of-a-ufl-expression">
+   Projection of a
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ufl
+    </span>
+   </code>
+   -Expression
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -445,7 +456,16 @@
                 
   <div class="section" id="implementation">
 <h1>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h1>
-<p>In this section, we will solve the deflection of the membrane problem, as well as learning how to create meshes with GMSH and how to use Paraview to visualize the solution.</p>
+<p>In this section, we will solve the deflection of the membrane problem.
+After finishing this section, you should be able to:</p>
+<ul class="simple">
+<li><p>Create a simple mesh using the GMSH Python API and load it into dolfin-x</p></li>
+<li><p>How to create boundary conditions using a geometrical identifier</p></li>
+<li><p>Using spatial coordinate to create a spatially varying function</p></li>
+<li><p>How to project a <code class="docutils literal notranslate"><span class="pre">ufl.Product</span></code> into an appropriate function space</p></li>
+<li><p>How to evaluate a <code class="docutils literal notranslate"><span class="pre">dolfinx.Function</span></code> at any point <span class="math notranslate nohighlight">\(x\)</span></p></li>
+<li><p>Use Paraview to visualize the solution of a PDE</p></li>
+</ul>
 <div class="section" id="creating-the-mesh">
 <h2>Creating the mesh<a class="headerlink" href="#creating-the-mesh" title="Permalink to this headline">¶</a></h2>
 <p>Author: Jørgen S. Dokken</p>
@@ -551,58 +571,36 @@
 </div>
 </div>
 </div>
-<div class="section" id="defining-the-load">
-<h2>Defining the load<a class="headerlink" href="#defining-the-load" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="defining-a-spatially-varying-load">
+<h2>Defining a spatially varying load<a class="headerlink" href="#defining-a-spatially-varying-load" title="Permalink to this headline">¶</a></h2>
 <p>Authors: Hans Petter Langtangen and Anders Logg.</p>
 <p>Adapted to dolfin-X: Jørgen S. Dokken</p>
-<p>The right hand side pressure function is represented using
-Python-classes. The class will have an initializer, where we store the two physical parameters, and an evaluation function which has a physical coordinate <code class="docutils literal notranslate"><span class="pre">x</span></code> as input.</p>
+<p>The right hand side pressure function is represented using <code class="docutils literal notranslate"><span class="pre">ufl.SpatialCoordinate</span></code> and a two constants, one for <span class="math notranslate nohighlight">\(\beta\)</span> and one for <span class="math notranslate nohighlight">\(R_0\)</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Pressure</span><span class="p">():</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">R0</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">R0</span> <span class="o">=</span> <span class="n">R0</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">return</span> <span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">R0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
-<span class="n">pressure</span> <span class="o">=</span> <span class="n">Pressure</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ufl</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<span class="n">beta</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+<span class="n">R0</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">beta</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">R0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
-<div class="section" id="interpolation-of-the-pressure">
-<h2>Interpolation of the pressure<a class="headerlink" href="#interpolation-of-the-pressure" title="Permalink to this headline">¶</a></h2>
-<p>To be able to use this class in a variational formulation, we interpolate this function into the appropriate function space. In this case, we will use the same function space as we use for our approximate solution. An interpolation uses that any finite element function can be written as <span class="math notranslate nohighlight">\(p=\sum_{j=1}^N P_j\phi_j\)</span>, where we set <span class="math notranslate nohighlight">\(P_j=p(x_j, y_j)\)</span> where <span class="math notranslate nohighlight">\((x_j,y_j)\)</span> are the coordinates of the node number <span class="math notranslate nohighlight">\(j\)</span>.</p>
+<div class="section" id="create-a-dirichlet-boundary-condition-using-geometrical-conditions">
+<h2>Create a Dirichlet boundary condition using geometrical conditions<a class="headerlink" href="#create-a-dirichlet-boundary-condition-using-geometrical-conditions" title="Permalink to this headline">¶</a></h2>
+<p>The next step is to create the homogenous boundary condition. As opposed to the <a class="reference internal" href="fundamentals_code.html"><span class="doc std std-doc">First tutorial</span></a> we will use <code class="docutils literal notranslate"><span class="pre">dolfinx.fem.locate_dofs_geometrical</span></code> to locate the degrees of freedom on the boundary. As we know that our domain is a circle with radius 1, we know that any degree of freedom should be located at a coordinate <span class="math notranslate nohighlight">\((x,y)\)</span> such that <span class="math notranslate nohighlight">\(\sqrt{x^2+y^2}=1\)</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-<span class="n">p</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">pressure</span><span class="p">)</span>
-<span class="n">p</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>We can modify the parameters at any time by changing the <code class="docutils literal notranslate"><span class="pre">pressure</span></code>-variables and update the interpolation, as follows</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pressure</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="mi">12</span>
-<span class="n">pressure</span><span class="o">.</span><span class="n">R0</span> <span class="o">=</span> <span class="mf">0.3</span>
-<span class="n">p</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">pressure</span><span class="p">)</span>
-<span class="n">p</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>We create the homogenuous boundary condition over the whole boundary which we do as in the first tutorial.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">uD</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-<span class="n">uD</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">fdim</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span> <span class="mi">1</span>
-<span class="n">boundary_facets</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">locate_entities_boundary</span><span class="p">(</span>
-    <span class="n">mesh</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">))</span>
-<span class="n">bc</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">uD</span><span class="p">,</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">boundary_facets</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">on_boundary</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">uD</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">uD</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
+    <span class="n">loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">boundary_dofs</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_geometrical</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">on_boundary</span><span class="p">)</span>
+<span class="n">bc</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">uD</span><span class="p">,</span> <span class="n">boundary_dofs</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -613,8 +611,7 @@ Python-classes. The class will have an initializer, where we store the two physi
 <p>The variational problem is the same as in our first Poisson problem, where <code class="docutils literal notranslate"><span class="pre">f</span></code> is replaced by <code class="docutils literal notranslate"><span class="pre">p</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ufl</span>
-<span class="n">u</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">u</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">a</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
 <span class="n">L</span> <span class="o">=</span> <span class="n">p</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
@@ -625,9 +622,27 @@ Python-classes. The class will have an initializer, where we store the two physi
 </div>
 </div>
 </div>
+<div class="section" id="projection-of-a-ufl-expression">
+<h2>Projection of a <code class="docutils literal notranslate"><span class="pre">ufl</span></code>-Expression<a class="headerlink" href="#projection-of-a-ufl-expression" title="Permalink to this headline">¶</a></h2>
+<p>As we previously defined the load <code class="docutils literal notranslate"><span class="pre">p</span></code> as a spatially varying function, we would like to interpolate this function into an appropriate function space for visualization.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">project</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <span class="n">u_</span><span class="p">,</span> <span class="n">v_</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+    <span class="n">a_p</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">u_</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
+    <span class="n">L_p</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="n">v_</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
+    <span class="n">projection</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">LinearProblem</span><span class="p">(</span><span class="n">a_p</span><span class="p">,</span> <span class="n">L_p</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">projection</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+
+<span class="n">pressure</span> <span class="o">=</span> <span class="n">project</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
 <div class="section" id="plotting-the-solution-over-a-line">
 <h2>Plotting the solution over a line<a class="headerlink" href="#plotting-the-solution-over-a-line" title="Permalink to this headline">¶</a></h2>
-<p>We first plot the load and deflection with matplotlib</p>
+<p>We first plot the load <span class="math notranslate nohighlight">\(p\)</span> and deflection <span class="math notranslate nohighlight">\(u_h\)</span> over the domain <span class="math notranslate nohighlight">\(\Omega\)</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -641,45 +656,74 @@ Python-classes. The class will have an initializer, where we store the two physi
 <span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">uh</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Deflection&quot;</span><span class="p">)</span>
 <span class="c1"># Select third subfigure</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">ax3</span><span class="p">)</span>
-<span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Load&quot;</span><span class="p">)</span>
+<span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pressure</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Load&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.tri.tricontour.TriContourSet at 0x7ff40fa2b670&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.tri.tricontour.TriContourSet at 0x7fe9260d6c40&gt;
 </pre></div>
 </div>
-<img alt="../_images/membrane_code_27_1.png" src="../_images/membrane_code_27_1.png" />
+<img alt="../_images/membrane_code_25_1.png" src="../_images/membrane_code_25_1.png" />
 </div>
 </div>
 </div>
 <div class="section" id="making-curve-plots-throughout-the-domain">
 <h2>Making curve plots throughout the domain<a class="headerlink" href="#making-curve-plots-throughout-the-domain" title="Permalink to this headline">¶</a></h2>
-<p>Another way to compare the deflection and the load is to make a plot along the line <span class="math notranslate nohighlight">\(x=0\)</span>. This is just a matter of defining a set of points along the <span class="math notranslate nohighlight">\(y\)</span>-axis and evaluating the finite element functions <span class="math notranslate nohighlight">\(u\)</span> and <span class="math notranslate nohighlight">\(p\)</span> at these points. As we would like our code to run in parallel, where the mesh is distributed over multiple processors, we need some additional checks. As every point is not guaranteed to be found on each processor, we loop through the points and only evaluate our functions for those that has the point inside a cell owned by the processor.</p>
+<p>Another way to compare the deflection and the load is to make a plot along the line <span class="math notranslate nohighlight">\(x=0\)</span>.
+This is just a matter of defining a set of points along the <span class="math notranslate nohighlight">\(y\)</span>-axis and evaluating the finite element functions <span class="math notranslate nohighlight">\(u\)</span> and <span class="math notranslate nohighlight">\(p\)</span> at these points.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.geometry</span>
-<span class="n">tol</span> <span class="o">=</span> <span class="mf">0.001</span> <span class="c1"># Avoid hitting the outside of the domain</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tol</span> <span class="o">=</span> <span class="mf">0.001</span> <span class="c1"># Avoid hitting the outside of the domain</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="n">tol</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">tol</span><span class="p">,</span> <span class="mi">101</span><span class="p">)</span>
 <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">101</span><span class="p">))</span>
 <span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
 <span class="n">u_values</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">p_values</span> <span class="o">=</span> <span class="p">[]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>As a finite element function is the linear combination of all degrees of freedom, <span class="math notranslate nohighlight">\(u_h(x)=\sum_{i=1}^N c_i \phi_i(x)\)</span> where <span class="math notranslate nohighlight">\(c_i\)</span> are the coefficients of <span class="math notranslate nohighlight">\(u_h\)</span>, <span class="math notranslate nohighlight">\(\phi_i\)</span> the <span class="math notranslate nohighlight">\(i\)</span>th basis function, we can compute the exact solution at any point in <span class="math notranslate nohighlight">\(\Omega\)</span>.
+However, as a mesh consists of a large set of degrees of freedom (i.e. <span class="math notranslate nohighlight">\(N\)</span> is large), we want to reduce the number of evaluations of the basis function <span class="math notranslate nohighlight">\(\phi_i(x)\)</span>. We do this by identifying which cell of the mesh <span class="math notranslate nohighlight">\(x\)</span> is in.
+This is efficiently done by creating a bounding box tree of the cells of the mesh, allowing a quick recursive search through the mesh entities.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.geometry</span>
 <span class="n">bb_tree</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">BoundingBoxTree</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
-<span class="n">cells</span> <span class="o">=</span> <span class="p">[]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we can compute which cells the bounding box tree collides with using <code class="docutils literal notranslate"><span class="pre">dolfinx.geometry.compute_collisions_point</span></code>. This function returns a list of cells whose bounding box collide with the point.
+However, as the bounding box of a cell spans more of <span class="math notranslate nohighlight">\(\mathbb{R}^n\)</span> than the actual cell, we check that the actual cell collides with cell
+using <code class="docutils literal notranslate"><span class="pre">dolfinx.geometry.select_colliding_cells</span></code>, whose input is the mesh, the list of cell candidates and an integer.
+The integer is used to tell <code class="docutils literal notranslate"><span class="pre">dolfinx</span></code> how many cells colliding with the point that should be return (if any).
+This is because if the point <code class="docutils literal notranslate"><span class="pre">p</span></code> is on an interal cell facet or edge, it can belong to multiple cells. As we are currently consider a problem using first order continous functions, it is not important which cell we select if the point is on an interior facet.</p>
+<p>Finally, we would like the code below to run in parallel, when the mesh is distributed over multiple processors. In that case, it is not guaranteed that every point in <code class="docutils literal notranslate"><span class="pre">points</span></code> is on each processor. Therefore we create a subset <code class="docutils literal notranslate"><span class="pre">points_on_proc</span></code> only containing the points found on the current processor.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cells</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">points_on_proc</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">points</span><span class="o">.</span><span class="n">T</span><span class="p">:</span>
     <span class="c1"># Find cells that are close to the point</span>
     <span class="n">cell_candidates</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">compute_collisions_point</span><span class="p">(</span><span class="n">bb_tree</span><span class="p">,</span> <span class="n">point</span><span class="p">)</span>
     <span class="c1"># Choose one of the cells that contains the point</span>
-    <span class="n">cell</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">cpp</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">select_colliding_cells</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">cell_candidates</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="c1"># Only search for points on current processor</span>
+    <span class="n">cell</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">select_colliding_cells</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">cell_candidates</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># Only use evaluate for points on current processor</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">points_on_proc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
         <span class="n">cells</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">points_on_proc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">points_on_proc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We now got a list of points on the processor, on in which cell each point belongs. We can then call <code class="docutils literal notranslate"><span class="pre">uh.eval</span></code> and <code class="docutils literal notranslate"><span class="pre">pressure.eval</span></code> to obtain the set of values for all the points.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">points_on_proc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">points_on_proc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 <span class="n">u_values</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">points_on_proc</span><span class="p">,</span> <span class="n">cells</span><span class="p">)</span>
-<span class="n">p_values</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">points_on_proc</span><span class="p">,</span> <span class="n">cells</span><span class="p">)</span>
+<span class="n">p_values</span> <span class="o">=</span> <span class="n">pressure</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">points_on_proc</span><span class="p">,</span> <span class="n">cells</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -688,18 +732,18 @@ Python-classes. The class will have an initializer, where we store the two physi
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mf">7.5</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">points_on_proc</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="mi">50</span><span class="o">*</span><span class="n">u_values</span><span class="p">,</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Deflection ($</span><span class="se">\\</span><span class="s2">times 50$)&quot;</span><span class="p">)</span> <span class="c1"># Magnify w</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">points_on_proc</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="mi">50</span><span class="o">*</span><span class="n">u_values</span><span class="p">,</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Deflection ($</span><span class="se">\\</span><span class="s2">times 50$)&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">points_on_proc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">p_values</span><span class="p">,</span> <span class="s2">&quot;b--&quot;</span><span class="p">,</span> <span class="n">linewidth</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Load&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="c1"># If ran in parallel as a python file, we save a plot per processor</span>
+<span class="c1"># If run in parallel as a python file, we save a plot per processor</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;membrane_rank</span><span class="si">{0:d}</span><span class="s2">.png&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">rank</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/membrane_code_31_0.png" src="../_images/membrane_code_31_0.png" />
+<img alt="../_images/membrane_code_35_0.png" src="../_images/membrane_code_35_0.png" />
 </div>
 </div>
 </div>
@@ -709,11 +753,11 @@ Python-classes. The class will have an initializer, where we store the two physi
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.io</span>
-<span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Load&quot;</span>
+<span class="n">pressure</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Load&quot;</span>
 <span class="n">uh</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Deflection&quot;</span>
 <span class="k">with</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">XDMFFile</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="s2">&quot;results_membrane.xdmf&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">xdmf</span><span class="p">:</span>
     <span class="n">xdmf</span><span class="o">.</span><span class="n">write_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">pressure</span><span class="p">)</span>
     <span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">uh</span><span class="p">)</span>
 </pre></div>
 </div>

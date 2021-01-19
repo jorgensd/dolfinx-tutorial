@@ -461,18 +461,27 @@
   <div class="section" id="implementation">
 <h1>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h1>
 <p>Author: Hans Petter Langtangen, Anders Logg and Jørgen Schartum Dokken</p>
+<p>In this section, you will learn:</p>
+<ul class="simple">
+<li><p>How to use the built-in meshes in dolfin-x</p></li>
+<li><p>How to create a Dirichlet boundary conditions on the whole domain boundary</p></li>
+<li><p>How to define a weak formulation of your PDE</p></li>
+<li><p>How to solve the resulting system of linear equations</p></li>
+<li><p>How to visualize the solution using matplotlib</p></li>
+<li><p>How to compute the <span class="math notranslate nohighlight">\(L^2(\Omega)\)</span> error and the error at mesh vertices</p></li>
+</ul>
 <p>The Poisson problem has so far featured a general domain <span class="math notranslate nohighlight">\(\Omega\)</span> and general functions <span class="math notranslate nohighlight">\(u_D\)</span> for the boundary conditions and <span class="math notranslate nohighlight">\(f\)</span> for the right hand side.
 Therefore, we need to make specific choices of <span class="math notranslate nohighlight">\(\Omega, u_D\)</span> and <span class="math notranslate nohighlight">\(f\)</span>. A wise choice is to construct a problem  with a known analytical solution, so that we can check that the computed solution is correct. The primary candidates are lower-order polynomials. The continuous Galerkin finite element spaces of degree <span class="math notranslate nohighlight">\(r\)</span> will exactly reproduce polynomials of degree <span class="math notranslate nohighlight">\(r\)</span>.</p>
 <!-- Particularly, piecewise linear continuous Galerkin finite elements are able to exactly reproduce a quadratic polynomial on 
 a uniformly partitioned mesh. -->
 <p>We use this fact to construct a quadratic function in <span class="math notranslate nohighlight">\(2D\)</span>. In particular we choose</p>
-<div class="amsmath math notranslate nohighlight" id="equation-71a641f9-da9b-43e4-a632-917a2379e220">
-<span class="eqno">(1)<a class="headerlink" href="#equation-71a641f9-da9b-43e4-a632-917a2379e220" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-17796f69-e028-4600-8f4e-b96840067cca">
+<span class="eqno">(1)<a class="headerlink" href="#equation-17796f69-e028-4600-8f4e-b96840067cca" title="Permalink to this equation">¶</a></span>\[\begin{align}
  u_e(x,y)=1+x^2+2y^2
  \end{align}\]</div>
 <p>Inserting <span class="math notranslate nohighlight">\(u_e\)</span> in the original boundary problem, we find that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-12279575-9962-4a08-82c2-704b879df67e">
-<span class="eqno">(2)<a class="headerlink" href="#equation-12279575-9962-4a08-82c2-704b879df67e" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-883fe1b6-dec4-40d5-a7d5-f5782882912d">
+<span class="eqno">(2)<a class="headerlink" href="#equation-883fe1b6-dec4-40d5-a7d5-f5782882912d" title="Permalink to this equation">¶</a></span>\[\begin{align}
     f(x,y)= -6,\qquad u_d(x,y)=u_e(x,y)=1+x^2+2y^2,
 \end{align}\]</div>
 <p>regardless of the shape of the domain as long as we prescribe
