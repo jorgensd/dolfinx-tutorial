@@ -475,13 +475,13 @@ Therefore, we need to make specific choices of <span class="math notranslate noh
 <!-- Particularly, piecewise linear continuous Galerkin finite elements are able to exactly reproduce a quadratic polynomial on 
 a uniformly partitioned mesh. -->
 <p>We use this fact to construct a quadratic function in <span class="math notranslate nohighlight">\(2D\)</span>. In particular we choose</p>
-<div class="amsmath math notranslate nohighlight" id="equation-17796f69-e028-4600-8f4e-b96840067cca">
-<span class="eqno">(1)<a class="headerlink" href="#equation-17796f69-e028-4600-8f4e-b96840067cca" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-59cfbba5-001d-4b30-8754-1c0fa233f4d5">
+<span class="eqno">(1)<a class="headerlink" href="#equation-59cfbba5-001d-4b30-8754-1c0fa233f4d5" title="Permalink to this equation">¶</a></span>\[\begin{align}
  u_e(x,y)=1+x^2+2y^2
  \end{align}\]</div>
 <p>Inserting <span class="math notranslate nohighlight">\(u_e\)</span> in the original boundary problem, we find that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-883fe1b6-dec4-40d5-a7d5-f5782882912d">
-<span class="eqno">(2)<a class="headerlink" href="#equation-883fe1b6-dec4-40d5-a7d5-f5782882912d" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-a8435fae-cb2e-497a-9e4e-5bff2ca38d55">
+<span class="eqno">(2)<a class="headerlink" href="#equation-a8435fae-cb2e-497a-9e4e-5bff2ca38d55" title="Permalink to this equation">¶</a></span>\[\begin{align}
     f(x,y)= -6,\qquad u_d(x,y)=u_e(x,y)=1+x^2+2y^2,
 \end{align}\]</div>
 <p>regardless of the shape of the domain as long as we prescribe
@@ -731,7 +731,7 @@ Therefore we compute the values of both <code class="docutils literal notranslat
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Error_L2 = 8.24e-03
-Error_max = 2.22e-15
+Error_max = 4.44e-15
 </pre></div>
 </div>
 </div>
