@@ -18,7 +18,7 @@ RUN adduser --disabled-password \
     ${NB_USER}
 
 # Install python components
-RUN pip3 install git+https://github.com/FEniCS/fiat.git --upgrade && \
+RUN pip3 install git+https://github.com/FEniCS/basix.git --upgrade && \
 	pip3 install git+https://github.com/FEniCS/ufl.git --upgrade && \
 	pip3 install git+https://github.com/FEniCS/ffcx.git --upgrade && \
 	rm -rf /usr/local/include/dolfin /usr/local/include/dolfin.h
