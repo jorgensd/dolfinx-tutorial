@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>A nonlinear Poisson equation &#8212; FEniCS-X tutorial</title>
     
-  <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+  <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
 
     
   <link rel="stylesheet"
@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     
-  <link rel="preload" as="script" href="../_static/js/index.3da636dd464baa7582d2.js">
+  <link rel="preload" as="script" href="../_static/js/index.d3f166471bb80abb5163.js">
 
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -408,8 +408,8 @@
 <div class="section" id="the-pde-problem">
 <h2>The PDE problem<a class="headerlink" href="#the-pde-problem" title="Permalink to this headline">¶</a></h2>
 <p>As a model for the solution of non-linear PDEs, we take the following non-linear Poisson equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0605637a-c1eb-44c4-b65f-7fcf90bc52d7">
-<span class="eqno">(20)<a class="headerlink" href="#equation-0605637a-c1eb-44c4-b65f-7fcf90bc52d7" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-49a59176-173c-4f29-96d4-ec79de8fe4bf">
+<span class="eqno">(20)<a class="headerlink" href="#equation-49a59176-173c-4f29-96d4-ec79de8fe4bf" title="Permalink to this equation">¶</a></span>\[\begin{align}
     - \nabla \cdot (q(u) \nabla u)&amp;=f &amp;&amp; \text{in } \Omega,\\
     u&amp;=u_D &amp;&amp; \text{on } \partial \Omega,
 \end{align}\]</div>
@@ -419,25 +419,25 @@
 <h2>Variational  formulation<a class="headerlink" href="#variational-formulation" title="Permalink to this headline">¶</a></h2>
 <p>As usual, we multiply the PDE by a test function <span class="math notranslate nohighlight">\(v\in \hat{V}\)</span>, integrate over the domain, and integrate second-order derivatives by parts. The boundary integrals arising from integration by parts vanishes wherever we employ Dirichlet conditions. The resulting variational formulation of our model problem becomes:</p>
 <p>Find <span class="math notranslate nohighlight">\(u\in V\)</span> such that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b9c25035-195e-4f8a-9b5c-1770166a5427">
-<span class="eqno">(21)<a class="headerlink" href="#equation-b9c25035-195e-4f8a-9b5c-1770166a5427" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-f51c79dd-5f77-47bf-9079-ac2632d81682">
+<span class="eqno">(21)<a class="headerlink" href="#equation-f51c79dd-5f77-47bf-9079-ac2632d81682" title="Permalink to this equation">¶</a></span>\[\begin{align}
     F(u; v)&amp;=0 &amp;&amp; \forall v \in \hat{V},
 \end{align}\]</div>
 <p>where</p>
-<div class="amsmath math notranslate nohighlight" id="equation-41a909fb-8e09-4fda-b81c-c040951eb9f3">
-<span class="eqno">(22)<a class="headerlink" href="#equation-41a909fb-8e09-4fda-b81c-c040951eb9f3" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-c71fdd11-4440-4dd1-b836-e41a7ad766c5">
+<span class="eqno">(22)<a class="headerlink" href="#equation-c71fdd11-4440-4dd1-b836-e41a7ad766c5" title="Permalink to this equation">¶</a></span>\[\begin{align}
     F(u; v)&amp;=\int_{\Omega}(q(u)\nabla u \cdot \nabla v - fv)\mathrm{d}x,
 \end{align}\]</div>
 <p>and</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e320261d-36a6-4809-9718-2b8905514f7a">
-<span class="eqno">(23)<a class="headerlink" href="#equation-e320261d-36a6-4809-9718-2b8905514f7a" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-5032db59-3835-4b00-a782-a2a69ad61dbf">
+<span class="eqno">(23)<a class="headerlink" href="#equation-5032db59-3835-4b00-a782-a2a69ad61dbf" title="Permalink to this equation">¶</a></span>\[\begin{align}
     V&amp;=\left\{v\in H^1(\Omega)\vert v=u_D \text{on } \partial \Omega \right\}\\
     \hat{V}&amp;=\left\{v\in H^1(\Omega)\vert v=0 \text{on } \partial \Omega \right\}
 \end{align}\]</div>
 <p>The discrete problem arises as usual by restricting <span class="math notranslate nohighlight">\(V\)</span> and <span class="math notranslate nohighlight">\(\hat{V}\)</span> to a pair of discrete spaces. The discrete non-linear problem can therefore be written as:</p>
 <p>Find <span class="math notranslate nohighlight">\(u_h \in V_h\)</span> such that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8dd68344-c353-4020-b015-05a32b67e27a">
-<span class="eqno">(24)<a class="headerlink" href="#equation-8dd68344-c353-4020-b015-05a32b67e27a" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-849504dd-05f3-44d1-b0b1-95f8909a49f8">
+<span class="eqno">(24)<a class="headerlink" href="#equation-849504dd-05f3-44d1-b0b1-95f8909a49f8" title="Permalink to this equation">¶</a></span>\[\begin{align}
 F(u_h, v) &amp;=0 \quad \forall v \in \hat{V}_h,
 \end{align}\]</div>
 <p>with <span class="math notranslate nohighlight">\(u_h=\sum_{j=1}^N U_j\phi_j\)</span>. Since <span class="math notranslate nohighlight">\(F\)</span> is non-linear in <span class="math notranslate nohighlight">\(u\)</span>, the variational statement gives rise to a system of non-linear algebraic equation in  the unknowns <span class="math notranslate nohighlight">\(U_1,\dots,U_N\)</span>.</p>
@@ -504,7 +504,7 @@ F(u_h, v) &amp;=0 \quad \forall v \in \hat{V}_h,
     </div>
 
     
-  <script src="../_static/js/index.3da636dd464baa7582d2.js"></script>
+  <script src="../_static/js/index.d3f166471bb80abb5163.js"></script>
 
 
     

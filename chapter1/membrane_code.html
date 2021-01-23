@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Implementation &#8212; FEniCS-X tutorial</title>
     
-  <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+  <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
 
     
   <link rel="stylesheet"
@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     
-  <link rel="preload" as="script" href="../_static/js/index.3da636dd464baa7582d2.js">
+  <link rel="preload" as="script" href="../_static/js/index.d3f166471bb80abb5163.js">
 
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -456,6 +456,7 @@
                 
   <div class="section" id="implementation">
 <h1>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h1>
+<p>Author: Jørgen S. Dokken</p>
 <p>In this section, we will solve the deflection of the membrane problem.
 After finishing this section, you should be able to:</p>
 <ul class="simple">
@@ -468,7 +469,6 @@ After finishing this section, you should be able to:</p>
 </ul>
 <div class="section" id="creating-the-mesh">
 <h2>Creating the mesh<a class="headerlink" href="#creating-the-mesh" title="Permalink to this headline">¶</a></h2>
-<p>Author: Jørgen S. Dokken</p>
 <p>To create the computational geometry, we use the python-API of <a class="reference external" href="http://gmsh.info/">GMSH</a>. We start by import the gmsh-module, and initalizing it.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -573,8 +573,6 @@ After finishing this section, you should be able to:</p>
 </div>
 <div class="section" id="defining-a-spatially-varying-load">
 <h2>Defining a spatially varying load<a class="headerlink" href="#defining-a-spatially-varying-load" title="Permalink to this headline">¶</a></h2>
-<p>Authors: Hans Petter Langtangen and Anders Logg.</p>
-<p>Adapted to dolfin-X: Jørgen S. Dokken</p>
 <p>The right hand side pressure function is represented using <code class="docutils literal notranslate"><span class="pre">ufl.SpatialCoordinate</span></code> and a two constants, one for <span class="math notranslate nohighlight">\(\beta\)</span> and one for <span class="math notranslate nohighlight">\(R_0\)</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -661,7 +659,7 @@ After finishing this section, you should be able to:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.tri.tricontour.TriContourSet at 0x7f3139697af0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.tri.tricontour.TriContourSet at 0x7fcd0f8c2e20&gt;
 </pre></div>
 </div>
 <img alt="../_images/membrane_code_25_1.png" src="../_images/membrane_code_25_1.png" />
@@ -824,7 +822,7 @@ This is because if the point <code class="docutils literal notranslate"><span cl
     </div>
 
     
-  <script src="../_static/js/index.3da636dd464baa7582d2.js"></script>
+  <script src="../_static/js/index.d3f166471bb80abb5163.js"></script>
 
 
     
