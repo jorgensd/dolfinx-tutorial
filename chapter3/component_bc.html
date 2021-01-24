@@ -447,12 +447,12 @@ We will illustrate the problem using a <code class="docutils literal notranslate
 u&amp;= 0&amp;&amp; \text{at } \partial\Omega_{D},\\
 u_x&amp;=0 &amp;&amp; \text{at } \partial\Omega_{Dx}.\end{split}\]</div>
 <p>We will consider a two dimensional box spanning <span class="math notranslate nohighlight">\([0,L]\times[0,H]\)</span>, where
-<span class="math notranslate nohighlight">\(\partial\Omega_N\)</span> is the left and right side of the beam, <span class="math notranslate nohighlight">\(\partial\Omega_D\)</span> the bottom of the  beam, while <span class="math notranslate nohighlight">\(\partial\Omega_{Dx}\)</span> is the top of the beam.
-We will prescribe a displacement <span class="math notranslate nohighlight">\(u_x=0\)</span> on the top of the beam, while the beam is being deformed under its own weight. The sides of the box is traction free.</p>
+<span class="math notranslate nohighlight">\(\partial\Omega_N\)</span> is the left and right side of the beam, <span class="math notranslate nohighlight">\(\partial\Omega_D\)</span> the bottom of the  beam, while <span class="math notranslate nohighlight">\(\partial\Omega_{Dx}\)</span> is the right side of the beam.
+We will prescribe a displacement <span class="math notranslate nohighlight">\(u_x=0\)</span> on the right side of the beam, while the beam is being deformed under its own weight. The sides of the box is traction free.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">L</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">H</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">H</span> <span class="o">=</span> <span class="mf">1.3</span>
 <span class="n">lambda_</span> <span class="o">=</span> <span class="mf">1.25</span> 
 <span class="n">mu</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">rho</span> <span class="o">=</span> <span class="mi">1</span>
@@ -494,7 +494,7 @@ We will prescribe a displacement <span class="math notranslate nohighlight">\(u_
 </div>
 </div>
 </div>
-<p>Next we would like to constrain the <span class="math notranslate nohighlight">\(x\)</span>-component of our solution at <span class="math notranslate nohighlight">\(y=L\)</span> to <span class="math notranslate nohighlight">\(0.1\)</span>. We start by creating the sub space only containing the <span class="math notranslate nohighlight">\(x\)</span>
+<p>Next we would like to constrain the <span class="math notranslate nohighlight">\(x\)</span>-component of our solution at <span class="math notranslate nohighlight">\(x=L\)</span> to <span class="math notranslate nohighlight">\(0\)</span>. We start by creating the sub space only containing the <span class="math notranslate nohighlight">\(x\)</span>
 -component.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -509,9 +509,9 @@ We will prescribe a displacement <span class="math notranslate nohighlight">\(u_
 <p>Next, we locate the degrees of freedom on the top boundary. However, as the boundary condition is in a sub space of our solution, we need to supply both the parent space <span class="math notranslate nohighlight">\(V\)</span> and the sub space <span class="math notranslate nohighlight">\(V_0\)</span> to <code class="docutils literal notranslate"><span class="pre">dolfinx.locate_dofs_geometrical</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">top</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">H</span><span class="p">)</span>
-<span class="n">boundary_dofs_x</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_geometrical</span><span class="p">((</span><span class="n">V</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">V0</span><span class="p">),</span> <span class="n">top</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">right</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">L</span><span class="p">),</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">H</span><span class="p">)</span>
+<span class="n">boundary_dofs_x</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_geometrical</span><span class="p">((</span><span class="n">V</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">V0</span><span class="p">),</span> <span class="n">right</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -588,7 +588,7 @@ We will prescribe a displacement <span class="math notranslate nohighlight">\(u_
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PolyCollection at 0x7f98073c89d0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PolyCollection at 0x7f06e46fda30&gt;
 </pre></div>
 </div>
 <img alt="../_images/component_bc_21_1.png" src="../_images/component_bc_21_1.png" />
