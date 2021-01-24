@@ -441,11 +441,11 @@ We will illustrate the problem using a <code class="docutils literal notranslate
 <p>We will use a slightly modified version of <a class="reference internal" href="../chapter2/linearelasticity_code.html"><span class="doc std std-doc">the linear elasticity demo</span></a>, namely</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}-\nabla \cdot \sigma (u) &amp;= f &amp;&amp; \text{in } \Omega,\\
-\sigma(u)&amp;= \lambda \mathrm{tr}(\epsilon(u))I + 2 \mu \epsilon(u),\\
-\epsilon(u) &amp;= \frac{1}{2}\left(\nabla u + (\nabla u )^T\right)
+\sigma(u)&amp;= \lambda \mathrm{tr}(\epsilon(u))I + 2 \mu \epsilon(u),&amp;&amp;\\
+\epsilon(u) &amp;= \frac{1}{2}\left(\nabla u + (\nabla u )^T\right),&amp;&amp;
 \sigma \cdot n &amp;= 0 &amp;&amp; \text{on } \partial \Omega_N,\\
 u&amp;= 0&amp;&amp; \text{at } \partial\Omega_{D},\\
-u_x&amp;=0 &amp;&amp; \text{at } \patial\Omega_{Dx}.\end{split}\]</div>
+u_x&amp;=0 &amp;&amp; \text{at } \partial\Omega_{Dx}.\end{split}\]</div>
 <p>We will consider a two dimensional box spanning <span class="math notranslate nohighlight">\([0,L]\times[0,H]\)</span>, where
 <span class="math notranslate nohighlight">\(\partial\Omega_N\)</span> is the left and right side of the beam, <span class="math notranslate nohighlight">\(\partial\Omega_D\)</span> the bottom of the  beam, while <span class="math notranslate nohighlight">\(\partial\Omega_{Dx}\)</span> is the top of the beam.
 We will prescribe a displacement <span class="math notranslate nohighlight">\(u_x=0\)</span> on the top of the beam, while the beam is being deformed under its own weight. The sides of the box is traction free.</p>
@@ -588,7 +588,7 @@ We will prescribe a displacement <span class="math notranslate nohighlight">\(u_
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PolyCollection at 0x7f46960f2a30&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PolyCollection at 0x7f98073c89d0&gt;
 </pre></div>
 </div>
 <img alt="../_images/component_bc_21_1.png" src="../_images/component_bc_21_1.png" />
