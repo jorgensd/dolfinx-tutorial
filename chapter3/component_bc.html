@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Implementation &#8212; FEniCS-X tutorial</title>
+    <title>Component-wise Dirichlet BC &#8212; FEniCS-X tutorial</title>
     
   <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
 
@@ -58,8 +58,8 @@
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Scaling" href="elasticity_scaling.html" />
-    <link rel="prev" title="The equations of linear elasticity" href="linearelasticity.html" />
+    <link rel="next" title="Electromagnetics example" href="em.html" />
+    <link rel="prev" title="Setting multiple Dirichlet, Neumann, and Robin conditions" href="robin_neumann_dirichlet.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -163,24 +163,24 @@
   A Gallery of finite element solvers
  </span>
 </p>
-<ul class="current nav sidenav_l1">
+<ul class="nav sidenav_l1">
  <li class="toctree-l1">
-  <a class="reference internal" href="intro.html">
+  <a class="reference internal" href="../chapter2/intro.html">
    A Gallery of finite element solvers
   </a>
  </li>
  <li class="toctree-l1 collapsible-parent">
-  <a class="reference internal" href="heat_equation.html">
+  <a class="reference internal" href="../chapter2/heat_equation.html">
    The heat equation
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="diffusion_code.html">
+    <a class="reference internal" href="../chapter2/diffusion_code.html">
      Diffusion of a Gaussian function
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="heat_code.html">
+    <a class="reference internal" href="../chapter2/heat_code.html">
      A known analytical solution
     </a>
    </li>
@@ -189,12 +189,12 @@
   </i>
  </li>
  <li class="toctree-l1 collapsible-parent">
-  <a class="reference internal" href="nonlinpoisson.html">
+  <a class="reference internal" href="../chapter2/nonlinpoisson.html">
    A nonlinear Poisson equation
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="nonlinpoisson_code.html">
+    <a class="reference internal" href="../chapter2/nonlinpoisson_code.html">
      Implementation
     </a>
    </li>
@@ -202,18 +202,18 @@
   <i class="fas fa-chevron-down">
   </i>
  </li>
- <li class="toctree-l1 current active collapsible-parent">
-  <a class="reference internal" href="linearelasticity.html">
+ <li class="toctree-l1 collapsible-parent">
+  <a class="reference internal" href="../chapter2/linearelasticity.html">
    The equations of linear elasticity
   </a>
-  <ul class="current collapse-ul">
-   <li class="toctree-l2 current active">
-    <a class="current reference internal" href="#">
+  <ul class="collapse-ul">
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter2/linearelasticity_code.html">
      Implementation
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="elasticity_scaling.html">
+    <a class="reference internal" href="../chapter2/elasticity_scaling.html">
      Scaling
     </a>
    </li>
@@ -222,17 +222,17 @@
   </i>
  </li>
  <li class="toctree-l1 collapsible-parent">
-  <a class="reference internal" href="navierstokes.html">
+  <a class="reference internal" href="../chapter2/navierstokes.html">
    The Navier-Stokes equations
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2">
-    <a class="reference internal" href="ns_code1.html">
+    <a class="reference internal" href="../chapter2/ns_code1.html">
      Test problem 1: Channel flow (Poiseuille flow)
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="ns_code2.html">
+    <a class="reference internal" href="../chapter2/ns_code2.html">
      Test problem 2: Flow past a cylinder (DFG 2D-3 benchmark)
     </a>
    </li>
@@ -241,7 +241,7 @@
   </i>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="advdiffreac.html">
+  <a class="reference internal" href="../chapter2/advdiffreac.html">
    TO BE IMPLEMETED: A system of advection-diffusion-reaction equations
   </a>
  </li>
@@ -251,34 +251,34 @@
   Subdomains and boundary conditions
  </span>
 </p>
-<ul class="nav sidenav_l1">
+<ul class="current nav sidenav_l1">
  <li class="toctree-l1">
-  <a class="reference internal" href="../chapter3/neumann_dirichlet_code.html">
+  <a class="reference internal" href="neumann_dirichlet_code.html">
    Combining Dirichlet and Neumann conditions
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../chapter3/multiple_dirichlet.html">
+  <a class="reference internal" href="multiple_dirichlet.html">
    Setting multiple Dirichlet condition
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../chapter3/subdomains.html">
+  <a class="reference internal" href="subdomains.html">
    Defining subdomains for different materials
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../chapter3/robin_neumann_dirichlet.html">
+  <a class="reference internal" href="robin_neumann_dirichlet.html">
    Setting multiple Dirichlet, Neumann, and Robin conditions
   </a>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../chapter3/component_bc.html">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
    Component-wise Dirichlet BC
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../chapter3/em.html">
+  <a class="reference internal" href="em.html">
    Electromagnetics example
   </a>
  </li>
@@ -339,7 +339,7 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../_sources/chapter2/linearelasticity_code.ipynb"><button type="button"
+        <a class="dropdown-buttons" href="../_sources/chapter3/component_bc.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
                 data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
@@ -359,7 +359,7 @@
                 data-toggle="tooltip" data-placement="left" title="Source repository"><i
                     class="fab fa-github"></i>repository</button></a>
         <a class="issues-button"
-            href="https://github.com/jorgensd/dolfinx-tutorial/issues/new?title=Issue%20on%20page%20%2Fchapter2/linearelasticity_code.html&body=Your%20issue%20content%20here."><button
+            href="https://github.com/jorgensd/dolfinx-tutorial/issues/new?title=Issue%20on%20page%20%2Fchapter3/component_bc.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
         
@@ -380,7 +380,7 @@
         aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
     <div class="dropdown-buttons">
         
-        <a class="binder-button" href="https://mybinder.org/v2/gh/jorgensd/dolfinx-tutorial/dokken/jupyterbook?urlpath=tree/./chapter2/linearelasticity_code.ipynb"><button type="button"
+        <a class="binder-button" href="https://mybinder.org/v2/gh/jorgensd/dolfinx-tutorial/dokken/jupyterbook?urlpath=tree/./chapter3/component_bc.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
                 data-placement="left"><img class="binder-button-logo"
                     src="../_static/images/logo_binder.svg"
@@ -403,11 +403,6 @@
         <nav id="bd-toc-nav">
             <ul class="nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#test-problem">
-   Test problem
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#boundary-conditions">
    Boundary conditions
   </a>
@@ -427,11 +422,6 @@
    Visualization
   </a>
  </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#stress-computation">
-   Stress computation
-  </a>
- </li>
 </ul>
 
         </nav>
@@ -443,58 +433,94 @@
         
               <div>
                 
-  <div class="section" id="implementation">
-<h1>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="component-wise-dirichlet-bc">
+<h1>Component-wise Dirichlet BC<a class="headerlink" href="#component-wise-dirichlet-bc" title="Permalink to this headline">¶</a></h1>
 <p>Author: Jørgen S. Dokken</p>
-<div class="section" id="test-problem">
-<h2>Test problem<a class="headerlink" href="#test-problem" title="Permalink to this headline">¶</a></h2>
-<p>As a test example, we will model a clamped beam deformed under its own weigth in 3D. This can be modeled, by setting the right-hand side body force per unit volume to <span class="math notranslate nohighlight">\(f=(0,0,-\rho g)\)</span> with <span class="math notranslate nohighlight">\(\rho\)</span> the density of the beam and <span class="math notranslate nohighlight">\(g\)</span> the acceleration of gravity. The beam is box-shaped with length <span class="math notranslate nohighlight">\(L\)</span> and has a square cross section of width <span class="math notranslate nohighlight">\(W\)</span>. we set <span class="math notranslate nohighlight">\(u=u_D=(0,0,0)\)</span> at the clamped end, x=0. The rest of the boundary is traction free, that is, we set <span class="math notranslate nohighlight">\(T=0\)</span>. We start by defining the physical variables used in the program.</p>
+<p>In this section, we will learn how to prescribe Dirichlet boundary conditions on a component of your unknown <span class="math notranslate nohighlight">\(u_h\)</span>.
+We will illustrate the problem using a <code class="docutils literal notranslate"><span class="pre">VectorElement</span></code>. However, the method generalizes to any <code class="docutils literal notranslate"><span class="pre">MixedElement</span></code>.</p>
+<p>We will use a slightly modified version of <a class="reference internal" href="../chapter2/linearelasticity_code.html"><span class="doc std std-doc">the linear elasticity demo</span></a>, namely</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}-\nabla \cdot \sigma (u) &amp;= f &amp;&amp; \text{in } \Omega,\\
+\sigma(u)&amp;= \lambda \mathrm{tr}(\epsilon(u))I + 2 \mu \epsilon(u),\\
+\epsilon(u) &amp;= \frac{1}{2}\left(\nabla u + (\nabla u )^T\right)
+\sigma \cdot n &amp;= 0 &amp;&amp; \text{on } \partial \Omega_N,\\
+u&amp;= 0&amp;&amp; \text{at } \partial\Omega_{D},\\
+u_x&amp;=0 &amp;&amp; \text{at } \patial\Omega_{Dx}.\end{split}\]</div>
+<p>We will consider a two dimensional box spanning <span class="math notranslate nohighlight">\([0,L]\times[0,H]\)</span>, where
+<span class="math notranslate nohighlight">\(\partial\Omega_N\)</span> is the left and right side of the beam, <span class="math notranslate nohighlight">\(\partial\Omega_D\)</span> the bottom of the  beam, while <span class="math notranslate nohighlight">\(\partial\Omega_{Dx}\)</span> is the top of the beam.
+We will prescribe a displacement <span class="math notranslate nohighlight">\(u_x=0\)</span> on the top of the beam, while the beam is being deformed under its own weight. The sides of the box is traction free.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Scaled variable</span>
-<span class="n">L</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">W</span> <span class="o">=</span> <span class="mf">0.2</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">L</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">H</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">lambda_</span> <span class="o">=</span> <span class="mf">1.25</span> 
 <span class="n">mu</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">rho</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">delta</span> <span class="o">=</span> <span class="n">W</span><span class="o">/</span><span class="n">L</span>
-<span class="n">gamma</span> <span class="o">=</span> <span class="mf">0.4</span><span class="o">*</span><span class="n">delta</span><span class="o">**</span><span class="mi">2</span>
-<span class="n">beta</span> <span class="o">=</span> <span class="mf">1.25</span>
-<span class="n">lambda_</span> <span class="o">=</span> <span class="n">beta</span>
-<span class="n">g</span> <span class="o">=</span> <span class="n">gamma</span>
+<span class="n">g</span> <span class="o">=</span> <span class="mi">1</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>We then create the mesh, which will consist of hexahedral elements, along with the function space. We will use the convenience function <code class="docutils literal notranslate"><span class="pre">VectorFunctionSpace</span></code>. However, we also could have used <code class="docutils literal notranslate"><span class="pre">ufl</span></code>s functionality, creating a vector element <code class="docutils literal notranslate"><span class="pre">element</span> <span class="pre">=</span> <span class="pre">ufl.VectorElement(&quot;CG&quot;,</span> <span class="pre">mesh.ufl_cell(),</span> <span class="pre">1)</span> </code>, and intitializing the function space as <code class="docutils literal notranslate"><span class="pre">V</span> <span class="pre">=</span> <span class="pre">dolfinx.FunctionSpace(mesh,</span> <span class="pre">element)</span></code>.</p>
+<p>As in the previous demos, we define our mesh and function space. We will create a <code class="docutils literal notranslate"><span class="pre">ufl.VectorElement</span></code> to create a two dimensional vector space.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx</span>
+<span class="kn">import</span> <span class="nn">ufl</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
 <span class="kn">from</span> <span class="nn">dolfinx.cpp.mesh</span> <span class="kn">import</span> <span class="n">CellType</span>
 
-<span class="n">mesh</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">BoxMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">L</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">W</span><span class="p">])],</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">],</span> <span class="n">cell_type</span><span class="o">=</span><span class="n">CellType</span><span class="o">.</span><span class="n">hexahedron</span><span class="p">)</span>
-<span class="n">V</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">VectorFunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">RectangleMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="n">L</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span><span class="mi">0</span><span class="p">]]),</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span><span class="mi">30</span><span class="p">],</span> <span class="n">cell_type</span><span class="o">=</span><span class="n">CellType</span><span class="o">.</span><span class="n">triangle</span><span class="p">)</span>
+<span class="n">element</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">VectorElement</span><span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">ufl_cell</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
 </pre></div>
-</div>
 </div>
 </div>
 </div>
 <div class="section" id="boundary-conditions">
 <h2>Boundary conditions<a class="headerlink" href="#boundary-conditions" title="Permalink to this headline">¶</a></h2>
-<p>As we would like to clamp the boundary at <span class="math notranslate nohighlight">\(x=0\)</span>, we do this by using a marker function, which locate the facets where <span class="math notranslate nohighlight">\(x\)</span> is close to zero by machine prescision.</p>
+<p>As we would like to clamp the boundary at <span class="math notranslate nohighlight">\(x=0\)</span>, we do this by using a marker function, we use <code class="docutils literal notranslate"><span class="pre">dolfinx.fem.locate_dofs_geometrical</span></code> to identify the relevant degrees of freedom.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">clamped_boundary</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
-
-<span class="n">fdim</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span> <span class="mi">1</span>
-<span class="n">boundary_facets</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">locate_entities_boundary</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">clamped_boundary</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
 
 <span class="n">u_D</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="k">with</span> <span class="n">u_D</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
     <span class="n">loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">bc</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_D</span><span class="p">,</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">boundary_facets</span><span class="p">))</span>
+<span class="n">bc</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_D</span><span class="p">,</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_geometrical</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">clamped_boundary</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next we would like to constrain the <span class="math notranslate nohighlight">\(x\)</span>-component of our solution at <span class="math notranslate nohighlight">\(y=L\)</span> to <span class="math notranslate nohighlight">\(0.1\)</span>. We start by creating the sub space only containing the <span class="math notranslate nohighlight">\(x\)</span>
+-component.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">V0</span> <span class="o">=</span> <span class="n">V</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">collapse</span><span class="p">()</span>
+<span class="n">uDx</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V0</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">uDx</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">uDx_loc</span><span class="p">:</span>
+    <span class="n">uDx_loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next, we locate the degrees of freedom on the top boundary. However, as the boundary condition is in a sub space of our solution, we need to supply both the parent space <span class="math notranslate nohighlight">\(V\)</span> and the sub space <span class="math notranslate nohighlight">\(V_0\)</span> to <code class="docutils literal notranslate"><span class="pre">dolfinx.locate_dofs_geometrical</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">top</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">H</span><span class="p">)</span>
+<span class="n">boundary_dofs_x</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_geometrical</span><span class="p">((</span><span class="n">V</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">V0</span><span class="p">),</span> <span class="n">top</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can now create our Dirichlet condition</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bcx</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">uDx</span><span class="p">,</span> <span class="n">boundary_dofs_x</span><span class="p">,</span> <span class="n">V</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">bcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">bc</span><span class="p">,</span> <span class="n">bcx</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -502,7 +528,7 @@
 <p>As we want the traction <span class="math notranslate nohighlight">\(T\)</span> over the remaining boundary to be <span class="math notranslate nohighlight">\(0\)</span>, we create a <code class="docutils literal notranslate"><span class="pre">dolfinx.Constant</span></code></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">T</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">T</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -523,26 +549,18 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">epsilon</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">ufl</span><span class="o">.</span><span class="n">sym</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">))</span> <span class="c1"># Equivalent to 0.5*(ufl.nabla_grad(u) + ufl.nabla_grad(u).T)</span>
+    <span class="k">return</span> <span class="n">ufl</span><span class="o">.</span><span class="n">sym</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">))</span> 
 <span class="k">def</span> <span class="nf">sigma</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">lambda_</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">nabla_div</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">Identity</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">geometric_dimension</span><span class="p">())</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">mu</span><span class="o">*</span><span class="n">epsilon</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
 
 <span class="n">u</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-<span class="n">f</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">rho</span><span class="o">*</span><span class="n">g</span><span class="p">))</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">rho</span><span class="o">*</span><span class="n">g</span><span class="p">))</span>
 <span class="n">a</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">sigma</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">epsilon</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
 <span class="n">L</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span> <span class="o">+</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">ds</span>
 </pre></div>
 </div>
 </div>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Note that we used <code class="docutils literal notranslate"><span class="pre">nabla_grad</span></code> and optionally <code class="docutils literal notranslate"><span class="pre">nabla_div</span></code> for the variational formulation, as oposed to our previous usage of
-<code class="docutils literal notranslate"><span class="pre">div</span></code> and <code class="docutils literal notranslate"><span class="pre">grad</span></code>. This is because for scalar functions <span class="math notranslate nohighlight">\(\nabla u\)</span> has a clear meaning
-<span class="math notranslate nohighlight">\(\nabla u = \left(\frac{\partial u}{\partial x}, \frac{\partial u}{\partial y}, \frac{\partial u}{\partial z} \right)\)</span>.</p>
-<p>However, if <span class="math notranslate nohighlight">\(u\)</span> is vector valued, the meaning is less clear. Some sources define <span class="math notranslate nohighlight">\(\nabla u\)</span> as a matrix with the elements <span class="math notranslate nohighlight">\(\frac{\partial u_j}{\partial x_i}\)</span>, while other  sources prefer
-<span class="math notranslate nohighlight">\(\frac{\partial u_i}{\partial x_j}\)</span>. In dolfin-X <code class="docutils literal notranslate"><span class="pre">grad(u)</span></code> is defined as the amtrix with element <span class="math notranslate nohighlight">\(\frac{\partial u_i}{\partial x_j}\)</span>. However, as it is common in continuum mechanics to use the other definition, <code class="docutils literal notranslate"><span class="pre">ufl</span></code> supplies us with <code class="docutils literal notranslate"><span class="pre">nabla_grad</span></code> for this purpose.</p>
 </div>
 </div>
 <div class="section" id="solve-the-linear-variational-problem">
@@ -550,7 +568,7 @@
 <p>As in the previous demos, we assemble the matrix and right hand side vector and use PETSc to solve our variational problem</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="p">[</span><span class="n">bc</span><span class="p">],</span> <span class="n">petsc_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ksp_type&quot;</span><span class="p">:</span> <span class="s2">&quot;preonly&quot;</span><span class="p">,</span> <span class="s2">&quot;pc_type&quot;</span><span class="p">:</span> <span class="s2">&quot;lu&quot;</span><span class="p">})</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcs</span><span class="p">,</span> <span class="n">petsc_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ksp_type&quot;</span><span class="p">:</span> <span class="s2">&quot;preonly&quot;</span><span class="p">,</span> <span class="s2">&quot;pc_type&quot;</span><span class="p">:</span> <span class="s2">&quot;lu&quot;</span><span class="p">})</span>
 <span class="n">uh</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -559,54 +577,21 @@
 </div>
 <div class="section" id="visualization">
 <h2>Visualization<a class="headerlink" href="#visualization" title="Permalink to this headline">¶</a></h2>
-<p>We will use Paraview to visualize the solution of this problem.
-As explained in previous sections, we save the solution with <code class="docutils literal notranslate"><span class="pre">XDMFFile</span></code>.
-After opening the file <code class="docutils literal notranslate"><span class="pre">deformation.xdmf</span></code> in Paraview and pressing <code class="docutils literal notranslate"><span class="pre">Apply</span></code>, one can press the <code class="docutils literal notranslate"><span class="pre">Warp</span> <span class="pre">by</span> <span class="pre">vector</span> <span class="pre">button</span></code>
-<img alt="Warp by vector" src="../_images/warp_by_vector.png" /> or go through the top menu (<code class="docutils literal notranslate"><span class="pre">Filters-&gt;Alphabetical-&gt;Warp</span> <span class="pre">by</span> <span class="pre">Vector</span></code>) and press <code class="docutils literal notranslate"><span class="pre">Apply</span></code>. We can also change the color of the deformed beam by changing the value in the color menu <img alt="color" src="../_images/color.png" /> from <code class="docutils literal notranslate"><span class="pre">Solid</span> <span class="pre">Color</span></code> to <code class="docutils literal notranslate"><span class="pre">Deformation</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.io</span>
-<span class="k">with</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">XDMFFile</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="s2">&quot;deformation.xdmf&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">xdmf</span><span class="p">:</span>
-    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-    <span class="n">uh</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Deformation&quot;</span>
-    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">uh</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>With some additional modifications, we can obtain the following visualization
-<img alt="Deformed beam" src="../_images/beam.png" /></p>
-</div>
-<div class="section" id="stress-computation">
-<h2>Stress computation<a class="headerlink" href="#stress-computation" title="Permalink to this headline">¶</a></h2>
-<p>As soon as the displacement is computed, we can compute various stress measures. We will compute the von Mises stress defined as <span class="math notranslate nohighlight">\(\sigma_m=\sqrt{\frac{3}{2}s:s}\)</span> where <span class="math notranslate nohighlight">\(s\)</span> is the deviatoric stress tensor <span class="math notranslate nohighlight">\(s(u)=\sigma(u)-\frac{1}{3}\mathrm{tr}(\sigma(u))I\)</span>.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">sigma</span><span class="p">(</span><span class="n">uh</span><span class="p">)</span> <span class="o">-</span><span class="mf">1.</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="n">sigma</span><span class="p">(</span><span class="n">uh</span><span class="p">))</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">Identity</span><span class="p">(</span><span class="n">uh</span><span class="o">.</span><span class="n">geometric_dimension</span><span class="p">())</span>
-<span class="n">von_Mises</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3.</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>The <code class="docutils literal notranslate"><span class="pre">von_Mises</span></code> variable is now an expression that must be projected into an appropriate function space so that we can visualize it. As <code class="docutils literal notranslate"><span class="pre">uh</span></code> is a linear combination of first order piecewise continuous functions, the von Mises stresses will be a cell-wise constant function.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">V_von_mises</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-<span class="n">p</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">V_von_mises</span><span class="p">)</span>
-<span class="n">q</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V_von_mises</span><span class="p">)</span>
-<span class="n">a_v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
-<span class="n">L_v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">von_Mises</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
-<span class="n">stresses</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V_von_mises</span><span class="p">)</span>
-<span class="n">problem</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">LinearProblem</span><span class="p">(</span><span class="n">a_v</span><span class="p">,</span> <span class="n">L_v</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="n">stresses</span><span class="p">)</span>
-<span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
-<span class="c1"># FIXME: Add way to visualize DG 0 functions</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.plotting</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">uh</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;displacement&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Coefficient(FunctionSpace(Mesh(VectorElement(FiniteElement(&#39;Q&#39;, hexahedron, 1), dim=3), 0), FiniteElement(&#39;DQ&#39;, hexahedron, 0)), 5)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PolyCollection at 0x7f4d261f45e0&gt;
 </pre></div>
 </div>
+<img alt="../_images/component_bc_21_1.png" src="../_images/component_bc_21_1.png" />
 </div>
 </div>
 </div>
@@ -625,7 +610,7 @@ After opening the file <code class="docutils literal notranslate"><span class="p
         },
         kernelOptions: {
             kernelName: "python3",
-            path: "./chapter2"
+            path: "./chapter3"
         },
         predefinedOutput: true
     }
@@ -640,8 +625,8 @@ After opening the file <code class="docutils literal notranslate"><span class="p
     
     <div class='prev-next-bottom'>
         
-    <a class='left-prev' id="prev-link" href="linearelasticity.html" title="previous page">The equations of linear elasticity</a>
-    <a class='right-next' id="next-link" href="elasticity_scaling.html" title="next page">Scaling</a>
+    <a class='left-prev' id="prev-link" href="robin_neumann_dirichlet.html" title="previous page">Setting multiple Dirichlet, Neumann, and Robin conditions</a>
+    <a class='right-next' id="next-link" href="em.html" title="next page">Electromagnetics example</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">
