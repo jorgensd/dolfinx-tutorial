@@ -42,6 +42,7 @@
         - file: chapter3/multiple_dirichlet
         - file: chapter3/subdomains
         - file: chapter3/robin_neumann_dirichlet
+        - file: chapter3/component_bc
         - file: chapter3/em
 - part: Improving your FEniCS-X code
   chapters:
