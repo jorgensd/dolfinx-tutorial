@@ -1,0 +1,40 @@
+name: Docker end-user images
+
+# Builds images with dolfinx and all of the required FEniCS Project
+# components nightly.
+
+on:
+  # Uncomment the below to trigger 'docker build' on push
+  push:
+     branches:
+       - "dokken/jupyterbook"
+  schedule:
+    # '*' is a special character in YAML, so string must be quoted
+    - cron: "0 6 * * *"
+  workflow_dispatch: ~
+
+jobs:
+  build_end_user_images:
+    name: Build dolfinx tutorial images for binde
+    if: ${{ github.repository == 'jorgensd/dolfinx-tutorial' && github.ref == 'refs/heads/master' }}
+    runs-on: ubuntu-20.04
+    env:
+      HDF5_MPI: "ON"
+      CC: "mpicc"
+      HDF5_DIR: "/usr/lib/x86_64-linux-gnu/hdf5/mpich/"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: "jorgensd/dolfinx-tutorial"
+          path: "tutorial"
+      - name: Pull dolfinx/dev-env
+        run: |
+          docker pull dolfinx/dolfinx
+      - name: Build the Docker images
+        run: |
+          docker build --file tutorial/docker/Dockerfile --tag dokken92/dolfinx_custom:nightly .
+      - name: Log into the DockerHub registry
+        run: echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+      - name: Push to the DockerHub registry
+        run: |
+          docker push dokken92/dolfinx_custom:nightly
