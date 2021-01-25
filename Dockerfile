@@ -9,4 +9,7 @@ ENV HOME /home/${NB_USER}
 
 WORKDIR ${HOME}
 COPY . ${HOME}
-USER ${USER}
+USER root
+RUN chown -R ${NB_UID} ${HOME}
+USER ${NB_USER}
+
