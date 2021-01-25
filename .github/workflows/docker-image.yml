@@ -16,7 +16,7 @@ on:
 jobs:
   build_end_user_images:
     name: Build dolfinx tutorial images for binde
-    if: ${{ github.repository == 'jorgensd/dolfinx-tutorial' && github.ref == 'refs/heads/master' }}
+    if: ${{ github.repository == 'jorgensd/dolfinx-tutorial' && github.ref == 'refs/heads/dokken/jupyterbook' }}
     runs-on: ubuntu-20.04
     env:
       HDF5_MPI: "ON"
