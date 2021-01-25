@@ -21,10 +21,12 @@ Important topics involve how to set boundary conditions of various types (Dirich
 Most of the mathematical part of the examples will be kept at a simple level, such that we can keep the focus on the functionality and syntax of FEniCS-X. Therefore we will mostly use the Poisson equation and the time-dependent diffusion equation as model problems. We will use adjusted input data, such that the solution of the problem can be exactly reproduced on uniform, structured meshes with the finite element method. This greatly simplifies the verification of the implementations.
 Occasionally we will consider a more physically relevant example to remind the reader that there are no big leaps from solving simple model problems to challenging real-world problems when using FEniCS-X.
 
-## Obtaining the software
+# Interactive tutorials
+As this book has been published as a Jupyter Book, we provide interactive notebooks that can be run in the browser. To start such a notebook click the ![Binder symbol](binder.png)-symbol in the top right corner of the relevant tutorial.
+
+# Obtaining the software
 
 If you would like to work with dolfin-X outside of the binder-notebooks, you need to install the FEniCS software. The software is quite complex, and building the software and all the dependencies from source can be a daunting task. The list of dependencies can be found at [https://fenicsproject.org/docs/dolfinx/dev/python/installation.html](https://fenicsproject.org/docs/dolfinx/dev/python/installation.html).
-
 
 ## Docker
 Fortunately, we supply a pre-built docker image at [https://hub.docker.com/r/dolfinx/dolfinx](https://hub.docker.com/r/dolfinx/dolfinx).
