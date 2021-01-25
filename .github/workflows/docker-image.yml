@@ -1,4 +1,4 @@
-name: Docker end-user images
+name: Docker tutorial images
 
 # Builds images with dolfinx and all of the required FEniCS Project
 # components nightly.
@@ -15,7 +15,7 @@ on:
 
 jobs:
   build_end_user_images:
-    name: Build dolfinx tutorial images for binde
+    name: Build dolfinx tutorial images for binder
     if: ${{ github.repository == 'jorgensd/dolfinx-tutorial' && github.ref == 'refs/heads/dokken/jupyterbook' }}
     runs-on: ubuntu-20.04
     env:
@@ -27,12 +27,12 @@ jobs:
         with:
           repository: "jorgensd/dolfinx-tutorial"
           path: "tutorial"
-      - name: Pull dolfinx/dev-env
+      - name: Pull dolfinx/dolfinx
         run: |
           docker pull dolfinx/dolfinx
       - name: Build the Docker images
         run: |
-          docker build --file tutorial/docker/Dockerfile --tag dokken92/dolfinx_custom:nightly .
+          docker build --file tutorial/docker/Dockerfile --cache-from dolfinx/dolfinx --tag dokken92/dolfinx_custom:nightly .
       - name: Log into the DockerHub registry
         run: echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
       - name: Push to the DockerHub registry
