@@ -117,6 +117,16 @@
    How to use this tutorial
   </a>
  </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../fem.html#interactive-tutorials">
+   Interactive tutorials
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../fem.html#obtaining-the-software">
+   Obtaining the software
+  </a>
+ </li>
 </ul>
 <p class="caption collapsible-parent">
  <span class="caption-text">
@@ -480,13 +490,13 @@ Therefore, we need to make specific choices of <span class="math notranslate noh
 <!-- Particularly, piecewise linear continuous Galerkin finite elements are able to exactly reproduce a quadratic polynomial on 
 a uniformly partitioned mesh. -->
 <p>We use this fact to construct a quadratic function in <span class="math notranslate nohighlight">\(2D\)</span>. In particular we choose</p>
-<div class="amsmath math notranslate nohighlight" id="equation-47f660b9-75f5-475a-abb9-94ed0ecc875f">
-<span class="eqno">(1)<a class="headerlink" href="#equation-47f660b9-75f5-475a-abb9-94ed0ecc875f" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-e9d0bfbc-a843-4f5a-a7a5-2724a30182fe">
+<span class="eqno">(1)<a class="headerlink" href="#equation-e9d0bfbc-a843-4f5a-a7a5-2724a30182fe" title="Permalink to this equation">¶</a></span>\[\begin{align}
  u_e(x,y)=1+x^2+2y^2
  \end{align}\]</div>
 <p>Inserting <span class="math notranslate nohighlight">\(u_e\)</span> in the original boundary problem, we find that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a8fe096e-7efb-4142-b694-86bd0794240f">
-<span class="eqno">(2)<a class="headerlink" href="#equation-a8fe096e-7efb-4142-b694-86bd0794240f" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-c284692a-781b-42ad-8218-815ea8702eec">
+<span class="eqno">(2)<a class="headerlink" href="#equation-c284692a-781b-42ad-8218-815ea8702eec" title="Permalink to this equation">¶</a></span>\[\begin{align}
     f(x,y)= -6,\qquad u_d(x,y)=u_e(x,y)=1+x^2+2y^2,
 \end{align}\]</div>
 <p>regardless of the shape of the domain as long as we prescribe
