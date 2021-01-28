@@ -11,4 +11,6 @@ COPY . ${HOME}
 USER root
 RUN chown -R ${NB_UID} ${HOME}
 USER ${NB_USER}
+
+RUN python3 -c "import vedo; import pyvista"
 ENTRYPOINT []
