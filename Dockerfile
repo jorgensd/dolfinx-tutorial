@@ -6,6 +6,7 @@ ARG NB_USER=fenics
 ARG NB_UID=1000
 ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
+RUN pip3 install pyvista
 
 WORKDIR ${HOME}
 COPY . ${HOME}
