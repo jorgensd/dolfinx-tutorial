@@ -2,9 +2,10 @@ FROM dolfinx/dolfinx
 
 # install the notebook package
 RUN apt-get update && \
-	apt-get install python3-pip -y
+	apt-get install -y python3-pip libgl1-mesa-glx libglu1-mesa xvfb  && \
+	apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN pip3 install --no-cache --upgrade pip && \
-    pip3 install --no-cache notebook
+    pip3 install --no-cache notebook pyvista
 
 # create user with a home directory
 ARG NB_USER=fenics
