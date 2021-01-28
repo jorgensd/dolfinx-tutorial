@@ -1,8 +1,8 @@
-FROM dolfinx/lab
+FROM dolfinx/dolfinx
 
 # install the notebook package
 RUN apt-get update && \
-	apt-get install -y python3-pip libgl1-mesa-glx libgl1-mesa-dev libglu1-mesa xvfb  && \
+	apt-get install -y python3-pip libgl1-mesa-dev xvfb && \
 	apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN pip3 install --no-cache --upgrade pip && \
     pip3 install --no-cache notebook pyvista
@@ -18,12 +18,19 @@ RUN adduser --disabled-password \
     --uid ${NB_UID} \
     ${NB_USER}
 
+ENV DISPLAY=:99.0
+ENV VISTA_OFF_SCREEN=True
+ENV VISTA_PLOT_THEME=document
+RUN which Xvfb
+RUN Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+RUN sleep 3
+RUN exec "$@"
 
 # Install progress-bar
 RUN pip3 install tqdm
 
 # Install meshio
-RUN pip3 install --no-cache-dir --no-binary=h5py h5py meshio jupyter jupyterlab
+RUN pip3 install --no-cache-dir --no-binary=h5py h5py meshio
 
 
 WORKDIR ${HOME}

@@ -1,4 +1,4 @@
-FROM dokken92/dolfinx_custom:pyvista3
+FROM dokken92/dolfinx_custom:pyvista4
 
 # create user with a home directory
 ARG NB_USER=fenics
