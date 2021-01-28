@@ -1,4 +1,4 @@
-FROM dokken92/dolfinx_custom:pyvista
+FROM dokken92/dolfinx_custom:pyvista2
 
 # create user with a home directory
 ARG NB_USER=fenics
@@ -9,7 +9,6 @@ ENV HOME /home/${NB_USER}
 WORKDIR ${HOME}
 COPY . ${HOME}
 USER root
-RUN python3 -c "import vedo; import pyvista"
 RUN chown -R ${NB_UID} ${HOME}
 USER ${NB_USER}
 

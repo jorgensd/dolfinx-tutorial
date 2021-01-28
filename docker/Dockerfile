@@ -1,4 +1,4 @@
-FROM dolfinx/dolfinx
+FROM dolfinx/lab
 
 # install the notebook package
 RUN apt-get update && \
