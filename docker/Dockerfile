@@ -23,7 +23,11 @@ RUN adduser --disabled-password \
 RUN pip3 install tqdm
 
 # Install meshio
-RUN pip3 install --no-cache-dir --no-binary=h5py h5py meshio
+RUN pip3 install --no-cache-dir --no-binary=h5py h5py meshio jupyter jupyterlab vedo
+
+RUN Xvfb :99 -screen 0 1024x768x24 > /dev/null   2>&1 &
+ENV DISPLAY :99.0
+ENV PYVISTA_OFF_SCREEN true
 
 
 WORKDIR ${HOME}
