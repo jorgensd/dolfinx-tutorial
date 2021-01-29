@@ -462,8 +462,8 @@
 <h1>Diffusion of a Gaussian function<a class="headerlink" href="#diffusion-of-a-gaussian-function" title="Permalink to this headline">¶</a></h1>
 <p>Author: Jørgen S. Dokken</p>
 <p>Let us now solve a more interesting problem, namely the diffusion of a Gaussian hill. We take the initial value to be</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b3f078ed-8cc8-4777-b47b-6c9974937791">
-<span class="eqno">(18)<a class="headerlink" href="#equation-b3f078ed-8cc8-4777-b47b-6c9974937791" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-1a59018b-1c98-429d-a933-9929fbbe41c0">
+<span class="eqno">(18)<a class="headerlink" href="#equation-1a59018b-1c98-429d-a933-9929fbbe41c0" title="Permalink to this equation">¶</a></span>\[\begin{align}
     u_0(x,y)&amp;= e^{-ax^2-ay^2}
 \end{align}\]</div>
 <p>for <span class="math notranslate nohighlight">\(a=5\)</span> on the domain <span class="math notranslate nohighlight">\([-2,-2]\times[2,2]\)</span>. For this problem we will use homogeneous Dirichlet boundary conditions (<span class="math notranslate nohighlight">\(u_D=0\)</span>).</p>
@@ -598,7 +598,18 @@ this could be read (<code class="docutils literal notranslate"><span class="pre"
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/diffusion_code_13_0.png" src="../_images/diffusion_code_13_0.png" />
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">7</span><span class="o">-</span><span class="mi">50</span><span class="n">facb37b5dc</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">dolfinx.plotting</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="k">def</span> <span class="nf">plot_with_colorbar</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span>     <span class="n">min_color</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">u_n</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span>     <span class="n">max_color</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">u_n</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;dolfinx.plotting&#39;
+</pre></div>
+</div>
 </div>
 </div>
 </div>
@@ -644,12 +655,7 @@ Finally, before moving to the next time step, we update the solution at the prev
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/diffusion_code_15_0.png" src="../_images/diffusion_code_15_0.png" />
-<img alt="../_images/diffusion_code_15_1.png" src="../_images/diffusion_code_15_1.png" />
-<img alt="../_images/diffusion_code_15_2.png" src="../_images/diffusion_code_15_2.png" />
-<img alt="../_images/diffusion_code_15_3.png" src="../_images/diffusion_code_15_3.png" />
-<img alt="../_images/diffusion_code_15_4.png" src="../_images/diffusion_code_15_4.png" />
-</div>
+<img alt="../_images/diffusion_code_15_0.svg" src="../_images/diffusion_code_15_0.svg" /><img alt="../_images/diffusion_code_15_1.svg" src="../_images/diffusion_code_15_1.svg" /><img alt="../_images/diffusion_code_15_2.svg" src="../_images/diffusion_code_15_2.svg" /></div>
 </div>
 </div>
 <div class="section" id="animation-with-paraview">
