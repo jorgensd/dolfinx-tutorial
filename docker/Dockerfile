@@ -10,7 +10,7 @@ RUN pip3 install --no-cache-dir --no-binary=h5py h5py meshio
 
 # Install notebook package
 RUN pip3 install --no-cache --upgrade pip && \
-    pip3 install --no-cache notebook pyvista
+    pip3 install --no-cache notebook pyvista ipyvtk_simple
 
 # Install progress-bar
 RUN pip3 install tqdm
