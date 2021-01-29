@@ -21,7 +21,8 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container: dolfinx/lab
+    container: dokken92/dolfinx_custom:pyvista1
+
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -38,6 +39,14 @@ jobs:
 
       - name: Test notebooks in parallel
         run: |
+          set -x
+          export DISPLAY=:99.0
+          export PYVISTA_OFF_SCREEN=true
+          export PYVISTA_USE_IPYVTK=true
+          which Xvfb
+          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+          sleep 3
+          set +x
           pip3 install jupyter nbconvert
           cd chapter1
           jupyter-nbconvert --to python fundamentals_code.ipynb
