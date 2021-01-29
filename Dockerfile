@@ -1,4 +1,6 @@
-FROM dokken92/dolfinx_custom:pyvista1
+FROM dokken92/dolfinx_custom:pyvista
+
+RUN pip3 install matplotlib
 
 # create user with a home directory
 ARG NB_USER
