@@ -81,8 +81,8 @@ jobs:
       # Runs a single command using the runners shell
       - name: Build the book
         run: |
-          jupyter-book build -W .
-
+          jupyter-book build  .
+      # Add in -W once matplotlib is gone
       # Pusb book to HTML to github pages
       - name: GitHub Pages action
         uses: peaceiris/actions-gh-pages@v3.5.9
