@@ -5,12 +5,12 @@
 
 on:
   # Uncomment the below to trigger 'docker build' on push
-  # push:
-  #    branches:
-  #      - "dokken/jupyterbook"
-  schedule:
-    # '*' is a special character in YAML, so string must be quoted
-    - cron: "0 6 * * *"
+  push:
+     branches:
+       - "dokken/jupyterbook"
+  # schedule:
+  #   # '*' is a special character in YAML, so string must be quoted
+  #   - cron: "0 6 * * *"
   workflow_dispatch: ~
 
 jobs:
@@ -32,9 +32,9 @@ jobs:
           docker pull dolfinx/dolfinx
       - name: Build the Docker images
         run: |
-          docker build --file tutorial/docker/Dockerfile --cache-from dolfinx/dolfinx --tag dokken92/dolfinx_custom:nightly .
+          docker build --file tutorial/docker/Dockerfile --cache-from dolfinx/dolfinx --tag dokken92/dolfinx_custom:29012021 .
       - name: Log into the DockerHub registry
         run: echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
       - name: Push to the DockerHub registry
         run: |
-          docker push dokken92/dolfinx_custom:nightly
+          docker push dokken92/dolfinx_custom:29012021
