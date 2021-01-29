@@ -23,6 +23,13 @@ jobs:
     runs-on: ubuntu-latest
     container: dokken92/dolfinx_custom:pyvista1
 
+    env:
+      HDF5_MPI: "ON"
+      CC: mpicc
+      HDF5_DIR: "/usr/lib/x86_64-linux-gnu/hdf5/mpich/"
+      DISPLAY: :99.0
+      PYVISTA_OFF_SCREEN: true
+      PYVISTA_USE_IPYVTK: true
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -31,23 +38,15 @@ jobs:
 
       - name: Install dependencies
         run: |
-          export HDF5_MPI="ON"
-          export CC=mpicc
-          export HDF5_DIR="/usr/lib/x86_64-linux-gnu/hdf5/mpich/"
-          pip3 install --no-cache-dir --no-binary=h5py h5py meshio
+          pip3 install --no-cache-dir --no-binary=h5py h5py meshio  nbconvert jupyter-book sphinxcontrib-bibtex==1.0.0
           pip3 install tqdm
+
+     - name: Setup headless display
+        run: Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+
 
       - name: Test notebooks in parallel
         run: |
-          set -x
-          export DISPLAY=:99.0
-          export PYVISTA_OFF_SCREEN=true
-          export PYVISTA_USE_IPYVTK=true
-          which Xvfb
-          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-          sleep 3
-          set +x
-          pip3 install jupyter nbconvert
           cd chapter1
           jupyter-nbconvert --to python fundamentals_code.ipynb
           mpirun -n 2 python3 fundamentals_code.py
@@ -82,7 +81,6 @@ jobs:
       # Runs a single command using the runners shell
       - name: Build the book
         run: |
-          pip3 install -U jupyter-book sphinxcontrib-bibtex==1.0.0
           jupyter-book build -W .
 
       # Pusb book to HTML to github pages
