@@ -41,7 +41,7 @@ jobs:
           pip3 install --no-cache-dir --no-binary=h5py h5py meshio  nbconvert jupyter-book sphinxcontrib-bibtex==1.0.0
           pip3 install tqdm
 
-     - name: Setup headless display
+      - name: Setup headless display
         run: Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 
 
