@@ -4,10 +4,10 @@
 # # components nightly.
 
 on:
-#   # Uncomment the below to trigger 'docker build' on push
-#   # push:
-#   #    branches:
-#   #      - "dokken/jupyterbook"
+  # Uncomment the below to trigger 'docker build' on push
+  push:
+     branches:
+       - "dokken/jupyterbook"
   schedule:
     # '*' is a special character in YAML, so string must be quoted
     - cron: "0 6 * * *"

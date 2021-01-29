@@ -1,4 +1,4 @@
-FROM dokken92/dolfinx_custom:pyvista
+FROM dokken92/dolfinx_custom:nightly
 
 RUN pip3 install matplotlib
 
