@@ -21,7 +21,7 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container: dokken92/dolfinx_custom:pyvista1
+    container: dokken92/dolfinx_custom:pyvista
 
     env:
       HDF5_MPI: "ON"
@@ -38,7 +38,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip3 install --no-cache-dir --no-binary=h5py h5py meshio  nbconvert jupyter-book sphinxcontrib-bibtex==1.0.0
+          pip3 install --no-cache-dir --no-binary=h5py h5py meshio  nbconvert jupyter-book sphinxcontrib-bibtex==1.0.0 matplotlib
           pip3 install tqdm
 
       - name: Setup headless display
