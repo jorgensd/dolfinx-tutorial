@@ -1,15 +1,20 @@
-FROM dokken92/dolfinx_custom:nightly
+FROM dokken92/dolfinx_custom:pyvista5
 
 # create user with a home directory
-ARG NB_USER=fenics
+ARG NB_USER
 ARG NB_UID=1000
 ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
 
+# Copy home directory for usage in binder
 WORKDIR ${HOME}
 COPY . ${HOME}
 USER root
 RUN chown -R ${NB_UID} ${HOME}
-USER ${NB_USER}
 
-ENTRYPOINT []
+# Activate headless protocol for visualization
+COPY start /srv/bin/start
+RUN  chmod +x /srv/bin/start
+
+USER ${NB_USER}
+ENTRYPOINT ["/srv/bin/start"]
