@@ -36,7 +36,7 @@ provides a definitive build recipe.
 Docker is a software that uses *containers* to supply software across different kinds of operating systems (Linux, Mac, Windows). The first step is to install docker, following the instructions at their [web-page](https://docs.docker.com/get-started/).
 As the dolfinx docker images are hosted at Docker-hub, one can directly access the image
 ```
-docker run dolfinx/dolfin
+docker run dolfinx/dolfinx
 ```
 There are several ways of customizing a docker container, such as mounting volumes/sharing folder, setting a working directory, sharing graphical interfaces etc. See `docker run --help` for an extensive list.
 
