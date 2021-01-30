@@ -456,6 +456,12 @@
   <div class="section" id="implementation">
 <h1>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h1>
 <p>Author: Jørgen S. Dokken</p>
+<p>In this tutorial, you will learn how to:</p>
+<ul class="simple">
+<li><p>Use a vector function space</p></li>
+<li><p>Visualize cell wise constant functions</p></li>
+<li><p>Compute Von Mises stresses</p></li>
+</ul>
 <div class="section" id="test-problem">
 <h2>Test problem<a class="headerlink" href="#test-problem" title="Permalink to this headline">¶</a></h2>
 <p>As a test example, we will model a clamped beam deformed under its own weigth in 3D. This can be modeled, by setting the right-hand side body force per unit volume to <span class="math notranslate nohighlight">\(f=(0,0,-\rho g)\)</span> with <span class="math notranslate nohighlight">\(\rho\)</span> the density of the beam and <span class="math notranslate nohighlight">\(g\)</span> the acceleration of gravity. The beam is box-shaped with length <span class="math notranslate nohighlight">\(L\)</span> and has a square cross section of width <span class="math notranslate nohighlight">\(W\)</span>. we set <span class="math notranslate nohighlight">\(u=u_D=(0,0,0)\)</span> at the clamped end, x=0. The rest of the boundary is traction free, that is, we set <span class="math notranslate nohighlight">\(T=0\)</span>. We start by defining the physical variables used in the program.</p>
@@ -569,7 +575,36 @@
 </div>
 <div class="section" id="visualization">
 <h2>Visualization<a class="headerlink" href="#visualization" title="Permalink to this headline">¶</a></h2>
-<p>We will use Paraview to visualize the solution of this problem.
+<p>As in the previous demos, we can either use Pyvista or Paraview for visualization. We start by using Pyvista. Instead of adding scalar values to the grid, we add vectors.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyvista</span>
+<span class="kn">import</span> <span class="nn">dolfinx.plot</span>
+<span class="c1"># Set off_screen to False if running in a notebook</span>
+<span class="n">off_screen</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1"># Create plotter and pyvista grid</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">off_screen</span><span class="o">=</span><span class="n">off_screen</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Deflection&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="p">[</span><span class="mi">800</span><span class="p">,</span> <span class="mi">800</span><span class="p">])</span>
+<span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">create_vtk_topology</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">(</span><span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c1"># Attach vector values to grid and warp grid by vector</span>
+<span class="n">grid</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">compute_point_values</span><span class="p">()</span><span class="o">.</span><span class="n">real</span> 
+<span class="n">actor_0</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;wireframe&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+<span class="n">warped</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">warp_by_vector</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="n">actor_1</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">warped</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">show_axes</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">off_screen</span><span class="p">:</span>
+   <span class="n">p</span><span class="o">.</span><span class="n">screenshot</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;deflection.png&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+   <span class="n">p</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We then obtain</p>
+<p><img alt="Deflected beam pyvista" src="../_images/deflection.png" /></p>
+<p>We could also use Paraview for visualizing this.
 As explained in previous sections, we save the solution with <code class="docutils literal notranslate"><span class="pre">XDMFFile</span></code>.
 After opening the file <code class="docutils literal notranslate"><span class="pre">deformation.xdmf</span></code> in Paraview and pressing <code class="docutils literal notranslate"><span class="pre">Apply</span></code>, one can press the <code class="docutils literal notranslate"><span class="pre">Warp</span> <span class="pre">by</span> <span class="pre">vector</span> <span class="pre">button</span></code>
 <img alt="Warp by vector" src="../_images/warp_by_vector.png" /> or go through the top menu (<code class="docutils literal notranslate"><span class="pre">Filters-&gt;Alphabetical-&gt;Warp</span> <span class="pre">by</span> <span class="pre">Vector</span></code>) and press <code class="docutils literal notranslate"><span class="pre">Apply</span></code>. We can also change the color of the deformed beam by changing the value in the color menu <img alt="color" src="../_images/color.png" /> from <code class="docutils literal notranslate"><span class="pre">Solid</span> <span class="pre">Color</span></code> to <code class="docutils literal notranslate"><span class="pre">Deformation</span></code>.</p>
@@ -584,8 +619,6 @@ After opening the file <code class="docutils literal notranslate"><span class="p
 </div>
 </div>
 </div>
-<p>With some additional modifications, we can obtain the following visualization
-<img alt="Deformed beam" src="../_images/beam.png" /></p>
 </div>
 <div class="section" id="stress-computation">
 <h2>Stress computation<a class="headerlink" href="#stress-computation" title="Permalink to this headline">¶</a></h2>
@@ -609,7 +642,6 @@ After opening the file <code class="docutils literal notranslate"><span class="p
 <span class="n">stresses</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V_von_mises</span><span class="p">)</span>
 <span class="n">problem</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">LinearProblem</span><span class="p">(</span><span class="n">a_v</span><span class="p">,</span> <span class="n">L_v</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="n">stresses</span><span class="p">)</span>
 <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
-<span class="c1"># FIXME: Add way to visualize DG 0 functions</span>
 </pre></div>
 </div>
 </div>
@@ -619,6 +651,24 @@ After opening the file <code class="docutils literal notranslate"><span class="p
 </div>
 </div>
 </div>
+<p>In the previous sections, we have only visualized first order Lagrangian functions. However, the Von Mises stresses are piecewise constant on each cell. Therefore, we modify our plotting routine slightly. The first thing we notice is that we  now set values for each cell, which has a one to one correspondence with the degrees of freedom in the function space.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">warped</span><span class="o">.</span><span class="n">cell_arrays</span><span class="p">[</span><span class="s2">&quot;VonMises&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stresses</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span>
+<span class="n">warped</span><span class="o">.</span><span class="n">set_active_scalars</span><span class="p">(</span><span class="s2">&quot;VonMises&quot;</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">off_screen</span><span class="o">=</span><span class="n">off_screen</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Deflection&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="p">[</span><span class="mi">800</span><span class="p">,</span> <span class="mi">800</span><span class="p">])</span>
+<span class="n">p</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">warped</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;wireframe&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">show_axes</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">off_screen</span><span class="p">:</span>
+   <span class="n">p</span><span class="o">.</span><span class="n">screenshot</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;stresses.png&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+   <span class="n">p</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><img alt="Von Mises stresses" src="../_images/stresses.png" /></p>
 </div>
 </div>
 
