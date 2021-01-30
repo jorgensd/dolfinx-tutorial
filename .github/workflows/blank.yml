@@ -55,16 +55,16 @@ jobs:
           cd ../chapter2
           jupyter-nbconvert --to python diffusion_code.ipynb
           mpirun -n 2 python3 diffusion_code.py
-          # jupyter-nbconvert --to python heat_code.ipynb
-          # mpirun -n 2 python3 heat_code.py
-          # jupyter-nbconvert --to python linearelasticity_code.ipynb
-          # mpirun -n 2 python3 linearelasticity_code.py
-          # jupyter-nbconvert --to python nonlinpoisson_code.ipynb
-          # mpirun -n 2 python3 nonlinpoisson_code.py
-          # jupyter-nbconvert --to python ns_code1.ipynb
-          # mpirun -n 2 python3 ns_code1.py
-          # jupyter-nbconvert --to python ns_code2.ipynb
-          # mpirun -n 2 python3 ns_code2.py
+          jupyter-nbconvert --to python heat_code.ipynb
+          mpirun -n 2 python3 heat_code.py
+          jupyter-nbconvert --to python linearelasticity_code.ipynb
+          mpirun -n 2 python3 linearelasticity_code.py
+          jupyter-nbconvert --to python nonlinpoisson_code.ipynb
+          mpirun -n 2 python3 nonlinpoisson_code.py
+          jupyter-nbconvert --to python ns_code1.ipynb
+          mpirun -n 2 python3 ns_code1.py
+          jupyter-nbconvert --to python ns_code2.ipynb
+          mpirun -n 2 python3 ns_code2.py
           # cd ../chapter3
           # jupyter-nbconvert --to python neumann_dirichlet_code.ipynb
           # mpirun -n 3 python3 neumann_dirichlet_code.py
