@@ -417,6 +417,11 @@
    Meshing a complex structure with subdomains
   </a>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#visualizing-the-magnetic-field">
+   Visualizing the magnetic field
+  </a>
+ </li>
 </ul>
 
         </nav>
@@ -430,8 +435,8 @@
                 
   <div class="section" id="electromagnetics-example">
 <h1>Electromagnetics example<a class="headerlink" href="#electromagnetics-example" title="Permalink to this headline">¶</a></h1>
-<p>Authors: Hans Petter Langtangen and Anders Logg</p>
-<p>Figure by: Jørgen S. Dokken</p>
+<p>Author: Jørgen S. Dokken</p>
+<p>Based on the tutorial by: Hans Petter Langtangen and Anders Logg</p>
 <p>In this example, we will consider an iron cylinder with copper wires wound around the cylinder, as shown below</p>
 <p><img alt="Cross section of wires" src="../_images/wire.png" /></p>
 <p>Through the copper wires a static current of <span class="math notranslate nohighlight">\(J=1A\)</span> is flowing.
@@ -627,8 +632,7 @@ L(v)&amp;=\int_\Omega J_z v~\mathrm{d} x.\end{split}\]</div>
 <span class="n">mesh</span> <span class="o">=</span> <span class="n">create_mesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">cells</span><span class="p">,</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:</span><span class="n">gdim</span><span class="p">],</span> <span class="n">ufl_domain</span><span class="p">)</span>
 <span class="n">tdim</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span>
 
-<span class="n">local_entities</span><span class="p">,</span> <span class="n">local_values</span> <span class="o">=</span> <span class="n">extract_local_entities</span><span class="p">(</span>
-            <span class="n">mesh</span><span class="p">,</span> <span class="n">tdim</span><span class="p">,</span> <span class="n">cells</span><span class="p">,</span> <span class="n">cell_values</span><span class="p">)</span>
+<span class="n">local_entities</span><span class="p">,</span> <span class="n">local_values</span> <span class="o">=</span> <span class="n">extract_local_entities</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">tdim</span><span class="p">,</span> <span class="n">cells</span><span class="p">,</span> <span class="n">cell_values</span><span class="p">)</span>
 <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">create_connectivity</span><span class="p">(</span><span class="n">tdim</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">adj</span> <span class="o">=</span> <span class="n">AdjacencyList_int32</span><span class="p">(</span><span class="n">local_entities</span><span class="p">)</span>
 <span class="n">ct</span> <span class="o">=</span> <span class="n">create_meshtags</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">tdim</span><span class="p">,</span> <span class="n">adj</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="n">local_values</span><span class="p">))</span>
@@ -647,6 +651,29 @@ L(v)&amp;=\int_\Omega J_z v~\mathrm{d} x.\end{split}\]</div>
 </div>
 </div>
 </div>
+<p>We can also visualize the subdommains using pyvista</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyvista</span>
+<span class="kn">import</span> <span class="nn">dolfinx.plot</span>
+<span class="n">off_screen</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">plotter</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">off_screen</span><span class="o">=</span><span class="n">off_screen</span><span class="p">)</span>
+<span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">create_vtk_topology</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">(</span><span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+<span class="n">num_local_cells</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">index_map</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span><span class="o">.</span><span class="n">size_local</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">cell_arrays</span><span class="p">[</span><span class="s2">&quot;Marker&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ct</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">ct</span><span class="o">.</span><span class="n">indices</span><span class="o">&lt;</span><span class="n">num_local_cells</span><span class="p">]</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">set_active_scalars</span><span class="p">(</span><span class="s2">&quot;Marker&quot;</span><span class="p">)</span>
+<span class="n">actor</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+<span class="n">plotter</span><span class="o">.</span><span class="n">view_xy</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">off_screen</span><span class="p">:</span>
+    <span class="n">plotter</span><span class="o">.</span><span class="n">screenshot</span><span class="p">(</span><span class="s2">&quot;cell_tags.png&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="p">[</span><span class="mi">800</span><span class="p">,</span><span class="mi">800</span><span class="p">])</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><img alt="Domain markers" src="../_images/cell_tags.png" /></p>
 <p>Next, we define the discontinous functions for the permability <span class="math notranslate nohighlight">\(\mu\)</span> and current <span class="math notranslate nohighlight">\(J_z\)</span> using the <code class="docutils literal notranslate"><span class="pre">MeshTags</span></code> as in <a class="reference internal" href="subdomains.html"><span class="doc std std-doc">Defining material parameters through subdomains</span></a></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -716,7 +743,7 @@ L(v)&amp;=\int_\Omega J_z v~\mathrm{d} x.\end{split}\]</div>
 <p>As we have computed the magnetic potential, we can now compute the magnetic field, by setting <code class="docutils literal notranslate"><span class="pre">B=curl(A_z)</span></code>. Note that as we have chosen a function space of first order piecewise linear function to describe our potential, the curl of a function in this space is a discontinous zeroth order function (a function of cell-wise constants). However, to simplify the visualization, we project the curl into a first order continous function space</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">W</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">VectorFunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">W</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">VectorFunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 <span class="n">p</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
 <span class="n">q</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
 <span class="n">a_w</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
@@ -728,48 +755,58 @@ L(v)&amp;=\int_\Omega J_z v~\mathrm{d} x.\end{split}\]</div>
 </div>
 </div>
 <p>Note that we used <code class="docutils literal notranslate"><span class="pre">ufl.as_vector</span></code> to interpret the <code class="docutils literal notranslate"><span class="pre">Python</span></code>-tuple <code class="docutils literal notranslate"><span class="pre">(A_z.dx(1),</span> <span class="pre">-A_z.dx(0))</span></code> as a vector in the unified form language (UFL).</p>
-<p>We now plot the magnetic potential <span class="math notranslate nohighlight">\(A_z\)</span> and the magnetic field <span class="math notranslate nohighlight">\(B\)</span></p>
+<p>We now plot the magnetic potential <span class="math notranslate nohighlight">\(A_z\)</span> and the magnetic field <span class="math notranslate nohighlight">\(B\)</span>. We start by creating a new plotter</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.plotting</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
-<span class="n">c</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">A_z</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Magentic potential&quot;</span><span class="p">)</span>
-<span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">linewidth</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plotter</span><span class="o">.</span><span class="n">remove_actor</span><span class="p">(</span><span class="n">actor</span><span class="p">)</span>
+<span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">create_vtk_topology</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
+<span class="n">num_dofs_local</span> <span class="o">=</span> <span class="n">V</span><span class="o">.</span><span class="n">dofmap</span><span class="o">.</span><span class="n">index_map</span><span class="o">.</span><span class="n">size_local</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">(</span><span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">point_arrays</span><span class="p">[</span><span class="s2">&quot;A_z&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">A_z</span><span class="o">.</span><span class="n">compute_point_values</span><span class="p">()</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">set_active_scalars</span><span class="p">(</span><span class="s2">&quot;A_z&quot;</span><span class="p">)</span>
+<span class="n">warp</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">warp_by_scalar</span><span class="p">(</span><span class="s2">&quot;A_z&quot;</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1e7</span><span class="p">)</span>
+<span class="n">actor</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">warp</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">off_screen</span><span class="p">:</span>
+    <span class="n">plotter</span><span class="o">.</span><span class="n">screenshot</span><span class="p">(</span><span class="s2">&quot;Az.png&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="p">[</span><span class="mi">800</span><span class="p">,</span><span class="mi">800</span><span class="p">])</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">9</span><span class="o">-</span><span class="mf">54e212194</span><span class="n">a57</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">dolfinx.plotting</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">c</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">A_z</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Magentic potential&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">linewidth</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">)</span>
+</div>
+<p><img alt="Magnetic potential" src="../_images/Az.png" /></p>
+</div>
+<div class="section" id="visualizing-the-magnetic-field">
+<h2>Visualizing the magnetic field<a class="headerlink" href="#visualizing-the-magnetic-field" title="Permalink to this headline">¶</a></h2>
+<p>As the magnetic field is a piecewise constant vector field, we need create a custom plotting function.
+We start by computing the midpoints of each cell, which is where we would like to visualize the cell-wise constant vector.
+Next, we take the data from the function <code class="docutils literal notranslate"><span class="pre">B</span></code>, and  shape it to become a 3D vector.
+We connect the vector field with the midpoint by using <code class="docutils literal notranslate"><span class="pre">pyvista.PolyData</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plotter</span><span class="o">.</span><span class="n">remove_actor</span><span class="p">(</span><span class="n">actor</span><span class="p">)</span>
+<span class="n">plotter</span><span class="o">.</span><span class="n">set_position</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
 
-<span class="ne">ModuleNotFoundError</span>: No module named &#39;dolfinx.plotting&#39;
+<span class="n">midpoints</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">cpp</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">midpoints</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">index_map</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span><span class="o">.</span><span class="n">size_local</span><span class="p">))</span>
+
+<span class="n">num_dofs_local</span> <span class="o">=</span> <span class="n">W</span><span class="o">.</span><span class="n">dofmap</span><span class="o">.</span><span class="n">index_map</span><span class="o">.</span><span class="n">size_local</span>
+<span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_dofs_local</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="n">values</span><span class="p">[:,</span> <span class="p">:</span><span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">real</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">num_dofs_local</span><span class="p">,</span> <span class="n">W</span><span class="o">.</span><span class="n">dofmap</span><span class="o">.</span><span class="n">index_map_bs</span><span class="p">)</span>
+<span class="n">cloud</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">PolyData</span><span class="p">(</span><span class="n">midpoints</span><span class="p">)</span>
+<span class="n">cloud</span><span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span>
+<span class="n">glyphs</span> <span class="o">=</span> <span class="n">cloud</span><span class="o">.</span><span class="n">glyph</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">2e6</span><span class="p">)</span>
+<span class="n">actor</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;wireframe&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+<span class="n">actor2</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">glyphs</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">off_screen</span><span class="p">:</span>
+    <span class="n">plotter</span><span class="o">.</span><span class="n">screenshot</span><span class="p">(</span><span class="s2">&quot;B.png&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="p">[</span><span class="mi">1200</span><span class="p">,</span><span class="mi">1200</span><span class="p">])</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>As it is easier to visualize vector fields in Paraview, we write our output to <code class="docutils literal notranslate"><span class="pre">XDMFFile</span></code></p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">XDMFFile</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="s2">&quot;em.xdmf&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">xdmf</span><span class="p">:</span>
-    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-    <span class="n">A_z</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;A_z&quot;</span>
-    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">A_z</span><span class="p">)</span>
-    <span class="n">B</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;B&quot;</span>
-    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>For instance, we visualize the potential by using the <code class="docutils literal notranslate"><span class="pre">Warp</span> <span class="pre">by</span> <span class="pre">Scalar</span></code> source to obtain
-<img alt="Magnetic potential warped by scalar (and scaled to unity)" src="../_images/A_z.png" /></p>
+<p><img alt="Magnetic field" src="../_images/B.png" /></p>
 </div>
 </div>
 
