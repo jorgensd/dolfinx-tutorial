@@ -433,8 +433,8 @@
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#visualization-of-time-dependent-problem-using-matplotlib">
-   Visualization of time dependent problem using matplotlib
+  <a class="reference internal nav-link" href="#visualization-of-time-dependent-problem-using-pyvista">
+   Visualization of time dependent problem using pyvista
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -462,8 +462,8 @@
 <h1>Diffusion of a Gaussian function<a class="headerlink" href="#diffusion-of-a-gaussian-function" title="Permalink to this headline">¶</a></h1>
 <p>Author: Jørgen S. Dokken</p>
 <p>Let us now solve a more interesting problem, namely the diffusion of a Gaussian hill. We take the initial value to be</p>
-<div class="amsmath math notranslate nohighlight" id="equation-06623218-a2d4-4b9a-a23e-4a5d9177fe75">
-<span class="eqno">(18)<a class="headerlink" href="#equation-06623218-a2d4-4b9a-a23e-4a5d9177fe75" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-0add4752-6af8-4ce5-86bd-463535eafb1f">
+<span class="eqno">(18)<a class="headerlink" href="#equation-0add4752-6af8-4ce5-86bd-463535eafb1f" title="Permalink to this equation">¶</a></span>\[\begin{align}
     u_0(x,y)&amp;= e^{-ax^2-ay^2}
 \end{align}\]</div>
 <p>for <span class="math notranslate nohighlight">\(a=5\)</span> on the domain <span class="math notranslate nohighlight">\([-2,-2]\times[2,2]\)</span>. For this problem we will use homogeneous Dirichlet boundary conditions (<span class="math notranslate nohighlight">\(u_D=0\)</span>).</p>
@@ -578,36 +578,41 @@ this could be read (<code class="docutils literal notranslate"><span class="pre"
 </div>
 </div>
 </div>
-<div class="section" id="visualization-of-time-dependent-problem-using-matplotlib">
-<h2>Visualization of time dependent problem using matplotlib<a class="headerlink" href="#visualization-of-time-dependent-problem-using-matplotlib" title="Permalink to this headline">¶</a></h2>
-<p>We use the dolfin-X plotting functionality, which is based on matplotlib to plot the solution at every <span class="math notranslate nohighlight">\(15\)</span>th time step. We would also like to visualize a colorbar reflecting the minimal and maximum value of <span class="math notranslate nohighlight">\(u\)</span> at each time step. We use the following convenience function <code class="docutils literal notranslate"><span class="pre">plot_with_colorbar</span></code> for this:</p>
+<div class="section" id="visualization-of-time-dependent-problem-using-pyvista">
+<h2>Visualization of time dependent problem using pyvista<a class="headerlink" href="#visualization-of-time-dependent-problem-using-pyvista" title="Permalink to this headline">¶</a></h2>
+<p>We use the dolfin-X plotting functionality, which is based on pyvista to plot the solution at every <span class="math notranslate nohighlight">\(15\)</span>th time step. We would also like to visualize a colorbar reflecting the minimal and maximum value of <span class="math notranslate nohighlight">\(u\)</span> at each time step. We use the following convenience function <code class="docutils literal notranslate"><span class="pre">plot_function</span></code> for this:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.plotting</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="k">def</span> <span class="nf">plot_with_colorbar</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>    
-    <span class="n">min_color</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">u_n</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-    <span class="n">max_color</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">u_n</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">u_n</span><span class="p">,</span><span class="n">vmin</span><span class="o">=</span><span class="n">min_color</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">max_color</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Time: </span><span class="si">{0:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyvista</span>
+<span class="kn">import</span> <span class="nn">dolfinx.plot</span>
 
-<span class="c1"># Plot initial condition</span>
-<span class="n">plot_with_colorbar</span><span class="p">(</span><span class="n">u_n</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">7</span><span class="o">-</span><span class="mi">50</span><span class="n">facb37b5dc</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">dolfinx.plotting</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="k">def</span> <span class="nf">plot_with_colorbar</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span>     <span class="n">min_color</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">u_n</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span>     <span class="n">max_color</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">u_n</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="c1"># Set off_screen to False if running in a notebook</span>
+<span class="n">off_screen</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="c1"># Create background plotter and mesh to attach values to</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">off_screen</span><span class="o">=</span><span class="n">off_screen</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Concentration&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="p">[</span><span class="mi">800</span><span class="p">,</span> <span class="mi">800</span><span class="p">])</span>
+<span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">create_vtk_topology</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">(</span><span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
 
-<span class="ne">ModuleNotFoundError</span>: No module named &#39;dolfinx.plotting&#39;
+<span class="k">def</span> <span class="nf">plot_function</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">uh</span><span class="p">,</span> <span class="n">off_screen</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a figure of the concentration uh warped visualized in 3D at timet step t.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Add time-stamp</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time: </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;timelabel&quot;</span><span class="p">)</span>
+    <span class="c1"># Update point values on pyvista grid</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">point_arrays</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">compute_point_values</span><span class="p">()</span><span class="o">.</span><span class="n">real</span>
+    <span class="c1"># Warp mesh by point values</span>
+    <span class="n">warped</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">warp_by_scalar</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+
+    <span class="c1"># Add mesh to plotter and visualize in notebook or save as figure</span>
+    <span class="n">actor</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">warped</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">off_screen</span><span class="p">:</span>
+       <span class="n">p</span><span class="o">.</span><span class="n">screenshot</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;diffusion_</span><span class="si">{</span><span class="n">t</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+       <span class="n">p</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="c1"># Clear plotter for next plot</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">remove_actor</span><span class="p">(</span><span class="n">actor</span><span class="p">)</span>
+<span class="n">plot_function</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">uh</span><span class="p">,</span> <span class="n">off_screen</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -648,15 +653,20 @@ Finally, before moving to the next time step, we update the solution at the prev
     <span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">uh</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
     <span class="c1"># Plot every 20th time step</span>
     <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">15</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">plot_with_colorbar</span><span class="p">(</span><span class="n">uh</span><span class="p">)</span>
+        <span class="n">plot_function</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">uh</span><span class="p">,</span> <span class="n">off_screen</span><span class="p">)</span>
 
 <span class="n">xdmf</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<img alt="../_images/diffusion_code_15_0.svg" src="../_images/diffusion_code_15_0.svg" /><img alt="../_images/diffusion_code_15_1.svg" src="../_images/diffusion_code_15_1.svg" /><img alt="../_images/diffusion_code_15_2.svg" src="../_images/diffusion_code_15_2.svg" /></div>
 </div>
+<p>We obtain the following sequence</p>
+<p><img alt="diff0.00" src="../_images/diffusion_0.00.png" />
+<img alt="diff0.03" src="../_images/diffusion_0.03.png" />
+<img alt="diff0.52" src="../_images/diffusion_0.52.png" />
+<img alt="diff1.02" src="../_images/diffusion_1.02.png" />
+<img alt="diff1.51" src="../_images/diffusion_1.51.png" />
+<img alt="diff2.00" src="../_images/diffusion_2.00.png" /></p>
 </div>
 <div class="section" id="animation-with-paraview">
 <h2>Animation with Paraview<a class="headerlink" href="#animation-with-paraview" title="Permalink to this headline">¶</a></h2>
