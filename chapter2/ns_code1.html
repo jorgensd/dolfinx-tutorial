@@ -422,6 +422,11 @@
    Verification
   </a>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#visualization-of-higher-order-functions">
+   Visualization of higher order functions
+  </a>
+ </li>
 </ul>
 
         </nav>
@@ -437,6 +442,11 @@
 <h1>Test problem 1: Channel flow (Poiseuille flow)<a class="headerlink" href="#test-problem-1-channel-flow-poiseuille-flow" title="Permalink to this headline">¶</a></h1>
 <p>Authors: Anders Logg and Hans Petter Langtangen</p>
 <p>Adapted by: Jørgen S. Dokken</p>
+<p>In this section, you will learn how to:</p>
+<ul class="simple">
+<li><p>Solve the Navier-Stokes problem using a splitting scheme</p></li>
+<li><p>Visualize functions from higher order Lagrangian spaces</p></li>
+</ul>
 <p>In this section, we will compute the flow bewteen two infinite plates, so-called channel or Poiseuille flow.
 As we shall see, this problem has an analytical solution.
 Let <span class="math notranslate nohighlight">\(H\)</span> be the distance between the plates and  <span class="math notranslate nohighlight">\(L\)</span> the length of the channel. There are no body forces.</p>
@@ -745,49 +755,69 @@ As the variational problem contains a mix of known and unknown quantities, we wi
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 0.02, L2-error 5.88e-01, Max error 1.60e-01
-Time 0.42, L2-error 1.09e-02, Max error 1.28e-04
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 0.42, L2-error 1.09e-02, Max error 1.28e-04
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 0.82, L2-error 2.11e-04, Max error 2.61e-04
-Time 1.22, L2-error 2.00e-05, Max error 1.52e-04
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 1.22, L2-error 2.00e-05, Max error 1.52e-04
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 1.62, L2-error 9.53e-06, Max error 8.04e-05
-Time 2.02, L2-error 5.79e-06, Max error 4.82e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 2.02, L2-error 5.79e-06, Max error 4.82e-05
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 2.42, L2-error 4.37e-06, Max error 3.19e-05
-Time 2.82, L2-error 3.76e-06, Max error 2.27e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 2.82, L2-error 3.76e-06, Max error 2.27e-05
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 3.22, L2-error 3.45e-06, Max error 1.71e-05
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 3.62, L2-error 3.28e-06, Max error 1.33e-05
-Time 4.02, L2-error 3.17e-06, Max error 1.07e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 4.02, L2-error 3.17e-06, Max error 1.07e-05
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 4.42, L2-error 3.11e-06, Max error 8.79e-06
-Time 4.82, L2-error 3.07e-06, Max error 7.38e-06
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 4.82, L2-error 3.07e-06, Max error 7.38e-06
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 5.22, L2-error 3.04e-06, Max error 6.98e-06
-Time 5.62, L2-error 3.03e-06, Max error 7.42e-06
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 5.62, L2-error 3.03e-06, Max error 7.42e-06
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 6.02, L2-error 3.02e-06, Max error 7.75e-06
-Time 6.42, L2-error 3.01e-06, Max error 8.02e-06
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 6.42, L2-error 3.01e-06, Max error 8.02e-06
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 6.82, L2-error 3.01e-06, Max error 8.23e-06
-Time 7.22, L2-error 3.00e-06, Max error 8.39e-06
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 7.22, L2-error 3.00e-06, Max error 8.39e-06
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 7.62, L2-error 3.00e-06, Max error 8.53e-06
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 8.02, L2-error 3.00e-06, Max error 8.63e-06
-Time 8.42, L2-error 3.00e-06, Max error 8.72e-06
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 8.42, L2-error 3.00e-06, Max error 8.72e-06
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 8.82, L2-error 3.00e-06, Max error 8.79e-06
@@ -807,7 +837,56 @@ Time 8.42, L2-error 3.00e-06, Max error 8.72e-06
 </div>
 <div class="section" id="verification">
 <h2>Verification<a class="headerlink" href="#verification" title="Permalink to this headline">¶</a></h2>
-<p>As for the previous problems we compute the error at each degree of freedom and the <span class="math notranslate nohighlight">\(L^2(\Omega)\)</span>-error. We start with the  initial condition <span class="math notranslate nohighlight">\(u=(0,0)\)</span>. We have not specified the initial condition explicitly, and FEniCS-X wil initialize all <code class="docutils literal notranslate"><span class="pre">Function</span></code>s including <code class="docutils literal notranslate"><span class="pre">u_n</span></code> and <code class="docutils literal notranslate"><span class="pre">u_</span></code> to zero. Since the exact solution is quadratic, we expect to reach machine precision within finite time. For our implementation, we observe that the error quickly approaches zero, and is of order <span class="math notranslate nohighlight">\(10^{-6}\)</span> at <span class="math notranslate nohighlight">\(T=10\)</span>.</p>
+<p>As for the previous problems we compute the error at each degree of freedom and the <span class="math notranslate nohighlight">\(L^2(\Omega)\)</span>-error. We start with the  initial condition <span class="math notranslate nohighlight">\(u=(0,0)\)</span>. We have not specified the initial condition explicitly, and FEniCS-X wil initialize all <code class="docutils literal notranslate"><span class="pre">Function</span></code>s including <code class="docutils literal notranslate"><span class="pre">u_n</span></code> and <code class="docutils literal notranslate"><span class="pre">u_</span></code> to zero. Since the exact solution is quadratic, we expect to reach machine precision within finite time. For our implementation, we observe that the error quickly approaches zero, and is of order <span class="math notranslate nohighlight">\(10^{-6}\)</span> at $T=10</p>
+</div>
+<div class="section" id="visualization-of-higher-order-functions">
+<h2>Visualization of higher order functions<a class="headerlink" href="#visualization-of-higher-order-functions" title="Permalink to this headline">¶</a></h2>
+<p>As the velocity field <span class="math notranslate nohighlight">\(u\)</span> is a second order Lagrangian space, it’s degrees of freedom does not align with the mesh vertices.
+To be able to visualize this, we use the convenience function <code class="docutils literal notranslate"><span class="pre">dolfinx.plot.create_vtk_topology</span></code>. However, we will send in the function-space of the velocity field.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.plot</span>
+<span class="kn">import</span> <span class="nn">pyvista</span>
+
+<span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">create_vtk_topology</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="c1"># To make this function work in parallel, we only consider ghosts owned by the current process</span>
+<span class="n">num_dofs_local</span> <span class="o">=</span> <span class="n">V</span><span class="o">.</span><span class="n">dofmap</span><span class="o">.</span><span class="n">index_map</span><span class="o">.</span><span class="n">size_local</span>
+<span class="c1"># We create a geometry for our modified mesh using the dof coordinates</span>
+<span class="n">geometry</span> <span class="o">=</span> <span class="n">V</span><span class="o">.</span><span class="n">tabulate_dof_coordinates</span><span class="p">()[:</span><span class="n">num_dofs_local</span><span class="p">]</span>
+<span class="c1"># As we are dealing with a vector field, we reshape the underlying dof array to accommedate for the three dimensional space</span>
+<span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">V</span><span class="o">.</span><span class="n">dofmap</span><span class="o">.</span><span class="n">index_map</span><span class="o">.</span><span class="n">size_local</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="n">values</span><span class="p">[:,</span> <span class="p">:</span><span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="n">u_n</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">real</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">V</span><span class="o">.</span><span class="n">dofmap</span><span class="o">.</span><span class="n">index_map</span><span class="o">.</span><span class="n">size_local</span><span class="p">,</span> <span class="n">V</span><span class="o">.</span><span class="n">dofmap</span><span class="o">.</span><span class="n">index_map_bs</span><span class="p">)</span>
+
+<span class="c1"># Create a point cloud of glyphs</span>
+<span class="n">function_grid</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">(</span><span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+<span class="n">function_grid</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span>
+<span class="n">glyphs</span> <span class="o">=</span> <span class="n">function_grid</span><span class="o">.</span><span class="n">glyph</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+
+<span class="c1"># Create a pyvista-grid for the mesh</span>
+<span class="n">topology_m</span><span class="p">,</span> <span class="n">cell_types_m</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">create_vtk_topology</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">(</span><span class="n">topology_m</span><span class="p">,</span> <span class="n">cell_types_m</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c1"># Create Create plotter</span>
+<span class="n">off_screen</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">plotter</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">off_screen</span><span class="o">=</span><span class="n">off_screen</span><span class="p">)</span>
+<span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;wireframe&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+<span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">glyphs</span><span class="p">)</span>
+<span class="n">plotter</span><span class="o">.</span><span class="n">view_xy</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">off_screen</span><span class="p">:</span>
+    <span class="n">plotter</span><span class="o">.</span><span class="n">screenshot</span><span class="p">(</span><span class="s2">&quot;glyphs.png&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="p">[</span><span class="mi">800</span><span class="p">,</span><span class="mi">800</span><span class="p">])</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING:py.warnings:/usr/local/dolfinx-real/lib/python3.8/dist-packages/dolfinx/plot.py:132: UserWarning: Plotting of higher order functions is experimental.
+  warnings.warn(&quot;Plotting of higher order functions is experimental.&quot;)
+</pre></div>
+</div>
+</div>
+</div>
+<p><img alt="Velocity field" src="../_images/glyphs.png" /></p>
 </div>
 </div>
 
