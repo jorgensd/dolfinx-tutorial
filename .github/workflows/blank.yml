@@ -52,9 +52,9 @@ jobs:
           mpirun -n 2 python3 fundamentals_code.py
           jupyter-nbconvert --to python membrane_code.ipynb
           mpirun -n 2 python3 membrane_code.py
-          # cd ../chapter2
-          # jupyter-nbconvert --to python diffusion_code.ipynb
-          # mpirun -n 2 python3 diffusion_code.py
+          cd ../chapter2
+          jupyter-nbconvert --to python diffusion_code.ipynb
+          mpirun -n 2 python3 diffusion_code.py
           # jupyter-nbconvert --to python heat_code.ipynb
           # mpirun -n 2 python3 heat_code.py
           # jupyter-nbconvert --to python linearelasticity_code.ipynb
