@@ -512,13 +512,13 @@ Therefore, we need to make specific choices of <span class="math notranslate noh
 <!-- Particularly, piecewise linear continuous Galerkin finite elements are able to exactly reproduce a quadratic polynomial on 
 a uniformly partitioned mesh. -->
 <p>We use this fact to construct a quadratic function in <span class="math notranslate nohighlight">\(2D\)</span>. In particular we choose</p>
-<div class="amsmath math notranslate nohighlight" id="equation-90657ca4-cdc5-468f-ad5c-931e54d418dd">
-<span class="eqno">(1)<a class="headerlink" href="#equation-90657ca4-cdc5-468f-ad5c-931e54d418dd" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-89a3242e-cfc1-4401-89b3-27c972216ca9">
+<span class="eqno">(1)<a class="headerlink" href="#equation-89a3242e-cfc1-4401-89b3-27c972216ca9" title="Permalink to this equation">¶</a></span>\[\begin{align}
  u_e(x,y)=1+x^2+2y^2
  \end{align}\]</div>
 <p>Inserting <span class="math notranslate nohighlight">\(u_e\)</span> in the original boundary problem, we find that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7e8aef8e-334b-40b4-8da7-e50a1f69b67f">
-<span class="eqno">(2)<a class="headerlink" href="#equation-7e8aef8e-334b-40b4-8da7-e50a1f69b67f" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-2ea49a9f-e367-49e5-95ad-929aa54e9dec">
+<span class="eqno">(2)<a class="headerlink" href="#equation-2ea49a9f-e367-49e5-95ad-929aa54e9dec" title="Permalink to this equation">¶</a></span>\[\begin{align}
     f(x,y)= -6,\qquad u_d(x,y)=u_e(x,y)=1+x^2+2y^2,
 \end{align}\]</div>
 <p>regardless of the shape of the domain as long as we prescribe
@@ -772,14 +772,14 @@ To do this we use the function <code class="docutils literal notranslate"><span 
 <p>We can now use the <code class="docutils literal notranslate"><span class="pre">pyvista.Plotter</span></code> to visualize the solution. We visualize it by showing it in 2D and warped in 3D. We can view the plot directly in the notebook by setting <code class="docutils literal notranslate"><span class="pre">off_screen</span></code> to False or save it as a png by setting it to True.</p>
 <div class="admonition-rendering-with-pyvista-using-docker-containers admonition">
 <p class="admonition-title">Rendering with pyvista using Docker-containers</p>
-<p>To make the plots render, we have to call<code class="docutils literal notranslate"><span class="pre">pyvista.utilities.xvfb.start_xvfb</span></code> to start a virtual framebuffer.</p>
+<p>To make the plots render, we have to call <code class="docutils literal notranslate"><span class="pre">pyvista.utilities.xvfb.start_xvfb</span></code> to start a virtual framebuffer.</p>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyvista.utilities.xvfb</span> <span class="kn">import</span> <span class="n">start_xvfb</span>
 <span class="n">start_xvfb</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-<span class="n">off_screen</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">off_screen</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="n">plotter</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">()</span>
 <span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">show_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_scalar_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">plotter</span><span class="o">.</span><span class="n">view_xy</span><span class="p">()</span>
@@ -787,35 +787,6 @@ To do this we use the function <code class="docutils literal notranslate"><span 
     <span class="n">plotter</span><span class="o">.</span><span class="n">screenshot</span><span class="p">(</span><span class="s2">&quot;fundamentals.png&quot;</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
-<span class="nn">/usr/local/lib/python3.8/dist-packages/pyvista/plotting/plotting.py</span> in <span class="ni">show</span><span class="nt">(self, title, window_size, interactive, auto_close, interactive_update, full_screen, screenshot, return_img, cpos, use_ipyvtk, **kwargs)</span>
-<span class="g g-Whitespace">   </span><span class="mi">4164</span>             <span class="k">try</span><span class="p">:</span>
-<span class="ne">-&gt; </span><span class="mi">4165</span>                 <span class="kn">from</span> <span class="nn">ipyvtk_simple.viewer</span> <span class="kn">import</span> <span class="n">ViewInteractiveWidget</span>
-<span class="g g-Whitespace">   </span><span class="mi">4166</span>             <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-
-<span class="ne">ModuleNotFoundError</span>: No module named &#39;ipyvtk_simple&#39;
-
-<span class="n">During</span> <span class="n">handling</span> <span class="n">of</span> <span class="n">the</span> <span class="n">above</span> <span class="n">exception</span><span class="p">,</span> <span class="n">another</span> <span class="n">exception</span> <span class="n">occurred</span><span class="p">:</span>
-
-<span class="ne">ImportError</span><span class="g g-Whitespace">                               </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">17</span><span class="o">-</span><span class="mi">5</span><span class="n">b1e814a4cd7</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">      </span><span class="mi">9</span>     <span class="n">plotter</span><span class="o">.</span><span class="n">screenshot</span><span class="p">(</span><span class="s2">&quot;fundamentals.png&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">10</span> <span class="k">else</span><span class="p">:</span>
-<span class="ne">---&gt; </span><span class="mi">11</span>     <span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-<span class="nn">/usr/local/lib/python3.8/dist-packages/pyvista/plotting/plotting.py</span> in <span class="ni">show</span><span class="nt">(self, title, window_size, interactive, auto_close, interactive_update, full_screen, screenshot, return_img, cpos, use_ipyvtk, **kwargs)</span>
-<span class="g g-Whitespace">   </span><span class="mi">4165</span>                 <span class="kn">from</span> <span class="nn">ipyvtk_simple.viewer</span> <span class="kn">import</span> <span class="n">ViewInteractiveWidget</span>
-<span class="g g-Whitespace">   </span><span class="mi">4166</span>             <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-<span class="ne">-&gt; </span><span class="mi">4167</span>                 <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s1">&#39;Please install `ipyvtk_simple` to use this feature:&#39;</span>
-<span class="g g-Whitespace">   </span><span class="mi">4168</span>                                   <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">https://github.com/Kitware/ipyvtk-simple&#39;</span><span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">4169</span>             <span class="c1"># Have to leave the Plotter open for the widget to use</span>
-
-<span class="ne">ImportError</span>: Please install `ipyvtk_simple` to use this feature:	https://github.com/Kitware/ipyvtk-simple
 </pre></div>
 </div>
 </div>
