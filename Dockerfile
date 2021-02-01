@@ -1,6 +1,8 @@
 FROM dokken92/dolfinx_custom:pyvista_itk
 #29012021
 
+pip3 install notebook
+
 # create user with a home directory
 ARG NB_USER
 ARG NB_UID=1000
