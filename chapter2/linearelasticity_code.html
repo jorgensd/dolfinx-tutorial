@@ -580,6 +580,10 @@
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyvista</span>
 <span class="kn">import</span> <span class="nn">dolfinx.plot</span>
+<span class="c1"># Start xvfb for rendering plots</span>
+<span class="kn">from</span> <span class="nn">pyvista.utilities.xvfb</span> <span class="kn">import</span> <span class="n">start_xvfb</span>
+<span class="n">start_xvfb</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
 <span class="c1"># Set off_screen to False if running in a notebook</span>
 <span class="n">off_screen</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -664,6 +668,10 @@ After opening the file <code class="docutils literal notranslate"><span class="p
    <span class="n">p</span><span class="o">.</span><span class="n">screenshot</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;stresses.png&quot;</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
    <span class="n">p</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="c1"># Uncomment to create interactive plot of warped mesh with either deformation of Von Mise stresses#</span>
+<span class="c1"># plotter_ITK = pyvista.PlotterITK()</span>
+<span class="c1"># plotter_ITK.add_mesh(warped)</span>
+<span class="c1"># plotter_ITK.show(True)</span>
 </pre></div>
 </div>
 </div>
