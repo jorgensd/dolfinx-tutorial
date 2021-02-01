@@ -19,3 +19,4 @@ RUN chown -R ${NB_UID} ${HOME}
 
 user ${NB_USER}
 # ENTRYPOINT ["/srv/bin/start"]
+ENTRYPOINT []
