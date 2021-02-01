@@ -1,4 +1,5 @@
-FROM dokken92/dolfinx_custom:29012021
+FROM dokken92/dolfinx_custom:pyvist_itk
+#29012021
 
 # create user with a home directory
 ARG NB_USER
@@ -13,8 +14,8 @@ USER root
 RUN chown -R ${NB_UID} ${HOME}
 
 # Activate headless protocol for visualization
-COPY start /srv/bin/start
-RUN  chmod +x /srv/bin/start
+# COPY start /srv/bin/start
+# RUN  chmod +x /srv/bin/start
 
-USER ${NB_USER}
-ENTRYPOINT ["/srv/bin/start"]
+user ${NB_USER}
+# ENTRYPOINT ["/srv/bin/start"]
