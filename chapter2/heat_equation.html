@@ -429,8 +429,8 @@
 <div class="section" id="the-pde-problem">
 <h2>The PDE problem<a class="headerlink" href="#the-pde-problem" title="Permalink to this headline">¶</a></h2>
 <p>The model problem for the time-dependent PDE reads</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a9d7b571-c35b-46d5-8321-1e90ed088d5a">
-<span class="eqno">(9)<a class="headerlink" href="#equation-a9d7b571-c35b-46d5-8321-1e90ed088d5a" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-0be45b0c-36ee-422d-a5ca-4082af126c20">
+<span class="eqno">(9)<a class="headerlink" href="#equation-0be45b0c-36ee-422d-a5ca-4082af126c20" title="Permalink to this equation">¶</a></span>\[\begin{align}
     \frac{\partial u}{\partial t}&amp;=\nabla^2 u + f &amp;&amp; \text{in } \Omega \times (0, T],\\
     u &amp;= u_D &amp;&amp; \text{n } \partial\Omega \times (0,T],\\
     u &amp;= u_0 &amp;&amp; \text{at } t=0.
@@ -441,36 +441,36 @@
 <h2>The variational formulation<a class="headerlink" href="#the-variational-formulation" title="Permalink to this headline">¶</a></h2>
 <p>A straightforward approach to solving time-dependent PDEs by the finite element method is to first discretize the time derivative by a finite difference approximation, which yields a sequence of stationary problems, and then turn each stationary problem into a variational formulation.
 We will let the superscript <span class="math notranslate nohighlight">\(n\)</span> denote a quantity at time <span class="math notranslate nohighlight">\(t_n\)</span>, where <span class="math notranslate nohighlight">\(n\)</span> is an integer counting time levels. For example, <span class="math notranslate nohighlight">\(u^n\)</span> means <span class="math notranslate nohighlight">\(u\)</span> at time level <span class="math notranslate nohighlight">\(n\)</span>. The first step of a finite difference discretization in time consists of sampling the PDE at some time  level, for instance <span class="math notranslate nohighlight">\(t_{n+1}\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-1a723e42-70b5-412b-b623-adb4135c864f">
-<span class="eqno">(10)<a class="headerlink" href="#equation-1a723e42-70b5-412b-b623-adb4135c864f" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-6d0887ef-d905-47d0-b391-d25e9772a1e6">
+<span class="eqno">(10)<a class="headerlink" href="#equation-6d0887ef-d905-47d0-b391-d25e9772a1e6" title="Permalink to this equation">¶</a></span>\[\begin{align}
     \left(\frac{\partial u }{\partial t}\right)^{n+1}= \nabla^2 u^{n+1}+ f^{n+1}.
 \end{align}\]</div>
 <p>The time-derivative can be  approximated by a difference quotient. For simplicity and stability reasons, we choose a simple backward difference:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0ba334c7-4e41-44db-ab54-91edb6dc2018">
-<span class="eqno">(11)<a class="headerlink" href="#equation-0ba334c7-4e41-44db-ab54-91edb6dc2018" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-83a98f1d-1925-4053-b11b-a71b2d436537">
+<span class="eqno">(11)<a class="headerlink" href="#equation-83a98f1d-1925-4053-b11b-a71b2d436537" title="Permalink to this equation">¶</a></span>\[\begin{align}
     \left(\frac{\partial u }{\partial t}\right)^{n+1}\approx \frac{u^{n+1}-u^n}{\Delta t},
 \end{align}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\Delta t\)</span> is the time discretization parameter. Inserting the latter expression into our equation at time step <span class="math notranslate nohighlight">\(n+1\)</span> yields</p>
-<div class="amsmath math notranslate nohighlight" id="equation-456d60a6-9659-42c3-9d3e-e5d729f0785b">
-<span class="eqno">(12)<a class="headerlink" href="#equation-456d60a6-9659-42c3-9d3e-e5d729f0785b" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-ef422d9b-5876-4a85-a9d2-dd1cc3cca081">
+<span class="eqno">(12)<a class="headerlink" href="#equation-ef422d9b-5876-4a85-a9d2-dd1cc3cca081" title="Permalink to this equation">¶</a></span>\[\begin{align}
     \frac{u^{n+1}-u^n}{\Delta t}= \nabla^2 u^{n+1}+ f^{n+1}.
 \end{align}\]</div>
 <p>This is our time-discrete version of the heat equation. It is called a <em>backward Euler</em> or a <em>implicit Euler</em> discretization.</p>
 <p>We reorder the equation such that the left-hand side contains the terms with only the unknown <span class="math notranslate nohighlight">\(u^{n+1}\)</span> and right-hand side contains only computed terms. The resulting equation is a sequence of stationary problems for <span class="math notranslate nohighlight">\(u^{n+1}\)</span>, assuming <span class="math notranslate nohighlight">\(u^{n}\)</span> is known from the previous time step:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e49775d4-41f7-419d-8184-79c0df8c2ebe">
-<span class="eqno">(13)<a class="headerlink" href="#equation-e49775d4-41f7-419d-8184-79c0df8c2ebe" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-a2b7bf5d-dc49-4200-933b-c25626f52d3a">
+<span class="eqno">(13)<a class="headerlink" href="#equation-a2b7bf5d-dc49-4200-933b-c25626f52d3a" title="Permalink to this equation">¶</a></span>\[\begin{align}
     u^0&amp;=u_0 &amp;&amp;\\
     u^{n+1}-\Delta t \nabla^2 u^{n+1}&amp;= u^{n} + \Delta t f^{n+1}, &amp;&amp; n = 0,1,2,\dots
 \end{align}\]</div>
 <p>Given <span class="math notranslate nohighlight">\(u_0\)</span>, we can solve for <span class="math notranslate nohighlight">\(u^0, u^1, u^2\)</span> and so on.</p>
 <p>We then in turn use the finite element method. This means that we have to turn the equation into its weak formulation. We multiply by the test-function of <span class="math notranslate nohighlight">\(v\in \hat{V}\)</span> and integrate second-order derivatives by parts. we now introduce the symbol <span class="math notranslate nohighlight">\(u\)</span> for <span class="math notranslate nohighlight">\(u^{n+1}\)</span> and we write the resulting weak formulation as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-567d5b56-32b9-4449-a996-f354cefc6c78">
-<span class="eqno">(14)<a class="headerlink" href="#equation-567d5b56-32b9-4449-a996-f354cefc6c78" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-11bbe1c9-f9a9-453a-a66d-76f2d967ddfc">
+<span class="eqno">(14)<a class="headerlink" href="#equation-11bbe1c9-f9a9-453a-a66d-76f2d967ddfc" title="Permalink to this equation">¶</a></span>\[\begin{align}
     a(u,v)&amp;=L_{n+1}(v),
 \end{align}\]</div>
 <p>where</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d13eb5cd-b8ce-429d-a58d-02b9d38fa3ee">
-<span class="eqno">(15)<a class="headerlink" href="#equation-d13eb5cd-b8ce-429d-a58d-02b9d38fa3ee" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-3724b235-9f34-42f9-aa4d-349c314c43e3">
+<span class="eqno">(15)<a class="headerlink" href="#equation-3724b235-9f34-42f9-aa4d-349c314c43e3" title="Permalink to this equation">¶</a></span>\[\begin{align}
     a(u,v)&amp;=\int_{\Omega}(uv + \Delta t \nabla u \cdot \nabla v )\mathrm{d} x\\
     L_{n+1}(v)&amp;=\int_{\Omega} (u^n+\Delta t f^{n+1})\mathrm{d} x.
 \end{align}\]</div>
@@ -478,13 +478,13 @@ We will let the superscript <span class="math notranslate nohighlight">\(n\)</sp
 <div class="section" id="projection-or-interpolation-of-the-initial-condition">
 <h2>Projection or interpolation of the initial condition<a class="headerlink" href="#projection-or-interpolation-of-the-initial-condition" title="Permalink to this headline">¶</a></h2>
 <p>In addition to the variational problem to be solved in each  time step, we also need to approximate the initial condition. This equation can also be turned into a variational problem</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b4339c64-121d-4908-82e6-8516104813c7">
-<span class="eqno">(16)<a class="headerlink" href="#equation-b4339c64-121d-4908-82e6-8516104813c7" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-1fd788fe-bb65-463a-a461-5ae13a009186">
+<span class="eqno">(16)<a class="headerlink" href="#equation-1fd788fe-bb65-463a-a461-5ae13a009186" title="Permalink to this equation">¶</a></span>\[\begin{align}
     a_0(u,v)&amp;=L_0(V),
 \end{align}\]</div>
 <p>with</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7aed2150-d490-44f2-b81d-46dd1ad0fc0c">
-<span class="eqno">(17)<a class="headerlink" href="#equation-7aed2150-d490-44f2-b81d-46dd1ad0fc0c" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-92994b6d-e9ee-4c5a-80eb-a0fc91d95f3f">
+<span class="eqno">(17)<a class="headerlink" href="#equation-92994b6d-e9ee-4c5a-80eb-a0fc91d95f3f" title="Permalink to this equation">¶</a></span>\[\begin{align}
     a_0(u,v)&amp;=\int_{\Omega}uv\mathrm{d} x,\\
     L_0(v)&amp;=\int_{\Omega}u_0v\mathrm{d} x.
 \end{align}\]</div>
