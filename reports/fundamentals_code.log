@@ -1,0 +1,59 @@
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/jupyter_cache/executors/utils.py", line 51, in single_nb_execution
+    executenb(
+  File "/usr/local/lib/python3.8/dist-packages/nbclient/client.py", line 1087, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+  File "/usr/local/lib/python3.8/dist-packages/nbclient/util.py", line 74, in wrapped
+    return just_run(coro(*args, **kwargs))
+  File "/usr/local/lib/python3.8/dist-packages/nbclient/util.py", line 53, in just_run
+    return loop.run_until_complete(coro)
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 616, in run_until_complete
+    return future.result()
+  File "/usr/local/lib/python3.8/dist-packages/nbclient/client.py", line 540, in async_execute
+    await self.async_execute_cell(
+  File "/usr/local/lib/python3.8/dist-packages/nbclient/client.py", line 832, in async_execute_cell
+    self._check_raise_for_error(cell, exec_reply)
+  File "/usr/local/lib/python3.8/dist-packages/nbclient/client.py", line 740, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply['content'])
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+from pyvista.utilities.xvfb import start_xvfb
+start_xvfb(wait=0)
+
+off_screen = False
+plotter = pyvista.Plotter()
+plotter.add_mesh(grid, show_edges=True, show_scalar_bar=True)
+plotter.view_xy()
+if off_screen:
+    plotter.screenshot("fundamentals.png")
+else:
+    plotter.show()
+------------------
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mModuleNotFoundError[0m                       Traceback (most recent call last)
+[0;32m/usr/local/lib/python3.8/dist-packages/pyvista/plotting/plotting.py[0m in [0;36mshow[0;34m(self, title, window_size, interactive, auto_close, interactive_update, full_screen, screenshot, return_img, cpos, use_ipyvtk, **kwargs)[0m
+[1;32m   4164[0m             [0;32mtry[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[0;32m-> 4165[0;31m                 [0;32mfrom[0m [0mipyvtk_simple[0m[0;34m.[0m[0mviewer[0m [0;32mimport[0m [0mViewInteractiveWidget[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m   4166[0m             [0;32mexcept[0m [0mImportError[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+
+[0;31mModuleNotFoundError[0m: No module named 'ipyvtk_simple'
+
+During handling of the above exception, another exception occurred:
+
+[0;31mImportError[0m                               Traceback (most recent call last)
+[0;32m<ipython-input-17-5b1e814a4cd7>[0m in [0;36m<module>[0;34m[0m
+[1;32m      9[0m     [0mplotter[0m[0;34m.[0m[0mscreenshot[0m[0;34m([0m[0;34m"fundamentals.png"[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[1;32m     10[0m [0;32melse[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[0;32m---> 11[0;31m     [0mplotter[0m[0;34m.[0m[0mshow[0m[0;34m([0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m
+[0;32m/usr/local/lib/python3.8/dist-packages/pyvista/plotting/plotting.py[0m in [0;36mshow[0;34m(self, title, window_size, interactive, auto_close, interactive_update, full_screen, screenshot, return_img, cpos, use_ipyvtk, **kwargs)[0m
+[1;32m   4165[0m                 [0;32mfrom[0m [0mipyvtk_simple[0m[0;34m.[0m[0mviewer[0m [0;32mimport[0m [0mViewInteractiveWidget[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   4166[0m             [0;32mexcept[0m [0mImportError[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[0;32m-> 4167[0;31m                 raise ImportError('Please install `ipyvtk_simple` to use this feature:'
+[0m[1;32m   4168[0m                                   '\thttps://github.com/Kitware/ipyvtk-simple')
+[1;32m   4169[0m             [0;31m# Have to leave the Plotter open for the widget to use[0m[0;34m[0m[0;34m[0m[0;34m[0m[0m
+
+[0;31mImportError[0m: Please install `ipyvtk_simple` to use this feature:	https://github.com/Kitware/ipyvtk-simple
+ImportError: Please install `ipyvtk_simple` to use this feature:	https://github.com/Kitware/ipyvtk-simple
+
