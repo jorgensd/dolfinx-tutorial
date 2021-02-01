@@ -847,6 +847,9 @@ To be able to visualize this, we use the convenience function <code class="docut
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.plot</span>
 <span class="kn">import</span> <span class="nn">pyvista</span>
+<span class="c1"># Start xvfb for rendering plots</span>
+<span class="kn">from</span> <span class="nn">pyvista.utilities.xvfb</span> <span class="kn">import</span> <span class="n">start_xvfb</span>
+<span class="n">start_xvfb</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
 <span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">create_vtk_topology</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="c1"># To make this function work in parallel, we only consider ghosts owned by the current process</span>
