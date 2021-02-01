@@ -17,6 +17,6 @@ RUN chown -R ${NB_UID} ${HOME}
 # COPY start /srv/bin/start
 # RUN  chmod +x /srv/bin/start
 
-user ${NB_USER}
+USER ${NB_USER}
 # ENTRYPOINT ["/srv/bin/start"]
 ENTRYPOINT []
