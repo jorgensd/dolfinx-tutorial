@@ -1,4 +1,4 @@
-FROM dokken92/dolfinx_custom:pyvist_itk
+FROM dokken92/dolfinx_custom:pyvista_itk
 #29012021
 
 # create user with a home directory
