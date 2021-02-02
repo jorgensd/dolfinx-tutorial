@@ -1,5 +1,4 @@
 FROM dokken92/dolfinx_custom:pyvista_itk
-#29012021
 
 RUN pip3 install notebook
 
@@ -15,10 +14,5 @@ COPY . ${HOME}
 USER root
 RUN chown -R ${NB_UID} ${HOME}
 
-# Activate headless protocol for visualization
-# COPY start /srv/bin/start
-# RUN  chmod +x /srv/bin/start
-
 USER ${NB_USER}
-# ENTRYPOINT ["/srv/bin/start"]
 ENTRYPOINT []
