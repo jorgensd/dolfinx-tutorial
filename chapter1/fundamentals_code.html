@@ -512,13 +512,13 @@ Therefore, we need to make specific choices of <span class="math notranslate noh
 <!-- Particularly, piecewise linear continuous Galerkin finite elements are able to exactly reproduce a quadratic polynomial on 
 a uniformly partitioned mesh. -->
 <p>We use this fact to construct a quadratic function in <span class="math notranslate nohighlight">\(2D\)</span>. In particular we choose</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e72cd321-17c6-4c4a-b9ed-b36a2fcc9e58">
-<span class="eqno">(1)<a class="headerlink" href="#equation-e72cd321-17c6-4c4a-b9ed-b36a2fcc9e58" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-35f318ec-1fe7-4fc2-b963-9574ff37aaca">
+<span class="eqno">(1)<a class="headerlink" href="#equation-35f318ec-1fe7-4fc2-b963-9574ff37aaca" title="Permalink to this equation">¶</a></span>\[\begin{align}
  u_e(x,y)=1+x^2+2y^2
  \end{align}\]</div>
 <p>Inserting <span class="math notranslate nohighlight">\(u_e\)</span> in the original boundary problem, we find that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-53a149be-b2ed-4c2e-bf74-3ada7105790b">
-<span class="eqno">(2)<a class="headerlink" href="#equation-53a149be-b2ed-4c2e-bf74-3ada7105790b" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-fac3273a-b72c-44a6-baf6-33f2eef36349">
+<span class="eqno">(2)<a class="headerlink" href="#equation-fac3273a-b72c-44a6-baf6-33f2eef36349" title="Permalink to this equation">¶</a></span>\[\begin{align}
     f(x,y)= -6,\qquad u_d(x,y)=u_e(x,y)=1+x^2+2y^2,
 \end{align}\]</div>
 <p>regardless of the shape of the domain as long as we prescribe
@@ -769,7 +769,8 @@ To do this we use the function <code class="docutils literal notranslate"><span 
 </div>
 </div>
 </div>
-<p>We can now use the <code class="docutils literal notranslate"><span class="pre">pyvista.Plotter</span></code> to visualize the solution. We visualize it by showing it in 2D and warped in 3D. We can view the plot directly in the notebook by setting <code class="docutils literal notranslate"><span class="pre">off_screen</span></code> to False or save it as a png by setting it to True.</p>
+<p>We can now use the <code class="docutils literal notranslate"><span class="pre">pyvista.Plotter</span></code> to visualize the solution. We visualize it by showing it in 2D and warped in 3D. yte
+In the jupyter notebook environment, we use the default setting of <code class="docutils literal notranslate"><span class="pre">pyvista.OFF_SCREEN=False</span></code>, which will render plots directly in the notebook. . PYVITo render in the online notebooks or in docker containers without X-forwarding, we need to start a virtual framebuffer.</p>
 <div class="admonition-rendering-with-pyvista-using-docker-containers admonition">
 <p class="admonition-title">Rendering with pyvista using Docker-containers</p>
 <p>To make the plots render, we have to call <code class="docutils literal notranslate"><span class="pre">pyvista.utilities.xvfb.start_xvfb</span></code> to start a virtual framebuffer.</p>
@@ -777,16 +778,14 @@ To do this we use the function <code class="docutils literal notranslate"><span 
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyvista.utilities.xvfb</span> <span class="kn">import</span> <span class="n">start_xvfb</span>
-<span class="n">start_xvfb</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">start_xvfb</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
 
-<span class="n">off_screen</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="n">plotter</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">()</span>
 <span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">show_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_scalar_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">plotter</span><span class="o">.</span><span class="n">view_xy</span><span class="p">()</span>
-<span class="k">if</span> <span class="n">off_screen</span><span class="p">:</span>
-    <span class="n">plotter</span><span class="o">.</span><span class="n">screenshot</span><span class="p">(</span><span class="s2">&quot;fundamentals.png&quot;</span><span class="p">)</span>
-<span class="k">else</span><span class="p">:</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">OFF_SCREEN</span><span class="p">:</span>
     <span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">figure</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">screenshot</span><span class="p">(</span><span class="s2">&quot;fundamentals.png&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -796,12 +795,13 @@ To do this we use the function <code class="docutils literal notranslate"><span 
 </div>
 <div class="section" id="interactive-plotting-in-notebooks">
 <h2>Interactive plotting in notebooks<a class="headerlink" href="#interactive-plotting-in-notebooks" title="Permalink to this headline">¶</a></h2>
-<p>To create an interactive plot using pyvista in a Jupyter notebook we us <code class="docutils literal notranslate"><span class="pre">pyvista.ITKPlotter</span></code> which uses <code class="docutils literal notranslate"><span class="pre">itkwidgets</span></code>. Uncomment the following section to render an interactive plot</p>
+<p>To create an interactive plot using pyvista in a Jupyter notebook we us <code class="docutils literal notranslate"><span class="pre">pyvista.ITKPlotter</span></code> which uses <code class="docutils literal notranslate"><span class="pre">itkwidgets</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># plotter_itk = pyvista.PlotterITK()</span>
-<span class="c1"># plotter_itk.add_mesh(grid)</span>
-<span class="c1"># plotter_itk.show(True)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="ow">not</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">OFF_SCREEN</span><span class="p">:</span>
+    <span class="n">plotter_itk</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">PlotterITK</span><span class="p">()</span>
+    <span class="n">plotter_itk</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+    <span class="n">plotter_itk</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
