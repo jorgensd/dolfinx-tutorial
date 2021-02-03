@@ -41,8 +41,6 @@ jobs:
 
       - name: Test notebooks in parallel
         run: |
-          apt-get update
-          apt-get install -y --no-install-recommends python3-pyqt5 libgl1-mesa-glx  # pyvistaqt
           cd chapter1
           jupyter-nbconvert --to python fundamentals_code.ipynb
           mpirun -n 2 python3 fundamentals_code.py
