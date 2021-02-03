@@ -27,8 +27,9 @@ jobs:
       HDF5_MPI: "ON"
       CC: mpicc
       HDF5_DIR: "/usr/lib/x86_64-linux-gnu/hdf5/mpich/"
-      DISPLAY: :99.0
+      DISPLAY: ":99.0" 
       PYVISTA_OFF_SCREEN: true
+      ALLOW_PLOTTING: true 
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
