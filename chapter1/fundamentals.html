@@ -278,11 +278,6 @@
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../chapter3/robin_neumann_dirichlet.html">
-   Setting multiple Dirichlet, Neumann, and Robin conditions
-  </a>
- </li>
- <li class="toctree-l1">
   <a class="reference internal" href="../chapter3/component_bc.html">
    Component-wise Dirichlet BC
   </a>
@@ -498,7 +493,7 @@ The formula reads</p>
 <p><span class="math notranslate nohighlight">\( -\int_\Omega (\nabla^2 u)v \mathrm{d}x
 = \int_\Omega\nabla u\cdot\nabla v \mathrm{d}x - \int_{\partial\Omega}\frac{\partial u}{\partial n}v \mathrm{d}s ,\)</span></p>
 <p>where <span class="math notranslate nohighlight">\(\frac{\partial u}{\partial n}=\nabla u \cdot n\)</span> is the derivative of <span class="math notranslate nohighlight">\(u\)</span> in the outward normal direction <span class="math notranslate nohighlight">\(n\)</span> on the boundary.</p>
-<p>Another feature of variational formulations is that the test function <span class="math notranslate nohighlight">\(v\)</span> is required to vanish on the parts of the boundary where the solution <span class="math notranslate nohighlight">\(u\)</span> is known. See for instance [Langtangen, Mardal 2019]<a class="bibtex reference internal" href="#langtangen-mardal-fem-2019" id="id1">[LM19]</a>.</p>
+<p>Another feature of variational formulations is that the test function <span class="math notranslate nohighlight">\(v\)</span> is required to vanish on the parts of the boundary where the solution <span class="math notranslate nohighlight">\(u\)</span> is known. See for instance [Langtangen, Mardal 2019]<a href="#id1"><span class="problematic" id="id2">:cite:`Langtangen_Mardal_FEM_2019`</span></a>.</p>
 <p>In the present problem, this means that <span class="math notranslate nohighlight">\(v\)</span> is <span class="math notranslate nohighlight">\(0\)</span> on the whole boundary <span class="math notranslate nohighlight">\(\partial\Omega\)</span>. In the present problem, it means that the second term in the integration by parts formula is zero, and we have that</p>
 <p><span class="math notranslate nohighlight">\(\int_\Omega \nabla u \cdot \nabla v \mathrm{d} x = \int_\Omega f v\mathrm{d} x\)</span></p>
 <p>If we require that this equation holds for all test functions <span class="math notranslate nohighlight">\(v\)</span> in some suitable space <span class="math notranslate nohighlight">\(\hat{V}\)</span>, the so-called <em>test space</em>, we obtain a well-defined mathematical problem that uniquely determines the solution <span class="math notranslate nohighlight">\(u\)</span> which lies in some function space <span class="math notranslate nohighlight">\(V\)</span>. Note that <span class="math notranslate nohighlight">\(V\)</span> does not have to be the same space as
@@ -541,12 +536,6 @@ For every linear problem, we will identify all terms with the unknown <span clas
 </div>
 <div class="section" id="references">
 <h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
-<p id="bibtex-bibliography-chapter1/fundamentals-0"><dl class="citation">
-<dt class="bibtex label" id="langtangen-mardal-fem-2019"><span class="brackets"><a class="fn-backref" href="#id1">LM19</a></span></dt>
-<dd><p>Hans Petter Langtangen and Kent-Andre Mardal. <em>Introduction to Numerical Methods for Variational Problems</em>. Springer International Publishing, Cham, 2019. ISBN 978-3-030-23788-2. <a class="reference external" href="https://doi.org/10.1007/978-3-030-23788-2_1">doi:10.1007/978-3-030-23788-2_1</a>.</p>
-</dd>
-</dl>
-</p>
 <div class="toctree-wrapper compound">
 </div>
 </div>

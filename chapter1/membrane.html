@@ -278,11 +278,6 @@
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../chapter3/robin_neumann_dirichlet.html">
-   Setting multiple Dirichlet, Neumann, and Robin conditions
-  </a>
- </li>
- <li class="toctree-l1">
   <a class="reference internal" href="../chapter3/component_bc.html">
    Component-wise Dirichlet BC
   </a>
@@ -417,45 +412,39 @@
 <p>Modified to dolfin-X by Jørgen S. Dokken</p>
 <p>In the first FEniCS program, we solved a simple problem which we could easily use to verify the implementation.
 In this section, we will turn our attentition to a physically more relevant problem with solutions of a somewhat more exciting shape.</p>
-<p>We would like to compute the deflection <span class="math notranslate nohighlight">\(D(x,y)\)</span> of a two-dimensional, circular membrane of radius <span class="math notranslate nohighlight">\(R\)</span>, subject to a load <span class="math notranslate nohighlight">\(p\)</span> over the membrane. The appropriate PDE model is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-792a0db6-8a5d-4559-ab98-cadc994c69ff">
-<span class="eqno">(3)<a class="headerlink" href="#equation-792a0db6-8a5d-4559-ab98-cadc994c69ff" title="Permalink to this equation">¶</a></span>\[\begin{align}
-     -T \nabla^2D&amp;=p \quad\text{in }\quad \Omega=\{(x,y)\vert x^2+y^2\leq R \}.
-\end{align}\]</div>
-<p>Here, <span class="math notranslate nohighlight">\(T\)</span> is the tension in the membrane (constant), and  <span class="math notranslate nohighlight">\(p\)</span> is the external pressure load. The boundary of the membrane has no deflection. This implies that <span class="math notranslate nohighlight">\(D=0\)</span> is the boundary condition. We model a localized load as a Gaussian function:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a4949de0-ff8d-4363-b61e-2be2cf0d8fcd">
-<span class="eqno">(4)<a class="headerlink" href="#equation-a4949de0-ff8d-4363-b61e-2be2cf0d8fcd" title="Permalink to this equation">¶</a></span>\[\begin{align}
-     p(x,y)&amp;=\frac{A}{2\pi\sigma}e^{-\frac{1}{2}\left(\frac{x-x_0}{\sigma}\right)^2-\frac{1}{2}\left(\frac{y-y_0}{\sigma}\right)^2}
-\end{align}\]</div>
-<p>The parameter <span class="math notranslate nohighlight">\(A\)</span> is the amplitude of the pressure, <span class="math notranslate nohighlight">\((x_0, y_0)\)</span> the localization of the maximum point of the load, and <span class="math notranslate nohighlight">\(\sigma\)</span> the “width” of <span class="math notranslate nohighlight">\(p\)</span>. We will take the center <span class="math notranslate nohighlight">\((x_0,y_0)\)</span> to be <span class="math notranslate nohighlight">\((0,R_0)\)</span> for some <span class="math notranslate nohighlight">\(0&lt;R_0&lt;R\)</span>.
-Then we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-40a42bf1-d797-4ead-aa3d-47d2694ebd79">
-<span class="eqno">(5)<a class="headerlink" href="#equation-40a42bf1-d797-4ead-aa3d-47d2694ebd79" title="Permalink to this equation">¶</a></span>\[\begin{align}
-     p(x,y)&amp;=\frac{A}{2\pi\sigma}e^{-\frac{1}{2}\left(\left(\frac{x}{\sigma}\right)^2
-     +\left(\frac{y-R_0}{\sigma}\right)^2\right)}
-\end{align}\]</div>
+<p>We would like to compute the deflection <span class="math notranslate nohighlight">\(D(x,y)\)</span> of a two-dimensional, circular membrane of radius <span class="math notranslate nohighlight">\(R\)</span>, subject to a load <span class="math notranslate nohighlight">\(p\)</span> over the membrane. The appropriate PDE model is
+\begin{align}
+-T \nabla^2D&amp;=p \quad\text{in }\quad \Omega={(x,y)\vert x^2+y^2\leq R }.
+\end{align}
+Here, <span class="math notranslate nohighlight">\(T\)</span> is the tension in the membrane (constant), and  <span class="math notranslate nohighlight">\(p\)</span> is the external pressure load. The boundary of the membrane has no deflection. This implies that <span class="math notranslate nohighlight">\(D=0\)</span> is the boundary condition. We model a localized load as a Gaussian function:
+\begin{align}
+p(x,y)&amp;=\frac{A}{2\pi\sigma}e^{-\frac{1}{2}\left(\frac{x-x_0}{\sigma}\right)^2-\frac{1}{2}\left(\frac{y-y_0}{\sigma}\right)^2}
+\end{align}
+The parameter <span class="math notranslate nohighlight">\(A\)</span> is the amplitude of the pressure, <span class="math notranslate nohighlight">\((x_0, y_0)\)</span> the localization of the maximum point of the load, and <span class="math notranslate nohighlight">\(\sigma\)</span> the “width” of <span class="math notranslate nohighlight">\(p\)</span>. We will take the center <span class="math notranslate nohighlight">\((x_0,y_0)\)</span> to be <span class="math notranslate nohighlight">\((0,R_0)\)</span> for some <span class="math notranslate nohighlight">\(0&lt;R_0&lt;R\)</span>.
+Then we have
+\begin{align}
+p(x,y)&amp;=\frac{A}{2\pi\sigma}e^{-\frac{1}{2}\left(\left(\frac{x}{\sigma}\right)^2
++\left(\frac{y-R_0}{\sigma}\right)^2\right)}
+\end{align}</p>
 <div class="section" id="scaling-the-equation">
 <h2>Scaling the  equation<a class="headerlink" href="#scaling-the-equation" title="Permalink to this headline">¶</a></h2>
 <p>There are many physical parameters in this problem, and we can benefit from grouping them by means of scaling. Let us introduce dimensionless coordinates
-<span class="math notranslate nohighlight">\(\bar{x}=\frac{x}{R}\)</span>, <span class="math notranslate nohighlight">\(\bar{y}=\frac{y}{R}\)</span>, and a dimensionless deflection <span class="math notranslate nohighlight">\(w=\frac{D}{D_e}\)</span>, where <span class="math notranslate nohighlight">\(D_e\)</span> is a characteristic size of the deflection. Introducing <span class="math notranslate nohighlight">\(\bar{R}_0=\frac{R_0}{R}\)</span>, we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9d83f9d7-ea0e-46b4-a7cb-204eb5d9e7b5">
-<span class="eqno">(6)<a class="headerlink" href="#equation-9d83f9d7-ea0e-46b4-a7cb-204eb5d9e7b5" title="Permalink to this equation">¶</a></span>\[\begin{align}
-    -\frac{\partial^2 w}{\partial \bar{x}^2} -\frac{\partial^2 w}{\partial \bar{y}^2}
-    &amp;=\frac{R^2A}{2\pi\sigma TD_e}e^{-\frac{R^2}{2\sigma^2}\left(\bar{x}^2+(\bar{y}-\bar{R}_0)^2\right)}\\
-    &amp;=\alpha e^{-\beta^2(\bar{x}^2+(\bar{y}-\bar{R}_0)^2}
-\end{align}\]</div>
-<p>for <span class="math notranslate nohighlight">\(\bar{x}^2+\bar{y}^2&lt;1\)</span> where <span class="math notranslate nohighlight">\(\alpha = \frac{R^2A}{2\pi\sigma TD_e}\)</span> and <span class="math notranslate nohighlight">\(\beta=\frac{R}{\sqrt{2}\sigma}\)</span>.</p>
+<span class="math notranslate nohighlight">\(\bar{x}=\frac{x}{R}\)</span>, <span class="math notranslate nohighlight">\(\bar{y}=\frac{y}{R}\)</span>, and a dimensionless deflection <span class="math notranslate nohighlight">\(w=\frac{D}{D_e}\)</span>, where <span class="math notranslate nohighlight">\(D_e\)</span> is a characteristic size of the deflection. Introducing <span class="math notranslate nohighlight">\(\bar{R}_0=\frac{R_0}{R}\)</span>, we obtain
+\begin{align}
+-\frac{\partial^2 w}{\partial \bar{x}^2} -\frac{\partial^2 w}{\partial \bar{y}^2}
+&amp;=\frac{R^2A}{2\pi\sigma TD_e}e^{-\frac{R^2}{2\sigma^2}\left(\bar{x}^2+(\bar{y}-\bar{R}_0)^2\right)}\
+&amp;=\alpha e^{-\beta^2(\bar{x}^2+(\bar{y}-\bar{R}_0)^2}
+\end{align}
+for <span class="math notranslate nohighlight">\(\bar{x}^2+\bar{y}^2&lt;1\)</span> where <span class="math notranslate nohighlight">\(\alpha = \frac{R^2A}{2\pi\sigma TD_e}\)</span> and <span class="math notranslate nohighlight">\(\beta=\frac{R}{\sqrt{2}\sigma}\)</span>.</p>
 <p>With an appropriate scaling, <span class="math notranslate nohighlight">\(w\)</span> and its derivatives are of size unity, so the left-hand side of the scaled PDE is about unity in size, while the right hand side has <span class="math notranslate nohighlight">\(\alpha\)</span> as its characteristic size. This suggests choosing alpha to be unity, or around unity. In this particular case, we choose <span class="math notranslate nohighlight">\(\alpha=4\)</span>. (One can also find  the analytical solution in scaled coordinates and show that the maximum deflection <span class="math notranslate nohighlight">\(D(0,0)\)</span> is <span class="math notranslate nohighlight">\(D_e\)</span> if we choose <span class="math notranslate nohighlight">\(\alpha=4\)</span> to determine <span class="math notranslate nohighlight">\(D_e\)</span>.)
-With <span class="math notranslate nohighlight">\(D_e=\frac{AR^2}{8\pi\sigma T}\)</span> and dropping the bars we obtain the scaled problem</p>
-<div class="amsmath math notranslate nohighlight" id="equation-43bdb7ab-5e86-4f83-87b1-44374a414daf">
-<span class="eqno">(7)<a class="headerlink" href="#equation-43bdb7ab-5e86-4f83-87b1-44374a414daf" title="Permalink to this equation">¶</a></span>\[\begin{align}
-    -\nabla^2 w = 4e^{-\beta^2(x^2+(y-R_0)^2)}
-\end{align}\]</div>
-<p>to be solved over the unit disc with <span class="math notranslate nohighlight">\(w=0\)</span> on the boundary. Now there are only two parameters to vary the dimensionless extent of the pressure, <span class="math notranslate nohighlight">\(\beta\)</span>, and the localization of the pressure peak, <span class="math notranslate nohighlight">\(R_0\in[0,1]\)</span>. As <span class="math notranslate nohighlight">\(\beta\to 0\)</span>, the solution will approach the special case <span class="math notranslate nohighlight">\(1-x^2-y^2\)</span>. Given a computed scaed solution <span class="math notranslate nohighlight">\(w\)</span>, the physical deflection can be computed by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3c69a98a-81b6-4af0-9abe-92beb7766a58">
-<span class="eqno">(8)<a class="headerlink" href="#equation-3c69a98a-81b6-4af0-9abe-92beb7766a58" title="Permalink to this equation">¶</a></span>\[\begin{align}
-    D=\frac{AR^2}{8\pi\sigma T}w
-\end{align}\]</div>
+With <span class="math notranslate nohighlight">\(D_e=\frac{AR^2}{8\pi\sigma T}\)</span> and dropping the bars we obtain the scaled problem
+\begin{align}
+-\nabla^2 w = 4e^{-\beta^2(x^2+(y-R_0)^2)}
+\end{align}
+to be solved over the unit disc with <span class="math notranslate nohighlight">\(w=0\)</span> on the boundary. Now there are only two parameters to vary the dimensionless extent of the pressure, <span class="math notranslate nohighlight">\(\beta\)</span>, and the localization of the pressure peak, <span class="math notranslate nohighlight">\(R_0\in[0,1]\)</span>. As <span class="math notranslate nohighlight">\(\beta\to 0\)</span>, the solution will approach the special case <span class="math notranslate nohighlight">\(1-x^2-y^2\)</span>. Given a computed scaed solution <span class="math notranslate nohighlight">\(w\)</span>, the physical deflection can be computed by
+\begin{align}
+D=\frac{AR^2}{8\pi\sigma T}w
+\end{align}</p>
 <div class="toctree-wrapper compound">
 </div>
 </div>

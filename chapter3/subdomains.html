@@ -58,7 +58,7 @@
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Setting multiple Dirichlet, Neumann, and Robin conditions" href="robin_neumann_dirichlet.html" />
+    <link rel="next" title="&lt;no title&gt;" href="robin_neumann_dirichlet.html" />
     <link rel="prev" title="Setting multiple Dirichlet condition" href="multiple_dirichlet.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -275,11 +275,6 @@
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
    Defining subdomains for different materials
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="robin_neumann_dirichlet.html">
-   Setting multiple Dirichlet, Neumann, and Robin conditions
   </a>
  </li>
  <li class="toctree-l1">
@@ -525,9 +520,12 @@ u&amp;=u_D=1 &amp;&amp; \text{on } \partial\Omega_D=[0,y], y\in[0,1]\\
 <span class="n">uh</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
 
 <span class="kn">import</span> <span class="nn">pyvista</span>
+<span class="c1"># Start virtual framebuffer</span>
+<span class="kn">from</span> <span class="nn">pyvista.utilities.xvfb</span> <span class="kn">import</span> <span class="n">start_xvfb</span>
+<span class="n">start_xvfb</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
 <span class="kn">import</span> <span class="nn">dolfinx.plot</span>
-<span class="n">off_screen</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="n">p</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">off_screen</span><span class="o">=</span><span class="n">off_screen</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="p">[</span><span class="mi">800</span><span class="p">,</span> <span class="mi">800</span><span class="p">],</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">window_size</span><span class="o">=</span><span class="p">[</span><span class="mi">800</span><span class="p">,</span> <span class="mi">800</span><span class="p">],</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
 <span class="c1"># Filter out ghosted cells</span>
 <span class="n">num_cells_local</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">index_map</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span><span class="o">.</span><span class="n">size_local</span>
 <span class="n">marker</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_cells_local</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
@@ -548,10 +546,9 @@ u&amp;=u_D=1 &amp;&amp; \text{on } \partial\Omega_D=[0,y], y\in[0,1]\\
 <span class="n">grid</span><span class="o">.</span><span class="n">point_arrays</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">point_values</span>
 <span class="n">grid</span><span class="o">.</span><span class="n">set_active_scalars</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">)</span>
 <span class="n">actor1</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">show_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">if</span> <span class="n">off_screen</span><span class="p">:</span>
-    <span class="n">p</span><span class="o">.</span><span class="n">screenshot</span><span class="p">(</span><span class="s2">&quot;subdomains_structured.png&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="p">[</span><span class="mi">800</span><span class="p">,</span><span class="mi">800</span><span class="p">])</span>
-<span class="k">else</span><span class="p">:</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">OFF_SCREEN</span><span class="p">:</span>
     <span class="n">p</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">figure</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">screenshot</span><span class="p">(</span><span class="s2">&quot;subdomains_structured.png&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -733,14 +730,14 @@ u&amp;=u_D=1 &amp;&amp; \text{on } \partial\Omega_D=[0,y], y\in[0,1]\\
 
 <span class="c1"># As the dolfinx.MeshTag contains a value for every cell in the</span>
 <span class="c1"># geometry, we can attach it directly to the grid</span>
-<span class="n">p</span><span class="o">.</span><span class="n">remove_actor</span><span class="p">(</span><span class="n">actor0</span><span class="p">)</span>
-<span class="n">p</span><span class="o">.</span><span class="n">remove_actor</span><span class="p">(</span><span class="n">actor1</span><span class="p">)</span>
 
 <span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">create_vtk_topology</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
 <span class="n">grid</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">(</span><span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
 <span class="n">num_local_cells</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">index_map</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span><span class="o">.</span><span class="n">size_local</span>
 <span class="n">grid</span><span class="o">.</span><span class="n">cell_arrays</span><span class="p">[</span><span class="s2">&quot;Marker&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ct</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">ct</span><span class="o">.</span><span class="n">indices</span><span class="o">&lt;</span><span class="n">num_local_cells</span><span class="p">]</span>
 <span class="n">grid</span><span class="o">.</span><span class="n">set_active_scalars</span><span class="p">(</span><span class="s2">&quot;Marker&quot;</span><span class="p">)</span>
+
+<span class="n">p</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">window_size</span><span class="o">=</span><span class="p">[</span><span class="mi">800</span><span class="p">,</span> <span class="mi">800</span><span class="p">],</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
 <span class="n">p</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">p</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">show_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">p</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
@@ -750,10 +747,9 @@ u&amp;=u_D=1 &amp;&amp; \text{on } \partial\Omega_D=[0,y], y\in[0,1]\\
 <span class="n">grid</span><span class="o">.</span><span class="n">point_arrays</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">point_values</span>
 <span class="n">grid</span><span class="o">.</span><span class="n">set_active_scalars</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">)</span>
 <span class="n">actor1</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">show_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">if</span> <span class="n">off_screen</span><span class="p">:</span>
-    <span class="n">p</span><span class="o">.</span><span class="n">screenshot</span><span class="p">(</span><span class="s2">&quot;subdomains_unstructured.png&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="p">[</span><span class="mi">800</span><span class="p">,</span><span class="mi">800</span><span class="p">])</span>
-<span class="k">else</span><span class="p">:</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">OFF_SCREEN</span><span class="p">:</span>
     <span class="n">p</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">figure</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">screenshot</span><span class="p">(</span><span class="s2">&quot;subdomains_unstructured.png&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -791,7 +787,7 @@ u&amp;=u_D=1 &amp;&amp; \text{on } \partial\Omega_D=[0,y], y\in[0,1]\\
     <div class='prev-next-bottom'>
         
     <a class='left-prev' id="prev-link" href="multiple_dirichlet.html" title="previous page">Setting multiple Dirichlet condition</a>
-    <a class='right-next' id="next-link" href="robin_neumann_dirichlet.html" title="next page">Setting multiple Dirichlet, Neumann, and Robin conditions</a>
+    <a class='right-next' id="next-link" href="robin_neumann_dirichlet.html" title="next page">&lt;no title&gt;</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">

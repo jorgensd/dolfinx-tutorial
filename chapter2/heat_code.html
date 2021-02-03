@@ -278,11 +278,6 @@
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../chapter3/robin_neumann_dirichlet.html">
-   Setting multiple Dirichlet, Neumann, and Robin conditions
-  </a>
- </li>
- <li class="toctree-l1">
   <a class="reference internal" href="../chapter3/component_bc.html">
    Component-wise Dirichlet BC
   </a>
@@ -462,12 +457,11 @@
 <h1>A known analytical solution<a class="headerlink" href="#a-known-analytical-solution" title="Permalink to this headline">¶</a></h1>
 <p>Author: Jørgen S. Dokken</p>
 <p>Just as for the <a class="reference internal" href="../chapter1/fundamentals_code.html"><span class="doc std std-doc">Poisson problem</span></a>, we construct a test problem which makes it easy to determine if the calculations are correct.</p>
-<p>Since we know that our first-order time-stepping scheme is exact for linear functions, we create a problem which has linear variation in time. We combine this with a quadratic variation in space. Therefore, we choose the analytical solution to be</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b79a1b93-78f2-47ce-924e-b555e4e496f8">
-<span class="eqno">(19)<a class="headerlink" href="#equation-b79a1b93-78f2-47ce-924e-b555e4e496f8" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<p>Since we know that our first-order time-stepping scheme is exact for linear functions, we create a problem which has linear variation in time. We combine this with a quadratic variation in space. Therefore, we choose the analytical solution to be
+\begin{align}
 u = 1 + x^2+\alpha y^2 + \beta t
-\end{align}\]</div>
-<p>which yields a function whose computed values at the degrees of freedom will be exact, regardless of the mesh size and <span class="math notranslate nohighlight">\(\Delta t\)</span> as long as the mesh is uniformly partitioned.
+\end{align}
+which yields a function whose computed values at the degrees of freedom will be exact, regardless of the mesh size and <span class="math notranslate nohighlight">\(\Delta t\)</span> as long as the mesh is uniformly partitioned.
 By inserting this into our original PDE, we find that the right hand side <span class="math notranslate nohighlight">\(f=\beta-2-2\alpha\)</span>. The boundary value <span class="math notranslate nohighlight">\(u_d(x,y,t)=1+x^2+\alpha y^2 + \beta t\)</span> and the initial value <span class="math notranslate nohighlight">\(u_0(x,y)=1+x^2+\alpha y^2\)</span>.</p>
 <p>We start by defining the temporal discretization parameters, along with the parameters for <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span>.</p>
 <div class="cell docutils container">

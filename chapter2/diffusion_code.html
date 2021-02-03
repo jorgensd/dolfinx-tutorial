@@ -278,11 +278,6 @@
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../chapter3/robin_neumann_dirichlet.html">
-   Setting multiple Dirichlet, Neumann, and Robin conditions
-  </a>
- </li>
- <li class="toctree-l1">
   <a class="reference internal" href="../chapter3/component_bc.html">
    Component-wise Dirichlet BC
   </a>
@@ -461,12 +456,11 @@
   <div class="section" id="diffusion-of-a-gaussian-function">
 <h1>Diffusion of a Gaussian function<a class="headerlink" href="#diffusion-of-a-gaussian-function" title="Permalink to this headline">¶</a></h1>
 <p>Author: Jørgen S. Dokken</p>
-<p>Let us now solve a more interesting problem, namely the diffusion of a Gaussian hill. We take the initial value to be</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c3d74f6e-f0cb-4d63-a26e-a790a406f1a9">
-<span class="eqno">(18)<a class="headerlink" href="#equation-c3d74f6e-f0cb-4d63-a26e-a790a406f1a9" title="Permalink to this equation">¶</a></span>\[\begin{align}
-    u_0(x,y)&amp;= e^{-ax^2-ay^2}
-\end{align}\]</div>
-<p>for <span class="math notranslate nohighlight">\(a=5\)</span> on the domain <span class="math notranslate nohighlight">\([-2,-2]\times[2,2]\)</span>. For this problem we will use homogeneous Dirichlet boundary conditions (<span class="math notranslate nohighlight">\(u_D=0\)</span>).</p>
+<p>Let us now solve a more interesting problem, namely the diffusion of a Gaussian hill. We take the initial value to be
+\begin{align}
+u_0(x,y)&amp;= e^{-ax^2-ay^2}
+\end{align}
+for <span class="math notranslate nohighlight">\(a=5\)</span> on the domain <span class="math notranslate nohighlight">\([-2,-2]\times[2,2]\)</span>. For this problem we will use homogeneous Dirichlet boundary conditions (<span class="math notranslate nohighlight">\(u_D=0\)</span>).</p>
 <p>The first difference from the previous problem is that we are not using a unit square. We create the rectangular domain with <code class="docutils literal notranslate"><span class="pre">dolfinx.RectangleMesh</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">

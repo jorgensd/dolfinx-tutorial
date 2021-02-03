@@ -278,11 +278,6 @@
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../chapter3/robin_neumann_dirichlet.html">
-   Setting multiple Dirichlet, Neumann, and Robin conditions
-  </a>
- </li>
- <li class="toctree-l1">
   <a class="reference internal" href="../chapter3/component_bc.html">
    Component-wise Dirichlet BC
   </a>
@@ -421,7 +416,7 @@ As we saw for the Navier-Stokes equations, one way to solve one equation a syste
 <h2>The PDE problem<a class="headerlink" href="#the-pde-problem" title="Permalink to this headline">¶</a></h2>
 <p>Our model problem is the following system of advection-diffusion-reaction equations:</p>
 <div class="math notranslate nohighlight" id="equation-adv-diff-reac">
-<span class="eqno">(35)<a class="headerlink" href="#equation-adv-diff-reac" title="Permalink to this equation">¶</a></span>\[\begin{split}\frac{\partial u_1}{\partial t} + w \cdot \nabla u_1 - \nabla \cdot (\epsilon \nabla u_1) &amp;= f_1 - Ku_1 u_2,\\
+<span class="eqno">(10)<a class="headerlink" href="#equation-adv-diff-reac" title="Permalink to this equation">¶</a></span>\[\begin{split}\frac{\partial u_1}{\partial t} + w \cdot \nabla u_1 - \nabla \cdot (\epsilon \nabla u_1) &amp;= f_1 - Ku_1 u_2,\\
 \frac{\partial u_2}{\partial t} + w \cdot \nabla u_2 - \nabla \cdot (\epsilon \nabla u_2) &amp;= f_2 - Ku_1 u_2,\\
 \frac{\partial u_3}{\partial t} + w \cdot \nabla u_3 - \nabla \cdot (\epsilon \nabla u_3) &amp;= f_3 - Ku_1 u_2 - K u_3,\\\end{split}\]</div>
 <p>This system models the chemical reaction between two species <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span> in some domain <span class="math notranslate nohighlight">\(\Omega\)</span>:</p>
@@ -430,7 +425,7 @@ As we saw for the Navier-Stokes equations, one way to solve one equation a syste
 <p>We assume that the  reaction is <em>first-order</em>, meaning that the reaction rate is proportional to concentrations <span class="math notranslate nohighlight">\([A]\)</span> and <span class="math notranslate nohighlight">\([B]\)</span> of the two species <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[\frac{\mathrm{d}}{\mathrm{d}t}[C]= K[A][B].\]</div>
-<p>We also assume that the formed species <span class="math notranslate nohighlight">\(C\)</span> spontaneously decaas with a rate proportional to the concentration [C]. In the <a class="reference internal" href="#equation-adv-diff-reac">(35)</a>, we use the variatbles <span class="math notranslate nohighlight">\(u_1, u_2\)</span> and <span class="math notranslate nohighlight">\(u_3\)</span> to denote the concentrations of the three species:</p>
+<p>We also assume that the formed species <span class="math notranslate nohighlight">\(C\)</span> spontaneously decaas with a rate proportional to the concentration [C]. In the <a class="reference internal" href="#equation-adv-diff-reac">(10)</a>, we use the variatbles <span class="math notranslate nohighlight">\(u_1, u_2\)</span> and <span class="math notranslate nohighlight">\(u_3\)</span> to denote the concentrations of the three species:</p>
 <div class="math notranslate nohighlight">
 \[ u_1=[A],\qquad u_2=[B], \qquad u_3=[C].\]</div>
 <p>We see that the chemical reactions are accounted for in the right-hand sides of the PDE system.</p>

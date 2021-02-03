@@ -278,11 +278,6 @@
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="robin_neumann_dirichlet.html">
-   Setting multiple Dirichlet, Neumann, and Robin conditions
-  </a>
- </li>
- <li class="toctree-l1">
   <a class="reference internal" href="component_bc.html">
    Component-wise Dirichlet BC
   </a>
@@ -578,6 +573,10 @@ Error_max = 7.11e-15
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyvista</span>
+<span class="c1"># Start virtual framebuffer</span>
+<span class="kn">from</span> <span class="nn">pyvista.utilities.xvfb</span> <span class="kn">import</span> <span class="n">start_xvfb</span>
+<span class="n">start_xvfb</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
 <span class="kn">import</span> <span class="nn">dolfinx.plot</span>
 <span class="n">pyvista_cells</span><span class="p">,</span> <span class="n">cell_types</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">create_vtk_topology</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
 <span class="n">grid</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">(</span><span class="n">pyvista_cells</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
@@ -587,15 +586,13 @@ Error_max = 7.11e-15
 <span class="n">grid</span><span class="o">.</span><span class="n">point_arrays</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">point_values</span>
 <span class="n">grid</span><span class="o">.</span><span class="n">set_active_scalars</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">)</span>
 
-<span class="n">off_screen</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="n">plotter</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">off_screen</span><span class="o">=</span><span class="n">off_screen</span><span class="p">)</span>
+<span class="n">plotter</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">()</span>
 <span class="n">plotter</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="s2">&quot;uh&quot;</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="s2">&quot;upper_edge&quot;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
 <span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">show_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">plotter</span><span class="o">.</span><span class="n">view_xy</span><span class="p">()</span>
-<span class="k">if</span> <span class="n">off_screen</span><span class="p">:</span>
-    <span class="n">plotter</span><span class="o">.</span><span class="n">screenshot</span><span class="p">(</span><span class="s2">&quot;neumann_dirichlet.png&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="p">[</span><span class="mi">800</span><span class="p">,</span><span class="mi">800</span><span class="p">])</span>
-<span class="k">else</span><span class="p">:</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">OFF_SCREEN</span><span class="p">:</span>
     <span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">figure</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">screenshot</span><span class="p">(</span><span class="s2">&quot;neumann_dirichlet.png&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

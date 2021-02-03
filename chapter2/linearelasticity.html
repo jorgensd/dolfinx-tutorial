@@ -278,11 +278,6 @@
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../chapter3/robin_neumann_dirichlet.html">
-   Setting multiple Dirichlet, Neumann, and Robin conditions
-  </a>
- </li>
- <li class="toctree-l1">
   <a class="reference internal" href="../chapter3/component_bc.html">
    Component-wise Dirichlet BC
   </a>
@@ -424,20 +419,19 @@
 <h2>The PDE problem<a class="headerlink" href="#the-pde-problem" title="Permalink to this headline">¶</a></h2>
 <p>The equations governing small elastic deformations of a body <span class="math notranslate nohighlight">\(\Omega\)</span> can be written as</p>
 <div class="math notranslate nohighlight" id="equation-elasticity-pde">
-<span class="eqno">(25)<a class="headerlink" href="#equation-elasticity-pde" title="Permalink to this equation">¶</a></span>\[\begin{split}    -\nabla \cdot \sigma (u) &amp;= f &amp;&amp; \text{in } \Omega\\
+<span class="eqno">(1)<a class="headerlink" href="#equation-elasticity-pde" title="Permalink to this equation">¶</a></span>\[\begin{split}    -\nabla \cdot \sigma (u) &amp;= f &amp;&amp; \text{in } \Omega\\
     \sigma(u)&amp;= \lambda \mathrm{tr}(\epsilon(u))I + 2 \mu \epsilon(u)\\
     \epsilon(u) &amp;= \frac{1}{2}\left(\nabla u + (\nabla u )^T\right)\end{split}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\sigma\)</span> is the stress tensor, <span class="math notranslate nohighlight">\(f\)</span> is the body force per unit volume, <span class="math notranslate nohighlight">\(\lambda\)</span> and <span class="math notranslate nohighlight">\(\mu\)</span> are Lamé’s elasticity parameters for the material in <span class="math notranslate nohighlight">\(\Omega\)</span>, <span class="math notranslate nohighlight">\(I\)</span> is the identity tensor, <span class="math notranslate nohighlight">\(\mathrm{tr}\)</span> is the trace operator on a tensor, <span class="math notranslate nohighlight">\(\epsilon\)</span> is the symmetric strain-rate tensor (symmetric gradient), and <span class="math notranslate nohighlight">\(u\)</span> is the displacement vector filed. Above we have assumed isotropic elastic conditions.
-By insertion of <span class="math notranslate nohighlight">\(\epsilon(u)\)</span> into <span class="math notranslate nohighlight">\(\sigma\)</span> we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-dee32957-3902-413d-aae1-0b2b515a6db5">
-<span class="eqno">(26)<a class="headerlink" href="#equation-dee32957-3902-413d-aae1-0b2b515a6db5" title="Permalink to this equation">¶</a></span>\[\begin{align}
-    \sigma(u)&amp;=\lambda(\nabla \cdot u)I + \mu(\nabla u + (\nabla u)^T)
-\end{align}\]</div>
-<p>Note that we could have written the PDE above as a single vector PDE for <span class="math notranslate nohighlight">\(u\)</span>, which is the governing PDe for the unknown <span class="math notranslate nohighlight">\(u\)</span> (Navier’s) equation. However, it is convenient to keep the current representation of the PDE for the derivation of the variational formulation.</p>
+By insertion of <span class="math notranslate nohighlight">\(\epsilon(u)\)</span> into <span class="math notranslate nohighlight">\(\sigma\)</span> we obtain
+\begin{align}
+\sigma(u)&amp;=\lambda(\nabla \cdot u)I + \mu(\nabla u + (\nabla u)^T)
+\end{align}
+Note that we could have written the PDE above as a single vector PDE for <span class="math notranslate nohighlight">\(u\)</span>, which is the governing PDe for the unknown <span class="math notranslate nohighlight">\(u\)</span> (Navier’s) equation. However, it is convenient to keep the current representation of the PDE for the derivation of the variational formulation.</p>
 </div>
 <div class="section" id="the-variational-formulation">
 <h2>The variational formulation<a class="headerlink" href="#the-variational-formulation" title="Permalink to this headline">¶</a></h2>
-<p>The variational formulation of the PDE consists of forming the inner product of the PDE <a class="reference internal" href="#equation-elasticity-pde">(25)</a> with a <em>vector</em> test function <span class="math notranslate nohighlight">\(v\in\hat{V}\)</span>, where <span class="math notranslate nohighlight">\(\hat{V}\)</span> is a vector-valued test function space, and integrating over the domain <span class="math notranslate nohighlight">\(\Omega\)</span>:</p>
+<p>The variational formulation of the PDE consists of forming the inner product of the PDE <a class="reference internal" href="#equation-elasticity-pde">(1)</a> with a <em>vector</em> test function <span class="math notranslate nohighlight">\(v\in\hat{V}\)</span>, where <span class="math notranslate nohighlight">\(\hat{V}\)</span> is a vector-valued test function space, and integrating over the domain <span class="math notranslate nohighlight">\(\Omega\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[    -\int_{\Omega}(\nabla \cdot \sigma)\cdot v ~\mathrm{d} x = \int_{\Omega} f\cdot v ~\mathrm{d} x.\]</div>
 <p>Since <span class="math notranslate nohighlight">\(\nabla \cdot \sigma\)</span> contains second-order derivatives of our unknown <span class="math notranslate nohighlight">\(u\)</span>, we integrate this term by parts</p>
@@ -452,16 +446,16 @@ Find <span class="math notranslate nohighlight">\(u\in V\)</span> such that</p>
 \[    a(u,v) = L(v)\qquad  \forall v \in \hat{V},\]</div>
 <p>where</p>
 <div class="math notranslate nohighlight" id="equation-elasticity">
-<span class="eqno">(27)<a class="headerlink" href="#equation-elasticity" title="Permalink to this equation">¶</a></span>\[\begin{split}    a(u,v)&amp;=\int_{\Omega}\sigma(u):\nabla v ~\mathrm{d}x\\
+<span class="eqno">(2)<a class="headerlink" href="#equation-elasticity" title="Permalink to this equation">¶</a></span>\[\begin{split}    a(u,v)&amp;=\int_{\Omega}\sigma(u):\nabla v ~\mathrm{d}x\\
     \sigma(u)&amp;=\lambda(\nabla \cdot u)I+\mu (\nabla u + (\nabla u)^T),\\
     L(v)&amp;=\int_{\Omega}f\cdot v~\mathrm{d} x + \int_{\partial\Omega_T}T\cdot v~\mathrm{d}s.\end{split}\]</div>
 <p>One can show that the inner product of a symmetric tensor <span class="math notranslate nohighlight">\(A\)</span> and an anti-symmetric tensor <span class="math notranslate nohighlight">\(B\)</span> vanishes. If we express <span class="math notranslate nohighlight">\(\nabla v\)</span> as a sum of its symmetric and anti-symmetric parts, only the symmetric part will survive in the product <span class="math notranslate nohighlight">\(\sigma : \nabla v\)</span> since <span class="math notranslate nohighlight">\(\nabla v\)</span> is a symmetric tensor. Thus replacing <span class="math notranslate nohighlight">\(\nabla v\)</span> by the symmetric gradient <span class="math notranslate nohighlight">\(\epsilon(v)\)</span> gives rise to a slightly different variational form</p>
 <div class="math notranslate nohighlight" id="equation-elasticity-alternative">
-<span class="eqno">(28)<a class="headerlink" href="#equation-elasticity-alternative" title="Permalink to this equation">¶</a></span>\[    a(u,v)= \int_{\Omega}\sigma(u):\epsilon(v)~\mathrm{d} x,\]</div>
+<span class="eqno">(3)<a class="headerlink" href="#equation-elasticity-alternative" title="Permalink to this equation">¶</a></span>\[    a(u,v)= \int_{\Omega}\sigma(u):\epsilon(v)~\mathrm{d} x,\]</div>
 <p>where <span class="math notranslate nohighlight">\(\epsilon(v)\)</span> is the symmetric part of <span class="math notranslate nohighlight">\(\nabla v\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[    \epsilon(v)=\frac{1}{2}\left(\nabla v + (\nabla v)^T\right)\]</div>
-<p>The formulation <a class="reference internal" href="#equation-elasticity-alternative">(28)</a> is what naturally arises from minimization of elastic potential energy and is a more popular formulation than <a class="reference internal" href="#equation-elasticity">(27)</a>.</p>
+<p>The formulation <a class="reference internal" href="#equation-elasticity-alternative">(3)</a> is what naturally arises from minimization of elastic potential energy and is a more popular formulation than <a class="reference internal" href="#equation-elasticity">(2)</a>.</p>
 <div class="toctree-wrapper compound">
 </div>
 </div>
