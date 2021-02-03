@@ -38,9 +38,6 @@ jobs:
       - name: Install dependencies
         run: pip3 install notebook nbconvert jupyter-book sphinxcontrib-bibtex==1.0.0
 
-      - name: Setup headless display
-        run: Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-
       - name: Test notebooks in parallel
         run: |
           cd chapter1
