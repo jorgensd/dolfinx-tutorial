@@ -43,6 +43,7 @@ jobs:
         run: |
           cd chapter1
           jupyter-nbconvert --to python fundamentals_code.ipynb
+          python3 -c "from pyvista.utils.xvfb import start xvfb; start_xvfb(0)"
           mpirun -n 2 python3 fundamentals_code.py
           # jupyter-nbconvert --to python membrane_code.ipynb
           # mpirun -n 2 python3 membrane_code.py
