@@ -29,7 +29,6 @@ jobs:
       HDF5_DIR: "/usr/lib/x86_64-linux-gnu/hdf5/mpich/"
       DISPLAY: ":99.0" 
       PYVISTA_OFF_SCREEN: true
-      ALLOW_PLOTTING: true 
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -43,7 +42,7 @@ jobs:
         run: |
           cd chapter1
           jupyter-nbconvert --to python fundamentals_code.ipynb
-          python3 -c "from pyvista.utils.xvfb import start xvfb; start_xvfb(0)"
+          python3 -c "from pyvista.utils.xvfb import start_xvfb; start_xvfb(0)"
           mpirun -n 2 python3 fundamentals_code.py
           # jupyter-nbconvert --to python membrane_code.ipynb
           # mpirun -n 2 python3 membrane_code.py
