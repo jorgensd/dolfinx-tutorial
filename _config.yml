@@ -23,6 +23,10 @@ repository:
   path_to_book: . # Optional path to your book, relative to the repository root
   branch: dokken/jupyterbook # Which branch of the repository should be used when creating links (optional)
 
+  # Add a bibtex file so that we can create citations
+bibtex_bibfiles:
+  - references.bib
+
 parse:
   myst_enable_extensions:
     - "amsmath"
@@ -48,6 +52,3 @@ html:
         which permits use, duplication, adaptation, distribution and reproduction in any medium or format, as long as you give appropriate credit to the original author(s) and the source,
         provide a link to the Creative Commons license and indicate if changes were made.
     </div>
-
-bibtex_bibfiles:
-   - references.bib
