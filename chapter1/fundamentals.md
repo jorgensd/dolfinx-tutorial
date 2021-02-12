@@ -83,7 +83,7 @@ $ -\int_\Omega (\nabla^2 u)v \mathrm{d}x
 
 where $\frac{\partial u}{\partial n}=\nabla u \cdot n$ is the derivative of $u$ in the outward normal direction $n$ on the boundary.
 
-Another feature of variational formulations is that the test function $v$ is required to vanish on the parts of the boundary where the solution $u$ is known. See for instance [Langtangen, Mardal 2019]{cite}`Langtangen_Mardal_FEM_2019`.
+Another feature of variational formulations is that the test function $v$ is required to vanish on the parts of the boundary where the solution $u$ is known. See for instance Langtangen, Mardal 2019 {cite}`Langtangen_Mardal_FEM_2019`.
 
 In the present problem, this means that $v$ is $0$ on the whole boundary $\partial\Omega$. In the present problem, it means that the second term in the integration by parts formula is zero, and we have that 
 
@@ -141,5 +141,6 @@ To solve a linear PDE in FEniCS-X, such as the Poisson equation, a user thus nee
 2. Express the PDE as a (discrete) variational problem: Find $u\in V$ such that $a(u,v)=L(v)$ for all $v \in \hat{V}$.
 
 ## References
-```{bibliography} references_fundamentals.bib
+```{bibliography}
+:filter: docname in docnames
 ```

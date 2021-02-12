@@ -48,3 +48,6 @@ html:
         which permits use, duplication, adaptation, distribution and reproduction in any medium or format, as long as you give appropriate credit to the original author(s) and the source,
         provide a link to the Creative Commons license and indicate if changes were made.
     </div>
+
+bibtex_bibfiles:
+   - references.bib
