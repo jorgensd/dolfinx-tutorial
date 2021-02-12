@@ -98,5 +98,6 @@ Finally, we compute the corrected velocity $u^{n+1}$ from the equation [](ipcs-t
 In summary, we may thus solve the incompressible Navier-Stokes equations efficiently by solving a sequence of three linear variational problems in each step.
 
 ## References
-```{bibliography} bib_ns.bib
+```{bibliography}
+:filter: docname in docnames
 ```
