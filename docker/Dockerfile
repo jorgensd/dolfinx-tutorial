@@ -1,4 +1,4 @@
-FROM dolfinx/dolfinx
+FROM dolfinx/lab
 
 WORKDIR /tmp/
 
@@ -10,11 +10,14 @@ RUN wget -qO - https://deb.nodesource.com/setup_15.x | bash && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Pyvista ITKWidgets dependencies
-RUN pip3 install --no-cache-dir jupyter jupyterlab pyvista ipygany itkwidgets
-RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager jupyter-matplotlib jupyterlab-datawidgets itkwidgets ipygany
+RUN pip3 install --no-cache-dir matplotlib itkwidgets ipywidgets
+RUN jupyter labextension install jupyter-matplotlib jupyterlab-datawidgets itkwidgets && \
+    rm -rf /usr/local/share/.cache/*
 
 # Install meshio
 RUN pip3 install --no-cache-dir --no-binary=h5py h5py meshio
 
 # Install progress-bar
-RUN pip3 install tqdm
+RUN pip3 install --no-cache-dir tqdm
+
+ENTRYPOINT []

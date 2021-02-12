@@ -1,6 +1,4 @@
-FROM dokken92/dolfinx_custom:pyvista_itk
-
-RUN pip3 install notebook
+FROM dokken92/dolfinx_custom:12022021
 
 # create user with a home directory
 ARG NB_USER
