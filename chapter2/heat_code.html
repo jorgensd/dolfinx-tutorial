@@ -462,11 +462,12 @@
 <h1>A known analytical solution<a class="headerlink" href="#a-known-analytical-solution" title="Permalink to this headline">¶</a></h1>
 <p>Author: Jørgen S. Dokken</p>
 <p>Just as for the <a class="reference internal" href="../chapter1/fundamentals_code.html"><span class="doc std std-doc">Poisson problem</span></a>, we construct a test problem which makes it easy to determine if the calculations are correct.</p>
-<p>Since we know that our first-order time-stepping scheme is exact for linear functions, we create a problem which has linear variation in time. We combine this with a quadratic variation in space. Therefore, we choose the analytical solution to be
-\begin{align}
+<p>Since we know that our first-order time-stepping scheme is exact for linear functions, we create a problem which has linear variation in time. We combine this with a quadratic variation in space. Therefore, we choose the analytical solution to be</p>
+<div class="amsmath math notranslate nohighlight" id="equation-0cec205e-f388-45ee-bced-6eae96508214">
+<span class="eqno">(19)<a class="headerlink" href="#equation-0cec205e-f388-45ee-bced-6eae96508214" title="Permalink to this equation">¶</a></span>\[\begin{align}
 u = 1 + x^2+\alpha y^2 + \beta t
-\end{align}
-which yields a function whose computed values at the degrees of freedom will be exact, regardless of the mesh size and <span class="math notranslate nohighlight">\(\Delta t\)</span> as long as the mesh is uniformly partitioned.
+\end{align}\]</div>
+<p>which yields a function whose computed values at the degrees of freedom will be exact, regardless of the mesh size and <span class="math notranslate nohighlight">\(\Delta t\)</span> as long as the mesh is uniformly partitioned.
 By inserting this into our original PDE, we find that the right hand side <span class="math notranslate nohighlight">\(f=\beta-2-2\alpha\)</span>. The boundary value <span class="math notranslate nohighlight">\(u_d(x,y,t)=1+x^2+\alpha y^2 + \beta t\)</span> and the initial value <span class="math notranslate nohighlight">\(u_0(x,y)=1+x^2+\alpha y^2\)</span>.</p>
 <p>We start by defining the temporal discretization parameters, along with the parameters for <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span>.</p>
 <div class="cell docutils container">

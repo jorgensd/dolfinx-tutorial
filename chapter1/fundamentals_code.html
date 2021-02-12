@@ -511,15 +511,17 @@
 Therefore, we need to make specific choices of <span class="math notranslate nohighlight">\(\Omega, u_D\)</span> and <span class="math notranslate nohighlight">\(f\)</span>. A wise choice is to construct a problem  with a known analytical solution, so that we can check that the computed solution is correct. The primary candidates are lower-order polynomials. The continuous Galerkin finite element spaces of degree <span class="math notranslate nohighlight">\(r\)</span> will exactly reproduce polynomials of degree <span class="math notranslate nohighlight">\(r\)</span>.</p>
 <!-- Particularly, piecewise linear continuous Galerkin finite elements are able to exactly reproduce a quadratic polynomial on 
 a uniformly partitioned mesh. -->
-<p>We use this fact to construct a quadratic function in <span class="math notranslate nohighlight">\(2D\)</span>. In particular we choose
-\begin{align}
-u_e(x,y)=1+x^2+2y^2
-\end{align}</p>
-<p>Inserting <span class="math notranslate nohighlight">\(u_e\)</span> in the original boundary problem, we find that<br />
-\begin{align}
-f(x,y)= -6,\qquad u_d(x,y)=u_e(x,y)=1+x^2+2y^2,
-\end{align}
-regardless of the shape of the domain as long as we prescribe
+<p>We use this fact to construct a quadratic function in <span class="math notranslate nohighlight">\(2D\)</span>. In particular we choose</p>
+<div class="amsmath math notranslate nohighlight" id="equation-d16a2cef-a14b-4aab-b836-354428c7923a">
+<span class="eqno">(1)<a class="headerlink" href="#equation-d16a2cef-a14b-4aab-b836-354428c7923a" title="Permalink to this equation">¶</a></span>\[\begin{align}
+ u_e(x,y)=1+x^2+2y^2
+ \end{align}\]</div>
+<p>Inserting <span class="math notranslate nohighlight">\(u_e\)</span> in the original boundary problem, we find that</p>
+<div class="amsmath math notranslate nohighlight" id="equation-47c0bc81-2c1d-4cd3-aa9a-1f9466f6e7ba">
+<span class="eqno">(2)<a class="headerlink" href="#equation-47c0bc81-2c1d-4cd3-aa9a-1f9466f6e7ba" title="Permalink to this equation">¶</a></span>\[\begin{align}
+    f(x,y)= -6,\qquad u_d(x,y)=u_e(x,y)=1+x^2+2y^2,
+\end{align}\]</div>
+<p>regardless of the shape of the domain as long as we prescribe
 <span class="math notranslate nohighlight">\(u_e\)</span> on the boundary.</p>
 <p>For simplicity, we choose the domain to be a unit square <span class="math notranslate nohighlight">\(\Omega=[0,1]\times [0,1]\)</span></p>
 <p>This simple but very powerful method for constructing test problems is called <em>the method of manufactured solutions</em>.
