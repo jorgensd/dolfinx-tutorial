@@ -435,56 +435,77 @@
                 
   <div class="section" id="combining-dirichlet-and-neumann-conditions">
 <h1>Combining Dirichlet and Neumann conditions<a class="headerlink" href="#combining-dirichlet-and-neumann-conditions" title="Permalink to this headline">¶</a></h1>
+<p>Author: Jørgen S. Dokken</p>
 <p>Let’s return to the Poisson problem from the <a class="reference internal" href="../chapter1/fundamentals.html"><span class="doc std std-doc">Fundamentals chapter</span></a> and see how to extend the mathematics and the implementation to handle Dirichlet condition in combination with a Neumann condition.
-The domain is still the unit square, but now we set the Dirichlet condition <span class="math notranslate nohighlight">\(u=u_D\)</span> at the left and right sides, while the Neumann condition</p>
-<div class="math notranslate nohighlight">
-\[-\frac{\partial u}{\partial n}=g\]</div>
-<p>is applied to the  remaining sides <span class="math notranslate nohighlight">\(y=0\)</span> and <span class="math notranslate nohighlight">\(y=1\)</span>.</p>
+The domain is still the unit square, but now we set the Dirichlet condition <span class="math notranslate nohighlight">\(u=u_D\)</span> at the left and right sides, while the Neumann condition
+$<span class="math notranslate nohighlight">\(
+-\frac{\partial u}{\partial n}=g
+\)</span><span class="math notranslate nohighlight">\(
+is applied to the  remaining sides \)</span>y=0<span class="math notranslate nohighlight">\( and \)</span>y=1$.</p>
 <div class="section" id="the-pde-problem">
 <h2>The PDE problem<a class="headerlink" href="#the-pde-problem" title="Permalink to this headline">¶</a></h2>
 <p>Let <span class="math notranslate nohighlight">\(\Lambda_D\)</span> and <span class="math notranslate nohighlight">\(\Lambda_N\)</span> denote parts of the boundary <span class="math notranslate nohighlight">\(\partial \Omega\)</span> where the Dirichlet and Neumann conditions apply, respectively.
-The complete boundary-value problem can be written as</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}-\nabla^2 u &amp;=f &amp;&amp; \text{in } \Omega,\\
-u&amp;=u_D &amp;&amp;\text{on } \Lambda_D.\\
--\frac{\partial u}{\partial n}&amp;=g &amp;&amp; \text{on }\Lambda_N\end{split}\]</div>
-<p>Again, we choose <span class="math notranslate nohighlight">\(u=1+x^2+2y^2\)</span> as the exact solution and adjust <span class="math notranslate nohighlight">\(f, g,\)</span> and <span class="math notranslate nohighlight">\(u_D\)</span> accordingly</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}f(x,y)&amp;=-6,\\
-g(x,y)&amp;=\begin{cases}
+The complete boundary-value problem can be written as
+$<span class="math notranslate nohighlight">\(
+-\nabla^2 u =f \qquad \text{in } \Omega,
+\)</span><span class="math notranslate nohighlight">\(
+u=u_D \qquad\text{on } \Lambda_D,
+\)</span><span class="math notranslate nohighlight">\(
+-\frac{\partial u}{\partial n}=g \qquad \text{on }\Lambda_N
+\)</span><span class="math notranslate nohighlight">\(
+Again, we choose \)</span>u=1+x^2+2y^2<span class="math notranslate nohighlight">\( as the exact solution and adjust \)</span>f, g,<span class="math notranslate nohighlight">\( and \)</span>u_D<span class="math notranslate nohighlight">\( accordingly
+\)</span><span class="math notranslate nohighlight">\(
+f(x,y)=-6,
+\)</span><span class="math notranslate nohighlight">\(
+\)</span><span class="math notranslate nohighlight">\(
+g(x,y)=\begin{cases}
 0, &amp; y=0,\\
 -4, &amp; y=1,
-\end{cases}\\
-u_D(x,y)&amp;=1+x^2+2y^2.\end{split}\]</div>
-<p>For the ease of programming, we define <span class="math notranslate nohighlight">\(g\)</span> as a function over the whole domain <span class="math notranslate nohighlight">\(\Omega\)</span> such that <span class="math notranslate nohighlight">\(g\)</span> takes on the correct values at <span class="math notranslate nohighlight">\(y=0\)</span> and <span class="math notranslate nohighlight">\(y=1\)</span>. One possible extension is</p>
-<div class="math notranslate nohighlight">
-\[ g(x,y)=-4y.\]</div>
+\end{cases}
+\)</span><span class="math notranslate nohighlight">\(
+\)</span><span class="math notranslate nohighlight">\(
+u_D(x,y)=1+x^2+2y^2.
+\)</span><span class="math notranslate nohighlight">\(
+For the ease of programming, we define \)</span>g<span class="math notranslate nohighlight">\( as a function over the whole domain \)</span>\Omega<span class="math notranslate nohighlight">\( such that \)</span>g<span class="math notranslate nohighlight">\( takes on the correct values at \)</span>y=0<span class="math notranslate nohighlight">\( and \)</span>y=1<span class="math notranslate nohighlight">\(. One possible extension is
+\)</span><span class="math notranslate nohighlight">\(
+ g(x,y)=-4y.
+\)</span>$</p>
 </div>
 <div class="section" id="the-variational-formulation">
 <h2>The variational formulation<a class="headerlink" href="#the-variational-formulation" title="Permalink to this headline">¶</a></h2>
-<p>The first task is to derive the variational formulatin. This time we cannot omit the boundary term arising from integration by parts, because <span class="math notranslate nohighlight">\(v\)</span> is only zero on <span class="math notranslate nohighlight">\(\Lambda_D\)</span>. We have</p>
-<div class="math notranslate nohighlight">
-\[    -\int_\Omega (\nabla^2u)v\mathrm{d} x =
-    \int_\Omega \nabla u \cdot \nabla v \mathrm{d} x
-     - \int_{\partial\Omega}\frac{\partial u}{\partial n}v\mathrm{d}s,\]</div>
-<p>and since <span class="math notranslate nohighlight">\(v=0\)</span> on <span class="math notranslate nohighlight">\(\Lambda_D\)</span>,</p>
-<div class="math notranslate nohighlight">
-\[  - \int_{\partial\Omega}\frac{\partial u}{\partial n}v\mathrm{d}s=
-    - \int_{\Lambda_N}\frac{\partial u}{\partial n}v\mathrm{d}s
-    =\int_{\Lambda_N} gv\mathrm{d}s,\]</div>
-<p>by applying the boundary condition on <span class="math notranslate nohighlight">\(\Lambda_N\)</span>.
-The resulting weak from reads</p>
-<div class="math notranslate nohighlight">
-\[    \int_\Omega \nabla u \cdot \nabla v \mathrm{d} x = \int_\Omega fv\mathrm{d} x - \int_{\Lambda_N}gv\mathrm{d}s.\]</div>
-<p>Expressing this equation in the standard notation <span class="math notranslate nohighlight">\(a(u,v)=L(v)\)</span> is straight-forward with</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}    a(u,v) &amp;= \int_{\Omega} \nabla u \cdot \nabla v \mathrm{d} x,\\
-    L(v) &amp;= \int_{\Omega} fv \mathrm{d} x - \int_{\Lambda_N} gv~\mathrm{d} s.\end{split}\]</div>
+<p>The first task is to derive the variational formulatin. This time we cannot omit the boundary term arising from integration by parts, because <span class="math notranslate nohighlight">\(v\)</span> is only zero on <span class="math notranslate nohighlight">\(\Lambda_D\)</span>. We have
+$<span class="math notranslate nohighlight">\(
+    -\int_\Omega (\nabla^2u)v~\mathrm{d} x =
+    \int_\Omega \nabla u \cdot \nabla v ~\mathrm{d} x
+     - \int_{\partial\Omega}\frac{\partial u}{\partial n}v~\mathrm{d}s,
+\)</span><span class="math notranslate nohighlight">\(
+and since \)</span>v=0<span class="math notranslate nohighlight">\( on \)</span>\Lambda_D<span class="math notranslate nohighlight">\(,
+\)</span>$</p>
+<ul class="simple">
+<li><p>\int_{\partial\Omega}\frac{\partial u}{\partial n}v~\mathrm{d}s=</p>
+<ul>
+<li><p>\int_{\Lambda_N}\frac{\partial u}{\partial n}v~\mathrm{d}s
+=\int_{\Lambda_N} gv~\mathrm{d}s,
+$<span class="math notranslate nohighlight">\(
+by applying the boundary condition on \)</span>\Lambda_N<span class="math notranslate nohighlight">\(.
+The resulting weak from reads
+\)</span><span class="math notranslate nohighlight">\(
+\int_\Omega \nabla u \cdot \nabla v~\mathrm{d} x = \int_\Omega fv~\mathrm{d} x - \int_{\Lambda_N}gv~\mathrm{d}s.
+\)</span><span class="math notranslate nohighlight">\(
+Expressing this equation in the standard notation \)</span>a(u,v)=L(v)<span class="math notranslate nohighlight">\( is straight-forward with 
+\)</span><span class="math notranslate nohighlight">\(
+a(u,v) = \int_{\Omega} \nabla u \cdot \nabla v ~\mathrm{d} x,\\
+\)</span><span class="math notranslate nohighlight">\(
+\)</span><span class="math notranslate nohighlight">\(
+L(v) = \int_{\Omega} fv \mathrm{d} x - \int_{\Lambda_N} gv~\mathrm{d} s.
+\)</span>$</p></li>
+</ul>
+</li>
+</ul>
 </div>
 <div class="section" id="implementation">
 <h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h2>
-<p>Author: Jørgen S. Dokken
-As in the previous example, we define our mesh,function space and bilinear form <span class="math notranslate nohighlight">\(a(u,v)\)</span>.</p>
+<p>As in the previous example, we define our mesh,function space and bilinear form <span class="math notranslate nohighlight">\(a(u,v)\)</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx</span>
@@ -549,14 +570,14 @@ As in the previous example, we define our mesh,function space and bilinear form 
 <span class="n">u_ex_vertex_values</span> <span class="o">=</span> <span class="n">uex</span><span class="o">.</span><span class="n">compute_point_values</span><span class="p">()</span>
 <span class="n">error_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">u_vertex_values</span> <span class="o">-</span> <span class="n">u_ex_vertex_values</span><span class="p">))</span>
 <span class="n">error_max</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">error_max</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">MAX</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error_L2 = </span><span class="si">{0:.2e}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">error_L2</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error_max = </span><span class="si">{0:.2e}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">error_max</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error_L2 : </span><span class="si">{</span><span class="n">error_L2</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error_max : </span><span class="si">{</span><span class="n">error_max</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Error_L2 = 5.27e-03
-Error_max = 7.11e-15
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Error_L2 : 5.27e-03
+Error_max : 7.11e-15
 </pre></div>
 </div>
 </div>

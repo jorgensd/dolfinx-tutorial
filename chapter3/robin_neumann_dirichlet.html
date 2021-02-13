@@ -439,55 +439,62 @@
 <p>We consider the variable coefficient example from <a class="reference internal" href="subdomains.html"><span class="doc std std-doc">the previous section</span></a>. In this section we will cover how to apply a mixture of Dirichlet, Neumann and Robin type boundary conditions for this type of problem.</p>
 <p>We divide our boundary into three distinct sections:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\Gamma_D\)</span> for Dirichlet conditions:</p></li>
+<li><p><span class="math notranslate nohighlight">\(\Gamma_D\)</span> for Dirichlet conditions:
+$<span class="math notranslate nohighlight">\(
+  u=u_D^0 \text{ on } \Gamma_D^0, \quad u=u_D^1 \text{ on } \Gamma_D^1, \dots
+\)</span><span class="math notranslate nohighlight">\(
+where \)</span>\Gamma_D=\Gamma_D^0\cup \Gamma_D^1 \cup \dots$.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\Gamma_N\)</span> for Neumann conditions:
+$<span class="math notranslate nohighlight">\(
+  -\kappa \frac{\partial u}{\partial n}=g_0 \text{ on } \Gamma_N^0,\\
+  -\kappa \frac{\partial u}{\partial n}=g_1 \text{ on } \Gamma_N^1
+\)</span><span class="math notranslate nohighlight">\(
+where \)</span>\Gamma_N=\Gamma_N^0\cup \Gamma_N^1 \cup \dots$.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\Gamma_R\)</span> for Robin conditions:
+$<span class="math notranslate nohighlight">\(
+-\kappa \frac{\partial u}{\partial n}=r(u-s)
+\)</span><span class="math notranslate nohighlight">\(
+where \)</span>r<span class="math notranslate nohighlight">\( and \)</span>s<span class="math notranslate nohighlight">\( are specified functions. The Robin condition is most often used to model heat transfer to the surroundings and arise naturally from Newton's cooling law.
+In that case, \)</span>r<span class="math notranslate nohighlight">\( is a heat transfer coefficient, and \)</span>s<span class="math notranslate nohighlight">\( is the temperature of the surroundings. 
+Both can be space and time-dependent. The Robin conditions apply at some parts \)</span>\Gamma_R^0,\Gamma_R^1,\dots<span class="math notranslate nohighlight">\(, of the boundary:
+\)</span><span class="math notranslate nohighlight">\(
+  -\kappa \frac{\partial u}{\partial n}=r_0(u-s_0) \text{ on } \Gamma_R^0\\
+-\kappa \frac{\partial u}{\partial n}=r_1(u-s_1) \text{ on } \Gamma_R^1
+\)</span>$</p></li>
 </ul>
-<div class="math notranslate nohighlight">
-\[    u=u_D^0 \text{ on } \Gamma_D^0, \quad u=u_D^1 \text{ on } \Gamma_D^1, \dots\]</div>
-<p>where <span class="math notranslate nohighlight">\(\Gamma_D=\Gamma_D^0\cup \Gamma_D^1 \cup \dots\)</span>.</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\Gamma_N\)</span> for Neumann conditions:</p></li>
-</ul>
-<div class="math notranslate nohighlight">
-\[\begin{split}    -\kappa \frac{\partial u}{\partial n}&amp;=g_0 \text{ on } \Gamma_N^0,\\ 
-    -\kappa \frac{\partial u}{\partial n}&amp;=g_1 \text{ on } \Gamma_N^1\end{split}\]</div>
-<p>where <span class="math notranslate nohighlight">\(\Gamma_N=\Gamma_N^0\cup \Gamma_N^1 \cup \dots\)</span>.</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\Gamma_R\)</span> for Robin conditions:</p></li>
-</ul>
-<div class="math notranslate nohighlight">
-\[-\kappa \frac{\partial u}{\partial n}=r(u-s)\]</div>
-<p>where <span class="math notranslate nohighlight">\(r\)</span> and <span class="math notranslate nohighlight">\(s\)</span> are specified functions. The Robin condition is most often used to model heat transfer to the surroundings and arise naturally from Newton’s cooling law.
-In that case, <span class="math notranslate nohighlight">\(r\)</span> is a heat transfer coefficient, and <span class="math notranslate nohighlight">\(s\)</span> is the temperature of the surroundings.
-Both can be space and time-dependent. The Robin conditions apply at some parts $\Gamma_R^0,\Gamma_R^1,\dots, of the boundary:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}    -\kappa \frac{\partial u}{\partial n}&amp;=r_0(u-s_0) \text{ on } \Gamma_R^0\\
-    -\kappa \frac{\partial u}{\partial n}&amp;=r_1(u-s_1) \text{ on } \Gamma_R^1\end{split}\]</div>
 <div class="section" id="the-pde-problem-and-variational-formulation">
 <h2>The PDE problem and variational formulation<a class="headerlink" href="#the-pde-problem-and-variational-formulation" title="Permalink to this headline">¶</a></h2>
-<p>We can summarize the PDE problem as</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}-\nabla (\kappa \nabla u) &amp;= f &amp;&amp; \text{in } \Omega,\\
-u&amp;=u_D^i &amp;&amp; \text{on } \Gamma_D^i, \qquad i=0,1,\dots\\
--\kappa \frac{\partial u}{\partial n}&amp;=g_0 &amp;&amp;\text{on } \Gamma_N^0,\qquad i=0,1,\dots\\
--\kappa \frac{\partial u}{\partial n}&amp;=r_i(u-s_i)&amp;&amp; \text{ on } \Gamma_R^i, \qquad i=0,1\end{split}\]</div>
-<p>As usual, we multiply by a test function and integrate by parts.</p>
-<div class="math notranslate nohighlight">
-\[-\int_{\Omega}\nabla \cdot (\kappa \nabla u)v ~\mathrm{d} x = 
+<p>We can summarize the PDE problem as
+$<span class="math notranslate nohighlight">\(
+-\nabla (\kappa \nabla u) = f \qquad \text{in } \Omega,\\
+u=u_D^i \qquad \text{on } \Gamma_D^i, \qquad i=0,1,\dots\\
+-\kappa \frac{\partial u}{\partial n}=g_0 \qquad\text{on } \Gamma_N^0,\qquad i=0,1,\dots\\
+-\kappa \frac{\partial u}{\partial n}=r_i(u-s_i)\qquad \text{ on } \Gamma_R^i, \qquad i=0,1
+\)</span><span class="math notranslate nohighlight">\(
+As usual, we multiply by a test function and integrate by parts.
+\)</span><span class="math notranslate nohighlight">\(
+-\int_{\Omega}\nabla \cdot (\kappa \nabla u)v ~\mathrm{d} x = 
 \int_{\Omega}\kappa \nabla u\cdot \nabla v~\mathrm{d} x - 
-\int_{\partial\Omega}\kappa \frac{\partial u}{\partial n} v ~\mathrm{d} s.\]</div>
-<p>On the dirichlet part (<span class="math notranslate nohighlight">\(\Gamma_D^i\)</span>), the boundary integral vanishes since <span class="math notranslate nohighlight">\(v=0\)</span>. On the remaining part of the boundary, we split the boundary into contributions from the Neumann parts (<span class="math notranslate nohighlight">\(\Gamma_N^i\)</span>) and Robin parts (<span class="math notranslate nohighlight">\(\Gamma_N^i\)</span>). Inserting the boundary conditions, we obtain</p>
-<div class="math notranslate nohighlight">
-\[-\int_{\Omega}\kappa\frac{\partial u }{\partial n }v~\mathrm{d} s=-\sum_i \int_{\Gamma_N^i} g_i~\mathrm{d} s + \sum_i\int_{\Gamma_R^i}r_i(u-s_i)~\mathrm{d}s.\]</div>
-<p>Thus we have the following variational problem</p>
-<div class="math notranslate nohighlight">
-\[F(u, v)=\int_\Omega \kappa \nabla u \cdot \nabla v~\mathrm{d} x
-+ \sum_i\int_{\Gamma_N^i}g_i v~\mathrm{d}s
-\sum_i\int_{\Gamma_R^i}r_i(u-s_i)~\mathrm{d}s - \int_\Omega fv~\mathrm{d} x = 0.\]</div>
-<p>We have been used to writing the variational formulation as <span class="math notranslate nohighlight">\(a(u,v)=L(v)\)</span>, which requires that we identify the integrals dependent on the trial function <span class="math notranslate nohighlight">\(u\)</span> and collect these in <span class="math notranslate nohighlight">\(a(u,v)\)</span>, while the remaining terms form <span class="math notranslate nohighlight">\(L(v)\)</span>. We not that the Robin condition has a contribution to both <span class="math notranslate nohighlight">\(a(u,v)\)</span> and <span class="math notranslate nohighlight">\(L(v)\)</span>.
-We then have</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}a(u,v)&amp;= \int_{\Omega} \kappa \nabla u \cdot \nabla v ~\mathrm{d} x + \sum_i \int_{\Gamma_R^i}r_i u v~\mathrm{d} s,\\
-L(v) &amp;= \int_{\Omega} fv~\mathrm{d} x - \sum_i \int_{\Gamma_N^i}g_i v~\mathrm{d} s + \sum_i \int_{\Gamma_R^i}r_i s_i v ~\mathrm{d}s.\end{split}\]</div>
+\int_{\partial\Omega}\kappa \frac{\partial u}{\partial n} v ~\mathrm{d} s.
+\)</span><span class="math notranslate nohighlight">\(
+On the dirichlet part (\)</span>\Gamma_D^i<span class="math notranslate nohighlight">\(), the boundary integral vanishes since \)</span>v=0<span class="math notranslate nohighlight">\(. On the remaining part of the boundary, we split the boundary into contributions from the Neumann parts (\)</span>\Gamma_N^i<span class="math notranslate nohighlight">\() and Robin parts (\)</span>\Gamma_N^i<span class="math notranslate nohighlight">\(). Inserting the boundary conditions, we obtain
+\)</span><span class="math notranslate nohighlight">\(
+-\int_{\Omega}\kappa\frac{\partial u }{\partial n }v~\mathrm{d} s=-\sum_i \int_{\Gamma_N^i} g_i~\mathrm{d} s + \sum_i\int_{\Gamma_R^i}r_i(u-s_i)~\mathrm{d}s.
+\)</span><span class="math notranslate nohighlight">\(
+Thus we have the following variational problem
+\)</span>$
+F(u, v)=\int_\Omega \kappa \nabla u \cdot \nabla v~\mathrm{d} x</p>
+<ul class="simple">
+<li><p>\sum_i\int_{\Gamma_N^i}g_i v~\mathrm{d}s
+\sum_i\int_{\Gamma_R^i}r_i(u-s_i)~\mathrm{d}s - \int_\Omega fv~\mathrm{d} x = 0.
+$<span class="math notranslate nohighlight">\(
+We have been used to writing the variational formulation as \)</span>a(u,v)=L(v)<span class="math notranslate nohighlight">\(, which requires that we identify the integrals dependent on the trial function \)</span>u<span class="math notranslate nohighlight">\( and collect these in \)</span>a(u,v)<span class="math notranslate nohighlight">\(, while the remaining terms form \)</span>L(v)<span class="math notranslate nohighlight">\(. We not that the Robin condition has a contribution to both \)</span>a(u,v)<span class="math notranslate nohighlight">\( and \)</span>L(v)<span class="math notranslate nohighlight">\(. 
+We then have
+\)</span><span class="math notranslate nohighlight">\(
+a(u,v)= \int_{\Omega} \kappa \nabla u \cdot \nabla v ~\mathrm{d} x + \sum_i \int_{\Gamma_R^i}r_i u v~\mathrm{d} s,\\
+L(v) = \int_{\Omega} fv~\mathrm{d} x - \sum_i \int_{\Gamma_N^i}g_i v~\mathrm{d} s + \sum_i \int_{\Gamma_R^i}r_i s_i v ~\mathrm{d}s.
+\)</span>$</p></li>
+</ul>
 </div>
 <div class="section" id="implementation">
 <h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h2>
@@ -506,18 +513,20 @@ L(v) &amp;= \int_{\Omega} fv~\mathrm{d} x - \sum_i \int_{\Gamma_N^i}g_i v~\mathr
 </div>
 </div>
 </div>
-<p>In this section, we will solve the Poisson problem for the manufactured solution <span class="math notranslate nohighlight">\(u_{ex} = 1+x^2+2y^2\)</span>, which yields <span class="math notranslate nohighlight">\(\kappa=1\)</span>, <span class="math notranslate nohighlight">\(f=-6\)</span>. The next step is to define the parameters of the boundary condition, and where we should apply them. In this example, we will apply the following</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}u &amp;= u_D &amp;&amp; \text{for } x=0 \text{ and } x=1\\
--\kappa \frac{\partial u}{\partial n} &amp;= r(u-s) &amp;&amp; \text{for } y=0\\
--\kappa \frac{\partial u}{\partial n} &amp;=g_0 \text{for } y = 1\\\end{split}\]</div>
-<p>To reproduce the analytical solution, we have that</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}    u_D&amp;=u_{ex}=1+x^2+2y^2\\
-    g_0&amp;=\left.\frac{\partial u_{ex}}{y}\right\vert_{y=1}=4y\vert_{y=1}=-4\end{split}\]</div>
-<p>The Robin condition can be specified in many ways. As
-<span class="math notranslate nohighlight">\(-\left.\frac{\partial u_{ex}}{n}\right\vert_{x=0}=\left.\frac{\partial u_{ex}}{\partial x}\right\vert_{x=0}=2x=0,\)</span>
-we can specify <span class="math notranslate nohighlight">\(r\neq 0\)</span> arbitrarly and <span class="math notranslate nohighlight">\(s=u_{ex}\)</span>. We choose <span class="math notranslate nohighlight">\(r=1000\)</span>.
+<p>In this section, we will solve the Poisson problem for the manufactured solution <span class="math notranslate nohighlight">\(u_{ex} = 1+x^2+2y^2\)</span>, which yields <span class="math notranslate nohighlight">\(\kappa=1\)</span>, <span class="math notranslate nohighlight">\(f=-6\)</span>. The next step is to define the parameters of the boundary condition, and where we should apply them. In this example, we will apply the following
+$<span class="math notranslate nohighlight">\(
+u = u_D \qquad \text{for } x=0,1\\
+-\kappa \frac{\partial u}{\partial n} = r(u-s) \quad \text{for } y=0\\
+-\kappa \frac{\partial u}{\partial n} =g_0 \quad\text{for } y = 1
+\)</span><span class="math notranslate nohighlight">\(
+To reproduce the analytical solution, we have that 
+\)</span><span class="math notranslate nohighlight">\(
+    u_D=u_{ex}=1+x^2+2y^2\\
+    g_0=\left.\frac{\partial u_{ex}}{y}\right\vert_{y=1}=4y\vert_{y=1}=-4
+\)</span><span class="math notranslate nohighlight">\(
+The Robin condition can be specified in many ways. As
+\)</span>-\left.\frac{\partial u_{ex}}{n}\right\vert_{x=0}=\left.\frac{\partial u_{ex}}{\partial x}\right\vert_{x=0}=2x=0,<span class="math notranslate nohighlight">\(
+we can specify \)</span>r\neq 0<span class="math notranslate nohighlight">\( arbitrarly and \)</span>s=u_{ex}<span class="math notranslate nohighlight">\(. We choose \)</span>r=1000$.
 We can now create all the necessary variable definitions and the traditional part of the variational form.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -686,13 +695,13 @@ We can now create all the necessary variable definitions and the traditional par
 <span class="n">u_exact</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">u_ex</span><span class="p">)</span>
 <span class="n">u_exact</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
 <span class="n">error_L2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">((</span><span class="n">uh</span> <span class="o">-</span> <span class="n">u_exact</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span><span class="p">),</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;L2-error: </span><span class="si">{0:.2e}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">error_L2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;L2-error: </span><span class="si">{</span><span class="n">error_L2</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="c1"># Compute values at mesh vertices</span>
 <span class="n">u_vertex_values</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">compute_point_values</span><span class="p">()</span>
 <span class="n">u_ex_vertex_values</span> <span class="o">=</span> <span class="n">u_exact</span><span class="o">.</span><span class="n">compute_point_values</span><span class="p">()</span>
 <span class="n">max_local</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">u_vertex_values</span> <span class="o">-</span> <span class="n">u_ex_vertex_values</span><span class="p">))</span>
 <span class="n">error_max</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">mpi_comm</span><span class="p">()</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">max_local</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">MAX</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error_max = </span><span class="si">{0:.2e}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">error_max</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error_max = </span><span class="si">{</span><span class="n">error_max</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

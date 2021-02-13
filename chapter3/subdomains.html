@@ -460,12 +460,13 @@ Such a function can be created over any mesh in the following way</p>
 </div>
 </div>
 <p>Note that both fucntion uses a <span class="math notranslate nohighlight">\(\leq\)</span> or <span class="math notranslate nohighlight">\(\geq\)</span>, as FEniCS-X will evaluate each cell at all of the vertices, and thus for has to return <code class="docutils literal notranslate"><span class="pre">True</span></code> for all vertices align with the interface to be marked properly.</p>
-<p>We will solve a variable-coefficient extension of the Poisson equation</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}-\nabla \cdot [\kappa (x,y)\nabla u(x, y)]&amp;= 1 &amp;&amp; \text{in } \Omega,\\
-u&amp;=u_D=1 &amp;&amp; \text{on } \partial\Omega_D=[0,y], y\in[0,1]\\
--\frac{\partial u}{\partial}{n}=0 &amp;&amp; \text{on } \partial\Omega\setminus \partial\Omega_D\end{split}\]</div>
-<p>Our next step is to define <span class="math notranslate nohighlight">\(\kappa\)</span></p>
+<p>We will solve a variable-coefficient extension of the Poisson equation
+$<span class="math notranslate nohighlight">\(
+-\nabla \cdot [\kappa (x,y)\nabla u(x, y)]= 1 \qquad \text{in } \Omega,\\
+u=u_D=1 \qquad \text{on } \partial\Omega_D=[0,y], y\in[0,1]\\
+-\frac{\partial u}{\partial}{n}=0 \qquad \text{on } \partial\Omega\setminus \partial\Omega_D
+\)</span><span class="math notranslate nohighlight">\(
+Our next step is to define \)</span>\kappa$</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kappa</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
@@ -552,7 +553,6 @@ u&amp;=u_D=1 &amp;&amp; \text{on } \partial\Omega_D=[0,y], y\in[0,1]\\
 </div>
 </div>
 <p>We clearly observe different behavior in the two regions, whose both has the same Dirichlet boundary condition on the left side, where <span class="math notranslate nohighlight">\(x=0\)</span>.</p>
-<p><img alt="structured subdomains" src="../_images/subdomains_structured.png" /></p>
 </div>
 <div class="section" id="interpolation-with-python-function">
 <h2>Interpolation with Python-function<a class="headerlink" href="#interpolation-with-python-function" title="Permalink to this headline">¶</a></h2>
@@ -755,7 +755,6 @@ u&amp;=u_D=1 &amp;&amp; \text{on } \partial\Omega_D=[0,y], y\in[0,1]\\
 <img alt="../_images/subdomains_28_0.png" src="../_images/subdomains_28_0.png" />
 </div>
 </div>
-<p><img alt="Unstructured subdomains" src="../_images/subdomains_unstructured.png" /></p>
 </div>
 </div>
 
