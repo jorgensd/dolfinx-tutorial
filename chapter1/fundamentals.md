@@ -23,10 +23,10 @@ This will include:
 - How to visualize the solution
 
 The Poisson equation is the following boundary-value problem
-
-$ -\nabla^2 u(\mathbf{x}) = f(\mathbf{x}) \quad \mathbf{x} \in \Omega$
-
-$ u(\mathbf{x}) = u_D(\mathbf{x})\quad \mathbf{x} \in \partial\Omega$
+\begin{align}
+-\nabla^2 u(\mathbf{x}) &= f(\mathbf{x})&&\mathbf{x} \in \Omega\\
+u(\mathbf{x}) &= u_D(\mathbf{x})&& \mathbf{x} \in \partial\Omega
+\end{align}
 
 Here, $u=u(\mathbf{x})$ is the unknown function, $f=f(\mathbf{x})$ is a prescribed function, $\nabla^2$ the Laplace operator, often written as $\Delta$, $\Omega$ the spatial domain, and $\partial\Omega$ is the boundary of $\Omega$. The Poisson problem, including both the PDE $-\nabla^2 u = f$ and the boundary condition $u=u_D$ on $\partial\Omega$, is an example of a _boundary-value problem_, which must be precisely state before it makes sense to start solving it numerically with FEniCS-X. 
 
@@ -57,7 +57,7 @@ As we have already covered step 1., we shall now cover step 2-4.
 FEniCS is based on the finite element method, which is a general and
 efficient mathematical machinery for the numerical solution of
 PDEs. The starting point for the finite element methods is a PDE
-expressed in \emph{variational form}. For readers not familiar with variational problems, it is suggested to reading a proper book on the finite element method in addition, as this tutorial is meant as a brief introduction to the subject. See the [original tutorial]([The FEniCS tutorial](https://www.springer.com/gp/book/9783319524610)) (Chapter 1.6.2).
+expressed in \emph{variational form}. For readers not familiar with variational problems, it is suggested to reading a proper book on the finite element method in addition, as this tutorial is meant as a brief introduction to the subject. See the original tutorial {cite}`FenicsTutorial` (Chapter 1.6.2).
 
 The basic recipe for turning a PDE into a variational problem is:
 - Multiply the PDE by a function $v$
@@ -83,7 +83,7 @@ $ -\int_\Omega (\nabla^2 u)v \mathrm{d}x
 
 where $\frac{\partial u}{\partial n}=\nabla u \cdot n$ is the derivative of $u$ in the outward normal direction $n$ on the boundary.
 
-Another feature of variational formulations is that the test function $v$ is required to vanish on the parts of the boundary where the solution $u$ is known. See for instance Langtangen, Mardal 2019 {cite}`Langtangen_Mardal_FEM_2019`.
+Another feature of variational formulations is that the test function $v$ is required to vanish on the parts of the boundary where the solution $u$ is known. See for instance {cite}`Langtangen_Mardal_FEM_2019`.
 
 In the present problem, this means that $v$ is $0$ on the whole boundary $\partial\Omega$. In the present problem, it means that the second term in the integration by parts formula is zero, and we have that 
 
@@ -142,5 +142,5 @@ To solve a linear PDE in FEniCS-X, such as the Poisson equation, a user thus nee
 
 ## References
 ```{bibliography}
-:filter: docname in docnames
+   :filter: cited and ({"chapter1/fundamentals"} >= docnames)
 ```

@@ -21,21 +21,19 @@ Important topics involve how to set boundary conditions of various types (Dirich
 Most of the mathematical part of the examples will be kept at a simple level, such that we can keep the focus on the functionality and syntax of FEniCS-X. Therefore we will mostly use the Poisson equation and the time-dependent diffusion equation as model problems. We will use adjusted input data, such that the solution of the problem can be exactly reproduced on uniform, structured meshes with the finite element method. This greatly simplifies the verification of the implementations.
 Occasionally we will consider a more physically relevant example to remind the reader that there are no big leaps from solving simple model problems to challenging real-world problems when using FEniCS-X.
 
-# Interactive tutorials
+## Interactive tutorials
 As this book has been published as a Jupyter Book, we provide interactive notebooks that can be run in the browser. To start such a notebook click the ![Binder symbol](binder.png)-symbol in the top right corner of the relevant tutorial.
 
-# Obtaining the software
+## Obtaining the software
 
-If you would like to work with dolfin-X outside of the binder-notebooks, you need to install the FEniCS software. The software is quite complex, and building the software and all the dependencies from source can be a daunting task. The list of dependencies can be found at [https://fenicsproject.org/docs/dolfinx/dev/python/installation.html](https://fenicsproject.org/docs/dolfinx/dev/python/installation.html).
-
-## Docker
-Fortunately, we supply a pre-built docker image at [https://hub.docker.com/r/dolfinx/dolfinx](https://hub.docker.com/r/dolfinx/dolfinx).
-The [Dockerfile](https://github.com/FEniCS/dolfinx/blob/master/Dockerfile)
-provides a definitive build recipe.
-
+If you would like to work with dolfin-X outside of the binder-notebooks, you need to install the FEniCS software. 
+The recommended way of installing dolfin-X for new usesers is by using Docker. 
 Docker is a software that uses *containers* to supply software across different kinds of operating systems (Linux, Mac, Windows). The first step is to install docker, following the instructions at their [web-page](https://docs.docker.com/get-started/).
-As the dolfinx docker images are hosted at Docker-hub, one can directly access the image
-```
+
+We supply a pre-built docker image at [https://hub.docker.com/r/dolfinx/dolfinx](https://hub.docker.com/r/dolfinx/dolfinx).
+The [Dockerfile](https://github.com/FEniCS/dolfinx/blob/master/Dockerfile)
+provides a definitive build recipe. As the dolfinx docker images are hosted at Docker-hub, one can directly access the image
+```s
 docker run dolfinx/dolfinx
 ```
 There are several ways of customizing a docker container, such as mounting volumes/sharing folder, setting a working directory, sharing graphical interfaces etc. See `docker run --help` for an extensive list.
@@ -48,15 +46,23 @@ To use the notebookes in this tutorial with dolfin-X on your own computer, you s
 ```
 The tutorials can also be exported as a notebook or PDF by clicking the ![Download](save.png)-symbol in the top right corner of the relevant tutorialThe notebook can in turn be used with a Python kernel which has dolfin-X.
 
+## Installation from source
+The software is quite complex, and building the software and all the dependencies from source can be a daunting task. The list of dependencies can be found at [https://fenicsproject.org/docs/dolfinx/dev/python/installation.html](https://fenicsproject.org/docs/dolfinx/dev/python/installation.html).
 
-If you are a beginner in Python, we suggest reading [A Primer on Scientific Programming in Python](https://link.springer.com/book/10.1007%2F978-3-662-49887-3) by Hans Petter Langtangen, which will give you a gentle introduction to the Python programming language. Note that dolfin-X, being a state of the art finite element solver, only supports Python 3, as Python 2 reached its end of life January 1st, 2020. To automatically transfer Python 2 scripts to Python 3, it is suggested to use the [2to3](https://docs.python.org/3/library/2to3.html)-package, which provides automated translation of the code.
+## Introduction to Python for beginners
+If you are a beginner in Python, we suggest reading {cite}`Langtangen2016` by Hans Petter Langtangen, which will give you a gentle introduction to the Python programming language. Note that dolfin-X, being a state of the art finite element solver, only supports Python 3, as Python 2 reached its end of life January 1st, 2020. To automatically transfer Python 2 scripts to Python 3, it is suggested to use the [2to3](https://docs.python.org/3/library/2to3.html)-package, which provides automated translation of the code.
 
 
-## The Finite element method
+## Introduction to the finite element method
+In the last decade, a wide range of lecture notes on finite elements methods has been made open access. See for instance:
+
+- [Numerical methods for partial differential equations](http://hplgit.github.io/num-methods-for-PDEs/doc/web/index.html), by Hans Petter Langtangen
+- [Finite Elements - Analysis and implementation](https://finite-element.github.io/), by David A. Ham and Colin J. Cotter
+- [Finite Element Analysis for Coupled Problems](https://david-kamensky.eng.ucsd.edu/teaching/mae-207-fea-for-coupled-problems), by David Kamensky. 
+
 There has been written many good text-books on the finite element method, and we refer to the original FEniCS tutorial, for references to these, (see Chapter 1.6.2 of [The FEniCS tutorial](https://www.springer.com/gp/book/9783319524610)).
 
-
-<!-- {cite}`ufl2014`.
 ## References
-```{bibliography} references_fem.bib
-``` -->
+```{bibliography}
+:filter: docname in docnames
+```
