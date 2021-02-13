@@ -1,4 +1,3 @@
-
 # Deflection of a membrane
 Authors: Hans Petter Langtangen and Anders Logg.
 
