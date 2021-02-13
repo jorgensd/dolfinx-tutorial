@@ -21,8 +21,6 @@ Then we have
      +\left(\frac{y-R_0}{\sigma}\right)^2\right)}
 \end{align}
 
-
-
 ## Scaling the  equation
 
 There are many physical parameters in this problem, and we can benefit from grouping them by means of scaling. Let us introduce dimensionless coordinates 
