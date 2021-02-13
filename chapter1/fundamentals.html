@@ -444,8 +444,8 @@ This will include:</p>
 <li><p>How to visualize the solution</p></li>
 </ul>
 <p>The Poisson equation is the following boundary-value problem</p>
-<div class="amsmath math notranslate nohighlight" id="equation-11b3b70f-5631-45c3-af34-3555d5125e53">
-<span class="eqno">(1)<a class="headerlink" href="#equation-11b3b70f-5631-45c3-af34-3555d5125e53" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-e12a858c-3a0c-420d-9dcb-a7249a2ebfb4">
+<span class="eqno">(1)<a class="headerlink" href="#equation-e12a858c-3a0c-420d-9dcb-a7249a2ebfb4" title="Permalink to this equation">¶</a></span>\[\begin{align}
 -\nabla^2 u(\mathbf{x}) &amp;= f(\mathbf{x})&amp;&amp;\mathbf{x} \in \Omega\\
 u(\mathbf{x}) &amp;= u_D(\mathbf{x})&amp;&amp; \mathbf{x} \in \partial\Omega
 \end{align}\]</div>
@@ -482,25 +482,29 @@ expressed in \emph{variational form}. For readers not familiar with variational 
 <p>The function <span class="math notranslate nohighlight">\(v\)</span> which multiplies the PDE is called a <em>test function</em>. The unknown function <span class="math notranslate nohighlight">\(u\)</span> that is to be approximated is referred to as a <em>trial function</em>.
 The terms trial and test functions are used in FEniCS-X too. The test and trial functions belong to certain <em>function spaces</em> that specify the properties of the functions.</p>
 <p>In the present case, we multiply the equation by a test function <span class="math notranslate nohighlight">\(v\)</span> and  integrate over <span class="math notranslate nohighlight">\(\Omega\)</span>:</p>
-<p><span class="math notranslate nohighlight">\(\int_\Omega -\nabla^2 u v \mathrm{d} x = \int_\Omega f v \mathrm{d} x\)</span></p>
+<p><span class="math notranslate nohighlight">\(\int_\Omega -\nabla^2 u v \mathrm{d} x = \int_\Omega f v ~\mathrm{d} x.\)</span></p>
 <p>Here <span class="math notranslate nohighlight">\(\mathrm{d} x\)</span> denotes the differential element for integration over the domain <span class="math notranslate nohighlight">\(\Omega\)</span>. We will later let <span class="math notranslate nohighlight">\(\mathrm{d} s\)</span> denote the differential element for integration over the boundary of <span class="math notranslate nohighlight">\(\Omega\)</span>.</p>
 <p>A rule of thumb is that when we derive variational formulations is that one tries to keep the order of derivatives of <span class="math notranslate nohighlight">\(u\)</span> and <span class="math notranslate nohighlight">\(v\)</span> as small as possible.
 Here, we have a second-order differential of <span class="math notranslate nohighlight">\(u\)</span>, which can be transformed to a first derivative by employing the technique of
 <a class="reference external" href="https://en.wikipedia.org/wiki/Integration_by_parts">integration by parts</a>.
 The formula reads</p>
-<p><span class="math notranslate nohighlight">\( -\int_\Omega (\nabla^2 u)v \mathrm{d}x
-= \int_\Omega\nabla u\cdot\nabla v \mathrm{d}x - \int_{\partial\Omega}\frac{\partial u}{\partial n}v \mathrm{d}s ,\)</span></p>
+<p><span class="math notranslate nohighlight">\( -\int_\Omega (\nabla^2 u)v~\mathrm{d}x
+= \int_\Omega\nabla u\cdot\nabla v \mathrm{d}x- 
+\int_{\partial\Omega}\frac{\partial u}{\partial n}v~\mathrm{d}s,\)</span></p>
 <p>where <span class="math notranslate nohighlight">\(\frac{\partial u}{\partial n}=\nabla u \cdot n\)</span> is the derivative of <span class="math notranslate nohighlight">\(u\)</span> in the outward normal direction <span class="math notranslate nohighlight">\(n\)</span> on the boundary.</p>
 <p>Another feature of variational formulations is that the test function <span class="math notranslate nohighlight">\(v\)</span> is required to vanish on the parts of the boundary where the solution <span class="math notranslate nohighlight">\(u\)</span> is known. See for instance <span id="id2">[<a class="reference internal" href="#id4"><span>LM19</span></a>]</span>.</p>
-<p>In the present problem, this means that <span class="math notranslate nohighlight">\(v\)</span> is <span class="math notranslate nohighlight">\(0\)</span> on the whole boundary <span class="math notranslate nohighlight">\(\partial\Omega\)</span>. In the present problem, it means that the second term in the integration by parts formula is zero, and we have that</p>
-<p><span class="math notranslate nohighlight">\(\int_\Omega \nabla u \cdot \nabla v \mathrm{d} x = \int_\Omega f v\mathrm{d} x\)</span></p>
+<p>In the present problem, this means that <span class="math notranslate nohighlight">\(v\)</span> is <span class="math notranslate nohighlight">\(0\)</span> on the whole boundary <span class="math notranslate nohighlight">\(\partial\Omega\)</span>. Thus, the second term in the integration by parts formula is zero, and we have that</p>
+<p><span class="math notranslate nohighlight">\(\int_\Omega \nabla u \cdot \nabla v \mathrm{d} x = \int_\Omega f v~\mathrm{d} x.\)</span></p>
 <p>If we require that this equation holds for all test functions <span class="math notranslate nohighlight">\(v\)</span> in some suitable space <span class="math notranslate nohighlight">\(\hat{V}\)</span>, the so-called <em>test space</em>, we obtain a well-defined mathematical problem that uniquely determines the solution <span class="math notranslate nohighlight">\(u\)</span> which lies in some function space <span class="math notranslate nohighlight">\(V\)</span>. Note that <span class="math notranslate nohighlight">\(V\)</span> does not have to be the same space as
 <span class="math notranslate nohighlight">\(\hat{V}\)</span>. We call the space <span class="math notranslate nohighlight">\(V\)</span> the <em>trial space</em>. We refer to the equation above as the <em>weak form</em>/<em>variational form</em> of the original boundary value problem. We now properly state our variational problem:
 Find <span class="math notranslate nohighlight">\(u\in V\)</span> such that</p>
 <p><span class="math notranslate nohighlight">\(\int_\Omega \nabla u \cdot \nabla v \mathrm{d} x = \int_\Omega f v\mathrm{d} x\qquad \forall v \in \hat{V}.\)</span></p>
-<p>For the present problem, the test and trial spaces <span class="math notranslate nohighlight">\(V\)</span> and <span class="math notranslate nohighlight">\(\hat{V}\)</span> is defined  as</p>
-<p><span class="math notranslate nohighlight">\( V=\{v\in H^1(\Omega) \vert v=u_D \quad \text{on } \partial \Omega \},\)</span></p>
-<p><span class="math notranslate nohighlight">\( \hat{V}=\{v\in H^1(\Omega) \vert v=0 \quad \text{on } \partial \Omega \}.\)</span></p>
+<p>For the present problem, the test and trial spaces <span class="math notranslate nohighlight">\(V\)</span> and <span class="math notranslate nohighlight">\(\hat{V}\)</span> is defined as</p>
+<div class="amsmath math notranslate nohighlight" id="equation-eb394483-6ce5-4aa3-92e6-0a5b913507d8">
+<span class="eqno">(2)<a class="headerlink" href="#equation-eb394483-6ce5-4aa3-92e6-0a5b913507d8" title="Permalink to this equation">¶</a></span>\[\begin{align}
+V&amp;=\{v\in H^1(\Omega) \vert v=u_D&amp;&amp;\text{on } \partial \Omega \},\\
+\hat{V}&amp;=\{v\in H^1(\Omega) \vert v=0 &amp;&amp;\text{on } \partial \Omega \}.
+\end{align}\]</div>
 <p>In short, <span class="math notranslate nohighlight">\(H^1(\Omega)\)</span> is the Sobolev space containing functions <span class="math notranslate nohighlight">\(v\)</span> such that <span class="math notranslate nohighlight">\(v^2\)</span> and <span class="math notranslate nohighlight">\(\vert \nabla v \vert ^2\)</span> have finite integrals over <span class="math notranslate nohighlight">\(\Omega\)</span>. The solution of the underlying
 PDE must line in a function space where the derivatives are
 also continuous, but the Sobolev space <span class="math notranslate nohighlight">\(H^1(\Omega)\)</span> allows functions with discontinuous derivatives.
@@ -511,7 +515,10 @@ hexahedrons.</p>
 <p>The variational problem is a <em>continuous problem</em>: it defines the solution <span class="math notranslate nohighlight">\(u\)</span> in the infinite-dimensional function space <span class="math notranslate nohighlight">\(V\)</span>.
 The finite element method for the  Poisson equation finds an approximate solution of the variational problem by replacing the infinite-dimensional function spaces <span class="math notranslate nohighlight">\(V\)</span> and <span class="math notranslate nohighlight">\(\hat V\)</span> by <em>discrete</em> (finite dimensional) trial and test spaces <span class="math notranslate nohighlight">\(V_h\subset V\)</span> and <span class="math notranslate nohighlight">\(\hat{V}_h \subset \hat{V}\)</span>. The discrete
 variational problem reads: Find <span class="math notranslate nohighlight">\(u_h\in V_h\)</span> such that</p>
-<p><span class="math notranslate nohighlight">\(\int_\Omega \nabla u_h \cdot \nabla v \mathrm{d} x = \int_\Omega fv \mathrm{d} x \quad \forall v \in \hat{V}_h.\)</span></p>
+<div class="amsmath math notranslate nohighlight" id="equation-effd93bd-3428-444a-9edc-d876010fe43b">
+<span class="eqno">(3)<a class="headerlink" href="#equation-effd93bd-3428-444a-9edc-d876010fe43b" title="Permalink to this equation">¶</a></span>\[\begin{align}
+\int_\Omega \nabla u_h \cdot \nabla v ~\mathrm{d} x &amp;= \int_\Omega fv~ \mathrm{d} x &amp;&amp; \forall v \in \hat{V}_h.
+\end{align}\]</div>
 <p>This variational problem, together with suitable definitions of <span class="math notranslate nohighlight">\(V_h\)</span> and <span class="math notranslate nohighlight">\(\hat{V}_h\)</span> uniquely define our approximate numerical solution of the Poisson equation.
 Note that the boundary condition is encoded as part of the test and trial spaces. This might seem complicated at first glance,
 but means that the finite element variational problem and the continuous variational problem looks the same.</p>
@@ -520,10 +527,16 @@ but means that the finite element variational problem and the continuous variati
 <h2>Abstract finite element variational formulation<a class="headerlink" href="#abstract-finite-element-variational-formulation" title="Permalink to this headline">¶</a></h2>
 <p>We will introduce the following notations for variational problems:
 Find <span class="math notranslate nohighlight">\(u\in V\)</span> such that</p>
-<p><span class="math notranslate nohighlight">\( a(u,v)=L(v)\qquad \forall v \in \hat{V}.\)</span></p>
+<div class="amsmath math notranslate nohighlight" id="equation-5b183e03-a602-4499-a258-512ab30db4fc">
+<span class="eqno">(4)<a class="headerlink" href="#equation-5b183e03-a602-4499-a258-512ab30db4fc" title="Permalink to this equation">¶</a></span>\[\begin{align}
+a(u,v)&amp;=L(v)&amp;&amp; \forall v \in \hat{V}.
+\end{align}\]</div>
 <p>For the Poisson equation, we have:</p>
-<p><span class="math notranslate nohighlight">\( a(u,v)= \int_{\Omega} \nabla u \cdot \nabla v \mathrm{d} x,\)</span></p>
-<p><span class="math notranslate nohighlight">\( L(v)= \int_{\Omega} fv \mathrm{d} x.\)</span></p>
+<div class="amsmath math notranslate nohighlight" id="equation-ba4d2c3f-8f3f-4096-a3fe-1ac6fa655f4a">
+<span class="eqno">(5)<a class="headerlink" href="#equation-ba4d2c3f-8f3f-4096-a3fe-1ac6fa655f4a" title="Permalink to this equation">¶</a></span>\[\begin{align}
+a(u,v) &amp;= \int_{\Omega} \nabla u \cdot \nabla v ~\mathrm{d} x,\\
+L(v) &amp;= \int_{\Omega} fv ~\mathrm{d} x.
+\end{align}\]</div>
 <p>From literature <span class="math notranslate nohighlight">\(a(u,v)\)</span> is known as the <em>bilinear form</em> and <span class="math notranslate nohighlight">\(L(V)\)</span> as a <em>linear form</em>.
 For every linear problem, we will identify all terms with the unknown <span class="math notranslate nohighlight">\(u\)</span> and collect them in <span class="math notranslate nohighlight">\(a(u,v)\)</span>, and collect all terms with only  known functions in <span class="math notranslate nohighlight">\(L(v)\)</span>.</p>
 <p>To solve a linear PDE in FEniCS-X, such as the Poisson equation, a user thus needs to perform two steps:</p>
