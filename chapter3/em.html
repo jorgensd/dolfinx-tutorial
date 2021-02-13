@@ -425,8 +425,8 @@
                 
   <div class="section" id="electromagnetics-example">
 <h1>Electromagnetics example<a class="headerlink" href="#electromagnetics-example" title="Permalink to this headline">¶</a></h1>
-<p>Author: Jørgen S. Dokken</p>
-<p>Based on the tutorial by: Hans Petter Langtangen and Anders Logg</p>
+<p>Theoretical introduction by: Hans Petter Langtangen and Anders Logg</p>
+<p>Implementation by: Jørgen S. Dokken</p>
 <p>In this example, we will consider an iron cylinder with copper wires wound around the cylinder, as shown below</p>
 <p><img alt="Cross section of wires" src="../_images/wire.png" /></p>
 <p>Through the copper wires a static current of <span class="math notranslate nohighlight">\(J=1A\)</span> is flowing.
@@ -489,7 +489,6 @@ L(v)=\int_\Omega J_z v~\mathrm{d} x.
 \]</div>
 <div class="section" id="meshing-a-complex-structure-with-subdomains">
 <h2>Meshing a complex structure with subdomains<a class="headerlink" href="#meshing-a-complex-structure-with-subdomains" title="Permalink to this headline">¶</a></h2>
-<p>Author: Jørgen S. Dokken</p>
 <p>We create the domain visualized in the cross section figure above using gmsh. Note that we are using the <code class="docutils literal notranslate"><span class="pre">gmsh.model.occ.fragment</span></code> commands to ensure that the boundaries of the wires are resolved in the mesh.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
