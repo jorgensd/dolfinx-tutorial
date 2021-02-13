@@ -417,6 +417,11 @@
    Visualization of higher order functions
   </a>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#references">
+   References
+  </a>
+ </li>
 </ul>
 
         </nav>
@@ -431,7 +436,7 @@
   <div class="section" id="test-problem-1-channel-flow-poiseuille-flow">
 <h1>Test problem 1: Channel flow (Poiseuille flow)<a class="headerlink" href="#test-problem-1-channel-flow-poiseuille-flow" title="Permalink to this headline">¶</a></h1>
 <p>Authors: Anders Logg and Hans Petter Langtangen</p>
-<p>Adapted by: Jørgen S. Dokken</p>
+<p>Adapted to dolfin-X by: Jørgen S. Dokken</p>
 <p>In this section, you will learn how to:</p>
 <ul class="simple">
 <li><p>Solve the Navier-Stokes problem using a splitting scheme</p></li>
@@ -444,7 +449,7 @@ Let <span class="math notranslate nohighlight">\(H\)</span> be the distance betw
 <div class="math notranslate nohighlight" id="equation-ns-scaled">
 <span class="eqno">(39)<a class="headerlink" href="#equation-ns-scaled" title="Permalink to this equation">¶</a></span>\[\begin{split}\frac{\partial u}{\partial t}+ \mathrm{Re} u \cdot \nabla u &amp;= -\nabla p + \nabla^2 u,\\
 \nabla \cdot u &amp;=0.\end{split}\]</div>
-<p>A detailed derivation for scaling of the Navier-Stokes equation for a large variety of physical situations can be found in <a class="reference external" href="https://www.doi.org/10.1007/978-3-319-32726-6_4">Chapter 4.2</a> of <a class="reference external" href="https://www.doi.org/10.1007/978-3-319-32726-6">Scaling of Differential Equations</a> (open-access) by Hans Petter Langtangen and Geir K. Pedersen.</p>
+<p>A detailed derivation for scaling of the Navier-Stokes equation for a large variety of physical situations can be found in <span id="id1">[<a class="reference internal" href="#id12"><span>LP16</span></a>]</span> (Chapter 4.2) by Hans Petter Langtangen and Geir K. Pedersen.</p>
 <p>Here, <span class="math notranslate nohighlight">\(\mathrm{Re}=\rho UH/\mu\)</span> is the Reynolds number. Because of the time and pressure scales, which are different from convection dominated fluid flow, the Reynolds number is associated with the convective term and not the viscity term.</p>
 <p>The exact solution is derived by assuming <span class="math notranslate nohighlight">\(u=(u_x(x,y,z),0,0)\)</span> with the <span class="math notranslate nohighlight">\(x\)</span>-axis pointing along the channel. Since <span class="math notranslate nohighlight">\(\nabla \cdot u = 0\)</span>, <span class="math notranslate nohighlight">\(u\)</span> cannot be dependent on <span class="math notranslate nohighlight">\(x\)</span>.</p>
 <p>The physics of channel flow is also two-dimensional so we can omit the <span class="math notranslate nohighlight">\(z\)</span>-coordinate (more precisely: <span class="math notranslate nohighlight">\(\partial/\partial z = 0\)</span>). Inserting <span class="math notranslate nohighlight">\(u=(u_x, 0, 0)\)</span> in the (scaled) governing equations gives <span class="math notranslate nohighlight">\(u_x''(y)=\frac{\partial p}{\partial x)}\)</span>.
@@ -737,7 +742,7 @@ As the variational problem contains a mix of known and unknown quantities, we wi
     <span class="n">error_max</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">u_</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span> <span class="o">-</span> <span class="n">u_ex</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">),</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">MAX</span><span class="p">)</span>
     <span class="c1"># Print error only every 20th step and at the last step</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">20</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="n">num_steps</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Time </span><span class="si">{0:.2f}</span><span class="s2">, L2-error </span><span class="si">{1:.2e}</span><span class="s2">, Max error </span><span class="si">{2:.2e}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">error_L2</span><span class="p">,</span> <span class="n">error_max</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time </span><span class="si">{</span><span class="n">t</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, L2-error </span><span class="si">{</span><span class="n">error_L2</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">, Max error </span><span class="si">{</span><span class="n">error_max</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="c1"># Close xmdf file</span>
 <span class="n">xdmf</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
@@ -877,7 +882,15 @@ To be able to visualize this, we use the convenience function <code class="docut
 <img alt="../_images/ns_code1_30_1.png" src="../_images/ns_code1_30_1.png" />
 </div>
 </div>
-<p><img alt="Velocity field" src="../_images/glyphs.png" /></p>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<p id="id2"><dl class="citation">
+<dt class="label" id="id12"><span class="brackets"><a class="fn-backref" href="#id1">LP16</a></span></dt>
+<dd><p>Hans Petter Langtangen and Geir K. Pedersen. <em>Advanced partial differential equation models</em>, pages 99–134. Springer International Publishing, Cham, 2016. <a class="reference external" href="https://doi.org/10.1007/978-3-319-32726-6_4">doi:10.1007/978-3-319-32726-6_4</a>.</p>
+</dd>
+</dl>
+</p>
 </div>
 </div>
 
