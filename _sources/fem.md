@@ -30,6 +30,8 @@ If you would like to work with dolfin-X outside of the binder-notebooks, you nee
 The recommended way of installing dolfin-X for new usesers is by using Docker. 
 Docker is a software that uses *containers* to supply software across different kinds of operating systems (Linux, Mac, Windows). The first step is to install docker, following the instructions at their [web-page](https://docs.docker.com/get-started/).
 
+All notebooks can be converted to python files using [nbconvert](https://nbconvert.readthedocs.io/en/latest/).
+
 We supply a pre-built docker image at [https://hub.docker.com/r/dolfinx/dolfinx](https://hub.docker.com/r/dolfinx/dolfinx).
 The [Dockerfile](https://github.com/FEniCS/dolfinx/blob/master/Dockerfile)
 provides a definitive build recipe. As the dolfinx docker images are hosted at Docker-hub, one can directly access the image
@@ -59,10 +61,11 @@ In the last decade, a wide range of lecture notes on finite elements methods has
 - [Numerical methods for partial differential equations](http://hplgit.github.io/num-methods-for-PDEs/doc/web/index.html), by Hans Petter Langtangen
 - [Finite Elements - Analysis and implementation](https://finite-element.github.io/), by David A. Ham and Colin J. Cotter
 - [Finite Element Analysis for Coupled Problems](https://david-kamensky.eng.ucsd.edu/teaching/mae-207-fea-for-coupled-problems), by David Kamensky. 
+- [An Encyclopedia of Finite Element Definitions](https://defelement.com/), by Matthew W. Scroggs.
 
-There has been written many good text-books on the finite element method, and we refer to the original FEniCS tutorial, for references to these, (see Chapter 1.6.2 of [The FEniCS tutorial](https://www.springer.com/gp/book/9783319524610)).
+There has been written many good text-books on the finite element method, and we refer to the original FEniCS tutorial, for references to these, see Chapter 1.6.2 of The FEniCS tutorial  {cite}`FenicsTutorial`.
 
 ## References
 ```{bibliography}
-:filter: docname in docnames
+   :filter: cited and ({"fem"} >= docnames)
 ```

@@ -445,63 +445,66 @@ is applied to the  remaining sides \)</span>y=0<span class="math notranslate noh
 <div class="section" id="the-pde-problem">
 <h2>The PDE problem<a class="headerlink" href="#the-pde-problem" title="Permalink to this headline">¶</a></h2>
 <p>Let <span class="math notranslate nohighlight">\(\Lambda_D\)</span> and <span class="math notranslate nohighlight">\(\Lambda_N\)</span> denote parts of the boundary <span class="math notranslate nohighlight">\(\partial \Omega\)</span> where the Dirichlet and Neumann conditions apply, respectively.
-The complete boundary-value problem can be written as
-$<span class="math notranslate nohighlight">\(
+The complete boundary-value problem can be written as</p>
+<div class="math notranslate nohighlight">
+\[
 -\nabla^2 u =f \qquad \text{in } \Omega,
-\)</span><span class="math notranslate nohighlight">\(
+\]</div>
+<div class="math notranslate nohighlight">
+\[
 u=u_D \qquad\text{on } \Lambda_D,
-\)</span><span class="math notranslate nohighlight">\(
+\]</div>
+<div class="math notranslate nohighlight">
+\[
 -\frac{\partial u}{\partial n}=g \qquad \text{on }\Lambda_N
-\)</span><span class="math notranslate nohighlight">\(
-Again, we choose \)</span>u=1+x^2+2y^2<span class="math notranslate nohighlight">\( as the exact solution and adjust \)</span>f, g,<span class="math notranslate nohighlight">\( and \)</span>u_D<span class="math notranslate nohighlight">\( accordingly
-\)</span><span class="math notranslate nohighlight">\(
+\]</div>
+<p>Again, we choose <span class="math notranslate nohighlight">\(u=1+x^2+2y^2\)</span> as the exact solution and adjust <span class="math notranslate nohighlight">\(f, g,\)</span> and <span class="math notranslate nohighlight">\(u_D\)</span> accordingly</p>
+<div class="math notranslate nohighlight">
+\[
 f(x,y)=-6,
-\)</span><span class="math notranslate nohighlight">\(
-\)</span><span class="math notranslate nohighlight">\(
+\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}
 g(x,y)=\begin{cases}
 0, &amp; y=0,\\
 -4, &amp; y=1,
 \end{cases}
-\)</span><span class="math notranslate nohighlight">\(
-\)</span><span class="math notranslate nohighlight">\(
+\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[
 u_D(x,y)=1+x^2+2y^2.
-\)</span><span class="math notranslate nohighlight">\(
-For the ease of programming, we define \)</span>g<span class="math notranslate nohighlight">\( as a function over the whole domain \)</span>\Omega<span class="math notranslate nohighlight">\( such that \)</span>g<span class="math notranslate nohighlight">\( takes on the correct values at \)</span>y=0<span class="math notranslate nohighlight">\( and \)</span>y=1<span class="math notranslate nohighlight">\(. One possible extension is
-\)</span><span class="math notranslate nohighlight">\(
+\]</div>
+<p>For the ease of programming, we define <span class="math notranslate nohighlight">\(g\)</span> as a function over the whole domain <span class="math notranslate nohighlight">\(\Omega\)</span> such that <span class="math notranslate nohighlight">\(g\)</span> takes on the correct values at <span class="math notranslate nohighlight">\(y=0\)</span> and <span class="math notranslate nohighlight">\(y=1\)</span>. One possible extension is
+$<span class="math notranslate nohighlight">\(
  g(x,y)=-4y.
 \)</span>$</p>
 </div>
 <div class="section" id="the-variational-formulation">
 <h2>The variational formulation<a class="headerlink" href="#the-variational-formulation" title="Permalink to this headline">¶</a></h2>
-<p>The first task is to derive the variational formulatin. This time we cannot omit the boundary term arising from integration by parts, because <span class="math notranslate nohighlight">\(v\)</span> is only zero on <span class="math notranslate nohighlight">\(\Lambda_D\)</span>. We have
-$<span class="math notranslate nohighlight">\(
-    -\int_\Omega (\nabla^2u)v~\mathrm{d} x =
-    \int_\Omega \nabla u \cdot \nabla v ~\mathrm{d} x
-     - \int_{\partial\Omega}\frac{\partial u}{\partial n}v~\mathrm{d}s,
-\)</span><span class="math notranslate nohighlight">\(
-and since \)</span>v=0<span class="math notranslate nohighlight">\( on \)</span>\Lambda_D<span class="math notranslate nohighlight">\(,
-\)</span>$</p>
-<ul class="simple">
-<li><p>\int_{\partial\Omega}\frac{\partial u}{\partial n}v~\mathrm{d}s=</p>
-<ul>
-<li><p>\int_{\Lambda_N}\frac{\partial u}{\partial n}v~\mathrm{d}s
-=\int_{\Lambda_N} gv~\mathrm{d}s,
-$<span class="math notranslate nohighlight">\(
-by applying the boundary condition on \)</span>\Lambda_N<span class="math notranslate nohighlight">\(.
-The resulting weak from reads
-\)</span><span class="math notranslate nohighlight">\(
-\int_\Omega \nabla u \cdot \nabla v~\mathrm{d} x = \int_\Omega fv~\mathrm{d} x - \int_{\Lambda_N}gv~\mathrm{d}s.
-\)</span><span class="math notranslate nohighlight">\(
-Expressing this equation in the standard notation \)</span>a(u,v)=L(v)<span class="math notranslate nohighlight">\( is straight-forward with 
-\)</span><span class="math notranslate nohighlight">\(
-a(u,v) = \int_{\Omega} \nabla u \cdot \nabla v ~\mathrm{d} x,\\
-\)</span><span class="math notranslate nohighlight">\(
-\)</span><span class="math notranslate nohighlight">\(
-L(v) = \int_{\Omega} fv \mathrm{d} x - \int_{\Lambda_N} gv~\mathrm{d} s.
-\)</span>$</p></li>
-</ul>
-</li>
-</ul>
+<p>The first task is to derive the variational formulatin. This time we cannot omit the boundary term arising from integration by parts, because <span class="math notranslate nohighlight">\(v\)</span> is only zero on <span class="math notranslate nohighlight">\(\Lambda_D\)</span>. We have</p>
+<div class="math notranslate nohighlight">
+\[
+-\int_\Omega (\nabla^2u)v~\mathrm{d} x = \int_\Omega \nabla u \cdot \nabla v ~\mathrm{d} x - \int_{\partial\Omega}\frac{\partial u}{\partial n}v~\mathrm{d}s,
+\]</div>
+<p>and since <span class="math notranslate nohighlight">\(v=0\)</span> on <span class="math notranslate nohighlight">\(\Lambda_D\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+- \int_{\partial\Omega}\frac{\partial u}{\partial n}v~\mathrm{d}s= - \int_{\Lambda_N}\frac{\partial u}{\partial n}v~\mathrm{d}s =\int_{\Lambda_N} gv~\mathrm{d}s,
+\]</div>
+<p>by applying the boundary condition on <span class="math notranslate nohighlight">\(\Lambda_N\)</span>.
+The resulting weak from reads</p>
+<div class="math notranslate nohighlight">
+\[
+    \int_\Omega \nabla u \cdot \nabla v~\mathrm{d} x = \int_\Omega fv~\mathrm{d} x - \int_{\Lambda_N}gv~\mathrm{d}s.\]</div>
+<p>Expressing this equation in the standard notation <span class="math notranslate nohighlight">\(a(u,v)=L(v)\)</span> is straight-forward with</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+    a(u,v) = \int_{\Omega} \nabla u \cdot \nabla v ~\mathrm{d} x,\\
+\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[
+L(v) = \int_{\Omega} fv ~\mathrm{d} x - \int_{\Lambda_N} gv~\mathrm{d} s.
+\]</div>
 </div>
 <div class="section" id="implementation">
 <h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h2>

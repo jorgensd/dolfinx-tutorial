@@ -422,10 +422,21 @@
 <h1>Setting multiple Dirichlet condition<a class="headerlink" href="#setting-multiple-dirichlet-condition" title="Permalink to this headline">¶</a></h1>
 <p>In the previous section, we used a single function to <span class="math notranslate nohighlight">\(u_d\)</span> to setting Dirichlet conditions on two parts of the boundary. However, it is often more practical to use multiple functins, one for each subdomain of the boundary. We consider a similar example to <a class="reference internal" href="neumann_dirichlet_code.html"><span class="doc std std-doc">the previous example</span></a> and redefine it consist of two Dirichlet boundary conditions</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}-\nabla^2 u &amp;=f &amp;&amp; \text{in } \Omega,
-u&amp;=u_L &amp;&amp; \text{on } \Lambda_D^L\\
-u&amp;=u_R &amp;&amp; \text{on } \Lambda_D^R\\
--\frac{\partial u}{\partial n} &amp;= g &amp;&amp; \text{on } \Lambda_N.\end{split}\]</div>
+\[
+-\nabla^2 u =f \quad \text{in } \Omega,
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+u=u_L \quad \text{on } \Lambda_D^L
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+u=u_R \quad \text{on } \Lambda_D^R
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+-\frac{\partial u}{\partial n} = g \quad \text{on } \Lambda_N.
+\]</div>
 <p>Here, <span class="math notranslate nohighlight">\(\Lambda_D^L\)</span> is the left boundary <span class="math notranslate nohighlight">\(x=0\)</span>,  while <span class="math notranslate nohighlight">\(\Lambda_D^R\)</span> is the right boundary <span class="math notranslate nohighlight">\(x=1\)</span>.
 We note that <span class="math notranslate nohighlight">\(u_L(y)=1+2y^2\)</span>, <span class="math notranslate nohighlight">\(u_R(y)=2+2y^2\)</span> and <span class="math notranslate nohighlight">\(g(y)=-4y\)</span> using the same analytical example as in the previous section.</p>
 <p>We start by defining the mesh, function space and variational formulation as in the previous exercise</p>

@@ -438,14 +438,26 @@
 <p>Author: Jørgen S. Dokken</p>
 <p>In this section, we will learn how to prescribe Dirichlet boundary conditions on a component of your unknown <span class="math notranslate nohighlight">\(u_h\)</span>.
 We will illustrate the problem using a <code class="docutils literal notranslate"><span class="pre">VectorElement</span></code>. However, the method generalizes to any <code class="docutils literal notranslate"><span class="pre">MixedElement</span></code>.</p>
-<p>We will use a slightly modified version of <a class="reference internal" href="../chapter2/linearelasticity_code.html"><span class="doc std std-doc">the linear elasticity demo</span></a>, namely</p>
+<p>We will use a slightly modified version of <a class="reference internal" href="../chapter2/linearelasticity_code.html"><span class="doc std std-doc">the linear elasticity demo</span></a>, namely
+$<span class="math notranslate nohighlight">\(
+-\nabla \cdot \sigma (u) = f\quad \text{in } \Omega,
+\)</span>$</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}-\nabla \cdot \sigma (u) &amp;= f &amp;&amp; \text{in } \Omega,\\
-\sigma(u)&amp;= \lambda \mathrm{tr}(\epsilon(u))I + 2 \mu \epsilon(u),&amp;&amp;\\
-\epsilon(u) &amp;= \frac{1}{2}\left(\nabla u + (\nabla u )^T\right),&amp;&amp;\\
-\sigma \cdot n &amp;= 0 &amp;&amp; \text{on } \partial \Omega_N,\\
-u&amp;= 0&amp;&amp; \text{at } \partial\Omega_{D},\\
-u_x&amp;=0 &amp;&amp; \text{at } \partial\Omega_{Dx}.\end{split}\]</div>
+\[
+\sigma \cdot n = 0 \quad \text{on } \partial \Omega_N,
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+u= 0\quad \text{at } \partial\Omega_{D},
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+u_x=0 \quad \text{at } \partial\Omega_{Dx},
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\sigma(u)= \lambda \mathrm{tr}(\epsilon(u))I + 2 \mu \epsilon(u), \qquad \epsilon(u) = \frac{1}{2}\left(\nabla u + (\nabla u )^T\right).
+\]</div>
 <p>We will consider a two dimensional box spanning <span class="math notranslate nohighlight">\([0,L]\times[0,H]\)</span>, where
 <span class="math notranslate nohighlight">\(\partial\Omega_N\)</span> is the left and right side of the beam, <span class="math notranslate nohighlight">\(\partial\Omega_D\)</span> the bottom of the  beam, while <span class="math notranslate nohighlight">\(\partial\Omega_{Dx}\)</span> is the right side of the beam.
 We will prescribe a displacement <span class="math notranslate nohighlight">\(u_x=0\)</span> on the right side of the beam, while the beam is being deformed under its own weight. The sides of the box is traction free.</p>

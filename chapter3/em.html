@@ -432,50 +432,61 @@
 <p>Through the copper wires a static current of <span class="math notranslate nohighlight">\(J=1A\)</span> is flowing.
 We would like to compute the magnetic field <span class="math notranslate nohighlight">\(B\)</span> in the iron cylinder, the copper wires, and the surrounding vaccum.</p>
 <p>We start by simplifying the problem to a 2D problem. We can do this by assuming that the cylinder extends far along the z-axis and as a consequence the field is virtually independent of the z-coordinate.
-Next, we consder Maxwell’s equation to derive a Poisson equation for the magnetic field (or rather its potential)
-$<span class="math notranslate nohighlight">\(
+Next, we consder Maxwell’s equation to derive a Poisson equation for the magnetic field (or rather its potential)</p>
+<div class="math notranslate nohighlight">
+\[
 \nabla \cdot D = \rho,
-\)</span><span class="math notranslate nohighlight">\(
-\)</span><span class="math notranslate nohighlight">\(
+\]</div>
+<div class="math notranslate nohighlight">
+\[
 \nabla \cdot B = 0,
-\)</span><span class="math notranslate nohighlight">\(
-\)</span><span class="math notranslate nohighlight">\(
+\]</div>
+<div class="math notranslate nohighlight">
+\[
 \nabla \times E = -\frac{\partial B}{\partial t},
-\)</span><span class="math notranslate nohighlight">\(
-\)</span><span class="math notranslate nohighlight">\(
+\]</div>
+<div class="math notranslate nohighlight">
+\[
 \nabla \times H = \frac{\partial D}{\partial t}+ J.
-\)</span><span class="math notranslate nohighlight">\(
-Here, \)</span>D<span class="math notranslate nohighlight">\( is the displacement field, \)</span>B<span class="math notranslate nohighlight">\( is the magnetic field, \)</span>E<span class="math notranslate nohighlight">\( is the electric field, and \)</span>H<span class="math notranslate nohighlight">\( is the magnetizing field.
-In addition to Maxwell's equation, we need a constitutive relation between \)</span>B<span class="math notranslate nohighlight">\( and \)</span>H<span class="math notranslate nohighlight">\(,
-\)</span><span class="math notranslate nohighlight">\(
+\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(D\)</span> is the displacement field, <span class="math notranslate nohighlight">\(B\)</span> is the magnetic field, <span class="math notranslate nohighlight">\(E\)</span> is the electric field, and <span class="math notranslate nohighlight">\(H\)</span> is the magnetizing field.
+In addition to Maxwell’s equation, we need a constitutive relation between <span class="math notranslate nohighlight">\(B\)</span> and <span class="math notranslate nohighlight">\(H\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
 B =\mu H,
-\)</span><span class="math notranslate nohighlight">\(
-which holds for an isotropic linear magnetic medium. 
-Here, \)</span>\mu<span class="math notranslate nohighlight">\( is the magnetic permability of the material. 
-Now, since \)</span>B<span class="math notranslate nohighlight">\( is solenodial (divergence free) accoording to Maxwell's equations, we known that \)</span>B<span class="math notranslate nohighlight">\( must be the curl of some vector field \)</span>A<span class="math notranslate nohighlight">\(. This field is called the magnetic vector potential. Since the problem is static and thus \)</span>\frac{\partial D}{\partial t}=0<span class="math notranslate nohighlight">\(, it follows that
-\)</span><span class="math notranslate nohighlight">\(
+\]</div>
+<p>which holds for an isotropic linear magnetic medium.
+Here, <span class="math notranslate nohighlight">\(\mu\)</span> is the magnetic permability of the material.
+Now, since <span class="math notranslate nohighlight">\(B\)</span> is solenodial (divergence free) accoording to Maxwell’s equations, we known that <span class="math notranslate nohighlight">\(B\)</span> must be the curl of some vector field <span class="math notranslate nohighlight">\(A\)</span>. This field is called the magnetic vector potential. Since the problem is static and thus <span class="math notranslate nohighlight">\(\frac{\partial D}{\partial t}=0\)</span>, it follows that</p>
+<div class="math notranslate nohighlight">
+\[
 J = \nabla \times H = \nabla \times(\mu^{-1} B)=\nabla \times (\mu^{-1}\nabla \times A ) = -\nabla \cdot (\mu^{-1}\nabla A).
-\)</span><span class="math notranslate nohighlight">\(
-In the last step, we have expanded the second derivatives and used the gauge freedom of \)</span>A<span class="math notranslate nohighlight">\( to simplify the equations to a simple vector-valued Poisson equation for the magnetic vector potential; if \)</span>B=\nabla \times A<span class="math notranslate nohighlight">\(, then \)</span>B=\nabla \times (A+\nabla \phi)<span class="math notranslate nohighlight">\( for any scalar field \)</span>\phi<span class="math notranslate nohighlight">\( (the gauge function).
-For the current problem, we thus need to solve the following 2D Poisson problem for the \)</span>z<span class="math notranslate nohighlight">\(-component \)</span>A_z<span class="math notranslate nohighlight">\( of the magnetic vector potential
-\)</span><span class="math notranslate nohighlight">\(
+\]</div>
+<p>In the last step, we have expanded the second derivatives and used the gauge freedom of <span class="math notranslate nohighlight">\(A\)</span> to simplify the equations to a simple vector-valued Poisson equation for the magnetic vector potential; if <span class="math notranslate nohighlight">\(B=\nabla \times A\)</span>, then <span class="math notranslate nohighlight">\(B=\nabla \times (A+\nabla \phi)\)</span> for any scalar field <span class="math notranslate nohighlight">\(\phi\)</span> (the gauge function).
+For the current problem, we thus need to solve the following 2D Poisson problem for the <span class="math notranslate nohighlight">\(z\)</span>-component <span class="math notranslate nohighlight">\(A_z\)</span> of the magnetic vector potential</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
     - \nabla \cdot (\mu^{-1} \nabla A_z) = J_z \qquad \text{in } \mathbb{R}^2,\\
-\)</span><span class="math notranslate nohighlight">\(
-\)</span><span class="math notranslate nohighlight">\(
+\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[
 \lim_{\vert(x,y)\vert\to \infty}A_z = 0.
-\)</span><span class="math notranslate nohighlight">\(
-Since we cannot solve the problem on an infinite domain, we will truncate the domain using a large disk, and set \)</span>A_z=0<span class="math notranslate nohighlight">\( on the boundary. The current \)</span>J_z<span class="math notranslate nohighlight">\( is set to \)</span>+1<span class="math notranslate nohighlight">\(A in the interior set of the circles (copper-wire cross sections) and to \)</span>-1<span class="math notranslate nohighlight">\( A in the exteriror set of circles in the cross section figure.
-Once the magnetic field vector potential has been computed, we can compute the magnetic field \)</span>B=B(x,y)<span class="math notranslate nohighlight">\( by
-\)</span><span class="math notranslate nohighlight">\(
+\]</div>
+<p>Since we cannot solve the problem on an infinite domain, we will truncate the domain using a large disk, and set <span class="math notranslate nohighlight">\(A_z=0\)</span> on the boundary. The current <span class="math notranslate nohighlight">\(J_z\)</span> is set to <span class="math notranslate nohighlight">\(+1\)</span>A in the interior set of the circles (copper-wire cross sections) and to <span class="math notranslate nohighlight">\(-1\)</span> A in the exteriror set of circles in the cross section figure.
+Once the magnetic field vector potential has been computed, we can compute the magnetic field <span class="math notranslate nohighlight">\(B=B(x,y)\)</span> by</p>
+<div class="math notranslate nohighlight">
+\[
     B(x,y)=\left(\frac{\partial A_z}{\partial y}, - \frac{\partial A_z}{\partial x} \right).
-\)</span><span class="math notranslate nohighlight">\(
-The weak formulation is easily obtained by multiplication of a test function \)</span>v<span class="math notranslate nohighlight">\(, followed by integration by parts, where all boundary integrals vanishes due to the Dirichlet condition, we obtain \)</span>a(A_z,v)=L(v)<span class="math notranslate nohighlight">\( with
-\)</span><span class="math notranslate nohighlight">\(
+\]</div>
+<p>The weak formulation is easily obtained by multiplication of a test function <span class="math notranslate nohighlight">\(v\)</span>, followed by integration by parts, where all boundary integrals vanishes due to the Dirichlet condition, we obtain <span class="math notranslate nohighlight">\(a(A_z,v)=L(v)\)</span> with</p>
+<div class="math notranslate nohighlight">
+\[
 a(A_z, v)=\int_\Omega \mu^{-1}\nabla A_z \cdot \nabla v ~\mathrm{d}x,
-\)</span><span class="math notranslate nohighlight">\(
-\)</span><span class="math notranslate nohighlight">\(
+\]</div>
+<div class="math notranslate nohighlight">
+\[
 L(v)=\int_\Omega J_z v~\mathrm{d} x.
-\)</span>$</p>
+\]</div>
 <div class="section" id="meshing-a-complex-structure-with-subdomains">
 <h2>Meshing a complex structure with subdomains<a class="headerlink" href="#meshing-a-complex-structure-with-subdomains" title="Permalink to this headline">¶</a></h2>
 <p>Author: Jørgen S. Dokken</p>

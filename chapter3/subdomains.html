@@ -417,6 +417,11 @@
    Subdomains defined from external mesh data
   </a>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#convert-msh-files-to-xdmf-using-meshio">
+   Convert msh-files to XDMF using meshio
+  </a>
+ </li>
 </ul>
 
         </nav>
@@ -460,13 +465,20 @@ Such a function can be created over any mesh in the following way</p>
 </div>
 </div>
 <p>Note that both fucntion uses a <span class="math notranslate nohighlight">\(\leq\)</span> or <span class="math notranslate nohighlight">\(\geq\)</span>, as FEniCS-X will evaluate each cell at all of the vertices, and thus for has to return <code class="docutils literal notranslate"><span class="pre">True</span></code> for all vertices align with the interface to be marked properly.</p>
-<p>We will solve a variable-coefficient extension of the Poisson equation
-$<span class="math notranslate nohighlight">\(
--\nabla \cdot [\kappa (x,y)\nabla u(x, y)]= 1 \qquad \text{in } \Omega,\\
-u=u_D=1 \qquad \text{on } \partial\Omega_D=[0,y], y\in[0,1]\\
--\frac{\partial u}{\partial}{n}=0 \qquad \text{on } \partial\Omega\setminus \partial\Omega_D
-\)</span><span class="math notranslate nohighlight">\(
-Our next step is to define \)</span>\kappa$</p>
+<p>We will solve a variable-coefficient extension of the Poisson equation</p>
+<div class="math notranslate nohighlight">
+\[
+-\nabla \cdot [\kappa (x,y)\nabla u(x, y)]= 1 \qquad \text{in } \Omega,
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+u=u_D=1 \qquad \text{on } \partial\Omega_D=[0,y], y\in[0,1]
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+-\frac{\partial u}{\partial n}=0 \qquad \text{on } \partial\Omega\setminus \partial\Omega_D
+\]</div>
+<p>Our next step is to define <span class="math notranslate nohighlight">\(\kappa\)</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kappa</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
@@ -477,8 +489,8 @@ Our next step is to define \)</span>\kappa$</p>
 </div>
 </div>
 <p>In the previous code block, we found which cells (triangular elements) which satisfies the condition for being in <span class="math notranslate nohighlight">\(\Omega_0, \Omega_1\)</span>. As the <span class="math notranslate nohighlight">\(DG-0\)</span> function contain only one degree of freedom per mesh, there is a one to one mapping between the cell indicies and the degrees of freedom. We let <span class="math notranslate nohighlight">\(\kappa=\begin{cases}
-1 \text{ if } x\in\Omega_0\\
-0.1 \text{ if } x\in\Omega_1\\
+1 &amp;\text{if } x\in\Omega_0\\
+0.1&amp; \text{if } x\in\Omega_1\\
 \end{cases}\)</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -634,6 +646,9 @@ Our next step is to define \)</span>\kappa$</p>
 </div>
 </div>
 </div>
+</div>
+<div class="section" id="convert-msh-files-to-xdmf-using-meshio">
+<h2>Convert msh-files to XDMF using meshio<a class="headerlink" href="#convert-msh-files-to-xdmf-using-meshio" title="Permalink to this headline">¶</a></h2>
 <p>We will use <code class="docutils literal notranslate"><span class="pre">meshio</span></code> to read in the <code class="docutils literal notranslate"><span class="pre">msh</span></code> file, and convert it to a more suitable IO format. Meshio requires <code class="docutils literal notranslate"><span class="pre">h54py</span></code>, and can be installed on linux with the following commands:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">HDF5_MPI</span><span class="o">=</span><span class="s2">&quot;ON&quot;</span>
 <span class="n">export</span> <span class="n">CC</span><span class="o">=</span><span class="n">mpicc</span>
@@ -641,30 +656,33 @@ Our next step is to define \)</span>\kappa$</p>
 <span class="n">pip3</span> <span class="n">install</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">cache</span><span class="o">-</span><span class="nb">dir</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">binary</span><span class="o">=</span><span class="n">h5py</span> <span class="n">h5py</span> <span class="n">meshio</span>
 </pre></div>
 </div>
+<p>We start by creating a convenience function for extracting data for a single cell type, and creating a new <code class="docutils literal notranslate"><span class="pre">meshio.Mesh</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">meshio</span>
-<span class="k">if</span> <span class="n">proc</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">create_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">cell_type</span><span class="p">,</span> <span class="n">prune_z</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">cells</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">cell</span><span class="o">.</span><span class="n">data</span> <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">mesh</span><span class="o">.</span><span class="n">cells</span> <span class="k">if</span> <span class="n">cell</span><span class="o">.</span><span class="n">type</span><span class="o">==</span><span class="n">cell_type</span><span class="p">])</span>
+    <span class="n">cell_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">mesh</span><span class="o">.</span><span class="n">cell_data_dict</span><span class="p">[</span><span class="s2">&quot;gmsh:physical&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+                         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">mesh</span><span class="o">.</span><span class="n">cell_data_dict</span><span class="p">[</span><span class="s2">&quot;gmsh:physical&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="n">cell_type</span><span class="p">])</span>
+    <span class="c1"># Remove z-coordinates from mesh if we have a 2D cell and all points have the same third coordinate</span>
+    <span class="n">points</span><span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">points</span>
+    <span class="k">if</span> <span class="n">prune_z</span><span class="p">:</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">points</span><span class="p">[:,:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">meshio</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">points</span><span class="p">,</span> <span class="n">cells</span><span class="o">=</span><span class="p">{</span><span class="n">cell_type</span><span class="p">:</span> <span class="n">cells</span><span class="p">},</span> <span class="n">cell_data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name_to_read&quot;</span><span class="p">:[</span><span class="n">cell_data</span><span class="p">]})</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>This function returns a meshio mesh, including physical markers for the given type. The <code class="docutils literal notranslate"><span class="pre">prune_z</span></code> argument is for cases where we want to use two dimensional meshes. The last coordinate in the mesh (as it is generated in a 3D space) has to be removed for dolfin-X to consider this as a two dimensional geometry.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">proc</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
     <span class="c1"># Read in mesh</span>
     <span class="n">msh</span> <span class="o">=</span> <span class="n">meshio</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;mesh.msh&quot;</span><span class="p">)</span>
-    <span class="c1"># Gather all cells from each type</span>
-    <span class="n">triangle_cells</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">line_cells</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">msh</span><span class="o">.</span><span class="n">cells</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">cell</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;line&quot;</span><span class="p">:</span>
-            <span class="n">line_cells</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">cell</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;triangle&quot;</span><span class="p">:</span>
-            <span class="n">triangle_cells</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-    <span class="c1"># Gather mesh data</span>
-    <span class="n">entity_data</span> <span class="o">=</span> <span class="n">msh</span><span class="o">.</span><span class="n">cell_data_dict</span><span class="p">[</span><span class="s2">&quot;gmsh:physical&quot;</span><span class="p">]</span>
-    <span class="n">triangle_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">entity_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">entity_data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s2">&quot;triangle&quot;</span><span class="p">])</span>
-    <span class="n">line_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">entity_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">entity_data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s2">&quot;line&quot;</span><span class="p">])</span>
-    <span class="n">triangle_cells</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">triangle_cells</span><span class="p">)</span>
-    <span class="n">line_cells</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">line_cells</span><span class="p">)</span>
-    <span class="c1"># Create and save one file for the mesh, and one file for the facets    </span>
-    <span class="n">gdim</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="n">triangle_mesh</span> <span class="o">=</span> <span class="n">meshio</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span><span class="n">msh</span><span class="o">.</span><span class="n">points</span><span class="p">[:,:</span><span class="n">gdim</span><span class="p">],</span> <span class="p">[(</span><span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="n">triangle_cells</span><span class="p">)],</span> <span class="n">cell_data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;triangle_data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">triangle_data</span><span class="p">]})</span>
-    <span class="n">line_mesh</span> <span class="o">=</span> <span class="n">meshio</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span><span class="n">msh</span><span class="o">.</span><span class="n">points</span><span class="p">[:,:</span><span class="n">gdim</span><span class="p">],</span> <span class="p">[(</span><span class="s2">&quot;line&quot;</span><span class="p">,</span> <span class="n">line_cells</span><span class="p">)],</span> <span class="n">cell_data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;line_data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">entity_data</span><span class="p">[</span><span class="s2">&quot;line&quot;</span><span class="p">]]})</span>
+    
+    <span class="c1"># Create and save one file for the mesh, and one file for the facets </span>
+    <span class="n">triangle_mesh</span> <span class="o">=</span> <span class="n">create_mesh</span><span class="p">(</span><span class="n">msh</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="n">prune_z</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">line_mesh</span> <span class="o">=</span> <span class="n">create_mesh</span><span class="p">(</span><span class="n">msh</span><span class="p">,</span> <span class="s2">&quot;line&quot;</span><span class="p">,</span> <span class="n">prune_z</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">meshio</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;mesh.xdmf&quot;</span><span class="p">,</span> <span class="n">triangle_mesh</span><span class="p">)</span>
     <span class="n">meshio</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;mt.xdmf&quot;</span><span class="p">,</span> <span class="n">line_mesh</span><span class="p">)</span>
 </pre></div>
@@ -752,7 +770,7 @@ Our next step is to define \)</span>\kappa$</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/subdomains_28_0.png" src="../_images/subdomains_28_0.png" />
+<img alt="../_images/subdomains_30_0.png" src="../_images/subdomains_30_0.png" />
 </div>
 </div>
 </div>

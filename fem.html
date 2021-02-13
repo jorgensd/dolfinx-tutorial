@@ -473,6 +473,7 @@ Occasionally we will consider a more physically relevant example to remind the r
 <p>If you would like to work with dolfin-X outside of the binder-notebooks, you need to install the FEniCS software.
 The recommended way of installing dolfin-X for new usesers is by using Docker.
 Docker is a software that uses <em>containers</em> to supply software across different kinds of operating systems (Linux, Mac, Windows). The first step is to install docker, following the instructions at their <a class="reference external" href="https://docs.docker.com/get-started/">web-page</a>.</p>
+<p>All notebooks can be converted to python files using <a class="reference external" href="https://nbconvert.readthedocs.io/en/latest/">nbconvert</a>.</p>
 <p>We supply a pre-built docker image at <a class="reference external" href="https://hub.docker.com/r/dolfinx/dolfinx">https://hub.docker.com/r/dolfinx/dolfinx</a>.
 The <a class="reference external" href="https://github.com/FEniCS/dolfinx/blob/master/Dockerfile">Dockerfile</a>
 provides a definitive build recipe. As the dolfinx docker images are hosted at Docker-hub, one can directly access the image</p>
@@ -493,7 +494,7 @@ provides a definitive build recipe. As the dolfinx docker images are hosted at D
 </div>
 <div class="section" id="introduction-to-python-for-beginners">
 <h2>Introduction to Python for beginners<a class="headerlink" href="#introduction-to-python-for-beginners" title="Permalink to this headline">¶</a></h2>
-<p>If you are a beginner in Python, we suggest reading <span id="id1">[<a class="reference internal" href="#id10"><span>Lan16</span></a>]</span> by Hans Petter Langtangen, which will give you a gentle introduction to the Python programming language. Note that dolfin-X, being a state of the art finite element solver, only supports Python 3, as Python 2 reached its end of life January 1st, 2020. To automatically transfer Python 2 scripts to Python 3, it is suggested to use the <a class="reference external" href="https://docs.python.org/3/library/2to3.html">2to3</a>-package, which provides automated translation of the code.</p>
+<p>If you are a beginner in Python, we suggest reading <span id="id1">[<a class="reference internal" href="#id11"><span>Lan16</span></a>]</span> by Hans Petter Langtangen, which will give you a gentle introduction to the Python programming language. Note that dolfin-X, being a state of the art finite element solver, only supports Python 3, as Python 2 reached its end of life January 1st, 2020. To automatically transfer Python 2 scripts to Python 3, it is suggested to use the <a class="reference external" href="https://docs.python.org/3/library/2to3.html">2to3</a>-package, which provides automated translation of the code.</p>
 </div>
 <div class="section" id="introduction-to-the-finite-element-method">
 <h2>Introduction to the finite element method<a class="headerlink" href="#introduction-to-the-finite-element-method" title="Permalink to this headline">¶</a></h2>
@@ -502,13 +503,14 @@ provides a definitive build recipe. As the dolfinx docker images are hosted at D
 <li><p><a class="reference external" href="http://hplgit.github.io/num-methods-for-PDEs/doc/web/index.html">Numerical methods for partial differential equations</a>, by Hans Petter Langtangen</p></li>
 <li><p><a class="reference external" href="https://finite-element.github.io/">Finite Elements - Analysis and implementation</a>, by David A. Ham and Colin J. Cotter</p></li>
 <li><p><a class="reference external" href="https://david-kamensky.eng.ucsd.edu/teaching/mae-207-fea-for-coupled-problems">Finite Element Analysis for Coupled Problems</a>, by David Kamensky.</p></li>
+<li><p><a class="reference external" href="https://defelement.com/">An Encyclopedia of Finite Element Definitions</a>, by Matthew W. Scroggs.</p></li>
 </ul>
-<p>There has been written many good text-books on the finite element method, and we refer to the original FEniCS tutorial, for references to these, (see Chapter 1.6.2 of <a class="reference external" href="https://www.springer.com/gp/book/9783319524610">The FEniCS tutorial</a>).</p>
+<p>There has been written many good text-books on the finite element method, and we refer to the original FEniCS tutorial, for references to these, see Chapter 1.6.2 of The FEniCS tutorial  <span id="id2">[<a class="reference internal" href="index.html#id11"><span>LL16</span></a>]</span>.</p>
 </div>
 <div class="section" id="references">
 <h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
-<p id="id2"><dl class="citation">
-<dt class="label" id="id10"><span class="brackets"><a class="fn-backref" href="#id1">Lan16</a></span></dt>
+<p id="id3"><dl class="citation">
+<dt class="label" id="id11"><span class="brackets"><a class="fn-backref" href="#id1">Lan16</a></span></dt>
 <dd><p>Hans Petter Langtangen. <em>A Primer on Scientific Programming with Python</em>. Springer Berlin Heidelberg, Berlin, Heidelberg, 2016. ISBN 978-3-662-49887-3. <a class="reference external" href="https://doi.org/10.1007/978-3-662-49887-3">doi:10.1007/978-3-662-49887-3</a>.</p>
 </dd>
 </dl>

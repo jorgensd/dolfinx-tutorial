@@ -20,7 +20,6 @@ Then we have
      p(x,y)&=\frac{A}{2\pi\sigma}e^{-\frac{1}{2}\left(\left(\frac{x}{\sigma}\right)^2
      +\left(\frac{y-R_0}{\sigma}\right)^2\right)}
 \end{align}
-
 ## Scaling the  equation
 
 There are many physical parameters in this problem, and we can benefit from grouping them by means of scaling. Let us introduce dimensionless coordinates 

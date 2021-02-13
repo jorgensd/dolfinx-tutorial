@@ -42,7 +42,7 @@ The IPCS scheme involves three steps. First, we compute a *tentative velocity $u
 This notation, suitable for problems wit many terms in the variational formulations, requires some explaination. 
 First, we use the short-hand notation
 ```{math}
-\langle v, w \rangle vw~\mathrm{d}x, \qquad
+\langle v, w \rangle = \int_{\Omega} vw~\mathrm{d}x, \qquad
 \langle v, w \rangle_{\partial\Omega}=\int_{\partial\Omega}vw~\mathrm{d}s.
 ```
 This allows us to express the variational problem in a more compact way. Second, we use the notation $u^{n+\frac{1}{2}}$. This notation refers to the value of $u$ at the midpoint of the interval, usually approximated by an arithmetic mean:
