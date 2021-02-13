@@ -117,16 +117,6 @@
    How to use this tutorial
   </a>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="#interactive-tutorials">
-   Interactive tutorials
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="#obtaining-the-software">
-   Obtaining the software
-  </a>
- </li>
 </ul>
 <p class="caption collapsible-parent">
  <span class="caption-text">
@@ -409,25 +399,35 @@
   <a class="reference internal nav-link" href="#how-to-use-this-tutorial">
    How to use this tutorial
   </a>
- </li>
- <li class="toc-h1 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#interactive-tutorials">
-   Interactive tutorials
-  </a>
- </li>
- <li class="toc-h1 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#obtaining-the-software">
-   Obtaining the software
-  </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h2 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#docker">
-     Docker
+    <a class="reference internal nav-link" href="#interactive-tutorials">
+     Interactive tutorials
     </a>
    </li>
    <li class="toc-h2 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#the-finite-element-method">
-     The Finite element method
+    <a class="reference internal nav-link" href="#obtaining-the-software">
+     Obtaining the software
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#installation-from-source">
+     Installation from source
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#introduction-to-python-for-beginners">
+     Introduction to Python for beginners
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#introduction-to-the-finite-element-method">
+     Introduction to the finite element method
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#references">
+     References
     </a>
    </li>
   </ul>
@@ -464,22 +464,19 @@ Additionally, Dolfin-X also contains compute intensive functions such as finite 
 <h1>How to use this tutorial<a class="headerlink" href="#how-to-use-this-tutorial" title="Permalink to this headline">¶</a></h1>
 <p>Most of the mathematical part of the examples will be kept at a simple level, such that we can keep the focus on the functionality and syntax of FEniCS-X. Therefore we will mostly use the Poisson equation and the time-dependent diffusion equation as model problems. We will use adjusted input data, such that the solution of the problem can be exactly reproduced on uniform, structured meshes with the finite element method. This greatly simplifies the verification of the implementations.
 Occasionally we will consider a more physically relevant example to remind the reader that there are no big leaps from solving simple model problems to challenging real-world problems when using FEniCS-X.</p>
-</div>
 <div class="section" id="interactive-tutorials">
-<h1>Interactive tutorials<a class="headerlink" href="#interactive-tutorials" title="Permalink to this headline">¶</a></h1>
+<h2>Interactive tutorials<a class="headerlink" href="#interactive-tutorials" title="Permalink to this headline">¶</a></h2>
 <p>As this book has been published as a Jupyter Book, we provide interactive notebooks that can be run in the browser. To start such a notebook click the <img alt="Binder symbol" src="_images/binder.png" />-symbol in the top right corner of the relevant tutorial.</p>
 </div>
 <div class="section" id="obtaining-the-software">
-<h1>Obtaining the software<a class="headerlink" href="#obtaining-the-software" title="Permalink to this headline">¶</a></h1>
-<p>If you would like to work with dolfin-X outside of the binder-notebooks, you need to install the FEniCS software. The software is quite complex, and building the software and all the dependencies from source can be a daunting task. The list of dependencies can be found at <a class="reference external" href="https://fenicsproject.org/docs/dolfinx/dev/python/installation.html">https://fenicsproject.org/docs/dolfinx/dev/python/installation.html</a>.</p>
-<div class="section" id="docker">
-<h2>Docker<a class="headerlink" href="#docker" title="Permalink to this headline">¶</a></h2>
-<p>Fortunately, we supply a pre-built docker image at <a class="reference external" href="https://hub.docker.com/r/dolfinx/dolfinx">https://hub.docker.com/r/dolfinx/dolfinx</a>.
+<h2>Obtaining the software<a class="headerlink" href="#obtaining-the-software" title="Permalink to this headline">¶</a></h2>
+<p>If you would like to work with dolfin-X outside of the binder-notebooks, you need to install the FEniCS software.
+The recommended way of installing dolfin-X for new usesers is by using Docker.
+Docker is a software that uses <em>containers</em> to supply software across different kinds of operating systems (Linux, Mac, Windows). The first step is to install docker, following the instructions at their <a class="reference external" href="https://docs.docker.com/get-started/">web-page</a>.</p>
+<p>We supply a pre-built docker image at <a class="reference external" href="https://hub.docker.com/r/dolfinx/dolfinx">https://hub.docker.com/r/dolfinx/dolfinx</a>.
 The <a class="reference external" href="https://github.com/FEniCS/dolfinx/blob/master/Dockerfile">Dockerfile</a>
-provides a definitive build recipe.</p>
-<p>Docker is a software that uses <em>containers</em> to supply software across different kinds of operating systems (Linux, Mac, Windows). The first step is to install docker, following the instructions at their <a class="reference external" href="https://docs.docker.com/get-started/">web-page</a>.
-As the dolfinx docker images are hosted at Docker-hub, one can directly access the image</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">run</span> <span class="n">dolfinx</span><span class="o">/</span><span class="n">dolfinx</span>
+provides a definitive build recipe. As the dolfinx docker images are hosted at Docker-hub, one can directly access the image</p>
+<div class="highlight-s notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">run</span> <span class="n">dolfinx</span><span class="o">/</span><span class="n">dolfinx</span>
 </pre></div>
 </div>
 <p>There are several ways of customizing a docker container, such as mounting volumes/sharing folder, setting a working directory, sharing graphical interfaces etc. See <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span> <span class="pre">--help</span></code> for an extensive list.</p>
@@ -489,15 +486,34 @@ As the dolfinx docker images are hosted at Docker-hub, one can directly access t
 </pre></div>
 </div>
 <p>The tutorials can also be exported as a notebook or PDF by clicking the <img alt="Download" src="_images/save.png" />-symbol in the top right corner of the relevant tutorialThe notebook can in turn be used with a Python kernel which has dolfin-X.</p>
-<p>If you are a beginner in Python, we suggest reading <a class="reference external" href="https://link.springer.com/book/10.1007%2F978-3-662-49887-3">A Primer on Scientific Programming in Python</a> by Hans Petter Langtangen, which will give you a gentle introduction to the Python programming language. Note that dolfin-X, being a state of the art finite element solver, only supports Python 3, as Python 2 reached its end of life January 1st, 2020. To automatically transfer Python 2 scripts to Python 3, it is suggested to use the <a class="reference external" href="https://docs.python.org/3/library/2to3.html">2to3</a>-package, which provides automated translation of the code.</p>
 </div>
-<div class="section" id="the-finite-element-method">
-<h2>The Finite element method<a class="headerlink" href="#the-finite-element-method" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="installation-from-source">
+<h2>Installation from source<a class="headerlink" href="#installation-from-source" title="Permalink to this headline">¶</a></h2>
+<p>The software is quite complex, and building the software and all the dependencies from source can be a daunting task. The list of dependencies can be found at <a class="reference external" href="https://fenicsproject.org/docs/dolfinx/dev/python/installation.html">https://fenicsproject.org/docs/dolfinx/dev/python/installation.html</a>.</p>
+</div>
+<div class="section" id="introduction-to-python-for-beginners">
+<h2>Introduction to Python for beginners<a class="headerlink" href="#introduction-to-python-for-beginners" title="Permalink to this headline">¶</a></h2>
+<p>If you are a beginner in Python, we suggest reading <span id="id1">[<a class="reference internal" href="#id10"><span>Lan16</span></a>]</span> by Hans Petter Langtangen, which will give you a gentle introduction to the Python programming language. Note that dolfin-X, being a state of the art finite element solver, only supports Python 3, as Python 2 reached its end of life January 1st, 2020. To automatically transfer Python 2 scripts to Python 3, it is suggested to use the <a class="reference external" href="https://docs.python.org/3/library/2to3.html">2to3</a>-package, which provides automated translation of the code.</p>
+</div>
+<div class="section" id="introduction-to-the-finite-element-method">
+<h2>Introduction to the finite element method<a class="headerlink" href="#introduction-to-the-finite-element-method" title="Permalink to this headline">¶</a></h2>
+<p>In the last decade, a wide range of lecture notes on finite elements methods has been made open access. See for instance:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="http://hplgit.github.io/num-methods-for-PDEs/doc/web/index.html">Numerical methods for partial differential equations</a>, by Hans Petter Langtangen</p></li>
+<li><p><a class="reference external" href="https://finite-element.github.io/">Finite Elements - Analysis and implementation</a>, by David A. Ham and Colin J. Cotter</p></li>
+<li><p><a class="reference external" href="https://david-kamensky.eng.ucsd.edu/teaching/mae-207-fea-for-coupled-problems">Finite Element Analysis for Coupled Problems</a>, by David Kamensky.</p></li>
+</ul>
 <p>There has been written many good text-books on the finite element method, and we refer to the original FEniCS tutorial, for references to these, (see Chapter 1.6.2 of <a class="reference external" href="https://www.springer.com/gp/book/9783319524610">The FEniCS tutorial</a>).</p>
-<!-- {cite}`ufl2014`.
-## References
-```{bibliography} references_fem.bib
-``` --></div>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<p id="id2"><dl class="citation">
+<dt class="label" id="id10"><span class="brackets"><a class="fn-backref" href="#id1">Lan16</a></span></dt>
+<dd><p>Hans Petter Langtangen. <em>A Primer on Scientific Programming with Python</em>. Springer Berlin Heidelberg, Berlin, Heidelberg, 2016. ISBN 978-3-662-49887-3. <a class="reference external" href="https://doi.org/10.1007/978-3-662-49887-3">doi:10.1007/978-3-662-49887-3</a>.</p>
+</dd>
+</dl>
+</p>
+</div>
 </div>
 
     <script type="text/x-thebe-config">

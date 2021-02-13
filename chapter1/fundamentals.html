@@ -117,16 +117,6 @@
    How to use this tutorial
   </a>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../fem.html#interactive-tutorials">
-   Interactive tutorials
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../fem.html#obtaining-the-software">
-   Obtaining the software
-  </a>
- </li>
 </ul>
 <p class="caption collapsible-parent">
  <span class="caption-text">
@@ -454,8 +444,11 @@ This will include:</p>
 <li><p>How to visualize the solution</p></li>
 </ul>
 <p>The Poisson equation is the following boundary-value problem</p>
-<p><span class="math notranslate nohighlight">\( -\nabla^2 u(\mathbf{x}) = f(\mathbf{x}) \quad \mathbf{x} \in \Omega\)</span></p>
-<p><span class="math notranslate nohighlight">\( u(\mathbf{x}) = u_D(\mathbf{x})\quad \mathbf{x} \in \partial\Omega\)</span></p>
+<div class="amsmath math notranslate nohighlight" id="equation-11b3b70f-5631-45c3-af34-3555d5125e53">
+<span class="eqno">(1)<a class="headerlink" href="#equation-11b3b70f-5631-45c3-af34-3555d5125e53" title="Permalink to this equation">¶</a></span>\[\begin{align}
+-\nabla^2 u(\mathbf{x}) &amp;= f(\mathbf{x})&amp;&amp;\mathbf{x} \in \Omega\\
+u(\mathbf{x}) &amp;= u_D(\mathbf{x})&amp;&amp; \mathbf{x} \in \partial\Omega
+\end{align}\]</div>
 <p>Here, <span class="math notranslate nohighlight">\(u=u(\mathbf{x})\)</span> is the unknown function, <span class="math notranslate nohighlight">\(f=f(\mathbf{x})\)</span> is a prescribed function, <span class="math notranslate nohighlight">\(\nabla^2\)</span> the Laplace operator, often written as <span class="math notranslate nohighlight">\(\Delta\)</span>, <span class="math notranslate nohighlight">\(\Omega\)</span> the spatial domain, and <span class="math notranslate nohighlight">\(\partial\Omega\)</span> is the boundary of <span class="math notranslate nohighlight">\(\Omega\)</span>. The Poisson problem, including both the PDE <span class="math notranslate nohighlight">\(-\nabla^2 u = f\)</span> and the boundary condition <span class="math notranslate nohighlight">\(u=u_D\)</span> on <span class="math notranslate nohighlight">\(\partial\Omega\)</span>, is an example of a <em>boundary-value problem</em>, which must be precisely state before it makes sense to start solving it numerically with FEniCS-X.</p>
 <p>In the two dimensional space with coordinates <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span>, we can expand the Poisson equation as</p>
 <p><span class="math notranslate nohighlight">\( -\frac{\partial^2 u}{\partial x^2} - \frac{\partial^2 u}{\partial y^2} = f(x,y)\)</span></p>
@@ -479,7 +472,7 @@ and visualize the results.</p></li>
 <p>FEniCS is based on the finite element method, which is a general and
 efficient mathematical machinery for the numerical solution of
 PDEs. The starting point for the finite element methods is a PDE
-expressed in \emph{variational form}. For readers not familiar with variational problems, it is suggested to reading a proper book on the finite element method in addition, as this tutorial is meant as a brief introduction to the subject. See the [original tutorial](<a class="reference external" href="https://www.springer.com/gp/book/9783319524610">The FEniCS tutorial</a>) (Chapter 1.6.2).</p>
+expressed in \emph{variational form}. For readers not familiar with variational problems, it is suggested to reading a proper book on the finite element method in addition, as this tutorial is meant as a brief introduction to the subject. See the original tutorial <span id="id1">[<a class="reference internal" href="../index.html#id11"><span>LL16</span></a>]</span> (Chapter 1.6.2).</p>
 <p>The basic recipe for turning a PDE into a variational problem is:</p>
 <ul class="simple">
 <li><p>Multiply the PDE by a function <span class="math notranslate nohighlight">\(v\)</span></p></li>
@@ -498,7 +491,7 @@ The formula reads</p>
 <p><span class="math notranslate nohighlight">\( -\int_\Omega (\nabla^2 u)v \mathrm{d}x
 = \int_\Omega\nabla u\cdot\nabla v \mathrm{d}x - \int_{\partial\Omega}\frac{\partial u}{\partial n}v \mathrm{d}s ,\)</span></p>
 <p>where <span class="math notranslate nohighlight">\(\frac{\partial u}{\partial n}=\nabla u \cdot n\)</span> is the derivative of <span class="math notranslate nohighlight">\(u\)</span> in the outward normal direction <span class="math notranslate nohighlight">\(n\)</span> on the boundary.</p>
-<p>Another feature of variational formulations is that the test function <span class="math notranslate nohighlight">\(v\)</span> is required to vanish on the parts of the boundary where the solution <span class="math notranslate nohighlight">\(u\)</span> is known. See for instance Langtangen, Mardal 2019 <span id="id1">[<a class="reference internal" href="#id3"><span>LM19</span></a>]</span>.</p>
+<p>Another feature of variational formulations is that the test function <span class="math notranslate nohighlight">\(v\)</span> is required to vanish on the parts of the boundary where the solution <span class="math notranslate nohighlight">\(u\)</span> is known. See for instance <span id="id2">[<a class="reference internal" href="#id4"><span>LM19</span></a>]</span>.</p>
 <p>In the present problem, this means that <span class="math notranslate nohighlight">\(v\)</span> is <span class="math notranslate nohighlight">\(0\)</span> on the whole boundary <span class="math notranslate nohighlight">\(\partial\Omega\)</span>. In the present problem, it means that the second term in the integration by parts formula is zero, and we have that</p>
 <p><span class="math notranslate nohighlight">\(\int_\Omega \nabla u \cdot \nabla v \mathrm{d} x = \int_\Omega f v\mathrm{d} x\)</span></p>
 <p>If we require that this equation holds for all test functions <span class="math notranslate nohighlight">\(v\)</span> in some suitable space <span class="math notranslate nohighlight">\(\hat{V}\)</span>, the so-called <em>test space</em>, we obtain a well-defined mathematical problem that uniquely determines the solution <span class="math notranslate nohighlight">\(u\)</span> which lies in some function space <span class="math notranslate nohighlight">\(V\)</span>. Note that <span class="math notranslate nohighlight">\(V\)</span> does not have to be the same space as
@@ -541,8 +534,8 @@ For every linear problem, we will identify all terms with the unknown <span clas
 </div>
 <div class="section" id="references">
 <h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
-<p id="id2"><dl class="citation">
-<dt class="label" id="id3"><span class="brackets"><a class="fn-backref" href="#id1">LM19</a></span></dt>
+<p id="id3"><dl class="citation">
+<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id2">LM19</a></span></dt>
 <dd><p>Hans Petter Langtangen and Kent-Andre Mardal. <em>Introduction to Numerical Methods for Variational Problems</em>. Springer International Publishing, Cham, 2019. ISBN 978-3-030-23788-2. <a class="reference external" href="https://doi.org/10.1007/978-3-030-23788-2_1">doi:10.1007/978-3-030-23788-2_1</a>.</p>
 </dd>
 </dl>

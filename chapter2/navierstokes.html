@@ -117,16 +117,6 @@
    How to use this tutorial
   </a>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../fem.html#interactive-tutorials">
-   Interactive tutorials
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../fem.html#obtaining-the-software">
-   Obtaining the software
-  </a>
- </li>
 </ul>
 <p class="caption collapsible-parent">
  <span class="caption-text">
@@ -430,23 +420,23 @@
 <h2>The PDE problem<a class="headerlink" href="#the-pde-problem" title="Permalink to this headline">¶</a></h2>
 <p>The incompressible Navier-Stokes equations form a system of equations for the velocity <span class="math notranslate nohighlight">\(u\)</span> and pressure <span class="math notranslate nohighlight">\(p\)</span> in an  incompressible fluid</p>
 <div class="math notranslate nohighlight" id="equation-navier-stokes">
-<span class="eqno">(29)<a class="headerlink" href="#equation-navier-stokes" title="Permalink to this equation">¶</a></span>\[\begin{split}\rho \left( \frac{\partial u }{\partial t} + u \cdot \nabla u \right) &amp;= \nabla \cdot \sigma (u, p) + f,\\
+<span class="eqno">(30)<a class="headerlink" href="#equation-navier-stokes" title="Permalink to this equation">¶</a></span>\[\begin{split}\rho \left( \frac{\partial u }{\partial t} + u \cdot \nabla u \right) &amp;= \nabla \cdot \sigma (u, p) + f,\\
 \nabla \cdot u &amp;= 0 \end{split}\]</div>
 <p>The right-hand side of <span class="math notranslate nohighlight">\(f\)</span> is a given force per unit volume and just as for the equations of linear elasticity, <span class="math notranslate nohighlight">\(\sigma(u,p)\)</span> denotes the stress tensor, which for a Newtonian fluid is given by</p>
 <div class="math notranslate nohighlight" id="equation-navier-stokes-stress">
-<span class="eqno">(30)<a class="headerlink" href="#equation-navier-stokes-stress" title="Permalink to this equation">¶</a></span>\[\sigma(u, p)=2\mu \epsilon (u) - pI,\]</div>
+<span class="eqno">(31)<a class="headerlink" href="#equation-navier-stokes-stress" title="Permalink to this equation">¶</a></span>\[\sigma(u, p)=2\mu \epsilon (u) - pI,\]</div>
 <p>where <span class="math notranslate nohighlight">\(\epsilon(u)\)</span> is the strain-rate tensor</p>
 <div class="math notranslate nohighlight">
 \[    \epsilon(u)=\frac{1}{2}\left(\nabla u + (\nabla u)^T\right).\]</div>
-<p>The parameter <span class="math notranslate nohighlight">\(\mu\)</span> is the dynamic viscosity. Note that the momentum equation <a class="reference internal" href="#equation-navier-stokes">(29)</a> is very similar to the elasticity equation <a class="reference internal" href="linearelasticity.html#equation-elasticity-pde">(25)</a>. The difference is in the two additional terms <span class="math notranslate nohighlight">\(\rho\left(\frac{\partial u}{\partial t}+ u\cdot \nabla u\right)\)</span> and the different expression for the stress tensor. The two extra terms express the acceleration balanced by the force <span class="math notranslate nohighlight">\(F=\nabla \cdot \sigma + f\)</span> per unit volume in Newton’s second law of motion.</p>
+<p>The parameter <span class="math notranslate nohighlight">\(\mu\)</span> is the dynamic viscosity. Note that the momentum equation <a class="reference internal" href="#equation-navier-stokes">(30)</a> is very similar to the elasticity equation <a class="reference internal" href="linearelasticity.html#equation-elasticity-pde">(26)</a>. The difference is in the two additional terms <span class="math notranslate nohighlight">\(\rho\left(\frac{\partial u}{\partial t}+ u\cdot \nabla u\right)\)</span> and the different expression for the stress tensor. The two extra terms express the acceleration balanced by the force <span class="math notranslate nohighlight">\(F=\nabla \cdot \sigma + f\)</span> per unit volume in Newton’s second law of motion.</p>
 </div>
 <div class="section" id="variational-formulation">
 <h2>Variational formulation<a class="headerlink" href="#variational-formulation" title="Permalink to this headline">¶</a></h2>
 <p>The Navier-Stokes equations are different from the time-dependent heat equation in that we need to solve a system of equations and the system of a special type. If we apply the same technique as for the heat equation; that is, replacing the time derivative with a simple difference quotient, we obtain a non-linear system of equations. This in itself is not a problem as we saw for the <a class="reference internal" href="nonlinpoisson.html"><span class="doc std std-doc">non-linear Poisson equation</span></a>, but the system has a so-called <em>saddle point structure</em> and requires special techniques (special preconditioners and iterative methods) to be solved efficiently.</p>
-<p>Instead we will apply a simpler and often very efficient approach, known as a <em>splitting method</em>. The idea is to consider the two equations in <a class="reference internal" href="#equation-navier-stokes">(29)</a> separately. There exist many splitting strategies for the incompressible Navier-Stokes equations. One of the oldest is the method proposed by Chorin <span id="id1">[<a class="reference internal" href="#id9"><span>Cho68</span></a>]</span> and Temam <span id="id2">[<a class="reference internal" href="#id10"><span>Tem69</span></a>]</span>, often referred to as <em>Chorin’s method</em>. We will use a modified version of Chorin’s method, the so-called incremental pressure correction scheme (IPCS) due to <span id="id3">[<a class="reference internal" href="#id11"><span>God79</span></a>]</span> which gives improved accuracy compared to the original scheme at little extra cost.</p>
+<p>Instead we will apply a simpler and often very efficient approach, known as a <em>splitting method</em>. The idea is to consider the two equations in <a class="reference internal" href="#equation-navier-stokes">(30)</a> separately. There exist many splitting strategies for the incompressible Navier-Stokes equations. One of the oldest is the method proposed by Chorin <span id="id1">[<a class="reference internal" href="#id9"><span>Cho68</span></a>]</span> and Temam <span id="id2">[<a class="reference internal" href="#id10"><span>Tem69</span></a>]</span>, often referred to as <em>Chorin’s method</em>. We will use a modified version of Chorin’s method, the so-called incremental pressure correction scheme (IPCS) due to <span id="id3">[<a class="reference internal" href="#id11"><span>God79</span></a>]</span> which gives improved accuracy compared to the original scheme at little extra cost.</p>
 <p>The IPCS scheme involves three steps. First, we compute a <em>tentative velocity <span class="math notranslate nohighlight">\(u\)</span></em> by advancing the momentum equation by a midpoint finite difference scheme in time, but using <span class="math notranslate nohighlight">\(p^n\)</span> from the previous interval. We will also linearize the nonlinear convective term by using the known velocity <span class="math notranslate nohighlight">\(u^n\)</span> from the previous time step: <span class="math notranslate nohighlight">\(u^n\cdot \nabla u^n\)</span>. Note that there exists several other methods to linearize this term, such as the Adams-Bashforth method, see <span id="id4">[<a class="reference internal" href="#id13"><span>Gue99</span></a>]</span> and <span id="id5">[<a class="reference internal" href="#id12"><span>QSS10</span></a>]</span>. The variational problem for the first step is: For the <span class="math notranslate nohighlight">\(n+1\)</span>th step, find <span class="math notranslate nohighlight">\(u^*\)</span> such that</p>
 <div class="math notranslate nohighlight" id="equation-ipcs-one">
-<span class="eqno">(31)<a class="headerlink" href="#equation-ipcs-one" title="Permalink to this equation">¶</a></span>\[\begin{split}    &amp;\left\langle \rho \frac{u^*-u^n}{\Delta t}, v\right\rangle
+<span class="eqno">(32)<a class="headerlink" href="#equation-ipcs-one" title="Permalink to this equation">¶</a></span>\[\begin{split}    &amp;\left\langle \rho \frac{u^*-u^n}{\Delta t}, v\right\rangle
     + \left\langle \rho u^n\cdot \nabla u^n, v \right\rangle
     +\left\langle \sigma(u^{n+\frac{1}{2}}, p^n), \epsilon(v)\right\rangle\\
     &amp;+ \left\langle p^n n, v \right\rangle_{\partial\Omega}
@@ -460,7 +450,7 @@ First, we use the short-hand notation</p>
 <p>This allows us to express the variational problem in a more compact way. Second, we use the notation <span class="math notranslate nohighlight">\(u^{n+\frac{1}{2}}\)</span>. This notation refers to the value of <span class="math notranslate nohighlight">\(u\)</span> at the midpoint of the interval, usually approximated by an arithmetic mean:</p>
 <div class="math notranslate nohighlight">
 \[   u^{n+\frac{1}{2}}\approx \frac{u^{n}+ u^{n+1}}{2}.\]</div>
-<p>Third, we notice that the variational problem <a class="reference internal" href="#equation-ipcs-one">(31)</a> arises from the integration by parts of the term
+<p>Third, we notice that the variational problem <a class="reference internal" href="#equation-ipcs-one">(32)</a> arises from the integration by parts of the term
 <span class="math notranslate nohighlight">\(langle -\nabla \cdot \sigma, v\rangle\)</span>. Just as for the <a class="reference internal" href="linearelasticity.html"><span class="doc std std-doc">linear elasticity problem</span></a>, we obtain</p>
 <div class="math notranslate nohighlight">
 \[    \langle -\nabla \cdot \sigma, v\rangle =
@@ -469,7 +459,7 @@ First, we use the short-hand notation</p>
 <p>where <span class="math notranslate nohighlight">\(T=\sigma \cdot n\)</span> is the boundary traction. If we solve a problem with a free boundary, we can take <span class="math notranslate nohighlight">\(T=0\)</span> on the boundary. However, if we compute the flow through a channel or a pipe and want to model flow that continues into an “imaginary channel” at the outflow, we need to treat this term with some care.
 The assumption we then can make is that the derivative of the velocity in the direction of the channel is zero at the outflow, corresponding to that the flow is “fully developed” or doesn’t change significantly downstream at the outflow.
 Doing so, the remaining boundary term at the outflow becomes
-<span class="math notranslate nohighlight">\(pn - \mu \nabla u \cdot n\)</span>, which is the term appearing in the variational problem <a class="reference internal" href="#equation-ipcs-one">(31)</a>. Note that this argument and the implementation depends exact on the definition of <span class="math notranslate nohighlight">\(\nabla u\)</span>, as either the  matrix with components <span class="math notranslate nohighlight">\(\frac{\partial u_i}{\partial x_j}\)</span> or <span class="math notranslate nohighlight">\(\frac{\partial u_j}{\partial x_i}\)</span>.
+<span class="math notranslate nohighlight">\(pn - \mu \nabla u \cdot n\)</span>, which is the term appearing in the variational problem <a class="reference internal" href="#equation-ipcs-one">(32)</a>. Note that this argument and the implementation depends exact on the definition of <span class="math notranslate nohighlight">\(\nabla u\)</span>, as either the  matrix with components <span class="math notranslate nohighlight">\(\frac{\partial u_i}{\partial x_j}\)</span> or <span class="math notranslate nohighlight">\(\frac{\partial u_j}{\partial x_i}\)</span>.
 We here choose the  latter, <span class="math notranslate nohighlight">\(\frac{\partial u_j}{\partial x_i}\)</span>,
 which means that we must use the UFL-operator <code class="docutils literal notranslate"><span class="pre">nabla_grad</span></code>. If we use the operator <code class="docutils literal notranslate"><span class="pre">grad</span></code> and the definition <span class="math notranslate nohighlight">\(\frac{\partial u_i}{\partial x_j}\)</span>, we must instead keep the terms <span class="math notranslate nohighlight">\(pn-\mu(\nabla u)^T \cdot n\)</span>.</p>
 <div class="admonition-the-usage-of-nabla-grad-and-grad admonition">
@@ -483,16 +473,16 @@ expression becomes <span class="math notranslate nohighlight">\(\sum_i u_i\frac{
 <p>We now move on to the second step in  our splitting scheme for the incompressible Navier-Stokes equations. In the first step, we computed the <em>tentative velocity</em> <span class="math notranslate nohighlight">\(u^*\)</span> based on the pressure from the previous time step.
 We may now use the computed tentative velocity to compute the new pressure <span class="math notranslate nohighlight">\(p^n\)</span>:</p>
 <div class="math notranslate nohighlight" id="equation-ipcs-two">
-<span class="eqno">(32)<a class="headerlink" href="#equation-ipcs-two" title="Permalink to this equation">¶</a></span>\[    \langle \nabla p^{n+1}, \nabla q \rangle = \langle \nabla p^n, \nabla q\rangle - \Delta t^{-1}\langle \nabla \cdot u^*, q\rangle.\]</div>
-<p>Note here that <span class="math notranslate nohighlight">\(q\)</span> is a scalar-valued test function from the pressure space, whereas the test function <span class="math notranslate nohighlight">\(v\)</span> in <a class="reference internal" href="#equation-ipcs-one">(31)</a> is a vector-valued test function from the velocity space.</p>
-<p>One way to think about this step is to subtract the Navier-Stokes momentum equation <a class="reference internal" href="#equation-navier-stokes">(29)</a> expressed in terms of the tentative velocity <span class="math notranslate nohighlight">\(u^*\)</span> and the pressure <span class="math notranslate nohighlight">\(p^n\)</span> from the momentum equation expressed in terms of the velocity <span class="math notranslate nohighlight">\(u^{n+1}\)</span> and pressure <span class="math notranslate nohighlight">\(p^{n+1}\)</span>. This results in the equation</p>
+<span class="eqno">(33)<a class="headerlink" href="#equation-ipcs-two" title="Permalink to this equation">¶</a></span>\[    \langle \nabla p^{n+1}, \nabla q \rangle = \langle \nabla p^n, \nabla q\rangle - \Delta t^{-1}\langle \nabla \cdot u^*, q\rangle.\]</div>
+<p>Note here that <span class="math notranslate nohighlight">\(q\)</span> is a scalar-valued test function from the pressure space, whereas the test function <span class="math notranslate nohighlight">\(v\)</span> in <a class="reference internal" href="#equation-ipcs-one">(32)</a> is a vector-valued test function from the velocity space.</p>
+<p>One way to think about this step is to subtract the Navier-Stokes momentum equation <a class="reference internal" href="#equation-navier-stokes">(30)</a> expressed in terms of the tentative velocity <span class="math notranslate nohighlight">\(u^*\)</span> and the pressure <span class="math notranslate nohighlight">\(p^n\)</span> from the momentum equation expressed in terms of the velocity <span class="math notranslate nohighlight">\(u^{n+1}\)</span> and pressure <span class="math notranslate nohighlight">\(p^{n+1}\)</span>. This results in the equation</p>
 <div class="math notranslate nohighlight">
 \[\frac{u^{n+1}-u^*}{\Delta t}+\nabla p^{n+1}- \nabla p^n = 0.\]</div>
 <p>Taking the divergence and requiring that <span class="math notranslate nohighlight">\(\nabla \cdot u^{n+1}=0\)</span> by the Navier-Stokes continuity equation, we obtain the equation</p>
 <div class="math notranslate nohighlight" id="equation-ipcs-tmp">
-<span class="eqno">(33)<a class="headerlink" href="#equation-ipcs-tmp" title="Permalink to this equation">¶</a></span>\[ - \frac{\nabla\cdot  u^*}{\Delta t}+ \nabla^2p^{n+1}-\nabla^2p^n=0,\]</div>
-<p>which is the Poisson problem for the pressure $p^{n+1} resulting in the variational formulation <a class="reference internal" href="#equation-ipcs-two">(32)</a>.</p>
-<p>Finally, we compute the corrected velocity <span class="math notranslate nohighlight">\(u^{n+1}\)</span> from the equation <a class="reference internal" href="#equation-ipcs-tmp">(33)</a>. Multiplying this equation by a test function <span class="math notranslate nohighlight">\(v\)</span>, we obtain</p>
+<span class="eqno">(34)<a class="headerlink" href="#equation-ipcs-tmp" title="Permalink to this equation">¶</a></span>\[ - \frac{\nabla\cdot  u^*}{\Delta t}+ \nabla^2p^{n+1}-\nabla^2p^n=0,\]</div>
+<p>which is the Poisson problem for the pressure $p^{n+1} resulting in the variational formulation <a class="reference internal" href="#equation-ipcs-two">(33)</a>.</p>
+<p>Finally, we compute the corrected velocity <span class="math notranslate nohighlight">\(u^{n+1}\)</span> from the equation <a class="reference internal" href="#equation-ipcs-tmp">(34)</a>. Multiplying this equation by a test function <span class="math notranslate nohighlight">\(v\)</span>, we obtain</p>
 <div class="math notranslate nohighlight">
 \[    \langle u^{n+1}, v\rangle=\langle u^*, v\rangle -\Delta t\langle \nabla(p^{n+1}-p^n), v\rangle\]</div>
 <p>In summary, we may thus solve the incompressible Navier-Stokes equations efficiently by solving a sequence of three linear variational problems in each step.</p>

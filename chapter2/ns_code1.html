@@ -117,16 +117,6 @@
    How to use this tutorial
   </a>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../fem.html#interactive-tutorials">
-   Interactive tutorials
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../fem.html#obtaining-the-software">
-   Obtaining the software
-  </a>
- </li>
 </ul>
 <p class="caption collapsible-parent">
  <span class="caption-text">
@@ -452,7 +442,7 @@ As we shall see, this problem has an analytical solution.
 Let <span class="math notranslate nohighlight">\(H\)</span> be the distance between the plates and  <span class="math notranslate nohighlight">\(L\)</span> the length of the channel. There are no body forces.</p>
 <p>We may scale the problem first to get rid of seemingly independent physical parameters. The physics of this problem is governed by viscous effects only, in the direction perpendicular to the flow, so a time scale should be based on diffusion accross the channel: <span class="math notranslate nohighlight">\(t_v=H^2/\nu\)</span>. We let <span class="math notranslate nohighlight">\(U\)</span>, some characteristic inflow velocity, be the velocity scale and <span class="math notranslate nohighlight">\(H\)</span> the spatial scale. The pressure scale is taken as the characteristic shear stress, <span class="math notranslate nohighlight">\(\mu U/H\)</span>, since this is a primary example of shear flow. Inserting <span class="math notranslate nohighlight">\(\bar{x}=x/H, \bar{y}=y/H, \bar{z}=z/H, \bar{u}=u/U, \bar{p}=Hp/{\mu U}\)</span>, and <span class="math notranslate nohighlight">\(\bar{t}=H^2/\nu\)</span> in the equations results in the scaled Navier-Stokes equations (dropping the bars after scaling)</p>
 <div class="math notranslate nohighlight" id="equation-ns-scaled">
-<span class="eqno">(34)<a class="headerlink" href="#equation-ns-scaled" title="Permalink to this equation">¶</a></span>\[\begin{split}\frac{\partial u}{\partial t}+ \mathrm{Re} u \cdot \nabla u &amp;= -\nabla p + \nabla^2 u,\\
+<span class="eqno">(35)<a class="headerlink" href="#equation-ns-scaled" title="Permalink to this equation">¶</a></span>\[\begin{split}\frac{\partial u}{\partial t}+ \mathrm{Re} u \cdot \nabla u &amp;= -\nabla p + \nabla^2 u,\\
 \nabla \cdot u &amp;=0.\end{split}\]</div>
 <p>A detailed derivation for scaling of the Navier-Stokes equation for a large variety of physical situations can be found in <a class="reference external" href="https://www.doi.org/10.1007/978-3-319-32726-6_4">Chapter 4.2</a> of <a class="reference external" href="https://www.doi.org/10.1007/978-3-319-32726-6">Scaling of Differential Equations</a> (open-access) by Hans Petter Langtangen and Geir K. Pedersen.</p>
 <p>Here, <span class="math notranslate nohighlight">\(\mathrm{Re}=\rho UH/\mu\)</span> is the Reynolds number. Because of the time and pressure scales, which are different from convection dominated fluid flow, the Reynolds number is associated with the convective term and not the viscity term.</p>
