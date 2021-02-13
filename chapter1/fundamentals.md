@@ -69,7 +69,7 @@ The terms trial and test functions are used in FEniCS-X too. The test and trial 
 
 In the present case, we multiply the equation by a test function $v$ and  integrate over $\Omega$:
 
-$\int_\Omega -\nabla^2 u v \mathrm{d} x = \int_\Omega f v \mathrm{d} x$
+$\int_\Omega -\nabla^2 u v \mathrm{d} x = \int_\Omega f v ~\mathrm{d} x.$
 
 Here $\mathrm{d} x$ denotes the differential element for integration over the domain $\Omega$. We will later let $\mathrm{d} s$ denote the differential element for integration over the boundary of $\Omega$. 
 
@@ -78,16 +78,17 @@ Here, we have a second-order differential of $u$, which can be transformed to a 
 [integration by parts](https://en.wikipedia.org/wiki/Integration_by_parts).
 The formula reads 
 
-$ -\int_\Omega (\nabla^2 u)v \mathrm{d}x
-= \int_\Omega\nabla u\cdot\nabla v \mathrm{d}x - \int_{\partial\Omega}\frac{\partial u}{\partial n}v \mathrm{d}s ,$
+$ -\int_\Omega (\nabla^2 u)v~\mathrm{d}x
+= \int_\Omega\nabla u\cdot\nabla v \mathrm{d}x- 
+\int_{\partial\Omega}\frac{\partial u}{\partial n}v~\mathrm{d}s,$
 
 where $\frac{\partial u}{\partial n}=\nabla u \cdot n$ is the derivative of $u$ in the outward normal direction $n$ on the boundary.
 
 Another feature of variational formulations is that the test function $v$ is required to vanish on the parts of the boundary where the solution $u$ is known. See for instance {cite}`Langtangen_Mardal_FEM_2019`.
 
-In the present problem, this means that $v$ is $0$ on the whole boundary $\partial\Omega$. In the present problem, it means that the second term in the integration by parts formula is zero, and we have that 
+In the present problem, this means that $v$ is $0$ on the whole boundary $\partial\Omega$. Thus, the second term in the integration by parts formula is zero, and we have that 
 
-$\int_\Omega \nabla u \cdot \nabla v \mathrm{d} x = \int_\Omega f v\mathrm{d} x$
+$\int_\Omega \nabla u \cdot \nabla v \mathrm{d} x = \int_\Omega f v~\mathrm{d} x.$
 
 If we require that this equation holds for all test functions $v$ in some suitable space $\hat{V}$, the so-called _test space_, we obtain a well-defined mathematical problem that uniquely determines the solution $u$ which lies in some function space $V$. Note that $V$ does not have to be the same space as 
 $\hat{V}$. We call the space $V$ the _trial space_. We refer to the equation above as the _weak form_/_variational form_ of the original boundary value problem. We now properly state our variational problem:
@@ -95,12 +96,11 @@ Find $u\in V$ such that
 
 $\int_\Omega \nabla u \cdot \nabla v \mathrm{d} x = \int_\Omega f v\mathrm{d} x\qquad \forall v \in \hat{V}.$
 
-For the present problem, the test and trial spaces $V$ and $\hat{V}$ is defined  as
-
-$ V=\{v\in H^1(\Omega) \vert v=u_D \quad \text{on } \partial \Omega \},$
-
-$ \hat{V}=\{v\in H^1(\Omega) \vert v=0 \quad \text{on } \partial \Omega \}.$
-
+For the present problem, the test and trial spaces $V$ and $\hat{V}$ is defined as
+\begin{align}
+V&=\{v\in H^1(\Omega) \vert v=u_D&&\text{on } \partial \Omega \},\\
+\hat{V}&=\{v\in H^1(\Omega) \vert v=0 &&\text{on } \partial \Omega \}.
+\end{align}
 In short, $H^1(\Omega)$ is the Sobolev space containing functions $v$ such that $v^2$ and $\vert \nabla v \vert ^2$ have finite integrals over $\Omega$. The solution of the underlying
 PDE must line in a function space where the derivatives are 
 also continuous, but the Sobolev space $H^1(\Omega)$ allows functions with discontinuous derivatives.
@@ -112,9 +112,9 @@ hexahedrons.
 The variational problem is a _continuous problem_: it defines the solution $u$ in the infinite-dimensional function space $V$.
 The finite element method for the  Poisson equation finds an approximate solution of the variational problem by replacing the infinite-dimensional function spaces $V$ and $\hat V$ by _discrete_ (finite dimensional) trial and test spaces $V_h\subset V$ and $\hat{V}_h \subset \hat{V}$. The discrete
 variational problem reads: Find $u_h\in V_h$ such that 
-
-$\int_\Omega \nabla u_h \cdot \nabla v \mathrm{d} x = \int_\Omega fv \mathrm{d} x \quad \forall v \in \hat{V}_h.$
-
+\begin{align}
+\int_\Omega \nabla u_h \cdot \nabla v ~\mathrm{d} x &= \int_\Omega fv~ \mathrm{d} x && \forall v \in \hat{V}_h.
+\end{align}
 This variational problem, together with suitable definitions of $V_h$ and $\hat{V}_h$ uniquely define our approximate numerical solution of the Poisson equation. 
 Note that the boundary condition is encoded as part of the test and trial spaces. This might seem complicated at first glance, 
 but means that the finite element variational problem and the continuous variational problem looks the same. 
@@ -123,15 +123,14 @@ but means that the finite element variational problem and the continuous variati
 
 We will introduce the following notations for variational problems:
 Find $u\in V$ such that 
-
-$ a(u,v)=L(v)\qquad \forall v \in \hat{V}.$
-
+\begin{align}
+a(u,v)&=L(v)&& \forall v \in \hat{V}.
+\end{align}
 For the Poisson equation, we have:
-
-$ a(u,v)= \int_{\Omega} \nabla u \cdot \nabla v \mathrm{d} x,$
-
-$ L(v)= \int_{\Omega} fv \mathrm{d} x.$
-
+\begin{align}
+a(u,v) &= \int_{\Omega} \nabla u \cdot \nabla v ~\mathrm{d} x,\\
+L(v) &= \int_{\Omega} fv ~\mathrm{d} x.
+\end{align}
 From literature $a(u,v)$ is known as the _bilinear form_ and $L(V)$ as a _linear form_. 
 For every linear problem, we will identify all terms with the unknown $u$ and collect them in $a(u,v)$, and collect all terms with only  known functions in $L(v)$.
 
