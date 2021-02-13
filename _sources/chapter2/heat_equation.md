@@ -45,8 +45,8 @@ We then in turn use the finite element method. This means that we have to turn t
 \end{align}
 where 
 \begin{align}
-    a(u,v)&=\int_{\Omega}(uv + \Delta t \nabla u \cdot \nabla v )\mathrm{d} x\\
-    L_{n+1}(v)&=\int_{\Omega} (u^n+\Delta t f^{n+1})\mathrm{d} x.
+    a(u,v)&=\int_{\Omega}(uv + \Delta t \nabla u \cdot \nabla v )~\mathrm{d} x\\
+    L_{n+1}(v)&=\int_{\Omega} (u^n+\Delta t f^{n+1})~\mathrm{d} x.
 \end{align}
 
 
@@ -57,8 +57,8 @@ In addition to the variational problem to be solved in each  time step, we also 
 \end{align}
 with 
 \begin{align}
-    a_0(u,v)&=\int_{\Omega}uv\mathrm{d} x,\\
-    L_0(v)&=\int_{\Omega}u_0v\mathrm{d} x.
+    a_0(u,v)&=\int_{\Omega}uv~\mathrm{d} x,\\
+    L_0(v)&=\int_{\Omega}u_0v~\mathrm{d} x.
 \end{align}
 When solving this variational problem $u^0$ becomes the $L^2$-projection of the given initial value $u_0$ into the finite element space. 
 
