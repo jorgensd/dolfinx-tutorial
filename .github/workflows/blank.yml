@@ -53,6 +53,8 @@ jobs:
           mpirun -n 2 python3 heat_code.py
           jupyter-nbconvert --to python linearelasticity_code.ipynb
           mpirun -n 2 python3 linearelasticity_code.py
+          jupyter-nbconvert --to python hyperelasticity.ipynb
+          mpirun -n 2 python3 hyperelasticity.py
           jupyter-nbconvert --to python nonlinpoisson_code.ipynb
           mpirun -n 2 python3 nonlinpoisson_code.py
           jupyter-nbconvert --to python ns_code1.ipynb
