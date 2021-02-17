@@ -36,7 +36,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Install dependencies
-        run: pip3 install notebook nbconvert jupyter-book myst_parser==0.13.3
+        run: pip3 install notebook nbconvert jupyter-book myst_parser==0.13.5
 
       - name: Test notebooks in parallel
         run: |
