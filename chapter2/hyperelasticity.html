@@ -402,20 +402,6 @@
     <!-- Table of contents -->
     <div class="d-none d-md-block col-md-2 bd-toc show">
         
-        <div class="tocsection onthispage pt-5 pb-3">
-            <i class="fas fa-list"></i> Contents
-        </div>
-        <nav id="bd-toc-nav">
-            <ul class="nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#comparison-to-linear-elasticity">
-   Comparison to linear elasticity
-  </a>
- </li>
-</ul>
-
-        </nav>
-        
     </div>
 </div>
     <div id="main-content" class="row">
@@ -546,13 +532,13 @@ Then, we create a slender cantilever consisting of hexahedral elements and creat
 </div>
 </div>
 </div>
-<div class="section" id="comparison-to-linear-elasticity">
-<h2>Comparison to linear elasticity<a class="headerlink" href="#comparison-to-linear-elasticity" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-comparison-to-linear-elasticity admonition">
+<p class="admonition-title">Comparison to linear elasticity</p>
 <p>To illustrate the difference between linear and hyperelasticity, the following lines can be uncommented to solve the linear elasticity problem.</p>
+</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Linear elasticity</span>
-<span class="c1"># P = 2.0 * mu * ufl.sym(ufl.grad(u)) + lmbda * ufl.tr(ufl.sym(ufl.grad(u))) * I</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># P = 2.0 * mu * ufl.sym(ufl.grad(u)) + lmbda * ufl.tr(ufl.sym(ufl.grad(u))) * I</span>
 </pre></div>
 </div>
 </div>
@@ -667,7 +653,7 @@ Then, we create a slender cantilever consisting of hexahedral elements and creat
 <span class="kn">import</span> <span class="nn">dolfinx.plot</span>
 <span class="c1"># Activate framebuffer, required for visualziation</span>
 <span class="kn">from</span> <span class="nn">pyvista.utilities.xvfb</span> <span class="kn">import</span> <span class="n">start_xvfb</span>
-<span class="n">start_xvfb</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">start_xvfb</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
 <span class="c1"># Create background plotter and mesh to attach values to</span>
 <span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">create_vtk_topology</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
 <span class="n">grid</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">(</span><span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
@@ -694,6 +680,7 @@ Then, we create a slender cantilever consisting of hexahedral elements and creat
     <span class="c1"># Create grid defined by the function space for visualization</span>
     <span class="n">function_grid</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">(</span><span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
     <span class="n">function_grid</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span>
+    <span class="n">function_grid</span><span class="o">.</span><span class="n">set_active_vectors</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">)</span>
     <span class="c1"># Warp mesh by deformation</span>
     <span class="n">warped</span> <span class="o">=</span> <span class="n">function_grid</span><span class="o">.</span><span class="n">warp_by_vector</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     
@@ -769,7 +756,6 @@ Then, we create a slender cantilever consisting of hexahedral elements and creat
 </pre></div>
 </div>
 <img alt="../_images/hyperelasticity_31_17.png" src="../_images/hyperelasticity_31_17.png" />
-</div>
 </div>
 </div>
 </div>
