@@ -245,11 +245,6 @@
    Hyperelasticity
   </a>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="advdiffreac.html">
-   TO BE IMPLEMETED: A system of advection-diffusion-reaction equations
-  </a>
- </li>
 </ul>
 <p class="caption collapsible-parent">
  <span class="caption-text">
@@ -458,8 +453,8 @@
 <p>Author: Jørgen S. Dokken</p>
 <p>Just as for the <a class="reference internal" href="../chapter1/fundamentals_code.html"><span class="doc std std-doc">Poisson problem</span></a>, we construct a test problem which makes it easy to determine if the calculations are correct.</p>
 <p>Since we know that our first-order time-stepping scheme is exact for linear functions, we create a problem which has linear variation in time. We combine this with a quadratic variation in space. Therefore, we choose the analytical solution to be</p>
-<div class="amsmath math notranslate nohighlight" id="equation-550c2877-8e72-4ce1-92ea-0d327c98dc12">
-<span class="eqno">(24)<a class="headerlink" href="#equation-550c2877-8e72-4ce1-92ea-0d327c98dc12" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-e22dda52-b525-4c96-b863-9eb1bbdb6c85">
+<span class="eqno">(24)<a class="headerlink" href="#equation-e22dda52-b525-4c96-b863-9eb1bbdb6c85" title="Permalink to this equation">¶</a></span>\[\begin{align}
 u = 1 + x^2+\alpha y^2 + \beta t
 \end{align}\]</div>
 <p>which yields a function whose computed values at the degrees of freedom will be exact, regardless of the mesh size and <span class="math notranslate nohighlight">\(\Delta t\)</span> as long as the mesh is uniformly partitioned.
