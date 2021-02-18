@@ -53,5 +53,4 @@ html:
         provide a link to the Creative Commons license and indicate if changes were made.
     </div>
 
-exclude_patterns: [README.md, chapter2/advdiffreac]
-
+exclude_patterns: [README.md, chapter2/advdiffreac.md]
