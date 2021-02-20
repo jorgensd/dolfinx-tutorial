@@ -36,8 +36,18 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Install dependencies
-        run: pip3 install notebook nbconvert jupyter-book myst_parser==0.13.3
-
+        run: |
+          wget -qO - https://deb.nodesource.com/setup_15.x | bash
+          apt-get -qq update
+          apt-get install -y libgl1-mesa-dev xvfb nodejs
+          apt-get clean
+          rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+          pip3 install --no-cache-dir --no-binary=h5py h5py meshio
+          pip3 install --no-cache-dir tqdm
+          pip3 install notebook nbconvert jupyter-book myst_parser==0.13.3 pyvista jupyterlab
+          pip3 install --no-cache-dir matplotlib itkwidgets ipywidgets
+          jupyter labextension install jupyter-matplotlib jupyterlab-datawidgets itkwidgets && \
+          rm -rf /usr/local/share/.cache/*
       - name: Test notebooks in parallel
         run: |
           cd chapter1
