@@ -8,10 +8,11 @@ If you have any comments, corrections or questions, please submit an issue in th
 ## Contributing
 If you want to contribute to this tutorial, please make a fork of the repository, make your changes, and test that it builds correctly using the build command locally in your computer:
 ```bash
-pip3 install -U jupyter-book sphinxcontrib-bibtex==1.0.0
-jupyter-book build .
+PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
 ```
 Any code added to the tutorial should work in parallel.
+
+Alternatively, if you want to add a separate chapter, a jupyter notebook can be added to a pull request, without integrating it into the tutorial. If so, the notebook will be reviewed and modified to be included in the tutorial.
 
 ## Requirements for dockerfile
 To create a suitable docker-file for the Binder containers to build from, see the instructions at.
