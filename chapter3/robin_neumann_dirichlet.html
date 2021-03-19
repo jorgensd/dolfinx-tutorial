@@ -666,8 +666,7 @@ We can now create all the necessary variable definitions and the traditional par
 <span class="c1"># Visualize solution</span>
 <span class="kn">import</span> <span class="nn">pyvista</span>
 <span class="c1"># Start virtual framebuffer</span>
-<span class="kn">from</span> <span class="nn">pyvista.utilities.xvfb</span> <span class="kn">import</span> <span class="n">start_xvfb</span>
-<span class="n">start_xvfb</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="n">pyvista</span><span class="o">.</span><span class="n">start_xvfb</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
 
 <span class="kn">import</span> <span class="nn">dolfinx.plot</span>
 <span class="n">pyvista_cells</span><span class="p">,</span> <span class="n">cell_types</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">create_vtk_topology</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>

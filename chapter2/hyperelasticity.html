@@ -650,8 +650,7 @@ Then, we create a slender cantilever consisting of hexahedral elements and creat
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyvista</span>
 <span class="kn">import</span> <span class="nn">dolfinx.plot</span>
 <span class="c1"># Activate framebuffer, required for visualziation</span>
-<span class="kn">from</span> <span class="nn">pyvista.utilities.xvfb</span> <span class="kn">import</span> <span class="n">start_xvfb</span>
-<span class="n">start_xvfb</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="n">pyvista</span><span class="o">.</span><span class="n">start_xvfb</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
 <span class="c1"># Create background plotter and mesh to attach values to</span>
 <span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">create_vtk_topology</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
 <span class="n">grid</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">(</span><span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
@@ -696,7 +695,8 @@ Then, we create a slender cantilever consisting of hexahedral elements and creat
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING:py.warnings:Plotting of higher order functions is experimental.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING:py.warnings:/usr/local/dolfinx-real/lib/python3.8/dist-packages/dolfinx/plot.py:132: UserWarning: Plotting of higher order functions is experimental.
+  warnings.warn(&quot;Plotting of higher order functions is experimental.&quot;)
 </pre></div>
 </div>
 <img alt="../_images/hyperelasticity_29_1.png" src="../_images/hyperelasticity_29_1.png" />
@@ -718,42 +718,46 @@ Then, we create a slender cantilever consisting of hexahedral elements and creat
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING:py.warnings:/usr/local/dolfinx-real/lib/python3.8/dist-packages/dolfinx/plot.py:132: UserWarning: Plotting of higher order functions is experimental.
+  warnings.warn(&quot;Plotting of higher order functions is experimental.&quot;)
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time step 1, Number of iterations 8, Load [ 0.   0.  -1.5]
 </pre></div>
 </div>
-<img alt="../_images/hyperelasticity_31_1.png" src="../_images/hyperelasticity_31_1.png" />
+<img alt="../_images/hyperelasticity_31_2.png" src="../_images/hyperelasticity_31_2.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time step 2, Number of iterations 9, Load [ 0.  0. -3.]
 </pre></div>
 </div>
-<img alt="../_images/hyperelasticity_31_3.png" src="../_images/hyperelasticity_31_3.png" />
+<img alt="../_images/hyperelasticity_31_4.png" src="../_images/hyperelasticity_31_4.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time step 3, Number of iterations 10, Load [ 0.   0.  -4.5]
 </pre></div>
 </div>
-<img alt="../_images/hyperelasticity_31_5.png" src="../_images/hyperelasticity_31_5.png" />
+<img alt="../_images/hyperelasticity_31_6.png" src="../_images/hyperelasticity_31_6.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time step 4, Number of iterations 9, Load [ 0.  0. -6.]
 </pre></div>
 </div>
-<img alt="../_images/hyperelasticity_31_7.png" src="../_images/hyperelasticity_31_7.png" />
+<img alt="../_images/hyperelasticity_31_8.png" src="../_images/hyperelasticity_31_8.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time step 5, Number of iterations 8, Load [ 0.   0.  -7.5]
 </pre></div>
 </div>
-<img alt="../_images/hyperelasticity_31_9.png" src="../_images/hyperelasticity_31_9.png" />
+<img alt="../_images/hyperelasticity_31_10.png" src="../_images/hyperelasticity_31_10.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time step 6, Number of iterations 7, Load [ 0.  0. -9.]
 </pre></div>
 </div>
-<img alt="../_images/hyperelasticity_31_11.png" src="../_images/hyperelasticity_31_11.png" />
+<img alt="../_images/hyperelasticity_31_12.png" src="../_images/hyperelasticity_31_12.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time step 7, Number of iterations 6, Load [  0.    0.  -10.5]
 </pre></div>
 </div>
-<img alt="../_images/hyperelasticity_31_13.png" src="../_images/hyperelasticity_31_13.png" />
+<img alt="../_images/hyperelasticity_31_14.png" src="../_images/hyperelasticity_31_14.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time step 8, Number of iterations 6, Load [  0.   0. -12.]
 </pre></div>
 </div>
-<img alt="../_images/hyperelasticity_31_15.png" src="../_images/hyperelasticity_31_15.png" />
+<img alt="../_images/hyperelasticity_31_16.png" src="../_images/hyperelasticity_31_16.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time step 9, Number of iterations 6, Load [  0.    0.  -13.5]
 </pre></div>
 </div>
-<img alt="../_images/hyperelasticity_31_17.png" src="../_images/hyperelasticity_31_17.png" />
+<img alt="../_images/hyperelasticity_31_18.png" src="../_images/hyperelasticity_31_18.png" />
 </div>
 </div>
 </div>
