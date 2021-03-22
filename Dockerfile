@@ -11,6 +11,7 @@ WORKDIR ${HOME}
 COPY . ${HOME}
 USER root
 RUN chown -R ${NB_UID} ${HOME}
+RUN pip3 install jupyterhub nbconvert
 
 USER ${NB_USER}
 ENTRYPOINT []
