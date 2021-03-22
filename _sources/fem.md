@@ -33,7 +33,7 @@ Docker is a software that uses *containers* to supply software across different 
 All notebooks can be converted to python files using [nbconvert](https://nbconvert.readthedocs.io/en/latest/).
 
 We supply a pre-built docker image at [https://hub.docker.com/r/dolfinx/dolfinx](https://hub.docker.com/r/dolfinx/dolfinx).
-The [Dockerfile](https://github.com/FEniCS/dolfinx/blob/master/Dockerfile)
+The [Dockerfile](https://github.com/FEniCS/dolfinx/blob/main/docker/Dockerfile)
 provides a definitive build recipe. As the dolfinx docker images are hosted at Docker-hub, one can directly access the image
 ```s
 docker run dolfinx/dolfinx
@@ -49,7 +49,7 @@ To use the notebookes in this tutorial with dolfin-X on your own computer, you s
 The tutorials can also be exported as a notebook or PDF by clicking the ![Download](save.png)-symbol in the top right corner of the relevant tutorialThe notebook can in turn be used with a Python kernel which has dolfin-X.
 
 ## Installation from source
-The software is quite complex, and building the software and all the dependencies from source can be a daunting task. The list of dependencies can be found at [https://fenicsproject.org/docs/dolfinx/dev/python/installation.html](https://fenicsproject.org/docs/dolfinx/dev/python/installation.html).
+The software is quite complex, and building the software and all the dependencies from source can be a daunting task. The list of dependencies can be found at [https://docs.fenicsproject.org/dolfinx/main/python/installation.html](https://docs.fenicsproject.org/dolfinx/main/python/installation.html.
 
 ## Introduction to Python for beginners
 If you are a beginner in Python, we suggest reading {cite}`Langtangen2016` by Hans Petter Langtangen, which will give you a gentle introduction to the Python programming language. Note that dolfin-X, being a state of the art finite element solver, only supports Python 3, as Python 2 reached its end of life January 1st, 2020. To automatically transfer Python 2 scripts to Python 3, it is suggested to use the [2to3](https://docs.python.org/3/library/2to3.html)-package, which provides automated translation of the code.
