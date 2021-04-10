@@ -91,7 +91,7 @@ V&=\{v\in H^1(\Omega) \vert v=u_D&&\text{on } \partial \Omega \},\\
 \hat{V}&=\{v\in H^1(\Omega) \vert v=0 &&\text{on } \partial \Omega \}.
 \end{align}
 In short, $H^1(\Omega)$ is the Sobolev space containing functions $v$ such that $v^2$ and $\vert \nabla v \vert ^2$ have finite integrals over $\Omega$. The solution of the underlying
-PDE must line in a function space where the derivatives are 
+PDE must lie in a function space where the derivatives are 
 also continuous, but the Sobolev space $H^1(\Omega)$ allows functions with discontinuous derivatives.
 This weaker continuity requirement in our weak formulation (caused by the integration by parts) is of great importance when it comes to constructing the finite element function space. In particular, it allows the use of piecewise polynomial function spaces. This means that the function spaces are constructed 
 by stitching together polynomial functions on simple domains 
