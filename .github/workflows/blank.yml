@@ -5,15 +5,14 @@ name: Build and publish
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ dokken/jupyterbook ]
+    branches: [dokken/jupyterbook]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
   # Weekly build on Mondays at 8 am
   schedule:
-    - cron: '0 8 * * 1'
-
+    - cron: "0 8 * * 1"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -21,13 +20,13 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container: dokken92/dolfinx_custom:19032021
+    container: dokken92/dolfinx_custom:20042021
 
     env:
       HDF5_MPI: "ON"
       CC: mpicc
       HDF5_DIR: "/usr/lib/x86_64-linux-gnu/hdf5/mpich/"
-      DISPLAY: ":99.0" 
+      DISPLAY: ":99.0"
       PYVISTA_OFF_SCREEN: true
 
     # Steps represent a sequence of tasks that will be executed as part of the job
