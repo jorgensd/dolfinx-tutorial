@@ -472,7 +472,7 @@
     <span class="n">L</span> <span class="o">=</span> <span class="n">f</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
     <span class="n">u_bc</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
     <span class="n">u_bc</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">u_numpy</span><span class="p">)</span>
-    <span class="n">u_bc</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
+    <span class="n">dolfinx</span><span class="o">.</span><span class="n">cpp</span><span class="o">.</span><span class="n">la</span><span class="o">.</span><span class="n">scatter_forward</span><span class="p">(</span><span class="n">u_bc</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
     <span class="n">facets</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">locate_entities_boundary</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="kc">True</span><span class="p">))</span>
     <span class="n">dofs</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">facets</span><span class="p">)</span>
     <span class="n">bcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_bc</span><span class="p">,</span> <span class="n">dofs</span><span class="p">)]</span>
@@ -538,9 +538,7 @@
 h: 1.25e-01 Error: 7.96e-02
 h: 6.25e-02 Error: 2.15e-02
 h: 3.12e-02 Error: 5.47e-03
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 1.56e-02 Error: 1.37e-03
+h: 1.56e-02 Error: 1.37e-03
 </pre></div>
 </div>
 </div>
@@ -595,19 +593,17 @@ Polynomial degree1, Rates [1.61 1.89 1.97 1.99]
 h: 1.25e-01 Error: 4.39e-03
 h: 6.25e-02 Error: 5.50e-04
 h: 3.12e-02 Error: 6.88e-05
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 1.56e-02 Error: 8.60e-06
+h: 1.56e-02 Error: 8.60e-06
 Polynomial degree2, Rates [3. 3. 3. 3.]
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 2.50e-01 Error: 5.47e-03
 h: 1.25e-01 Error: 3.33e-04
 h: 6.25e-02 Error: 1.99e-05
+h: 3.12e-02 Error: 1.21e-06
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 3.12e-02 Error: 1.21e-06
-h: 1.56e-02 Error: 7.51e-08
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 1.56e-02 Error: 7.51e-08
 Polynomial degree3, Rates [4.04 4.07 4.03 4.01]
 </pre></div>
 </div>
