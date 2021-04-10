@@ -46,7 +46,7 @@ As we have already covered step 1., we shall now cover step 2-4.
 FEniCS is based on the finite element method, which is a general and
 efficient mathematical machinery for the numerical solution of
 PDEs. The starting point for the finite element methods is a PDE
-expressed in \emph{variational form}. For readers not familiar with variational problems, it is suggested to reading a proper book on the finite element method in addition, as this tutorial is meant as a brief introduction to the subject. See the original tutorial {cite}`FenicsTutorial` (Chapter 1.6.2).
+expressed in _variational form_. For readers not familiar with variational problems, it is suggested to reading a proper book on the finite element method in addition, as this tutorial is meant as a brief introduction to the subject. See the original tutorial {cite}`FenicsTutorial` (Chapter 1.6.2).
 
 The basic recipe for turning a PDE into a variational problem is:
 - Multiply the PDE by a function $v$
