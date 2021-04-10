@@ -32,9 +32,9 @@ jobs:
           docker pull dolfinx/dolfinx
       - name: Build the Docker images
         run: |
-          docker build --file tutorial/docker/Dockerfile --cache-from dolfinx/dolfinx --tag dokken92/dolfinx_custom:29012021 .
+          docker build --file tutorial/docker/Dockerfile --cache-from dolfinx/dolfinx --tag dokken92/dolfinx_custom:10042021 .
       - name: Log into the DockerHub registry
         run: echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
       - name: Push to the DockerHub registry
         run: |
-          docker push dokken92/dolfinx_custom:19032021
+          docker push dokken92/dolfinx_custom:10042021

@@ -3,3 +3,5 @@ _build
 *.h5
 *.xdmf
 *.vtu
+*/.ipynb_checkpoints/*
+.ipynb_checkpoints/*
