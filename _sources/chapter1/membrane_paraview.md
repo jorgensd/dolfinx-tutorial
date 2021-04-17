@@ -1,6 +1,7 @@
 # Using Paraview for visualization
 
-We start by opening [Paraview](https://www.paraview.org/). We start by opening the file by pressing `File->Open`.
+We start by opening [Paraview](https://www.paraview.org/). We start by opening the file by pressing `File->Open`. Next you should choose the `Xdmf3ReaderT` to open the data with.
+
 The next step is to visualize each of the functions. To do this, we choose `Filters->Alphabetic->ExtractBlock`. The next step is to select the first Unstructured Grid and press `Apply` as shown below:
 
 ![Select Block](select_block.png)
