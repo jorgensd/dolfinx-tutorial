@@ -47,7 +47,7 @@ jobs:
           pip3 install --no-cache-dir --no-binary=h5py h5py meshio
           pip3 install --no-cache-dir tqdm
           pip3 install notebook nbconvert jupyter-book myst_parser==0.13.3 pyvista jupyterlab
-          pip3 install --no-cache-dir matplotlib itkwidgets ipywidgets
+          pip3 install --no-cache-dir matplotlib itkwidgets ipywidgets setuptools --upgrade
           jupyter labextension install jupyter-matplotlib jupyterlab-datawidgets itkwidgets && \
           rm -rf /usr/local/share/.cache/*
       - name: Test notebooks in parallel
