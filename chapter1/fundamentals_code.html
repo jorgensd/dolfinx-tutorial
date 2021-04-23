@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Implementation &#8212; FEniCS-X tutorial</title>
     
-  <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
+  <link href="../_static/css/theme.css" rel="stylesheet" />
+  <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
 
     
   <link rel="stylesheet"
@@ -19,14 +20,10 @@
 
     
       
-  <link rel="stylesheet"
-    href="../_static/vendor/open-sans_all/1.44.1/index.css">
-  <link rel="stylesheet"
-    href="../_static/vendor/lato_latin-ext/1.44.1/index.css">
 
     
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx-book-theme.e7340bb3dbd8dde6db86f25597f54a1b.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx-book-theme.acff12b8f9c144ce68a297486a2fa670.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
@@ -34,7 +31,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     
-  <link rel="preload" as="script" href="../_static/js/index.d3f166471bb80abb5163.js">
+  <link rel="preload" as="script" href="../_static/js/index.1c5a1a01449ed65a7b51.js">
 
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -44,7 +41,7 @@
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
     <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="../_static/sphinx-book-theme.7d483ff0a819d6edff12ce0b1ead3928.js"></script>
+    <script src="../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
     <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
@@ -60,14 +57,14 @@
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Deflection of a membrane" href="membrane.html" />
     <link rel="prev" title="Solving the Poisson equation" href="fundamentals.html" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
-
-
-
+    
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
     
 
     <div class="container-xl">
@@ -76,73 +73,71 @@
 <div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
     
         <div class="navbar-brand-box">
-<a class="navbar-brand text-wrap" href="../index.html">
-  
-  <img src="../_static/logo.jpeg" class="logo" alt="logo">
-  
-  
-  <h1 class="site-logo" id="site-title">FEniCS-X tutorial</h1>
-  
-</a>
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+      <img src="../_static/logo.jpeg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">FEniCS-X tutorial</h1>
+      
+    </a>
 </div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
   <i class="icon fas fa-search"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
-</form>
-<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
-    <ul class="nav sidenav_l1">
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../index.html">
    The FEniCS-X tutorial
   </a>
  </li>
 </ul>
-<p class="caption collapsible-parent">
+<p class="caption">
  <span class="caption-text">
   Introduction
  </span>
 </p>
-<ul class="nav sidenav_l1">
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../fem.html">
    An overview of the FEniCS Project
   </a>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../fem.html#what-you-will-learn">
-   What you will learn
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../fem.html#how-to-use-this-tutorial">
-   How to use this tutorial
-  </a>
- </li>
 </ul>
-<p class="caption collapsible-parent">
+<p class="caption">
  <span class="caption-text">
   Fundamentals
  </span>
 </p>
-<ul class="current nav sidenav_l1">
- <li class="toctree-l1 current active collapsible-parent">
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active has-children">
   <a class="reference internal" href="fundamentals.html">
    Solving the Poisson equation
   </a>
-  <ul class="current collapse-ul">
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
    <li class="toctree-l2 current active">
     <a class="current reference internal" href="#">
      Implementation
     </a>
    </li>
   </ul>
-  <i class="fas fa-chevron-down">
-  </i>
  </li>
- <li class="toctree-l1 collapsible-parent">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="membrane.html">
    Deflection of a membrane
   </a>
-  <ul class="collapse-ul">
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
    <li class="toctree-l2">
     <a class="reference internal" href="membrane_code.html">
      Implementation
@@ -154,26 +149,29 @@
     </a>
    </li>
   </ul>
-  <i class="fas fa-chevron-down">
-  </i>
  </li>
 </ul>
-<p class="caption collapsible-parent">
+<p class="caption">
  <span class="caption-text">
   A Gallery of finite element solvers
  </span>
 </p>
-<ul class="nav sidenav_l1">
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../chapter2/intro.html">
    A Gallery of finite element solvers
   </a>
  </li>
- <li class="toctree-l1 collapsible-parent">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="../chapter2/heat_equation.html">
    The heat equation
   </a>
-  <ul class="collapse-ul">
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
    <li class="toctree-l2">
     <a class="reference internal" href="../chapter2/diffusion_code.html">
      Diffusion of a Gaussian function
@@ -185,28 +183,34 @@
     </a>
    </li>
   </ul>
-  <i class="fas fa-chevron-down">
-  </i>
  </li>
- <li class="toctree-l1 collapsible-parent">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="../chapter2/nonlinpoisson.html">
    A nonlinear Poisson equation
   </a>
-  <ul class="collapse-ul">
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
    <li class="toctree-l2">
     <a class="reference internal" href="../chapter2/nonlinpoisson_code.html">
      Implementation
     </a>
    </li>
   </ul>
-  <i class="fas fa-chevron-down">
-  </i>
  </li>
- <li class="toctree-l1 collapsible-parent">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="../chapter2/linearelasticity.html">
    The equations of linear elasticity
   </a>
-  <ul class="collapse-ul">
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
    <li class="toctree-l2">
     <a class="reference internal" href="../chapter2/linearelasticity_code.html">
      Implementation
@@ -218,14 +222,17 @@
     </a>
    </li>
   </ul>
-  <i class="fas fa-chevron-down">
-  </i>
  </li>
- <li class="toctree-l1 collapsible-parent">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="../chapter2/navierstokes.html">
    The Navier-Stokes equations
   </a>
-  <ul class="collapse-ul">
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
    <li class="toctree-l2">
     <a class="reference internal" href="../chapter2/ns_code1.html">
      Test problem 1: Channel flow (Poiseuille flow)
@@ -237,8 +244,6 @@
     </a>
    </li>
   </ul>
-  <i class="fas fa-chevron-down">
-  </i>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../chapter2/hyperelasticity.html">
@@ -246,12 +251,12 @@
   </a>
  </li>
 </ul>
-<p class="caption collapsible-parent">
+<p class="caption">
  <span class="caption-text">
   Subdomains and boundary conditions
  </span>
 </p>
-<ul class="nav sidenav_l1">
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../chapter3/neumann_dirichlet_code.html">
    Combining Dirichlet and Neumann conditions
@@ -283,12 +288,12 @@
   </a>
  </li>
 </ul>
-<p class="caption collapsible-parent">
+<p class="caption">
  <span class="caption-text">
   Improving your FEniCS-X code
  </span>
 </p>
-<ul class="nav sidenav_l1">
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../chapter4/solvers.html">
    Solver configuration
@@ -301,6 +306,7 @@
  </li>
 </ul>
 
+    </div>
 </nav> <!-- To handle the deprecated key -->
 
 <div class="navbar_extra_footer">
@@ -368,12 +374,12 @@
     </div>
 </div>
 
-
             <!-- Full screen (wrap in <a> to have style consistency -->
-            <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
-                    data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
-                    title="Fullscreen mode"><i
-                        class="fas fa-expand"></i></button></a>
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
 
             <!-- Launch buttons -->
 
@@ -399,12 +405,11 @@
         <!-- Table of contents -->
         <div class="d-none d-md-block col-md-2 bd-toc show">
             
-        <div class="tocsection onthispage pt-5 pb-3">
-            <i class="fas fa-list"></i>
-            Contents
-        </div>
-        <nav id="bd-toc-nav">
-            <ul class="nav section-nav flex-column">
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav">
+                <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#interactive-tutorials">
    Interactive tutorials
@@ -472,8 +477,7 @@
  </li>
 </ul>
 
-        </nav>
-        
+            </nav>
         </div>
     </div>
 </div>
@@ -506,13 +510,13 @@ Therefore, we need to make specific choices of <span class="math notranslate noh
 <!-- Particularly, piecewise linear continuous Galerkin finite elements are able to exactly reproduce a quadratic polynomial on 
 a uniformly partitioned mesh. -->
 <p>We use this fact to construct a quadratic function in <span class="math notranslate nohighlight">\(2D\)</span>. In particular we choose</p>
-<div class="amsmath math notranslate nohighlight" id="equation-02b79852-e78d-4084-9946-5f828ded29b3">
-<span class="eqno">(6)<a class="headerlink" href="#equation-02b79852-e78d-4084-9946-5f828ded29b3" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-b2a2e393-4068-4c49-b33b-669e5f6faddd">
+<span class="eqno">(6)<a class="headerlink" href="#equation-b2a2e393-4068-4c49-b33b-669e5f6faddd" title="Permalink to this equation">¶</a></span>\[\begin{align}
  u_e(x,y)=1+x^2+2y^2
  \end{align}\]</div>
 <p>Inserting <span class="math notranslate nohighlight">\(u_e\)</span> in the original boundary problem, we find that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4b4471a9-e388-4d9e-9538-5e0c0e7b11a1">
-<span class="eqno">(7)<a class="headerlink" href="#equation-4b4471a9-e388-4d9e-9538-5e0c0e7b11a1" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-910bfb3b-ac3d-42c1-a9e4-e3f5fe05d83f">
+<span class="eqno">(7)<a class="headerlink" href="#equation-910bfb3b-ac3d-42c1-a9e4-e3f5fe05d83f" title="Permalink to this equation">¶</a></span>\[\begin{align}
     f(x,y)= -6,\qquad u_d(x,y)=u_e(x,y)=1+x^2+2y^2,
 \end{align}\]</div>
 <p>regardless of the shape of the domain as long as we prescribe
@@ -800,7 +804,7 @@ In the jupyter notebook environment, we use the default setting of <code class="
 </div>
 <div class="cell_output docutils container">
 <script type="application/vnd.jupyter.widget-view+json">
-{"version_major": 2, "version_minor": 0, "model_id": "74f3ec7a83594aea9caefcc4b79f1339"}
+{"version_major": 2, "version_minor": 0, "model_id": "d2bb263fcfe14cf08e07d3ea4da6d017"}
 </script></div>
 </div>
 </div>
@@ -825,7 +829,7 @@ In the jupyter notebook environment, we use the default setting of <code class="
 
 
 <script type="application/vnd.jupyter.widget-state+json">
-{"state": {"471a34edfeaa443d89a48a01dc9c65c0": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "74f3ec7a83594aea9caefcc4b79f1339": {"model_name": "ViewerModel", "model_module": "itkwidgets", "model_module_version": "^0.32.0", "state": {"_custom_cmap": null, "_dom_classes": [], "_downsampling": false, "_largest_roi": {"shape": [2, 3], "dtype": "float64"}, "_model_module": "itkwidgets", "_model_module_version": "^0.32.0", "_model_name": "ViewerModel", "_rendering_image": false, "_reset_crop_requested": false, "_scale_factors": {"shape": [3], "dtype": "uint8"}, "_view_count": null, "_view_module": "itkwidgets", "_view_module_version": "^0.32.0", "_view_name": "ViewerView", "annotations": true, "axes": false, "background": [], "blend_mode": "composite", "camera": {"shape": [3, 3], "dtype": "float32"}, "channels": null, "clicked_slice_point": null, "cmap": null, "geometries": [{"vtkClass": "vtkPolyData", "points": {"vtkClass": "vtkPoints", "name": "_points", "numberOfComponents": 3, "dataType": "Float32Array", "size": 243}, "polys": {"vtkClass": "vtkCellArray", "name": "_polys", "numberOfComponents": 1, "size": 320, "dataType": "Uint32Array"}, "pointData": {"vtkClass": "vtkDataSetAttributes", "activeScalars": 0, "arrays": [{"data": {"vtkClass": "vtkDataArray", "name": "u", "numberOfComponents": 1, "size": 81, "dataType": "Float64Array"}}]}, "metadata": {"name": "Geometry 0"}}], "geometry_colors": {"shape": [1, 3], "dtype": "float32"}, "geometry_opacities": {"shape": [1], "dtype": "float32"}, "gradient_opacity": 0.2, "interpolation": true, "label_image_blend": 0.5, "label_image_names": null, "label_image_weights": null, "layout": "IPY_MODEL_471a34edfeaa443d89a48a01dc9c65c0", "lut": "glasbey", "mode": "v", "opacity_gaussians": null, "point_set_colors": {"shape": [0, 3], "dtype": "float32"}, "point_set_opacities": {"shape": [0], "dtype": "float32"}, "point_set_representations": [], "point_set_sizes": {"shape": [0], "dtype": "uint8"}, "point_sets": [], "rendered_image": null, "rendered_label_image": null, "roi": {"shape": [2, 3], "dtype": "float64"}, "rotate": false, "sample_distance": 0.25, "select_roi": false, "shadow": true, "slicing_planes": false, "ui_collapsed": true, "units": "", "vmax": null, "vmin": null, "x_slice": null, "y_slice": null, "z_slice": null}, "buffers": [{"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["_largest_roi", "buffer"]}, {"data": "AQEB", "encoding": "base64", "path": ["_scale_factors", "buffer"]}, {"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["camera", "buffer"]}, {"data": "KLUv/WDMArUKACQIAACAPwAAwD8AYD8AAKI+o8FAPwAAiIk/AACAjKbEID8AAGRmbHaRq8kAP0JIUoI/mD+y0CQ+Jiw2P0RWcouhu9kQPhI+AAAYPgAAIjA+WISWrMbkBAY+AAAMPgAAFjY+AABMZoO50/EAAgAAAAgAADJIAAAAYj+APpI/AACgyOI/QICXqACbYsawAjGhqgcQgDLacNtP536C41/UjoHzn+gFS5NnhTgn5/rHEj8xaWGDXbtKTWvCl99Q2HkgYvlBp7uZr3flh8Mr4o99e4N/h98oPWbVfzhna3TKlpLX4zz74y/iwKPPOZJOxxX9VhYe5B9Gj6sGI/xl5IH1jsi+RvKmjcEbkXXtAC5fgtP95Qff8NqfzonX/S/rqGnxSOiXfz06IdgOupPrZ3C7xcAM9UUvB/H3Beeu6IXHaHhxz7GPqcJfs3CpO0Bonc9R3bgpn7hqAQ==", "encoding": "base64", "path": ["geometries", 0, "points", "compressedValues"]}, {"data": "KLUv/WAABIULAEIJGxMQkK05qxCAUCuQltQrSt3aHjUF777yOpUUlBMTkpe8jaeRgXFhUTFyigaGBYUEhAORTwDUaDNZzCDkEitVCnWCFYA8QhQCfUwvgo9DbDRbxlNyDXj84RzmcsvbOueQPmqdJfCA945zdzjHX4DoqNHq2LRvIAJCVIUHEMDpAR9wmY2P8WF9cLxeHTzuVweHq/XBYRYvHZ7h/GAud+cDL7dxMLysDw7nqwPH9drB4LQ+OOzSi8MnMOIDF6/tn87ppcPTeelgdLUcPO5XB4/rtYNhLFoenu4RH7h4tf88Ty8On/eLg8PV8uBwXjs4Xq8ODrPccvhkj3jg5b398zm9dHg6Lx2MrpaDx/3q4HG9djCMRcvD0z3iAxev9p/n6cXn835xcLhaHhzOawfH69XBYZZbDh/7/PHle/vzL6d3RGCbn6f70sfgbPlwXK99HGbx0qdZHN3F8R3ZuNKC3lvnccF1OtoeXWOdx9hTx5oq", "encoding": "base64", "path": ["geometries", 0, "polys", "compressedValues"]}, {"data": "KLUv/WCIARUIAKILJCKwJemE7LbJtoTgrYZRjGEg1wmFJ+XMzFVY65q1rbVGMCEpH0C8hCM1frz5tr0p86Xqid6KAEAqIIKjvQ2bY3A5hQkFHysJ4vIGbD447DWWy4q0VSqrBqBCQpCRzJjhOgYVt+CSJMHsR67XjRfJvJJ5uXn1gPKDdKCFnwI7yw0dt+TwnBtGUR5JmZnPkfeGNlGoINAr9wwAIxqqDhBIgy8GY3A/3Z7YaSfrdzRC2nlEJHTO/JjaAqvy5o5PT7WyQP+y9yZcEWhztaP7xu+BtGxNmD3lqd3SDVkIy6bZhTexC8u3U32hWLRuNVuJptwm0P91W7rn1hzw8V4vSPKAAw==", "encoding": "base64", "path": ["geometries", 0, "pointData", "arrays", 0, "data", "compressedValues"]}, {"data": "AACAPwAAgD8AAIA/", "encoding": "base64", "path": ["geometry_colors", "buffer"]}, {"data": "AACAPw==", "encoding": "base64", "path": ["geometry_opacities", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_colors", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_opacities", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_sizes", "buffer"]}, {"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["roi", "buffer"]}]}}, "version_major": 2, "version_minor": 0}
+{"state": {"fc4c456f04194c9db5838fd5dfdcf577": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "d2bb263fcfe14cf08e07d3ea4da6d017": {"model_name": "ViewerModel", "model_module": "itkwidgets", "model_module_version": "^0.32.0", "state": {"_custom_cmap": null, "_dom_classes": [], "_downsampling": false, "_largest_roi": {"shape": [2, 3], "dtype": "float64"}, "_model_module": "itkwidgets", "_model_module_version": "^0.32.0", "_model_name": "ViewerModel", "_rendering_image": false, "_reset_crop_requested": false, "_scale_factors": {"shape": [3], "dtype": "uint8"}, "_view_count": null, "_view_module": "itkwidgets", "_view_module_version": "^0.32.0", "_view_name": "ViewerView", "annotations": true, "axes": false, "background": [], "blend_mode": "composite", "camera": {"shape": [3, 3], "dtype": "float32"}, "channels": null, "clicked_slice_point": null, "cmap": null, "geometries": [{"vtkClass": "vtkPolyData", "points": {"vtkClass": "vtkPoints", "name": "_points", "numberOfComponents": 3, "dataType": "Float32Array", "size": 243}, "polys": {"vtkClass": "vtkCellArray", "name": "_polys", "numberOfComponents": 1, "size": 320, "dataType": "Uint32Array"}, "pointData": {"vtkClass": "vtkDataSetAttributes", "activeScalars": 0, "arrays": [{"data": {"vtkClass": "vtkDataArray", "name": "u", "numberOfComponents": 1, "size": 81, "dataType": "Float64Array"}}]}, "metadata": {"name": "Geometry 0"}}], "geometry_colors": {"shape": [1, 3], "dtype": "float32"}, "geometry_opacities": {"shape": [1], "dtype": "float32"}, "gradient_opacity": 0.2, "interpolation": true, "label_image_blend": 0.5, "label_image_names": null, "label_image_weights": null, "layout": "IPY_MODEL_fc4c456f04194c9db5838fd5dfdcf577", "lut": "glasbey", "mode": "v", "opacity_gaussians": null, "point_set_colors": {"shape": [0, 3], "dtype": "float32"}, "point_set_opacities": {"shape": [0], "dtype": "float32"}, "point_set_representations": [], "point_set_sizes": {"shape": [0], "dtype": "uint8"}, "point_sets": [], "rendered_image": null, "rendered_label_image": null, "roi": {"shape": [2, 3], "dtype": "float64"}, "rotate": false, "sample_distance": 0.25, "select_roi": false, "shadow": true, "slicing_planes": false, "ui_collapsed": true, "units": "", "vmax": null, "vmin": null, "x_slice": null, "y_slice": null, "z_slice": null}, "buffers": [{"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["_largest_roi", "buffer"]}, {"data": "AQEB", "encoding": "base64", "path": ["_scale_factors", "buffer"]}, {"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["camera", "buffer"]}, {"data": "KLUv/WDMArUKACQIAACAPwAAwD8AYD8AAKI+o8FAPwAAiIk/AACAjKbEID8AAGRmbHaRq8kAP0JIUoI/mD+y0CQ+Jiw2P0RWcouhu9kQPhI+AAAYPgAAIjA+WISWrMbkBAY+AAAMPgAAFjY+AABMZoO50/EAAgAAAAgAADJIAAAAYj+APpI/AACgyOI/QICXqACbYsawAjGhqgcQgDLacNtP536C41/UjoHzn+gFS5NnhTgn5/rHEj8xaWGDXbtKTWvCl99Q2HkgYvlBp7uZr3flh8Mr4o99e4N/h98oPWbVfzhna3TKlpLX4zz74y/iwKPPOZJOxxX9VhYe5B9Gj6sGI/xl5IH1jsi+RvKmjcEbkXXtAC5fgtP95Qff8NqfzonX/S/rqGnxSOiXfz06IdgOupPrZ3C7xcAM9UUvB/H3Beeu6IXHaHhxz7GPqcJfs3CpO0Bonc9R3bgpn7hqAQ==", "encoding": "base64", "path": ["geometries", 0, "points", "compressedValues"]}, {"data": "KLUv/WAABIULAEIJGxMQkK05qxCAUCuQltQrSt3aHjUF777yOpUUlBMTkpe8jaeRgXFhUTFyigaGBYUEhAORTwDUaDNZzCDkEitVCnWCFYA8QhQCfUwvgo9DbDRbxlNyDXj84RzmcsvbOueQPmqdJfCA945zdzjHX4DoqNHq2LRvIAJCVIUHEMDpAR9wmY2P8WF9cLxeHTzuVweHq/XBYRYvHZ7h/GAud+cDL7dxMLysDw7nqwPH9drB4LQ+OOzSi8MnMOIDF6/tn87ppcPTeelgdLUcPO5XB4/rtYNhLFoenu4RH7h4tf88Ty8On/eLg8PV8uBwXjs4Xq8ODrPccvhkj3jg5b398zm9dHg6Lx2MrpaDx/3q4HG9djCMRcvD0z3iAxev9p/n6cXn835xcLhaHhzOawfH69XBYZZbDh/7/PHle/vzL6d3RGCbn6f70sfgbPlwXK99HGbx0qdZHN3F8R3ZuNKC3lvnccF1OtoeXWOdx9hTx5oq", "encoding": "base64", "path": ["geometries", 0, "polys", "compressedValues"]}, {"data": "KLUv/WCIARUIAKILJCKwJemE7LbJtoTgrYZRjGEg1wmFJ+XMzFVY65q1rbVGMCEpH0C8hCM1frz5tr0p86Xqid6KAEAqIIKjvQ2bY3A5hQkFHysJ4vIGbD447DWWy4q0VSqrBqBCQpCRzJjhOgYVt+CSJMHsR67XjRfJvJJ5uXn1gPKDdKCFnwI7yw0dt+TwnBtGUR5JmZnPkfeGNlGoINAr9wwAIxqqDhBIgy8GY3A/3Z7YaSfrdzRC2nlEJHTO/JjaAqvy5o5PT7WyQP+y9yZcEWhztaP7xu+BtGxNmD3lqd3SDVkIy6bZhTexC8u3U32hWLRuNVuJptwm0P91W7rn1hzw8V4vSPKAAw==", "encoding": "base64", "path": ["geometries", 0, "pointData", "arrays", 0, "data", "compressedValues"]}, {"data": "AACAPwAAgD8AAIA/", "encoding": "base64", "path": ["geometry_colors", "buffer"]}, {"data": "AACAPw==", "encoding": "base64", "path": ["geometry_opacities", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_colors", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_opacities", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_sizes", "buffer"]}, {"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["roi", "buffer"]}]}}, "version_major": 2, "version_minor": 0}
 </script>
 
 
@@ -885,9 +889,8 @@ In the jupyter notebook environment, we use the default setting of <code class="
 
       </div>
     </div>
-
     
-  <script src="../_static/js/index.d3f166471bb80abb5163.js"></script>
+  <script src="../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
 
 
     
