@@ -461,8 +461,8 @@
 <p>Author: Jørgen S. Dokken</p>
 <p>Just as for the <a class="reference internal" href="../chapter1/fundamentals_code.html"><span class="doc std std-doc">Poisson problem</span></a>, we construct a test problem which makes it easy to determine if the calculations are correct.</p>
 <p>Since we know that our first-order time-stepping scheme is exact for linear functions, we create a problem which has linear variation in time. We combine this with a quadratic variation in space. Therefore, we choose the analytical solution to be</p>
-<div class="amsmath math notranslate nohighlight" id="equation-63b3a15c-922a-49b9-bb86-630a62be5693">
-<span class="eqno">(24)<a class="headerlink" href="#equation-63b3a15c-922a-49b9-bb86-630a62be5693" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-6e42b608-0443-4c65-a5b0-76121a9023fe">
+<span class="eqno">(24)<a class="headerlink" href="#equation-6e42b608-0443-4c65-a5b0-76121a9023fe" title="Permalink to this equation">¶</a></span>\[\begin{align}
 u = 1 + x^2+\alpha y^2 + \beta t
 \end{align}\]</div>
 <p>which yields a function whose computed values at the degrees of freedom will be exact, regardless of the mesh size and <span class="math notranslate nohighlight">\(\Delta t\)</span> as long as the mesh is uniformly partitioned.
@@ -654,7 +654,7 @@ to verify our implementation.</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>L2-error: 2.83e-02
-Error_max: 4.44e-15
+Error_max: 6.22e-15
 </pre></div>
 </div>
 </div>
@@ -718,10 +718,9 @@ Error_max: 4.44e-15
 
       </div>
     </div>
-    
+  
   <script src="../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
 
-
-    
+  None
   </body>
 </html>
