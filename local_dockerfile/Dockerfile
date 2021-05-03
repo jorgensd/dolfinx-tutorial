@@ -1,7 +1,7 @@
 FROM dolfinx/lab
 
 # Dependencies for pyvista and related packages
-RUN wget -qO - https://deb.nodesource.com/setup_15.x | bash && \
+RUN wget -qO - https://deb.nodesource.com/setup_16.x | bash && \
     apt-get -qq update && \
     apt-get install -y libgl1-mesa-dev xvfb nodejs && \
     apt-get clean && \
@@ -15,7 +15,7 @@ RUN jupyter labextension install jupyter-matplotlib jupyterlab-datawidgets itkwi
 RUN pip3 install --no-cache-dir --no-binary=h5py h5py meshio
 
 # Install progress-bar
-RUN pip3 install tqdm
+RUN pip3 install tqdm pygments --upgrade
 
 EXPOSE 8888/tcp
 ENV SHELL /bin/bash
