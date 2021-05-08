@@ -86,3 +86,10 @@ jobs:
           mpirun -n 3 python3 component_bc.py
           jupyter-nbconvert --to python em.ipynb
           mpirun -n 3 python3 em.py
+          cd ../chapter4
+          jupyter-nbconvert --to python solvers.ipynb
+          mpirun -n 3 python3 solvers.py
+          jupyter-nbconvert --to python convergence.ipynb
+          mpirun -n 3 python3 convergence.py
+          jupyter-nbconvert --to python compiler_parameters.ipynb
+          mpirun -n 3 python3 compiler_parameters.py
