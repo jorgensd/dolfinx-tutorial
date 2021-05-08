@@ -126,6 +126,11 @@
    </li>
   </ul>
  </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter1/nitsche.html">
+   Weak imposition of Dirichlet conditions for the Poisson problem
+  </a>
+ </li>
  <li class="toctree-l1 has-children">
   <a class="reference internal" href="../chapter1/membrane.html">
    Deflection of a membrane
@@ -498,154 +503,156 @@ This C code is in turned compiled using <a class="reference external" href="http
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 1) [&#39;-O1&#39;, &#39;-march=native&#39;]: 0.027083873748779297 s
-(N1curl, 1) [&#39;-O2&#39;, &#39;-march=native&#39;]: 0.024297237396240234 s
-(N1curl, 1) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.020957231521606445 s
-(N1curl, 1) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.02062821388244629 s
-(N1curl, 1) [&#39;-O1&#39;]: 0.027904510498046875 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 1) [&#39;-O1&#39;, &#39;-march=native&#39;]: 0.024149179458618164 s
+(N1curl, 1) [&#39;-O2&#39;, &#39;-march=native&#39;]: 0.02406907081604004 s
+(N1curl, 1) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.01962137222290039 s
+(N1curl, 1) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.01858663558959961 s
+(N1curl, 1) [&#39;-O1&#39;]: 0.024539709091186523 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 1) [&#39;-O2&#39;]: 0.027127742767333984 s
-(N1curl, 1) [&#39;-O3&#39;]: 0.022922515869140625 s
-(N1curl, 1) [&#39;-Ofast&#39;]: 0.02109241485595703 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 1) [&#39;-O2&#39;]: 0.024282455444335938 s
+(N1curl, 1) [&#39;-O3&#39;]: 0.02065134048461914 s
+(N1curl, 1) [&#39;-Ofast&#39;]: 0.018746614456176758 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 2) [&#39;-O1&#39;, &#39;-march=native&#39;]: 0.3739790916442871 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 2) [&#39;-O1&#39;, &#39;-march=native&#39;]: 0.3771474361419678 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 2) [&#39;-O2&#39;, &#39;-march=native&#39;]: 0.32128477096557617 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 2) [&#39;-O2&#39;, &#39;-march=native&#39;]: 0.31520843505859375 s
+(N1curl, 2) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.16490793228149414 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 2) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.2007157802581787 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 2) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.1637439727783203 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 2) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.1949021816253662 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 2) [&#39;-O1&#39;]: 0.376802921295166 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 2) [&#39;-O1&#39;]: 0.4251067638397217 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 2) [&#39;-O2&#39;]: 0.3404974937438965 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 2) [&#39;-O2&#39;]: 0.38884878158569336 s
-(N1curl, 2) [&#39;-O3&#39;]: 0.1924152374267578 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 2) [&#39;-O3&#39;]: 0.19838213920593262 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 2) [&#39;-Ofast&#39;]: 0.18990588188171387 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 2) [&#39;-Ofast&#39;]: 0.19817090034484863 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-O1&#39;, &#39;-march=native&#39;]: 3.058009386062622 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-O1&#39;, &#39;-march=native&#39;]: 2.869680643081665 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-O2&#39;, &#39;-march=native&#39;]: 2.3881776332855225 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-O2&#39;, &#39;-march=native&#39;]: 2.3361470699310303 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-O3&#39;, &#39;-march=native&#39;]: 1.2638039588928223 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.9577128887176514 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 1.2810816764831543 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.9581334590911865 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-O1&#39;]: 3.4984562397003174 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-O1&#39;]: 3.2699718475341797 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-O2&#39;]: 2.7715952396392822 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-O2&#39;]: 2.5923190116882324 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-O3&#39;]: 1.5825331211090088 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-O3&#39;]: 1.6468510627746582 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-Ofast&#39;]: 1.5437703132629395 s
-(CG, 1) [&#39;-O1&#39;, &#39;-march=native&#39;]: 0.0055484771728515625 s
-(CG, 1) [&#39;-O2&#39;, &#39;-march=native&#39;]: 0.004878520965576172 s
-(CG, 1) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.0052127838134765625 s
-(CG, 1) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.0061109066009521484 s
-(CG, 1) [&#39;-O1&#39;]: 0.004336833953857422 s
-(CG, 1) [&#39;-O2&#39;]: 0.0051267147064208984 s
-(CG, 1) [&#39;-O3&#39;]: 0.004034996032714844 s
-(CG, 1) [&#39;-Ofast&#39;]: 0.004534482955932617 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-Ofast&#39;]: 1.7090380191802979 s
+(CG, 1) [&#39;-O1&#39;, &#39;-march=native&#39;]: 0.004510164260864258 s
+(CG, 1) [&#39;-O2&#39;, &#39;-march=native&#39;]: 0.004429817199707031 s
+(CG, 1) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.004238128662109375 s
+(CG, 1) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.004185199737548828 s
+(CG, 1) [&#39;-O1&#39;]: 0.004598855972290039 s
+(CG, 1) [&#39;-O2&#39;]: 0.004437685012817383 s
+(CG, 1) [&#39;-O3&#39;]: 0.004179477691650391 s
+(CG, 1) [&#39;-Ofast&#39;]: 0.00416254997253418 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 2) [&#39;-O1&#39;, &#39;-march=native&#39;]: 0.04520106315612793 s
-(CG, 2) [&#39;-O2&#39;, &#39;-march=native&#39;]: 0.03958725929260254 s
-(CG, 2) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.03636574745178223 s
-(CG, 2) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.034124135971069336 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 2) [&#39;-O1&#39;, &#39;-march=native&#39;]: 0.04358482360839844 s
+(CG, 2) [&#39;-O2&#39;, &#39;-march=native&#39;]: 0.042159080505371094 s
+(CG, 2) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.038178443908691406 s
+(CG, 2) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.0381464958190918 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 2) [&#39;-O1&#39;]: 0.0447390079498291 s
-(CG, 2) [&#39;-O2&#39;]: 0.04176592826843262 s
-(CG, 2) [&#39;-O3&#39;]: 0.035585641860961914 s
-(CG, 2) [&#39;-Ofast&#39;]: 0.03562355041503906 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 2) [&#39;-O1&#39;]: 0.043775320053100586 s
+(CG, 2) [&#39;-O2&#39;]: 0.04436516761779785 s
+(CG, 2) [&#39;-O3&#39;]: 0.039846181869506836 s
+(CG, 2) [&#39;-Ofast&#39;]: 0.03984808921813965 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 3) [&#39;-O1&#39;, &#39;-march=native&#39;]: 0.18564367294311523 s
-(CG, 3) [&#39;-O2&#39;, &#39;-march=native&#39;]: 0.19087719917297363 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 3) [&#39;-O1&#39;, &#39;-march=native&#39;]: 0.19166302680969238 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 3) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.1626112461090088 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 3) [&#39;-O2&#39;, &#39;-march=native&#39;]: 0.17959260940551758 s
+(CG, 3) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.15394258499145508 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 3) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.17427682876586914 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 3) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.15368008613586426 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 3) [&#39;-O1&#39;]: 0.2064974308013916 s
-(CG, 3) [&#39;-O2&#39;]: 0.1964101791381836 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 3) [&#39;-O1&#39;]: 0.24443793296813965 s
+(CG, 3) [&#39;-O2&#39;]: 0.18729639053344727 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 3) [&#39;-O3&#39;]: 0.14639663696289062 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 3) [&#39;-O3&#39;]: 0.1612997055053711 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 3) [&#39;-Ofast&#39;]: 0.15365934371948242 s
-(RT, 1) [&#39;-O1&#39;, &#39;-march=native&#39;]: 0.018037080764770508 s
-(RT, 1) [&#39;-O2&#39;, &#39;-march=native&#39;]: 0.014494895935058594 s
-(RT, 1) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.012293100357055664 s
-(RT, 1) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.012719154357910156 s
-(RT, 1) [&#39;-O1&#39;]: 0.0156404972076416 s
-(RT, 1) [&#39;-O2&#39;]: 0.015574216842651367 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 3) [&#39;-Ofast&#39;]: 0.1613922119140625 s
+(RT, 1) [&#39;-O1&#39;, &#39;-march=native&#39;]: 0.0161898136138916 s
+(RT, 1) [&#39;-O2&#39;, &#39;-march=native&#39;]: 0.01632380485534668 s
+(RT, 1) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.013486385345458984 s
+(RT, 1) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.013164043426513672 s
+(RT, 1) [&#39;-O1&#39;]: 0.017139434814453125 s
+(RT, 1) [&#39;-O2&#39;]: 0.016826629638671875 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 1) [&#39;-O3&#39;]: 0.013429880142211914 s
-(RT, 1) [&#39;-Ofast&#39;]: 0.011739969253540039 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 1) [&#39;-O3&#39;]: 0.014555692672729492 s
+(RT, 1) [&#39;-Ofast&#39;]: 0.013377666473388672 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 2) [&#39;-O1&#39;, &#39;-march=native&#39;]: 0.22379350662231445 s
-(RT, 2) [&#39;-O2&#39;, &#39;-march=native&#39;]: 0.17136597633361816 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 2) [&#39;-O1&#39;, &#39;-march=native&#39;]: 0.2135334014892578 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 2) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.1256108283996582 s
-(RT, 2) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.1267402172088623 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 2) [&#39;-O2&#39;, &#39;-march=native&#39;]: 0.18182730674743652 s
+(RT, 2) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.11847257614135742 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 2) [&#39;-O1&#39;]: 0.25068235397338867 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 2) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.11771106719970703 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 2) [&#39;-O2&#39;]: 0.2255396842956543 s
-(RT, 2) [&#39;-O3&#39;]: 0.14043951034545898 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 2) [&#39;-O1&#39;]: 0.20989513397216797 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 2) [&#39;-Ofast&#39;]: 0.14110636711120605 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 2) [&#39;-O2&#39;]: 0.20056891441345215 s
+(RT, 2) [&#39;-O3&#39;]: 0.13266634941101074 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-O1&#39;, &#39;-march=native&#39;]: 1.9348983764648438 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 2) [&#39;-Ofast&#39;]: 0.13298797607421875 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-O2&#39;, &#39;-march=native&#39;]: 1.3893964290618896 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-O1&#39;, &#39;-march=native&#39;]: 1.6732211112976074 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.8885664939880371 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-O2&#39;, &#39;-march=native&#39;]: 1.5354692935943604 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.8679368495941162 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.6101672649383545 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-O1&#39;]: 2.1439058780670166 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.6123871803283691 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-O2&#39;]: 1.8849844932556152 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-O1&#39;]: 2.0213239192962646 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-O3&#39;]: 1.062157154083252 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-O2&#39;]: 1.6436638832092285 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-Ofast&#39;]: 1.0743958950042725 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-O3&#39;]: 0.9787657260894775 s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-Ofast&#39;]: 0.9073772430419922 s
 </pre></div>
 </div>
 </div>

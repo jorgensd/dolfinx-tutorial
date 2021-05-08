@@ -128,6 +128,11 @@
    </li>
   </ul>
  </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter1/nitsche.html">
+   Weak imposition of Dirichlet conditions for the Poisson problem
+  </a>
+ </li>
  <li class="toctree-l1 has-children">
   <a class="reference internal" href="../chapter1/membrane.html">
    Deflection of a membrane
@@ -466,8 +471,8 @@
 <p>Author: Jørgen S. Dokken</p>
 <p>Just as for the <a class="reference internal" href="../chapter1/fundamentals_code.html"><span class="doc std std-doc">Poisson problem</span></a>, we construct a test problem which makes it easy to determine if the calculations are correct.</p>
 <p>Since we know that our first-order time-stepping scheme is exact for linear functions, we create a problem which has linear variation in time. We combine this with a quadratic variation in space. Therefore, we choose the analytical solution to be</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2b05dec9-1f20-456a-89eb-df873d8a8a90">
-<span class="eqno">(24)<a class="headerlink" href="#equation-2b05dec9-1f20-456a-89eb-df873d8a8a90" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-7c24d34f-7e99-479d-b9e2-095a2313dad5">
+<span class="eqno">(27)<a class="headerlink" href="#equation-7c24d34f-7e99-479d-b9e2-095a2313dad5" title="Permalink to this equation">¶</a></span>\[\begin{align}
 u = 1 + x^2+\alpha y^2 + \beta t
 \end{align}\]</div>
 <p>which yields a function whose computed values at the degrees of freedom will be exact, regardless of the mesh size and <span class="math notranslate nohighlight">\(\Delta t\)</span> as long as the mesh is uniformly partitioned.
