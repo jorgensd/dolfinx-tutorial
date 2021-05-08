@@ -1,5 +1,5 @@
 # The dolfin-X tutorial
-![CI status](https://github.com/jorgensd/dolfinx-tutorial/actions/workflows/blank.yml/badge.svg)
+![CI status](https://github.com/jorgensd/dolfinx-tutorial/actions/workflows/build-publish.yml/badge.svg)
 ![Main status](https://github.com/jorgensd/dolfinx-tutorial/actions/workflows/main-test.yml/badge.svg)
 
 This is the github repo for the dolfinx-tutorial [webpage](https://jorgensd.github.io/dolfinx-tutorial/).
