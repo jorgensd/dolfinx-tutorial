@@ -300,6 +300,11 @@
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../chapter4/compiler_parameters.html">
+   JIT Parameters
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../chapter4/convergence.html">
    Error control: Computing convergence rates
   </a>
@@ -461,8 +466,8 @@
 <p>Author: Jørgen S. Dokken</p>
 <p>Just as for the <a class="reference internal" href="../chapter1/fundamentals_code.html"><span class="doc std std-doc">Poisson problem</span></a>, we construct a test problem which makes it easy to determine if the calculations are correct.</p>
 <p>Since we know that our first-order time-stepping scheme is exact for linear functions, we create a problem which has linear variation in time. We combine this with a quadratic variation in space. Therefore, we choose the analytical solution to be</p>
-<div class="amsmath math notranslate nohighlight" id="equation-aa474a74-ac0a-42c9-aee3-ff3a65ce1ead">
-<span class="eqno">(24)<a class="headerlink" href="#equation-aa474a74-ac0a-42c9-aee3-ff3a65ce1ead" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-8e61def6-d4ae-4295-ac19-2993c57650a4">
+<span class="eqno">(24)<a class="headerlink" href="#equation-8e61def6-d4ae-4295-ac19-2993c57650a4" title="Permalink to this equation">¶</a></span>\[\begin{align}
 u = 1 + x^2+\alpha y^2 + \beta t
 \end{align}\]</div>
 <p>which yields a function whose computed values at the degrees of freedom will be exact, regardless of the mesh size and <span class="math notranslate nohighlight">\(\Delta t\)</span> as long as the mesh is uniformly partitioned.

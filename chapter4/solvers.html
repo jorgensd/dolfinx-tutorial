@@ -55,7 +55,7 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Error control: Computing convergence rates" href="convergence.html" />
+    <link rel="next" title="JIT Parameters" href="compiler_parameters.html" />
     <link rel="prev" title="Electromagnetics example" href="../chapter3/em.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -300,6 +300,11 @@
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="compiler_parameters.html">
+   JIT Parameters
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="convergence.html">
    Error control: Computing convergence rates
   </a>
@@ -509,7 +514,7 @@ We start by creating a generic module for evaluating the analytical solution  at
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_139826024855968) 1 MPI processes
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_139810095484640) 1 MPI processes
 
   type: preonly
 
@@ -521,7 +526,7 @@ We start by creating a generic module for evaluating the analytical solution  at
 
   using NONE norm type for convergence test
 
-PC Object: (dolfinx_solve_139826024855968) 1 MPI processes
+PC Object: (dolfinx_solve_139810095484640) 1 MPI processes
 
   type: lu
 
@@ -585,7 +590,7 @@ You can set any opition in <code class="docutils literal notranslate"><span clas
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_139825985487104) 1 MPI processes
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_139810095212192) 1 MPI processes
 
   type: cg
 
@@ -597,7 +602,7 @@ You can set any opition in <code class="docutils literal notranslate"><span clas
 
   using PRECONDITIONED norm type for convergence test
 
-PC Object: (dolfinx_solve_139825985487104) 1 MPI processes
+PC Object: (dolfinx_solve_139810095212192) 1 MPI processes
 
   type: ilu
 
@@ -658,7 +663,7 @@ PC Object: (dolfinx_solve_139825985487104) 1 MPI processes
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_139825985487296) 1 MPI processes
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_139810095211856) 1 MPI processes
 
   type: gmres
 
@@ -674,7 +679,7 @@ PC Object: (dolfinx_solve_139825985487104) 1 MPI processes
 
   using PRECONDITIONED norm type for convergence test
 
-PC Object: (dolfinx_solve_139825985487296) 1 MPI processes
+PC Object: (dolfinx_solve_139810095211856) 1 MPI processes
 
   type: none
 
@@ -728,7 +733,7 @@ PC Object: (dolfinx_solve_139825985487296) 1 MPI processes
         <div class='prev-next-bottom'>
             
     <a class='left-prev' id="prev-link" href="../chapter3/em.html" title="previous page">Electromagnetics example</a>
-    <a class='right-next' id="next-link" href="convergence.html" title="next page">Error control: Computing convergence rates</a>
+    <a class='right-next' id="next-link" href="compiler_parameters.html" title="next page">JIT Parameters</a>
 
         </div>
         
