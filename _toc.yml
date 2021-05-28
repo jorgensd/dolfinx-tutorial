@@ -46,7 +46,7 @@
     - file: chapter3/robin_neumann_dirichlet
     - file: chapter3/component_bc
     - file: chapter3/em
-- part: Improving your FEniCS-X code
+- part: Improving your FEniCSx code
   chapters:
     - file: chapter4/solvers
     - file: chapter4/compiler_parameters

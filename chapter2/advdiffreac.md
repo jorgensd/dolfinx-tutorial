@@ -3,7 +3,7 @@ Authors: Hans Petter Langtangen and Anders Logg
 
 Most of the problems we have encountered so far have a common feature: they all invlove models expressed by a single scalar or vector PDE.
 In many situations the model is instead expressed as a system of PDEs, describing different quantities possibly govered by (very) different physics. 
-As we saw for the Navier-Stokes equations, one way to solve one equation a system of PDEs in FEniCS-X is to use a splitting method where we solve one equation at a time and feed the solution from one  equation into the next. However, one of the strengths with FEniCS-X  is the ease by which one can instead define variational problems that couple several PDEs into one compound system. In this system, we will look at how to use FEniCS-X to write solvers for such a system of coupled PDEs. The goal is to demonstrate how easy it is to implement fully implicit, also known as monolithic, solvers in FEniCS-X.
+As we saw for the Navier-Stokes equations, one way to solve one equation a system of PDEs in FEniCSx is to use a splitting method where we solve one equation at a time and feed the solution from one  equation into the next. However, one of the strengths with FEniCSx  is the ease by which one can instead define variational problems that couple several PDEs into one compound system. In this system, we will look at how to use FEniCSx to write solvers for such a system of coupled PDEs. The goal is to demonstrate how easy it is to implement fully implicit, also known as monolithic, solvers in FEniCSx.
 
 ## The PDE problem
 Our model problem is the following system of advection-diffusion-reaction equations:
