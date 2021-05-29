@@ -2,7 +2,7 @@
 
 Authors: Anders Logg and Hans Petter Langtangen
 
-Analysis of structures is one of  the major activities of modern engineering, which likely makes the PDE modelling the deformation of elastic bodies the most popular PDE in the world. It takes just one page of code to solve the equations of 2D or 3D elasticity in dolfin-X, and shown in this section.
+Analysis of structures is one of  the major activities of modern engineering, which likely makes the PDE modelling the deformation of elastic bodies the most popular PDE in the world. It takes just one page of code to solve the equations of 2D or 3D elasticity in DOLFINx, and shown in this section.
 
 ## The PDE problem
 The equations governing small elastic deformations of a body $\Omega$ can be written as

@@ -1,4 +1,4 @@
-# The dolfin-X tutorial
+# The DOLFINx tutorial
 ![CI status](https://github.com/jorgensd/dolfinx-tutorial/actions/workflows/build-publish.yml/badge.svg)
 ![Main status](https://github.com/jorgensd/dolfinx-tutorial/actions/workflows/main-test.yml/badge.svg)
 

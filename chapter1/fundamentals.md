@@ -2,9 +2,9 @@
 
 Authors: Hans Petter Langtangen, Anders Logg 
 
-Adapted to FEniCS-X by Jørgen S. Dokken 
+Adapted to FEniCSx by Jørgen S. Dokken 
 
-The goal of this tutorial is to solve one of the most basic PDEs, the Poisson equations, with a few lines of code in FEniCS-X. We start by introducing the most fundamental FEniCS objects, such as `Function`, `FunctionSpace`, `TrialFunction` and `TestFunction`, and learn how to write a basic PDE solver. 
+The goal of this tutorial is to solve one of the most basic PDEs, the Poisson equations, with a few lines of code in FEniCSx. We start by introducing the most fundamental FEniCSx objects, such as `Function`, `FunctionSpace`, `TrialFunction` and `TestFunction`, and learn how to write a basic PDE solver. 
 This will include:
 - How to formulate a mathematical variational problem
 - How to apply boundary conditions
@@ -17,7 +17,7 @@ The Poisson equation is the following boundary-value problem
 u(\mathbf{x}) &= u_D(\mathbf{x})&& \mathbf{x} \in \partial\Omega
 \end{align}
 
-Here, $u=u(\mathbf{x})$ is the unknown function, $f=f(\mathbf{x})$ is a prescribed function, $\nabla^2$ the Laplace operator, often written as $\Delta$, $\Omega$ the spatial domain, and $\partial\Omega$ is the boundary of $\Omega$. The Poisson problem, including both the PDE $-\nabla^2 u = f$ and the boundary condition $u=u_D$ on $\partial\Omega$, is an example of a _boundary-value problem_, which must be precisely state before it makes sense to start solving it numerically with FEniCS-X. 
+Here, $u=u(\mathbf{x})$ is the unknown function, $f=f(\mathbf{x})$ is a prescribed function, $\nabla^2$ the Laplace operator, often written as $\Delta$, $\Omega$ the spatial domain, and $\partial\Omega$ is the boundary of $\Omega$. The Poisson problem, including both the PDE $-\nabla^2 u = f$ and the boundary condition $u=u_D$ on $\partial\Omega$, is an example of a _boundary-value problem_, which must be precisely state before it makes sense to start solving it numerically with FEniCSx. 
 
 In the two dimensional space with coordinates $x$ and $y$, we can expand the Poisson equation as
 
@@ -31,19 +31,19 @@ elastic rods, inviscid fluid flow, and water waves. Moreover, the
 equation appears in numerical splitting strategies for more complicated
 systems of PDEs, in particular the Navier--Stokes equations.
 
-Solving a boundary value problem in FEniCS consists of the following steps:
+Solving a boundary value problem in FEniCSx consists of the following steps:
 
 1. Identify the computational domain $\Omega$, the PDE, and its corresponding boundary conditions and source terms $f$.
 2. Reformulate the PDE as a finite element variational problem.
-3. Write a Python program defining the computational domain, the boundary conditions, the variational problem and the source terms, using FEniCS.
+3. Write a Python program defining the computational domain, the boundary conditions, the variational problem and the source terms, using FEniCSx.
 4. Run the Python program to solve the boundary-value problem. Optionally, you can extend the program to derive quantities such as fluxes and averages,
 and visualize the results.
 
-As we have already covered step 1., we shall now cover step 2-4.
+As we have already covered step 1, we shall now cover step 2-4.
 
 ## Finite element variational formulation
 
-FEniCS is based on the finite element method, which is a general and
+FEniCSx is based on the finite element method, which is a general and
 efficient mathematical machinery for the numerical solution of
 PDEs. The starting point for the finite element methods is a PDE
 expressed in _variational form_. For readers not familiar with variational problems, it is suggested to reading a proper book on the finite element method in addition, as this tutorial is meant as a brief introduction to the subject. See the original tutorial {cite}`FenicsTutorial` (Chapter 1.6.2).
@@ -54,7 +54,7 @@ The basic recipe for turning a PDE into a variational problem is:
 - Perform integration by parts of terms with second order derivatives. 
 
 The function $v$ which multiplies the PDE is called a _test function_. The unknown function $u$ that is to be approximated is referred to as a _trial function_. 
-The terms trial and test functions are used in FEniCS-X too. The test and trial functions belong to certain _function spaces_ that specify the properties of the functions.
+The terms trial and test functions are used in FEniCSx too. The test and trial functions belong to certain _function spaces_ that specify the properties of the functions.
 
 In the present case, we multiply the equation by a test function $v$ and  integrate over $\Omega$:
 
@@ -95,8 +95,8 @@ PDE must lie in a function space where the derivatives are
 also continuous, but the Sobolev space $H^1(\Omega)$ allows functions with discontinuous derivatives.
 This weaker continuity requirement in our weak formulation (caused by the integration by parts) is of great importance when it comes to constructing the finite element function space. In particular, it allows the use of piecewise polynomial function spaces. This means that the function spaces are constructed 
 by stitching together polynomial functions on simple domains 
-such as intervals, triangles, quadrilaterals, tetrahedrons and
-hexahedrons. 
+such as intervals, triangles, quadrilaterals, tetrahedra and
+hexahedra. 
 
 The variational problem is a _continuous problem_: it defines the solution $u$ in the infinite-dimensional function space $V$.
 The finite element method for the  Poisson equation finds an approximate solution of the variational problem by replacing the infinite-dimensional function spaces $V$ and $\hat V$ by _discrete_ (finite dimensional) trial and test spaces $V_h\subset V$ and $\hat{V}_h \subset \hat{V}$. The discrete
@@ -123,7 +123,7 @@ L(v) &= \int_{\Omega} fv ~\mathrm{d} x.
 From literature $a(u,v)$ is known as the _bilinear form_ and $L(V)$ as a _linear form_. 
 For every linear problem, we will identify all terms with the unknown $u$ and collect them in $a(u,v)$, and collect all terms with only  known functions in $L(v)$.
 
-To solve a linear PDE in FEniCS-X, such as the Poisson equation, a user thus needs to perform two steps:
+To solve a linear PDE in FEniCSx, such as the Poisson equation, a user thus needs to perform two steps:
 
 1. Choose the finite element spaces $V$ and $\hat{V}$ by specifying the domain (the mesh) and the type of function space (polynomial degree and type).
 2. Express the PDE as a (discrete) variational problem: Find $u\in V$ such that $a(u,v)=L(v)$ for all $v \in \hat{V}$.

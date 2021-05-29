@@ -1,6 +1,6 @@
 # name: Docker tutorial images
 
-# # Builds images with dolfinx and all of the required FEniCS Project
+# # Builds images with DOLFINx and all of the required FEniCS Project
 # # components nightly.
 
 on:
@@ -15,7 +15,7 @@ on:
 
 jobs:
   build_end_user_images:
-    name: Build dolfinx tutorial images for binder
+    name: Build DOLFINx tutorial images for binder
     if: ${{ github.repository == 'jorgensd/dolfinx-tutorial' && github.ref == 'refs/heads/dokken/jupyterbook' }}
     runs-on: ubuntu-20.04
     env:
