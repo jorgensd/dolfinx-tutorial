@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>A nonlinear Poisson equation &#8212; FEniCS-X tutorial</title>
+    <title>A nonlinear Poisson equation &#8212; FEniCSx tutorial</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -78,7 +78,7 @@
       <img src="../_static/logo.jpeg" class="logo" alt="logo">
       
       
-      <h1 class="site-logo" id="site-title">FEniCS-X tutorial</h1>
+      <h1 class="site-logo" id="site-title">FEniCSx tutorial</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
@@ -89,7 +89,7 @@
         <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../index.html">
-   The FEniCS-X tutorial
+   The FEniCSx tutorial
   </a>
  </li>
 </ul>
@@ -295,7 +295,7 @@
 </ul>
 <p class="caption">
  <span class="caption-text">
-  Improving your FEniCS-X code
+  Improving your FEniCSx code
  </span>
 </p>
 <ul class="nav bd-sidenav">
@@ -431,8 +431,8 @@
 <div class="section" id="the-pde-problem">
 <h2>The PDE problem<a class="headerlink" href="#the-pde-problem" title="Permalink to this headline">¶</a></h2>
 <p>As a model for the solution of non-linear PDEs, we take the following non-linear Poisson equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a6eab4e0-02da-4d4a-9678-3f2111fd8985">
-<span class="eqno">(28)<a class="headerlink" href="#equation-a6eab4e0-02da-4d4a-9678-3f2111fd8985" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-3a414e50-a457-474a-9aee-7cf84d4a5aa6">
+<span class="eqno">(28)<a class="headerlink" href="#equation-3a414e50-a457-474a-9aee-7cf84d4a5aa6" title="Permalink to this equation">¶</a></span>\[\begin{align}
     - \nabla \cdot (q(u) \nabla u)&amp;=f &amp;&amp; \text{in } \Omega,\\
     u&amp;=u_D &amp;&amp; \text{on } \partial \Omega,
 \end{align}\]</div>
@@ -442,25 +442,25 @@
 <h2>Variational  formulation<a class="headerlink" href="#variational-formulation" title="Permalink to this headline">¶</a></h2>
 <p>As usual, we multiply the PDE by a test function <span class="math notranslate nohighlight">\(v\in \hat{V}\)</span>, integrate over the domain, and integrate second-order derivatives by parts. The boundary integrals arising from integration by parts vanishes wherever we employ Dirichlet conditions. The resulting variational formulation of our model problem becomes:</p>
 <p>Find <span class="math notranslate nohighlight">\(u\in V\)</span> such that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f01bc90a-4ff7-4bfe-877f-fba56e463708">
-<span class="eqno">(29)<a class="headerlink" href="#equation-f01bc90a-4ff7-4bfe-877f-fba56e463708" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-c9239abd-d466-4ce2-aec8-bd5369f78e23">
+<span class="eqno">(29)<a class="headerlink" href="#equation-c9239abd-d466-4ce2-aec8-bd5369f78e23" title="Permalink to this equation">¶</a></span>\[\begin{align}
     F(u; v)&amp;=0 &amp;&amp; \forall v \in \hat{V},
 \end{align}\]</div>
 <p>where</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b111b0b4-53d3-4c61-bdb4-a670151aec1e">
-<span class="eqno">(30)<a class="headerlink" href="#equation-b111b0b4-53d3-4c61-bdb4-a670151aec1e" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-b80508ac-17c8-4745-8fad-1ef7e794891f">
+<span class="eqno">(30)<a class="headerlink" href="#equation-b80508ac-17c8-4745-8fad-1ef7e794891f" title="Permalink to this equation">¶</a></span>\[\begin{align}
     F(u; v)&amp;=\int_{\Omega}(q(u)\nabla u \cdot \nabla v - fv)\mathrm{d}x,
 \end{align}\]</div>
 <p>and</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a8a56c37-8050-46c5-93f2-f8ef2d03633f">
-<span class="eqno">(31)<a class="headerlink" href="#equation-a8a56c37-8050-46c5-93f2-f8ef2d03633f" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-d1d6bf59-12ef-47ca-9fe8-2b50863a8e18">
+<span class="eqno">(31)<a class="headerlink" href="#equation-d1d6bf59-12ef-47ca-9fe8-2b50863a8e18" title="Permalink to this equation">¶</a></span>\[\begin{align}
     V&amp;=\left\{v\in H^1(\Omega)\vert v=u_D \text{on } \partial \Omega \right\}\\
     \hat{V}&amp;=\left\{v\in H^1(\Omega)\vert v=0 \text{on } \partial \Omega \right\}
 \end{align}\]</div>
 <p>The discrete problem arises as usual by restricting <span class="math notranslate nohighlight">\(V\)</span> and <span class="math notranslate nohighlight">\(\hat{V}\)</span> to a pair of discrete spaces. The discrete non-linear problem can therefore be written as:</p>
 <p>Find <span class="math notranslate nohighlight">\(u_h \in V_h\)</span> such that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-db20efa8-f34f-4c78-b422-4bbef2dc4b28">
-<span class="eqno">(32)<a class="headerlink" href="#equation-db20efa8-f34f-4c78-b422-4bbef2dc4b28" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-8afb3678-9f80-4555-9fcb-29490c9aacb2">
+<span class="eqno">(32)<a class="headerlink" href="#equation-8afb3678-9f80-4555-9fcb-29490c9aacb2" title="Permalink to this equation">¶</a></span>\[\begin{align}
 F(u_h, v) &amp;=0 \quad \forall v \in \hat{V}_h,
 \end{align}\]</div>
 <p>with <span class="math notranslate nohighlight">\(u_h=\sum_{j=1}^N U_j\phi_j\)</span>. Since <span class="math notranslate nohighlight">\(F\)</span> is non-linear in <span class="math notranslate nohighlight">\(u\)</span>, the variational statement gives rise to a system of non-linear algebraic equation in  the unknowns <span class="math notranslate nohighlight">\(U_1,\dots,U_N\)</span>.</p>

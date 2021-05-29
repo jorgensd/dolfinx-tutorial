@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The Navier-Stokes equations &#8212; FEniCS-X tutorial</title>
+    <title>The Navier-Stokes equations &#8212; FEniCSx tutorial</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -78,7 +78,7 @@
       <img src="../_static/logo.jpeg" class="logo" alt="logo">
       
       
-      <h1 class="site-logo" id="site-title">FEniCS-X tutorial</h1>
+      <h1 class="site-logo" id="site-title">FEniCSx tutorial</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
@@ -89,7 +89,7 @@
         <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../index.html">
-   The FEniCS-X tutorial
+   The FEniCSx tutorial
   </a>
  </li>
 </ul>
@@ -295,7 +295,7 @@
 </ul>
 <p class="caption">
  <span class="caption-text">
-  Improving your FEniCS-X code
+  Improving your FEniCSx code
  </span>
 </p>
 <ul class="nav bd-sidenav">
@@ -484,7 +484,7 @@ which means that we must use the UFL-operator <code class="docutils literal notr
 <p class="admonition-title">The usage of “nabla_grad” and “grad”</p>
 <p>As mentioned in the note in <a class="reference internal" href="linearelasticity_code.html"><span class="doc std std-doc">Linear elasticity implementation</span></a> the usage of <code class="docutils literal notranslate"><span class="pre">nabla_grad</span></code> and <code class="docutils literal notranslate"><span class="pre">grad</span></code> has to be interpreted with care. For the Navier-Stokes equations it is important to consider the term <span class="math notranslate nohighlight">\(u\cdot \nabla u\)</span> which should be interpreted as the vector <span class="math notranslate nohighlight">\(w\)</span> with elements
 <span class="math notranslate nohighlight">\(w_i=\sum_{j}\left(u_j\frac{\partial}{\partial x_j}\right)u_i = \sum_j u_j\frac{\partial u_i}{\partial x_j}\)</span>.
-This term can be  implemented in  FEniCS-X as either
+This term can be  implemented in  FEniCSx as either
 <code class="docutils literal notranslate"><span class="pre">grad(u)*u</span></code>, since this expression becomes <span class="math notranslate nohighlight">\(\sum_j\frac{\partial u_j}{\partial x_j}u_j\)</span>, or as <code class="docutils literal notranslate"><span class="pre">dot(u,</span> <span class="pre">nabla_grad(u))</span></code> since this
 expression becomes <span class="math notranslate nohighlight">\(\sum_i u_i\frac{\partial u_j}{x_i}\)</span>. We will use the notation <code class="docutils literal notranslate"><span class="pre">dot(u,</span> <span class="pre">nabla_grad(u))</span></code> below since it corresponds more closely to the standard notation <span class="math notranslate nohighlight">\(u\cdot \nabla u\)</span>.</p>
 </div>

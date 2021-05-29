@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Defining subdomains for different materials &#8212; FEniCS-X tutorial</title>
+    <title>Defining subdomains for different materials &#8212; FEniCSx tutorial</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -78,7 +78,7 @@
       <img src="../_static/logo.jpeg" class="logo" alt="logo">
       
       
-      <h1 class="site-logo" id="site-title">FEniCS-X tutorial</h1>
+      <h1 class="site-logo" id="site-title">FEniCSx tutorial</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
@@ -89,7 +89,7 @@
         <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../index.html">
-   The FEniCS-X tutorial
+   The FEniCSx tutorial
   </a>
  </li>
 </ul>
@@ -295,7 +295,7 @@
 </ul>
 <p class="caption">
  <span class="caption-text">
-  Improving your FEniCS-X code
+  Improving your FEniCSx code
  </span>
 </p>
 <ul class="nav bd-sidenav">
@@ -454,7 +454,7 @@
   <div class="section" id="defining-subdomains-for-different-materials">
 <h1>Defining subdomains for different materials<a class="headerlink" href="#defining-subdomains-for-different-materials" title="Permalink to this headline">¶</a></h1>
 <p>Author: Jørgen S. Dokken</p>
-<p>Solving PDEs in domains made up of different materials is frequently encountered task. In FEniCS-X, we handle these problems by defining a Discontinous cell-wise constant function.
+<p>Solving PDEs in domains made up of different materials is frequently encountered task. In FEniCSx, we handle these problems by defining a Discontinous cell-wise constant function.
 Such a function can be created over any mesh in the following way</p>
 <div class="section" id="subdomains-on-built-in-meshes">
 <h2>Subdomains on built-in meshes<a class="headerlink" href="#subdomains-on-built-in-meshes" title="Permalink to this headline">¶</a></h2>
@@ -482,7 +482,7 @@ Such a function can be created over any mesh in the following way</p>
 </div>
 </div>
 </div>
-<p>Note that both fucntion uses a <span class="math notranslate nohighlight">\(\leq\)</span> or <span class="math notranslate nohighlight">\(\geq\)</span>, as FEniCS-X will evaluate each cell at all of the vertices, and thus for has to return <code class="docutils literal notranslate"><span class="pre">True</span></code> for all vertices align with the interface to be marked properly.</p>
+<p>Note that both fucntion uses a <span class="math notranslate nohighlight">\(\leq\)</span> or <span class="math notranslate nohighlight">\(\geq\)</span>, as FEniCSx will evaluate each cell at all of the vertices, and thus for has to return <code class="docutils literal notranslate"><span class="pre">True</span></code> for all vertices align with the interface to be marked properly.</p>
 <p>We will solve a variable-coefficient extension of the Poisson equation</p>
 <div class="math notranslate nohighlight">
 \[
@@ -630,7 +630,7 @@ Falling back to a static output.
 </div>
 <div class="section" id="subdomains-defined-from-external-mesh-data">
 <h2>Subdomains defined from external mesh data<a class="headerlink" href="#subdomains-defined-from-external-mesh-data" title="Permalink to this headline">¶</a></h2>
-<p>Let us now consider the same problem, but using GMSH to generate the mesh and subdomains. We will then in turn show how to use this data to generate discontinuous functions in dolfin-X.</p>
+<p>Let us now consider the same problem, but using GMSH to generate the mesh and subdomains. We will then in turn show how to use this data to generate discontinuous functions in DOLFINx.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gmsh</span>
@@ -696,7 +696,7 @@ Falling back to a static output.
 </div>
 </div>
 </div>
-<p>This function returns a meshio mesh, including physical markers for the given type. The <code class="docutils literal notranslate"><span class="pre">prune_z</span></code> argument is for cases where we want to use two dimensional meshes. The last coordinate in the mesh (as it is generated in a 3D space) has to be removed for dolfin-X to consider this as a two dimensional geometry.</p>
+<p>This function returns a meshio mesh, including physical markers for the given type. The <code class="docutils literal notranslate"><span class="pre">prune_z</span></code> argument is for cases where we want to use two dimensional meshes. The last coordinate in the mesh (as it is generated in a 3D space) has to be removed for DOLFINx to consider this as a two dimensional geometry.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">proc</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -712,7 +712,7 @@ Falling back to a static output.
 </div>
 </div>
 </div>
-<p>We have now written the mesh and the cell markers to one file, and the facet markers in a separate file. We can now read this data in dolfin-X using <code class="docutils literal notranslate"><span class="pre">XDMFFile.read_mesh</span></code> and <code class="docutils literal notranslate"><span class="pre">XDMFFile.read_meshtags</span></code>. The <code class="docutils literal notranslate"><span class="pre">dolfinx.MeshTags</span></code> stores the index of the entity, along with the value of the marker in two one dimensional arrays.</p>
+<p>We have now written the mesh and the cell markers to one file, and the facet markers in a separate file. We can now read this data in DOLFINx using <code class="docutils literal notranslate"><span class="pre">XDMFFile.read_mesh</span></code> and <code class="docutils literal notranslate"><span class="pre">XDMFFile.read_meshtags</span></code>. The <code class="docutils literal notranslate"><span class="pre">dolfinx.MeshTags</span></code> stores the index of the entity, along with the value of the marker in two one dimensional arrays.</p>
 <p>Note that we have generated and written the mesh on only one processor. However, the <code class="docutils literal notranslate"><span class="pre">xdmf</span></code>-format supports parallel IO, and we can thus read the mesh in parallel.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">

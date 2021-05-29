@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Test problem 1: Channel flow (Poiseuille flow) &#8212; FEniCS-X tutorial</title>
+    <title>Test problem 1: Channel flow (Poiseuille flow) &#8212; FEniCSx tutorial</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -78,7 +78,7 @@
       <img src="../_static/logo.jpeg" class="logo" alt="logo">
       
       
-      <h1 class="site-logo" id="site-title">FEniCS-X tutorial</h1>
+      <h1 class="site-logo" id="site-title">FEniCSx tutorial</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
@@ -89,7 +89,7 @@
         <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../index.html">
-   The FEniCS-X tutorial
+   The FEniCSx tutorial
   </a>
  </li>
 </ul>
@@ -295,7 +295,7 @@
 </ul>
 <p class="caption">
  <span class="caption-text">
-  Improving your FEniCS-X code
+  Improving your FEniCSx code
  </span>
 </p>
 <ul class="nav bd-sidenav">
@@ -454,7 +454,7 @@
   <div class="section" id="test-problem-1-channel-flow-poiseuille-flow">
 <h1>Test problem 1: Channel flow (Poiseuille flow)<a class="headerlink" href="#test-problem-1-channel-flow-poiseuille-flow" title="Permalink to this headline">¶</a></h1>
 <p>Authors: Anders Logg and Hans Petter Langtangen</p>
-<p>Adapted to dolfin-X by: Jørgen S. Dokken</p>
+<p>Adapted to DOLFINx by: Jørgen S. Dokken</p>
 <p>In this section, you will learn how to:</p>
 <ul class="simple">
 <li><p>Solve the Navier-Stokes problem using a splitting scheme</p></li>
@@ -484,7 +484,7 @@ In other applications, scaling shows that it might be necessary to just set the 
 <div class="section" id="implementation">
 <h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h2>
 <p>Author: Jørgen S. Dokken</p>
-<p>As in the previous example, we load the <code class="docutils literal notranslate"><span class="pre">dolfinx</span></code>-module, along with the <code class="docutils literal notranslate"><span class="pre">mpi4py</span></code>-module, and create the unit square mesh and define the run-time and temporal discretization</p>
+<p>As in the previous example, we load the DOLFINx module, along with the <code class="docutils literal notranslate"><span class="pre">mpi4py</span></code> module, and create the unit square mesh and define the run-time and temporal discretization</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx</span>
@@ -851,7 +851,7 @@ As the variational problem contains a mix of known and unknown quantities, we wi
 </div>
 <div class="section" id="verification">
 <h2>Verification<a class="headerlink" href="#verification" title="Permalink to this headline">¶</a></h2>
-<p>As for the previous problems we compute the error at each degree of freedom and the <span class="math notranslate nohighlight">\(L^2(\Omega)\)</span>-error. We start with the  initial condition <span class="math notranslate nohighlight">\(u=(0,0)\)</span>. We have not specified the initial condition explicitly, and FEniCS-X wil initialize all <code class="docutils literal notranslate"><span class="pre">Function</span></code>s including <code class="docutils literal notranslate"><span class="pre">u_n</span></code> and <code class="docutils literal notranslate"><span class="pre">u_</span></code> to zero. Since the exact solution is quadratic, we expect to reach machine precision within finite time. For our implementation, we observe that the error quickly approaches zero, and is of order <span class="math notranslate nohighlight">\(10^{-6}\)</span> at $T=10</p>
+<p>As for the previous problems we compute the error at each degree of freedom and the <span class="math notranslate nohighlight">\(L^2(\Omega)\)</span>-error. We start with the  initial condition <span class="math notranslate nohighlight">\(u=(0,0)\)</span>. We have not specified the initial condition explicitly, and FEniCSx will initialize all <code class="docutils literal notranslate"><span class="pre">Function</span></code>s including <code class="docutils literal notranslate"><span class="pre">u_n</span></code> and <code class="docutils literal notranslate"><span class="pre">u_</span></code> to zero. Since the exact solution is quadratic, we expect to reach machine precision within finite time. For our implementation, we observe that the error quickly approaches zero, and is of order <span class="math notranslate nohighlight">\(10^{-6}\)</span> at $T=10</p>
 </div>
 <div class="section" id="visualization-of-higher-order-functions">
 <h2>Visualization of higher order functions<a class="headerlink" href="#visualization-of-higher-order-functions" title="Permalink to this headline">¶</a></h2>

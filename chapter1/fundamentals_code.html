@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Implementation &#8212; FEniCS-X tutorial</title>
+    <title>Implementation &#8212; FEniCSx tutorial</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -78,7 +78,7 @@
       <img src="../_static/logo.jpeg" class="logo" alt="logo">
       
       
-      <h1 class="site-logo" id="site-title">FEniCS-X tutorial</h1>
+      <h1 class="site-logo" id="site-title">FEniCSx tutorial</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
@@ -89,7 +89,7 @@
         <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../index.html">
-   The FEniCS-X tutorial
+   The FEniCSx tutorial
   </a>
  </li>
 </ul>
@@ -295,7 +295,7 @@
 </ul>
 <p class="caption">
  <span class="caption-text">
-  Improving your FEniCS-X code
+  Improving your FEniCSx code
  </span>
 </p>
 <ul class="nav bd-sidenav">
@@ -499,10 +499,10 @@
   <div class="section" id="implementation">
 <h1>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h1>
 <p>Author: Jørgen Schartum Dokken</p>
-<p>This implementation is an adaptation of the work in <span id="id1">[<a class="reference internal" href="../index.html#id11"><span>LL16</span></a>]</span> to dolfin-X.</p>
+<p>This implementation is an adaptation of the work in <span id="id1">[<a class="reference internal" href="../index.html#id11"><span>LL16</span></a>]</span> to DOLFINx.</p>
 <p>In this section, you will learn:</p>
 <ul class="simple">
-<li><p>How to use the built-in meshes in dolfin-x</p></li>
+<li><p>How to use the built-in meshes in DOLFINx</p></li>
 <li><p>How to create a Dirichlet boundary conditions on the whole domain boundary</p></li>
 <li><p>How to define a weak formulation of your PDE</p></li>
 <li><p>How to solve the resulting system of linear equations</p></li>
@@ -520,13 +520,13 @@ Therefore, we need to make specific choices of <span class="math notranslate noh
 <!-- Particularly, piecewise linear continuous Galerkin finite elements are able to exactly reproduce a quadratic polynomial on 
 a uniformly partitioned mesh. -->
 <p>We use this fact to construct a quadratic function in <span class="math notranslate nohighlight">\(2D\)</span>. In particular we choose</p>
-<div class="amsmath math notranslate nohighlight" id="equation-da06bfd1-b30d-44ef-9c57-d8d646c5c635">
-<span class="eqno">(6)<a class="headerlink" href="#equation-da06bfd1-b30d-44ef-9c57-d8d646c5c635" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-94f80126-31af-49f5-bb59-ee49873d5ef1">
+<span class="eqno">(6)<a class="headerlink" href="#equation-94f80126-31af-49f5-bb59-ee49873d5ef1" title="Permalink to this equation">¶</a></span>\[\begin{align}
  u_e(x,y)=1+x^2+2y^2
  \end{align}\]</div>
 <p>Inserting <span class="math notranslate nohighlight">\(u_e\)</span> in the original boundary problem, we find that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-161f3c04-26ba-455b-ae5b-5b27469d44ed">
-<span class="eqno">(7)<a class="headerlink" href="#equation-161f3c04-26ba-455b-ae5b-5b27469d44ed" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-c8c337af-2631-413f-9212-d24392a1fe29">
+<span class="eqno">(7)<a class="headerlink" href="#equation-c8c337af-2631-413f-9212-d24392a1fe29" title="Permalink to this equation">¶</a></span>\[\begin{align}
     f(x,y)= -6,\qquad u_d(x,y)=u_e(x,y)=1+x^2+2y^2,
 \end{align}\]</div>
 <p>regardless of the shape of the domain as long as we prescribe
@@ -551,7 +551,7 @@ be produced to machine precision by the program.</p>
 </div>
 </div>
 </div>
-<p>A major difference between a traditional FEniCS code and a FEniCS-X code, is that one is not advised to use the wildcard import.</p>
+<p>A major difference between a traditional FEniCS code and a FEniCSx code, is that one is not advised to use the wildcard import.</p>
 </div>
 <div class="section" id="generating-simple-meshes">
 <h2>Generating  simple meshes<a class="headerlink" href="#generating-simple-meshes" title="Permalink to this headline">¶</a></h2>
@@ -587,9 +587,9 @@ multiple parameters.</p>
 </div>
 </div>
 <p>The second argument is the tuple containing the type of finite element, and the element degree. The type of element here is “CG”, which implies the standard Lagrange family of elements.
-Dolfin-X supports a large variety on elements on simplices
-(triangles and tetrahedrons) and non-simplices (quadrilaterals
-and hexahedrons). For an overview, see:
+DOLFINx supports a large variety on elements on simplices
+(triangles and tetrahedra) and non-simplices (quadrilaterals
+and hexahedra). For an overview, see:
 <em>FIXME: Add link to all the elements we support</em></p>
 <p>The element degree in the code is 1. This means that we are choosing the standard <span class="math notranslate nohighlight">\(P_1\)</span> linear Lagrange element, which has degrees of freedom at the vertices. The computed solution will be continuous across elements and linearly varying in <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> inside each element. Higher degree polynomial approximations are obtained by increasing the degree argument.</p>
 </div>
@@ -625,7 +625,7 @@ This function returns an array of booleans of the same size as the number of fac
 <div class="admonition-local-ordering-of-degrees-of-freedom-and-mesh-vertices admonition">
 <p class="admonition-title">Local ordering of degrees of freedom and mesh vertices</p>
 <p>Many people expect there to be a 1-1 correspondence between the mesh coordinates and the coordinates of the degrees of freedom.
-However, this is only true in the case of <code class="docutils literal notranslate"><span class="pre">CG</span></code> 1 elements on a first order mesh. Therefore, in <code class="docutils literal notranslate"><span class="pre">dolfinx</span></code> we use separate local numbering for the mesh coordinates and the dof coordinates. To obtain the local dof coordinates we can use <code class="docutils literal notranslate"><span class="pre">V.tabulate_dof_coordinates()</span></code>, while the ordering of the local vertices can be obtained by <code class="docutils literal notranslate"><span class="pre">mesh.geometry.x</span></code>.</p>
+However, this is only true in the case of <code class="docutils literal notranslate"><span class="pre">CG</span></code> 1 elements on a first order mesh. Therefore, in DOLFINx we use separate local numbering for the mesh coordinates and the dof coordinates. To obtain the local dof coordinates we can use <code class="docutils literal notranslate"><span class="pre">V.tabulate_dof_coordinates()</span></code>, while the ordering of the local vertices can be obtained by <code class="docutils literal notranslate"><span class="pre">mesh.geometry.x</span></code>.</p>
 </div>
 <p>With this data at hand, we can create the Dirichlet boundary condition</p>
 <div class="cell docutils container">
@@ -640,7 +640,7 @@ However, this is only true in the case of <code class="docutils literal notransl
 <div class="section" id="defining-the-trial-and-test-function">
 <h2>Defining the trial and test function<a class="headerlink" href="#defining-the-trial-and-test-function" title="Permalink to this headline">¶</a></h2>
 <p>In mathematics, we distinguish between trial and test spaces <span class="math notranslate nohighlight">\(V\)</span> and <span class="math notranslate nohighlight">\(\hat{V}\)</span>. The only difference in the present problem is the boundary conditions.
-In FEniCS-X, we do not specify boundary conditions as part of the function space, so it is sufficient to use a common space for the trial and test function:</p>
+In FEniCSx, we do not specify boundary conditions as part of the function space, so it is sufficient to use a common space for the trial and test function:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">u</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
@@ -680,7 +680,7 @@ However, if we would like to change this parameter later in the simulation, we w
 <p>Note that there is a very close correspondence between the Python syntax and the mathematical syntax
 <span class="math notranslate nohighlight">\(\int_{\Omega} \nabla u \cdot \nabla v ~\mathrm{d} x\)</span> and <span class="math notranslate nohighlight">\(\int_{\Omega}fv~\mathrm{d} x\)</span>.
 The integration over the domain <span class="math notranslate nohighlight">\(\Omega\)</span> is defined by using <code class="docutils literal notranslate"><span class="pre">ufl.dx</span></code>, an integration measure over all cells of the mesh.</p>
-<p>This is the key strength of FEniCS-X: the formulas in the variational formulation translate directly to very similar Python code, a feature that makes it easy to specify and solve complicated PDE problems. The language used to express weak forms is the Unified Form Language <a class="reference external" href="https://doi.org/10.1145/2566630">UFL</a>.</p>
+<p>This is the key strength of FEniCSx: the formulas in the variational formulation translate directly to very similar Python code, a feature that makes it easy to specify and solve complicated PDE problems. The language used to express weak forms is the Unified Form Language <a class="reference external" href="https://doi.org/10.1145/2566630">UFL</a>.</p>
 </div>
 <div class="section" id="expressing-inner-products">
 <h2>Expressing inner products<a class="headerlink" href="#expressing-inner-products" title="Permalink to this headline">¶</a></h2>
@@ -740,7 +740,7 @@ Therefore we compute the values of both <code class="docutils literal notranslat
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Error_L2 : 8.24e-03
-Error_max : 4.22e-15
+Error_max : 3.11e-15
 </pre></div>
 </div>
 </div>
@@ -822,7 +822,7 @@ Falling back to a static output.
 </div>
 <div class="cell_output docutils container">
 <script type="application/vnd.jupyter.widget-view+json">
-{"version_major": 2, "version_minor": 0, "model_id": "4af78bd0865847f4a76d6bb0002a68d2"}
+{"version_major": 2, "version_minor": 0, "model_id": "8544de04653944bbafe67d6669d892a3"}
 </script></div>
 </div>
 </div>
@@ -846,7 +846,7 @@ Falling back to a static output.
 
 
 <script type="application/vnd.jupyter.widget-state+json">
-{"state": {"ed6999b386b346d887af30ac749cf43b": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "4af78bd0865847f4a76d6bb0002a68d2": {"model_name": "ViewerModel", "model_module": "itkwidgets", "model_module_version": "^0.32.0", "state": {"_custom_cmap": null, "_dom_classes": [], "_downsampling": false, "_largest_roi": {"shape": [2, 3], "dtype": "float64"}, "_model_module": "itkwidgets", "_model_module_version": "^0.32.0", "_model_name": "ViewerModel", "_rendering_image": false, "_reset_crop_requested": false, "_scale_factors": {"shape": [3], "dtype": "uint8"}, "_view_count": null, "_view_module": "itkwidgets", "_view_module_version": "^0.32.0", "_view_name": "ViewerView", "annotations": true, "axes": false, "background": [], "blend_mode": "composite", "camera": {"shape": [3, 3], "dtype": "float32"}, "channels": null, "clicked_slice_point": null, "cmap": null, "geometries": [{"vtkClass": "vtkPolyData", "points": {"vtkClass": "vtkPoints", "name": "_points", "numberOfComponents": 3, "dataType": "Float32Array", "size": 243}, "polys": {"vtkClass": "vtkCellArray", "name": "_polys", "numberOfComponents": 1, "size": 320, "dataType": "Uint32Array"}, "pointData": {"vtkClass": "vtkDataSetAttributes", "activeScalars": 0, "arrays": [{"data": {"vtkClass": "vtkDataArray", "name": "u", "numberOfComponents": 1, "size": 81, "dataType": "Float64Array"}}]}, "metadata": {"name": "Geometry 0"}}], "geometry_colors": {"shape": [1, 3], "dtype": "float32"}, "geometry_opacities": {"shape": [1], "dtype": "float32"}, "gradient_opacity": 0.2, "interpolation": true, "label_image_blend": 0.5, "label_image_names": null, "label_image_weights": null, "layout": "IPY_MODEL_ed6999b386b346d887af30ac749cf43b", "lut": "glasbey", "mode": "v", "opacity_gaussians": null, "point_set_colors": {"shape": [0, 3], "dtype": "float32"}, "point_set_opacities": {"shape": [0], "dtype": "float32"}, "point_set_representations": [], "point_set_sizes": {"shape": [0], "dtype": "uint8"}, "point_sets": [], "rendered_image": null, "rendered_label_image": null, "roi": {"shape": [2, 3], "dtype": "float64"}, "rotate": false, "sample_distance": 0.25, "select_roi": false, "shadow": true, "slicing_planes": false, "ui_collapsed": true, "units": "", "vmax": null, "vmin": null, "x_slice": null, "y_slice": null, "z_slice": null}, "buffers": [{"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["_largest_roi", "buffer"]}, {"data": "AQEB", "encoding": "base64", "path": ["_scale_factors", "buffer"]}, {"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["camera", "buffer"]}, {"data": "KLUv/WDMArUKACQIAACAPwAAwD8AYD8AAKI+o8FAPwAAiIk/AACAjKbEID8AAGRmbHaRq8kAP0JIUoI/mD+y0CQ+Jiw2P0RWcouhu9kQPhI+AAAYPgAAIjA+WISWrMbkBAY+AAAMPgAAFjY+AABMZoO50/EAAgAAAAgAADJIAAAAYj+APpI/AACgyOI/QICXqACbYsawAjGhqgcQgDLacNtP536C41/UjoHzn+gFS5NnhTgn5/rHEj8xaWGDXbtKTWvCl99Q2HkgYvlBp7uZr3flh8Mr4o99e4N/h98oPWbVfzhna3TKlpLX4zz74y/iwKPPOZJOxxX9VhYe5B9Gj6sGI/xl5IH1jsi+RvKmjcEbkXXtAC5fgtP95Qff8NqfzonX/S/rqGnxSOiXfz06IdgOupPrZ3C7xcAM9UUvB/H3Beeu6IXHaHhxz7GPqcJfs3CpO0Bonc9R3bgpn7hqAQ==", "encoding": "base64", "path": ["geometries", 0, "points", "compressedValues"]}, {"data": "KLUv/WAABIULAEIJGxMQkK05qxCAUCuQltQrSt3aHjUF777yOpUUlBMTkpe8jaeRgXFhUTFyigaGBYUEhAORTwDUaDNZzCDkEitVCnWCFYA8QhQCfUwvgo9DbDRbxlNyDXj84RzmcsvbOueQPmqdJfCA945zdzjHX4DoqNHq2LRvIAJCVIUHEMDpAR9wmY2P8WF9cLxeHTzuVweHq/XBYRYvHZ7h/GAud+cDL7dxMLysDw7nqwPH9drB4LQ+OOzSi8MnMOIDF6/tn87ppcPTeelgdLUcPO5XB4/rtYNhLFoenu4RH7h4tf88Ty8On/eLg8PV8uBwXjs4Xq8ODrPccvhkj3jg5b398zm9dHg6Lx2MrpaDx/3q4HG9djCMRcvD0z3iAxev9p/n6cXn835xcLhaHhzOawfH69XBYZZbDh/7/PHle/vzL6d3RGCbn6f70sfgbPlwXK99HGbx0qdZHN3F8R3ZuNKC3lvnccF1OtoeXWOdx9hTx5oq", "encoding": "base64", "path": ["geometries", 0, "polys", "compressedValues"]}, {"data": "KLUv/WCIAc0IAOKMKCWgpelERIhtNyG2rbFiAOCpqmoE/J/7i87/aIDjP/abbdba/bvJOXCEDUhITIAvP9H/5PeH8crOX3wvLqAcWoG1lWB7rrwN58cts6zkRREJZAe6qJRGf1bYeWOG3R3zZ4BSaCxpjp4S+NmFHWXcrONGqzzgSoLXoUQ/lh75i58hQzcM2koargpMKTxt40mlRBL78tAjiRJPJaIka8z/PyWCR1CoIE4jbwbQohqyDhBY4y4Gu3H5FkpO8CG2y13o+JH9cE7bIQ62zwviH84Yzf17woWPZozX8v3qLfwaLigjOaA25LZrMpBHuRiTj5jbljn12tgNeiISY+9bptl/RnE0akYYf9Bo02HQhFtNOkk6uMAGS8AB", "encoding": "base64", "path": ["geometries", 0, "pointData", "arrays", 0, "data", "compressedValues"]}, {"data": "AACAPwAAgD8AAIA/", "encoding": "base64", "path": ["geometry_colors", "buffer"]}, {"data": "AACAPw==", "encoding": "base64", "path": ["geometry_opacities", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_colors", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_opacities", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_sizes", "buffer"]}, {"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["roi", "buffer"]}]}}, "version_major": 2, "version_minor": 0}
+{"state": {"1df2cbed70fb477b902eca9086f3f41f": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "8544de04653944bbafe67d6669d892a3": {"model_name": "ViewerModel", "model_module": "itkwidgets", "model_module_version": "^0.32.0", "state": {"_custom_cmap": null, "_dom_classes": [], "_downsampling": false, "_largest_roi": {"shape": [2, 3], "dtype": "float64"}, "_model_module": "itkwidgets", "_model_module_version": "^0.32.0", "_model_name": "ViewerModel", "_rendering_image": false, "_reset_crop_requested": false, "_scale_factors": {"shape": [3], "dtype": "uint8"}, "_view_count": null, "_view_module": "itkwidgets", "_view_module_version": "^0.32.0", "_view_name": "ViewerView", "annotations": true, "axes": false, "background": [], "blend_mode": "composite", "camera": {"shape": [3, 3], "dtype": "float32"}, "channels": null, "clicked_slice_point": null, "cmap": null, "geometries": [{"vtkClass": "vtkPolyData", "points": {"vtkClass": "vtkPoints", "name": "_points", "numberOfComponents": 3, "dataType": "Float32Array", "size": 243}, "polys": {"vtkClass": "vtkCellArray", "name": "_polys", "numberOfComponents": 1, "size": 320, "dataType": "Uint32Array"}, "pointData": {"vtkClass": "vtkDataSetAttributes", "activeScalars": 0, "arrays": [{"data": {"vtkClass": "vtkDataArray", "name": "u", "numberOfComponents": 1, "size": 81, "dataType": "Float64Array"}}]}, "metadata": {"name": "Geometry 0"}}], "geometry_colors": {"shape": [1, 3], "dtype": "float32"}, "geometry_opacities": {"shape": [1], "dtype": "float32"}, "gradient_opacity": 0.2, "interpolation": true, "label_image_blend": 0.5, "label_image_names": null, "label_image_weights": null, "layout": "IPY_MODEL_1df2cbed70fb477b902eca9086f3f41f", "lut": "glasbey", "mode": "v", "opacity_gaussians": null, "point_set_colors": {"shape": [0, 3], "dtype": "float32"}, "point_set_opacities": {"shape": [0], "dtype": "float32"}, "point_set_representations": [], "point_set_sizes": {"shape": [0], "dtype": "uint8"}, "point_sets": [], "rendered_image": null, "rendered_label_image": null, "roi": {"shape": [2, 3], "dtype": "float64"}, "rotate": false, "sample_distance": 0.25, "select_roi": false, "shadow": true, "slicing_planes": false, "ui_collapsed": true, "units": "", "vmax": null, "vmin": null, "x_slice": null, "y_slice": null, "z_slice": null}, "buffers": [{"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["_largest_roi", "buffer"]}, {"data": "AQEB", "encoding": "base64", "path": ["_scale_factors", "buffer"]}, {"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["camera", "buffer"]}, {"data": "KLUv/WDMArUKACQIAACAPwAAwD8AYD8AAKI+o8FAPwAAiIk/AACAjKbEID8AAGRmbHaRq8kAP0JIUoI/mD+y0CQ+Jiw2P0RWcouhu9kQPhI+AAAYPgAAIjA+WISWrMbkBAY+AAAMPgAAFjY+AABMZoO50/EAAgAAAAgAADJIAAAAYj+APpI/AACgyOI/QICXqACbYsawAjGhqgcQgDLacNtP536C41/UjoHzn+gFS5NnhTgn5/rHEj8xaWGDXbtKTWvCl99Q2HkgYvlBp7uZr3flh8Mr4o99e4N/h98oPWbVfzhna3TKlpLX4zz74y/iwKPPOZJOxxX9VhYe5B9Gj6sGI/xl5IH1jsi+RvKmjcEbkXXtAC5fgtP95Qff8NqfzonX/S/rqGnxSOiXfz06IdgOupPrZ3C7xcAM9UUvB/H3Beeu6IXHaHhxz7GPqcJfs3CpO0Bonc9R3bgpn7hqAQ==", "encoding": "base64", "path": ["geometries", 0, "points", "compressedValues"]}, {"data": "KLUv/WAABIULAEIJGxMQkK05qxCAUCuQltQrSt3aHjUF777yOpUUlBMTkpe8jaeRgXFhUTFyigaGBYUEhAORTwDUaDNZzCDkEitVCnWCFYA8QhQCfUwvgo9DbDRbxlNyDXj84RzmcsvbOueQPmqdJfCA945zdzjHX4DoqNHq2LRvIAJCVIUHEMDpAR9wmY2P8WF9cLxeHTzuVweHq/XBYRYvHZ7h/GAud+cDL7dxMLysDw7nqwPH9drB4LQ+OOzSi8MnMOIDF6/tn87ppcPTeelgdLUcPO5XB4/rtYNhLFoenu4RH7h4tf88Ty8On/eLg8PV8uBwXjs4Xq8ODrPccvhkj3jg5b398zm9dHg6Lx2MrpaDx/3q4HG9djCMRcvD0z3iAxev9p/n6cXn835xcLhaHhzOawfH69XBYZZbDh/7/PHle/vzL6d3RGCbn6f70sfgbPlwXK99HGbx0qdZHN3F8R3ZuNKC3lvnccF1OtoeXWOdx9hTx5oq", "encoding": "base64", "path": ["geometries", 0, "polys", "compressedValues"]}, {"data": "KLUv/WCIAT0IAPLLJCKwJelk77bJtoRsS9QwijEM5DqFY+rMzFVY65q1rbVG2N4yHzgcP3hxjo6LXu+6M7h8YXIE3ggKJABFeCihsmNy0ZWKQLQxchxyX1DmRirmy7bMipVdTjaxc4IBiaCKdJobE7ixRZVcuo4dtCN2TDQzs2XMzNCQ9oZCKeFm+RXY6bM7Ut9Pup+DaV+o3d3mxfEFxFCoEEC13DPgoqKpDhBA5V0MY2i/u6yqWWmq28Uu9OBlVbC/eyxgf6c/6Jow+NzWXJB37Fa70K7haPTc1X297cauY5u8oc0ktnhBNWwSdfxn0jaH5auFFAlqpgvbY+/CHvQjoglrsZ+57Obxs+MP54EG", "encoding": "base64", "path": ["geometries", 0, "pointData", "arrays", 0, "data", "compressedValues"]}, {"data": "AACAPwAAgD8AAIA/", "encoding": "base64", "path": ["geometry_colors", "buffer"]}, {"data": "AACAPw==", "encoding": "base64", "path": ["geometry_opacities", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_colors", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_opacities", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_sizes", "buffer"]}, {"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["roi", "buffer"]}]}}, "version_major": 2, "version_minor": 0}
 </script>
 
 

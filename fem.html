@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>An overview of the FEniCS Project &#8212; FEniCS-X tutorial</title>
+    <title>An overview of the FEniCS Project &#8212; FEniCSx tutorial</title>
     
   <link href="_static/css/theme.css" rel="stylesheet" />
   <link href="_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -54,7 +54,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Solving the Poisson equation" href="chapter1/fundamentals.html" />
-    <link rel="prev" title="The FEniCS-X tutorial" href="index.html" />
+    <link rel="prev" title="The FEniCSx tutorial" href="index.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -76,7 +76,7 @@
       <img src="_static/logo.jpeg" class="logo" alt="logo">
       
       
-      <h1 class="site-logo" id="site-title">FEniCS-X tutorial</h1>
+      <h1 class="site-logo" id="site-title">FEniCSx tutorial</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
@@ -87,7 +87,7 @@
         <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="index.html">
-   The FEniCS-X tutorial
+   The FEniCSx tutorial
   </a>
  </li>
 </ul>
@@ -293,7 +293,7 @@
 </ul>
 <p class="caption">
  <span class="caption-text">
-  Improving your FEniCS-X code
+  Improving your FEniCSx code
  </span>
 </p>
 <ul class="nav bd-sidenav">
@@ -461,9 +461,9 @@
                 
   <div class="section" id="an-overview-of-the-fenics-project">
 <h1>An overview of the FEniCS Project<a class="headerlink" href="#an-overview-of-the-fenics-project" title="Permalink to this headline">¶</a></h1>
-<p>The FEniCS project is a research and software project aimed at creating mathematical methods and software for solving partial differential equations. This includes creating intuitive, efficient and flexible software. The project was initiated in 2003, and is developed in collaboration between researchers from a number of universities and research institutes around the world. For the latest updates and more information about the FEniCS project, visit the <a class="reference external" href="https://fenicsproject.org">FEniCS</a> web-page.</p>
-<p>The latest version of the FEniCS project, FEniCS-X, consists of several building blocks, namely <a class="reference external" href="https://github.com/FEniCS/basix/">basix</a>, <a class="reference external" href="https://github.com/FEniCS/ufl">UFL</a>, <a class="reference external" href="https://github.com/FEniCS/ffcx">FFC-X</a> and <a class="reference external" href="https://github.com/FEniCS/dolfinx">Dolfin-X</a>. We will now go through the main objectives of each of these building blocks. Dolfin-X is the high performance C++ backend of FEniCS-X, where structures such as meshes, function spaces and functions are implemented.
-Additionally, Dolfin-X also contains compute intensive functions such as finite element assembly and mesh refinement algorithms. It also provides an interface to linear algebra solvers and data-structures, such as <a class="reference external" href="https://www.mcs.anl.gov/petsc/">PETSc</a>. UFL is a high-level form language for describing variational formulations with a high-level mathematical syntax. FFC-X is the form compiler of FEniCS; given variational formulations written with UFL, it generates efficient C code. Basix is the finite element backend of FEniCS, responsible for generating finite element basis functions.</p>
+<p>The FEniCS project is a research and software project aimed at creating mathematical methods and software for solving partial differential equations. This includes creating intuitive, efficient and flexible software. The project was initiated in 2003, and is developed in collaboration between researchers from a number of universities and research institutes around the world. For the latest updates and more information about the FEniCS project, visit the <a class="reference external" href="https://fenicsproject.org">FEniCS</a> webpage.</p>
+<p>The latest version of the FEniCS project, FEniCSx, consists of several building blocks, namely <a class="reference external" href="https://github.com/FEniCS/basix/">Basix</a>, <a class="reference external" href="https://github.com/FEniCS/ufl">UFL</a>, <a class="reference external" href="https://github.com/FEniCS/ffcx">FFCx</a> and <a class="reference external" href="https://github.com/FEniCS/dolfinx">DOLFINx</a>. We will now go through the main objectives of each of these building blocks. DOLFINx is the high performance C++ backend of FEniCSx, where structures such as meshes, function spaces and functions are implemented.
+Additionally, DOLFINx also contains compute intensive functions such as finite element assembly and mesh refinement algorithms. It also provides an interface to linear algebra solvers and data-structures, such as <a class="reference external" href="https://www.mcs.anl.gov/petsc/">PETSc</a>. UFL is a high-level form language for describing variational formulations with a high-level mathematical syntax. FFCx is the form compiler of FEniCSx; given variational formulations written with UFL, it generates efficient C code. Basix is the finite element backend of FEniCSx, responsible for generating finite element basis functions.</p>
 </div>
 <div class="section" id="what-you-will-learn">
 <h1>What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permalink to this headline">¶</a></h1>
@@ -478,48 +478,48 @@ Additionally, Dolfin-X also contains compute intensive functions such as finite 
 </div>
 <div class="section" id="how-to-use-this-tutorial">
 <h1>How to use this tutorial<a class="headerlink" href="#how-to-use-this-tutorial" title="Permalink to this headline">¶</a></h1>
-<p>Most of the mathematical part of the examples will be kept at a simple level, such that we can keep the focus on the functionality and syntax of FEniCS-X. Therefore we will mostly use the Poisson equation and the time-dependent diffusion equation as model problems. We will use adjusted input data, such that the solution of the problem can be exactly reproduced on uniform, structured meshes with the finite element method. This greatly simplifies the verification of the implementations.
-Occasionally we will consider a more physically relevant example to remind the reader that there are no big leaps from solving simple model problems to challenging real-world problems when using FEniCS-X.</p>
+<p>Most of the mathematical part of the examples will be kept at a simple level, such that we can keep the focus on the functionality and syntax of FEniCSx. Therefore we will mostly use the Poisson equation and the time-dependent diffusion equation as model problems. We will use adjusted input data, such that the solution of the problem can be exactly reproduced on uniform, structured meshes with the finite element method. This greatly simplifies the verification of the implementations.
+Occasionally we will consider a more physically relevant example to remind the reader that there are no big leaps from solving simple model problems to challenging real-world problems when using FEniCSx.</p>
 <div class="section" id="interactive-tutorials">
 <h2>Interactive tutorials<a class="headerlink" href="#interactive-tutorials" title="Permalink to this headline">¶</a></h2>
 <p>As this book has been published as a Jupyter Book, we provide interactive notebooks that can be run in the browser. To start such a notebook click the <img alt="Binder symbol" src="_images/binder.png" />-symbol in the top right corner of the relevant tutorial.</p>
 </div>
 <div class="section" id="obtaining-the-software">
 <h2>Obtaining the software<a class="headerlink" href="#obtaining-the-software" title="Permalink to this headline">¶</a></h2>
-<p>If you would like to work with dolfin-X outside of the binder-notebooks, you need to install the FEniCS software.
-The recommended way of installing dolfin-X for new usesers is by using Docker.
-Docker is a software that uses <em>containers</em> to supply software across different kinds of operating systems (Linux, Mac, Windows). The first step is to install docker, following the instructions at their <a class="reference external" href="https://docs.docker.com/get-started/">web-page</a>.</p>
+<p>If you would like to work with DOLFINx outside of the binder-notebooks, you need to install the FEniCS software.
+The recommended way of installing DOLFINx for new usesers is by using Docker.
+Docker is a software that uses <em>containers</em> to supply software across different kinds of operating systems (Linux, Mac, Windows). The first step is to install docker, following the instructions at their <a class="reference external" href="https://docs.docker.com/get-started/">webpage</a>.</p>
 <p>All notebooks can be converted to python files using <a class="reference external" href="https://nbconvert.readthedocs.io/en/latest/">nbconvert</a>.</p>
 <p>We supply a pre-built docker image at <a class="reference external" href="https://hub.docker.com/r/dolfinx/dolfinx">https://hub.docker.com/r/dolfinx/dolfinx</a>.
 The <a class="reference external" href="https://github.com/FEniCS/dolfinx/blob/main/docker/Dockerfile">Dockerfile</a>
-provides a definitive build recipe. As the dolfinx docker images are hosted at Docker-hub, one can directly access the image</p>
+provides a definitive build recipe. As the DOLFINx docker images are hosted at Docker-hub, one can directly access the image</p>
 <div class="highlight-s notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">run</span> <span class="n">dolfinx</span><span class="o">/</span><span class="n">dolfinx</span>
 </pre></div>
 </div>
 <p>There are several ways of customizing a docker container, such as mounting volumes/sharing folder, setting a working directory, sharing graphical interfaces etc. See <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span> <span class="pre">--help</span></code> for an extensive list.</p>
-<p>Once you have installed dolfin-X, either by using docker or installing form source, you can test the installation by running <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">-c</span> <span class="pre">&quot;import</span> <span class="pre">dolfinx&quot;</span></code>. If all goes well, no error-messages should appear.</p>
-<p>To use the notebookes in this tutorial with dolfin-X on your own computer, you should use the docker image <code class="docutils literal notranslate"><span class="pre">docker/lab</span></code>, using the following command</p>
+<p>Once you have installed DOLFINx, either by using docker or installing form source, you can test the installation by running <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">-c</span> <span class="pre">&quot;import</span> <span class="pre">dolfinx&quot;</span></code>. If all goes well, no error-messages should appear.</p>
+<p>To use the notebookes in this tutorial with DOLFINx on your own computer, you should use the docker image <code class="docutils literal notranslate"><span class="pre">docker/lab</span></code>, using the following command</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="n">docker</span> <span class="n">run</span> <span class="o">--</span><span class="n">init</span> <span class="o">-</span><span class="n">p</span> <span class="mi">8888</span><span class="p">:</span><span class="mi">8888</span> <span class="o">-</span><span class="n">v</span> <span class="s2">&quot;$(pwd)&quot;</span><span class="p">:</span><span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="n">shared</span> <span class="n">dolfinx</span><span class="o">/</span><span class="n">lab</span>
 </pre></div>
 </div>
-<p>The tutorials can also be exported as a notebook or PDF by clicking the <img alt="Download" src="_images/save.png" />-symbol in the top right corner of the relevant tutorialThe notebook can in turn be used with a Python kernel which has dolfin-X.</p>
+<p>The tutorials can also be exported as a notebook or PDF by clicking the <img alt="Download" src="_images/save.png" />-symbol in the top right corner of the relevant tutorialThe notebook can in turn be used with a Python kernel which has DOLFINx.</p>
 </div>
 <div class="section" id="installation-from-source">
 <h2>Installation from source<a class="headerlink" href="#installation-from-source" title="Permalink to this headline">¶</a></h2>
-<p>The software is quite complex, and building the software and all the dependencies from source can be a daunting task. The list of dependencies can be found at [<a class="reference external" href="https://docs.fenicsproject.org/dolfinx/main/python/installation.html">https://docs.fenicsproject.org/dolfinx/main/python/installation.html</a>](<a class="reference external" href="https://docs.fenicsproject.org/dolfinx/main/python/installation.html">https://docs.fenicsproject.org/dolfinx/main/python/installation.html</a>.</p>
+<p>The software is quite complex, and building the software and all the dependencies from source can be a daunting task. The list of dependencies can be found at <a class="reference external" href="https://docs.fenicsproject.org/dolfinx/main/python/installation.html">docs.fenicsproject.org/dolfinx/main/python/installation.html</a>.</p>
 </div>
 <div class="section" id="introduction-to-python-for-beginners">
 <h2>Introduction to Python for beginners<a class="headerlink" href="#introduction-to-python-for-beginners" title="Permalink to this headline">¶</a></h2>
-<p>If you are a beginner in Python, we suggest reading <span id="id1">[<a class="reference internal" href="#id11"><span>Lan16</span></a>]</span> by Hans Petter Langtangen, which will give you a gentle introduction to the Python programming language. Note that dolfin-X, being a state of the art finite element solver, only supports Python 3, as Python 2 reached its end of life January 1st, 2020. To automatically transfer Python 2 scripts to Python 3, it is suggested to use the <a class="reference external" href="https://docs.python.org/3/library/2to3.html">2to3</a>-package, which provides automated translation of the code.</p>
+<p>If you are a beginner in Python, we suggest reading <span id="id1">[<a class="reference internal" href="#id11"><span>Lan16</span></a>]</span> by Hans Petter Langtangen, which will give you a gentle introduction to the Python programming language. Note that DOLFINx, being a state of the art finite element solver, only supports Python 3, as Python 2 reached its end of life January 1st, 2020. To automatically transfer Python 2 scripts to Python 3, it is suggested to use the <a class="reference external" href="https://docs.python.org/3/library/2to3.html">2to3</a>-package, which provides automated translation of the code.</p>
 </div>
 <div class="section" id="introduction-to-the-finite-element-method">
 <h2>Introduction to the finite element method<a class="headerlink" href="#introduction-to-the-finite-element-method" title="Permalink to this headline">¶</a></h2>
 <p>In the last decade, a wide range of lecture notes on finite elements methods has been made open access. See for instance:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="http://hplgit.github.io/num-methods-for-PDEs/doc/web/index.html">Numerical methods for partial differential equations</a>, by Hans Petter Langtangen</p></li>
-<li><p><a class="reference external" href="https://finite-element.github.io/">Finite Elements - Analysis and implementation</a>, by David A. Ham and Colin J. Cotter</p></li>
-<li><p><a class="reference external" href="https://david-kamensky.eng.ucsd.edu/teaching/mae-207-fea-for-coupled-problems">Finite Element Analysis for Coupled Problems</a>, by David Kamensky.</p></li>
-<li><p><a class="reference external" href="https://defelement.com/">An Encyclopedia of Finite Element Definitions</a>, by Matthew W. Scroggs.</p></li>
+<li><p><a class="reference external" href="https://finite-element.github.io/">Finite elements - analysis and implementation</a>, by David A. Ham and Colin J. Cotter</p></li>
+<li><p><a class="reference external" href="https://david-kamensky.eng.ucsd.edu/teaching/mae-207-fea-for-coupled-problems">Finite element analysis for coupled problems</a>, by David Kamensky.</p></li>
+<li><p><a class="reference external" href="https://defelement.com/">DefElement: an encyclopedia of finite element definitions</a>, by Matthew W. Scroggs.</p></li>
 </ul>
 <p>There has been written many good text-books on the finite element method, and we refer to the original FEniCS tutorial, for references to these, see Chapter 1.6.2 of The FEniCS tutorial  <span id="id2">[<a class="reference internal" href="index.html#id11"><span>LL16</span></a>]</span>.</p>
 </div>
@@ -559,7 +559,7 @@ provides a definitive build recipe. As the dolfinx docker images are hosted at D
         
         <div class='prev-next-bottom'>
             
-    <a class='left-prev' id="prev-link" href="index.html" title="previous page">The FEniCS-X tutorial</a>
+    <a class='left-prev' id="prev-link" href="index.html" title="previous page">The FEniCSx tutorial</a>
     <a class='right-next' id="next-link" href="chapter1/fundamentals.html" title="next page">Solving the Poisson equation</a>
 
         </div>

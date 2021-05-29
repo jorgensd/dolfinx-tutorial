@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Solving the Poisson equation &#8212; FEniCS-X tutorial</title>
+    <title>Solving the Poisson equation &#8212; FEniCSx tutorial</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -78,7 +78,7 @@
       <img src="../_static/logo.jpeg" class="logo" alt="logo">
       
       
-      <h1 class="site-logo" id="site-title">FEniCS-X tutorial</h1>
+      <h1 class="site-logo" id="site-title">FEniCSx tutorial</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
@@ -89,7 +89,7 @@
         <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../index.html">
-   The FEniCS-X tutorial
+   The FEniCSx tutorial
   </a>
  </li>
 </ul>
@@ -295,7 +295,7 @@
 </ul>
 <p class="caption">
  <span class="caption-text">
-  Improving your FEniCS-X code
+  Improving your FEniCSx code
  </span>
 </p>
 <ul class="nav bd-sidenav">
@@ -432,8 +432,8 @@
   <div class="section" id="solving-the-poisson-equation">
 <h1>Solving the Poisson equation<a class="headerlink" href="#solving-the-poisson-equation" title="Permalink to this headline">¶</a></h1>
 <p>Authors: Hans Petter Langtangen, Anders Logg</p>
-<p>Adapted to FEniCS-X by Jørgen S. Dokken</p>
-<p>The goal of this tutorial is to solve one of the most basic PDEs, the Poisson equations, with a few lines of code in FEniCS-X. We start by introducing the most fundamental FEniCS objects, such as <code class="docutils literal notranslate"><span class="pre">Function</span></code>, <code class="docutils literal notranslate"><span class="pre">FunctionSpace</span></code>, <code class="docutils literal notranslate"><span class="pre">TrialFunction</span></code> and <code class="docutils literal notranslate"><span class="pre">TestFunction</span></code>, and learn how to write a basic PDE solver.
+<p>Adapted to FEniCSx by Jørgen S. Dokken</p>
+<p>The goal of this tutorial is to solve one of the most basic PDEs, the Poisson equations, with a few lines of code in FEniCSx. We start by introducing the most fundamental FEniCSx objects, such as <code class="docutils literal notranslate"><span class="pre">Function</span></code>, <code class="docutils literal notranslate"><span class="pre">FunctionSpace</span></code>, <code class="docutils literal notranslate"><span class="pre">TrialFunction</span></code> and <code class="docutils literal notranslate"><span class="pre">TestFunction</span></code>, and learn how to write a basic PDE solver.
 This will include:</p>
 <ul class="simple">
 <li><p>How to formulate a mathematical variational problem</p></li>
@@ -442,12 +442,12 @@ This will include:</p>
 <li><p>How to visualize the solution</p></li>
 </ul>
 <p>The Poisson equation is the following boundary-value problem</p>
-<div class="amsmath math notranslate nohighlight" id="equation-562c6bfe-466a-4322-b47b-022929869e5f">
-<span class="eqno">(1)<a class="headerlink" href="#equation-562c6bfe-466a-4322-b47b-022929869e5f" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-ca73f968-6742-4681-8a70-53181130a313">
+<span class="eqno">(1)<a class="headerlink" href="#equation-ca73f968-6742-4681-8a70-53181130a313" title="Permalink to this equation">¶</a></span>\[\begin{align}
 -\nabla^2 u(\mathbf{x}) &amp;= f(\mathbf{x})&amp;&amp;\mathbf{x} \in \Omega\\
 u(\mathbf{x}) &amp;= u_D(\mathbf{x})&amp;&amp; \mathbf{x} \in \partial\Omega
 \end{align}\]</div>
-<p>Here, <span class="math notranslate nohighlight">\(u=u(\mathbf{x})\)</span> is the unknown function, <span class="math notranslate nohighlight">\(f=f(\mathbf{x})\)</span> is a prescribed function, <span class="math notranslate nohighlight">\(\nabla^2\)</span> the Laplace operator, often written as <span class="math notranslate nohighlight">\(\Delta\)</span>, <span class="math notranslate nohighlight">\(\Omega\)</span> the spatial domain, and <span class="math notranslate nohighlight">\(\partial\Omega\)</span> is the boundary of <span class="math notranslate nohighlight">\(\Omega\)</span>. The Poisson problem, including both the PDE <span class="math notranslate nohighlight">\(-\nabla^2 u = f\)</span> and the boundary condition <span class="math notranslate nohighlight">\(u=u_D\)</span> on <span class="math notranslate nohighlight">\(\partial\Omega\)</span>, is an example of a <em>boundary-value problem</em>, which must be precisely state before it makes sense to start solving it numerically with FEniCS-X.</p>
+<p>Here, <span class="math notranslate nohighlight">\(u=u(\mathbf{x})\)</span> is the unknown function, <span class="math notranslate nohighlight">\(f=f(\mathbf{x})\)</span> is a prescribed function, <span class="math notranslate nohighlight">\(\nabla^2\)</span> the Laplace operator, often written as <span class="math notranslate nohighlight">\(\Delta\)</span>, <span class="math notranslate nohighlight">\(\Omega\)</span> the spatial domain, and <span class="math notranslate nohighlight">\(\partial\Omega\)</span> is the boundary of <span class="math notranslate nohighlight">\(\Omega\)</span>. The Poisson problem, including both the PDE <span class="math notranslate nohighlight">\(-\nabla^2 u = f\)</span> and the boundary condition <span class="math notranslate nohighlight">\(u=u_D\)</span> on <span class="math notranslate nohighlight">\(\partial\Omega\)</span>, is an example of a <em>boundary-value problem</em>, which must be precisely state before it makes sense to start solving it numerically with FEniCSx.</p>
 <p>In the two dimensional space with coordinates <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span>, we can expand the Poisson equation as</p>
 <p><span class="math notranslate nohighlight">\( -\frac{\partial^2 u}{\partial x^2} - \frac{\partial^2 u}{\partial y^2} = f(x,y)\)</span></p>
 <p>The unknown <span class="math notranslate nohighlight">\(u\)</span> is now a function of two variables, <span class="math notranslate nohighlight">\(u=u(x,y)\)</span>, defined over the two-dimensional domain <span class="math notranslate nohighlight">\(\Omega\)</span>.</p>
@@ -456,18 +456,18 @@ heat conduction, electrostatics, diffusion of substances, twisting of
 elastic rods, inviscid fluid flow, and water waves. Moreover, the
 equation appears in numerical splitting strategies for more complicated
 systems of PDEs, in particular the Navier–Stokes equations.</p>
-<p>Solving a boundary value problem in FEniCS consists of the following steps:</p>
+<p>Solving a boundary value problem in FEniCSx consists of the following steps:</p>
 <ol class="simple">
 <li><p>Identify the computational domain <span class="math notranslate nohighlight">\(\Omega\)</span>, the PDE, and its corresponding boundary conditions and source terms <span class="math notranslate nohighlight">\(f\)</span>.</p></li>
 <li><p>Reformulate the PDE as a finite element variational problem.</p></li>
-<li><p>Write a Python program defining the computational domain, the boundary conditions, the variational problem and the source terms, using FEniCS.</p></li>
+<li><p>Write a Python program defining the computational domain, the boundary conditions, the variational problem and the source terms, using FEniCSx.</p></li>
 <li><p>Run the Python program to solve the boundary-value problem. Optionally, you can extend the program to derive quantities such as fluxes and averages,
 and visualize the results.</p></li>
 </ol>
-<p>As we have already covered step 1., we shall now cover step 2-4.</p>
+<p>As we have already covered step 1, we shall now cover step 2-4.</p>
 <div class="section" id="finite-element-variational-formulation">
 <h2>Finite element variational formulation<a class="headerlink" href="#finite-element-variational-formulation" title="Permalink to this headline">¶</a></h2>
-<p>FEniCS is based on the finite element method, which is a general and
+<p>FEniCSx is based on the finite element method, which is a general and
 efficient mathematical machinery for the numerical solution of
 PDEs. The starting point for the finite element methods is a PDE
 expressed in <em>variational form</em>. For readers not familiar with variational problems, it is suggested to reading a proper book on the finite element method in addition, as this tutorial is meant as a brief introduction to the subject. See the original tutorial <span id="id1">[<a class="reference internal" href="../index.html#id11"><span>LL16</span></a>]</span> (Chapter 1.6.2).</p>
@@ -478,7 +478,7 @@ expressed in <em>variational form</em>. For readers not familiar with variationa
 <li><p>Perform integration by parts of terms with second order derivatives.</p></li>
 </ul>
 <p>The function <span class="math notranslate nohighlight">\(v\)</span> which multiplies the PDE is called a <em>test function</em>. The unknown function <span class="math notranslate nohighlight">\(u\)</span> that is to be approximated is referred to as a <em>trial function</em>.
-The terms trial and test functions are used in FEniCS-X too. The test and trial functions belong to certain <em>function spaces</em> that specify the properties of the functions.</p>
+The terms trial and test functions are used in FEniCSx too. The test and trial functions belong to certain <em>function spaces</em> that specify the properties of the functions.</p>
 <p>In the present case, we multiply the equation by a test function <span class="math notranslate nohighlight">\(v\)</span> and  integrate over <span class="math notranslate nohighlight">\(\Omega\)</span>:</p>
 <p><span class="math notranslate nohighlight">\(\int_\Omega -\nabla^2 u v \mathrm{d} x = \int_\Omega f v ~\mathrm{d} x.\)</span></p>
 <p>Here <span class="math notranslate nohighlight">\(\mathrm{d} x\)</span> denotes the differential element for integration over the domain <span class="math notranslate nohighlight">\(\Omega\)</span>. We will later let <span class="math notranslate nohighlight">\(\mathrm{d} s\)</span> denote the differential element for integration over the boundary of <span class="math notranslate nohighlight">\(\Omega\)</span>.</p>
@@ -498,8 +498,8 @@ The formula reads</p>
 Find <span class="math notranslate nohighlight">\(u\in V\)</span> such that</p>
 <p><span class="math notranslate nohighlight">\(\int_\Omega \nabla u \cdot \nabla v \mathrm{d} x = \int_\Omega f v\mathrm{d} x\qquad \forall v \in \hat{V}.\)</span></p>
 <p>For the present problem, the test and trial spaces <span class="math notranslate nohighlight">\(V\)</span> and <span class="math notranslate nohighlight">\(\hat{V}\)</span> is defined as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2b104321-9fbb-4fc6-a830-8dcaca53b466">
-<span class="eqno">(2)<a class="headerlink" href="#equation-2b104321-9fbb-4fc6-a830-8dcaca53b466" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-a7061701-b353-49ce-89e9-dff65f390544">
+<span class="eqno">(2)<a class="headerlink" href="#equation-a7061701-b353-49ce-89e9-dff65f390544" title="Permalink to this equation">¶</a></span>\[\begin{align}
 V&amp;=\{v\in H^1(\Omega) \vert v=u_D&amp;&amp;\text{on } \partial \Omega \},\\
 \hat{V}&amp;=\{v\in H^1(\Omega) \vert v=0 &amp;&amp;\text{on } \partial \Omega \}.
 \end{align}\]</div>
@@ -508,13 +508,13 @@ PDE must lie in a function space where the derivatives are
 also continuous, but the Sobolev space <span class="math notranslate nohighlight">\(H^1(\Omega)\)</span> allows functions with discontinuous derivatives.
 This weaker continuity requirement in our weak formulation (caused by the integration by parts) is of great importance when it comes to constructing the finite element function space. In particular, it allows the use of piecewise polynomial function spaces. This means that the function spaces are constructed
 by stitching together polynomial functions on simple domains
-such as intervals, triangles, quadrilaterals, tetrahedrons and
-hexahedrons.</p>
+such as intervals, triangles, quadrilaterals, tetrahedra and
+hexahedra.</p>
 <p>The variational problem is a <em>continuous problem</em>: it defines the solution <span class="math notranslate nohighlight">\(u\)</span> in the infinite-dimensional function space <span class="math notranslate nohighlight">\(V\)</span>.
 The finite element method for the  Poisson equation finds an approximate solution of the variational problem by replacing the infinite-dimensional function spaces <span class="math notranslate nohighlight">\(V\)</span> and <span class="math notranslate nohighlight">\(\hat V\)</span> by <em>discrete</em> (finite dimensional) trial and test spaces <span class="math notranslate nohighlight">\(V_h\subset V\)</span> and <span class="math notranslate nohighlight">\(\hat{V}_h \subset \hat{V}\)</span>. The discrete
 variational problem reads: Find <span class="math notranslate nohighlight">\(u_h\in V_h\)</span> such that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e41f1cb9-7732-4e40-b01a-f7ee3fef4829">
-<span class="eqno">(3)<a class="headerlink" href="#equation-e41f1cb9-7732-4e40-b01a-f7ee3fef4829" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-64e03e0f-061f-4ed2-b995-39e506fa8433">
+<span class="eqno">(3)<a class="headerlink" href="#equation-64e03e0f-061f-4ed2-b995-39e506fa8433" title="Permalink to this equation">¶</a></span>\[\begin{align}
 \int_\Omega \nabla u_h \cdot \nabla v ~\mathrm{d} x &amp;= \int_\Omega fv~ \mathrm{d} x &amp;&amp; \forall v \in \hat{V}_h.
 \end{align}\]</div>
 <p>This variational problem, together with suitable definitions of <span class="math notranslate nohighlight">\(V_h\)</span> and <span class="math notranslate nohighlight">\(\hat{V}_h\)</span> uniquely define our approximate numerical solution of the Poisson equation.
@@ -525,19 +525,19 @@ but means that the finite element variational problem and the continuous variati
 <h2>Abstract finite element variational formulation<a class="headerlink" href="#abstract-finite-element-variational-formulation" title="Permalink to this headline">¶</a></h2>
 <p>We will introduce the following notations for variational problems:
 Find <span class="math notranslate nohighlight">\(u\in V\)</span> such that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9f532067-98bb-47a6-831a-954610ddb035">
-<span class="eqno">(4)<a class="headerlink" href="#equation-9f532067-98bb-47a6-831a-954610ddb035" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-c5b62293-f37f-48b1-a4cb-10c13ef926ea">
+<span class="eqno">(4)<a class="headerlink" href="#equation-c5b62293-f37f-48b1-a4cb-10c13ef926ea" title="Permalink to this equation">¶</a></span>\[\begin{align}
 a(u,v)&amp;=L(v)&amp;&amp; \forall v \in \hat{V}.
 \end{align}\]</div>
 <p>For the Poisson equation, we have:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-27b28025-713a-41d4-9646-6455ba2784b0">
-<span class="eqno">(5)<a class="headerlink" href="#equation-27b28025-713a-41d4-9646-6455ba2784b0" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-a835a6a6-767f-454c-bf02-8b557e5f8704">
+<span class="eqno">(5)<a class="headerlink" href="#equation-a835a6a6-767f-454c-bf02-8b557e5f8704" title="Permalink to this equation">¶</a></span>\[\begin{align}
 a(u,v) &amp;= \int_{\Omega} \nabla u \cdot \nabla v ~\mathrm{d} x,\\
 L(v) &amp;= \int_{\Omega} fv ~\mathrm{d} x.
 \end{align}\]</div>
 <p>From literature <span class="math notranslate nohighlight">\(a(u,v)\)</span> is known as the <em>bilinear form</em> and <span class="math notranslate nohighlight">\(L(V)\)</span> as a <em>linear form</em>.
 For every linear problem, we will identify all terms with the unknown <span class="math notranslate nohighlight">\(u\)</span> and collect them in <span class="math notranslate nohighlight">\(a(u,v)\)</span>, and collect all terms with only  known functions in <span class="math notranslate nohighlight">\(L(v)\)</span>.</p>
-<p>To solve a linear PDE in FEniCS-X, such as the Poisson equation, a user thus needs to perform two steps:</p>
+<p>To solve a linear PDE in FEniCSx, such as the Poisson equation, a user thus needs to perform two steps:</p>
 <ol class="simple">
 <li><p>Choose the finite element spaces <span class="math notranslate nohighlight">\(V\)</span> and <span class="math notranslate nohighlight">\(\hat{V}\)</span> by specifying the domain (the mesh) and the type of function space (polynomial degree and type).</p></li>
 <li><p>Express the PDE as a (discrete) variational problem: Find <span class="math notranslate nohighlight">\(u\in V\)</span> such that <span class="math notranslate nohighlight">\(a(u,v)=L(v)\)</span> for all <span class="math notranslate nohighlight">\(v \in \hat{V}\)</span>.</p></li>

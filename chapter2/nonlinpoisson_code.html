@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Implementation &#8212; FEniCS-X tutorial</title>
+    <title>Implementation &#8212; FEniCSx tutorial</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -78,7 +78,7 @@
       <img src="../_static/logo.jpeg" class="logo" alt="logo">
       
       
-      <h1 class="site-logo" id="site-title">FEniCS-X tutorial</h1>
+      <h1 class="site-logo" id="site-title">FEniCSx tutorial</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
@@ -89,7 +89,7 @@
         <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../index.html">
-   The FEniCS-X tutorial
+   The FEniCSx tutorial
   </a>
  </li>
 </ul>
@@ -295,7 +295,7 @@
 </ul>
 <p class="caption">
  <span class="caption-text">
-  Improving your FEniCS-X code
+  Improving your FEniCSx code
  </span>
 </p>
 <ul class="nav bd-sidenav">
@@ -460,7 +460,7 @@
 </div>
 </div>
 </div>
-<p>Note that since <code class="docutils literal notranslate"><span class="pre">x</span></code> is a 2D vector, the first component (index 0) resemble <span class="math notranslate nohighlight">\(x\)</span>, while the second component (index 1) resemble <span class="math notranslate nohighlight">\(y\)</span>. The resulting function <code class="docutils literal notranslate"><span class="pre">f</span></code> can be directly used in variational formulations in dolfin-X.</p>
+<p>Note that since <code class="docutils literal notranslate"><span class="pre">x</span></code> is a 2D vector, the first component (index 0) resemble <span class="math notranslate nohighlight">\(x\)</span>, while the second component (index 1) resemble <span class="math notranslate nohighlight">\(y\)</span>. The resulting function <code class="docutils literal notranslate"><span class="pre">f</span></code> can be directly used in variational formulations in DOLFINx.</p>
 <p>As we now have defined our source term and exact solution, we can create the appropriate function space and boundary conditions.
 Note that as we have already defined the exact solution, we only have to convert it to a python function that can be evaluated in the interpolation function. We do this by employing the Python <code class="docutils literal notranslate"><span class="pre">eval</span></code> and <code class="docutils literal notranslate"><span class="pre">lambda</span></code>-functions.</p>
 <div class="cell docutils container">
@@ -562,7 +562,7 @@ If we think of the problem in terms of finite differences on a uniform mesh, <sp
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>L2-error: 3.68e-15
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>L2-error: 3.65e-15
 Error_max: 1.42e-14
 </pre></div>
 </div>
