@@ -13,6 +13,7 @@
       sections:
         - file: chapter1/fundamentals_code
     - file: chapter1/nitsche
+    - file: chapter1/dg
     - file: chapter1/membrane
       sections:
         - file: chapter1/membrane_code

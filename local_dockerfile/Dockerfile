@@ -16,7 +16,7 @@ RUN pip3 install --no-cache-dir --no-binary=h5py h5py meshio
 
 # Install progress-bar
 RUN pip3 install tqdm pygments --upgrade
-
+RUN pip3 install pyvista ipyvtklink
 EXPOSE 8888/tcp
 ENV SHELL /bin/bash
 

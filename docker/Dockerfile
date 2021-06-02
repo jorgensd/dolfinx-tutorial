@@ -9,7 +9,7 @@ RUN wget -qO - https://deb.nodesource.com/setup_16.x | bash && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN pip3 install setuptools jupyterhub nbconvert --upgrade
+RUN pip3 install --no-cache-dir setuptools jupyterhub nbconvert --upgrade
 
 # Pyvista ITKWidgets dependencies
 RUN pip3 install --no-cache-dir matplotlib itkwidgets ipywidgets
@@ -21,5 +21,8 @@ RUN pip3 install --no-cache-dir --no-binary=h5py h5py meshio
 
 # Install progress-bar
 RUN pip3 install --no-cache-dir tqdm pygments --upgrade
+
+RUN pip3 install --no-cache-dir pyvista ipyvtklink --upgrade
+
 
 ENTRYPOINT []

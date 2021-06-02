@@ -35,7 +35,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Install dependencies
-        run: pip3 install notebook nbconvert jupyter-book myst_parser==0.13.3
+        run: pip3 install notebook nbconvert jupyter-book myst_parser==0.13.3 pyvista ipyvtklink
 
       - name: Test notebooks in parallel
         run: |
@@ -45,6 +45,10 @@ jobs:
           mpirun -n 2 python3 fundamentals_code.py
           jupyter-nbconvert --to python membrane_code.ipynb
           mpirun -n 2 python3 membrane_code.py
+          jupyter-nbconvert --to python nitsche.ipynb
+          mpirun -n 2 python3 nitsche.py
+          jupyter-nbconvert --to python dg.ipynb
+          mpirun -n 2 python3 dg.py
           cd ../chapter2
           jupyter-nbconvert --to python diffusion_code.ipynb
           mpirun -n 2 python3 diffusion_code.py
