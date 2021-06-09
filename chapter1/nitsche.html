@@ -426,7 +426,7 @@
   <div class="section" id="weak-imposition-of-dirichlet-conditions-for-the-poisson-problem">
 <h1>Weak imposition of Dirichlet conditions for the Poisson problem<a class="headerlink" href="#weak-imposition-of-dirichlet-conditions-for-the-poisson-problem" title="Permalink to this headline">¶</a></h1>
 <p>Author: Jørgen S. Dokken</p>
-<p>In this section, we will go through how to solve the Poisson problem from the <a class="reference internal" href="fundamentals.html"><span class="doc std std-doc">Fundamentals</span></a> tutorial using Nitsche’s method <span id="id1">[<a class="reference internal" href="#id13"><span>Nit71</span></a>]</span>.
+<p>In this section, we will go through how to solve the Poisson problem from the <a class="reference internal" href="fundamentals.html"><span class="doc std std-doc">Fundamentals</span></a> tutorial using Nitsche’s method <span id="id1">[<a class="reference internal" href="#id13">Nit71</a>]</span>.
 The idea of weak imposition is that we add additional terms to the variational formulation to impose the boundary condition, instead of modifying the matrix system using strong imposition (lifting).</p>
 <p>We start by importing the required modules and creating the mesh and function space for our solution</p>
 <div class="cell docutils container">
@@ -459,21 +459,21 @@ The idea of weak imposition is that we add additional terms to the variational f
 </div>
 <p>As opposed to the first tutorial, we now have to have another look at the variational form.
 We start by integrating the problem by parts, to obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-adff4fb9-05e1-4625-bbc0-8b5f052b1e43">
-<span class="eqno">(8)<a class="headerlink" href="#equation-adff4fb9-05e1-4625-bbc0-8b5f052b1e43" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-239efcf8-5166-4647-883a-9c4827d9dca5">
+<span class="eqno">(8)<a class="headerlink" href="#equation-239efcf8-5166-4647-883a-9c4827d9dca5" title="Permalink to this equation">¶</a></span>\[\begin{align}
     \int_{\Omega} \nabla u \cdot \nabla v~\mathrm{d}x - \int_{\partial\Omega}\nabla u \cdot n v~\mathrm{d}s = \int_{\Omega} f v~\mathrm{d}x.
 \end{align}\]</div>
 <p>As we are not using strong enforcement, we do not set the trace of the test function to <span class="math notranslate nohighlight">\(0\)</span> on the outer boundary.
 Instead, we add the following two terms to the variational formulation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1e7e24d5-c577-49bc-af7d-572c38170b91">
-<span class="eqno">(9)<a class="headerlink" href="#equation-1e7e24d5-c577-49bc-af7d-572c38170b91" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-0d8a6b96-ef2d-47fb-a1a4-b48fb183bb66">
+<span class="eqno">(9)<a class="headerlink" href="#equation-0d8a6b96-ef2d-47fb-a1a4-b48fb183bb66" title="Permalink to this equation">¶</a></span>\[\begin{align}
     -\int_{\partial\Omega} \nabla  v \cdot n (u-u_D)~\mathrm{d}s + \frac{\alpha}{h} \int_{\partial\Omega} (u-u_D)v~\mathrm{d}s.
 \end{align}\]</div>
 <p>where the first term enforces symmetry to the bilinear form, while the latter term enforces coercivity.
 <span class="math notranslate nohighlight">\(u_D\)</span> is the known Dirichlet condition, and <span class="math notranslate nohighlight">\(h\)</span> is the circumradius of the mesh element.
 We create bilinear and linear form, <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(L\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-37fe4919-ed6f-4058-92b9-da18cec32705">
-<span class="eqno">(10)<a class="headerlink" href="#equation-37fe4919-ed6f-4058-92b9-da18cec32705" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-d7e91c4f-b2ad-42e7-b508-277e30ef7c9f">
+<span class="eqno">(10)<a class="headerlink" href="#equation-d7e91c4f-b2ad-42e7-b508-277e30ef7c9f" title="Permalink to this equation">¶</a></span>\[\begin{align}
     a(u, v) &amp;= \int_{\Omega} \nabla u \cdot \nabla v~\mathrm{d}x + \int_{\partial\Omega}-(n \cdot\nabla u) v - (n \cdot \nabla v) u - \frac{\alpha}{h} uv~\mathrm{d}s,\\
     L(v) &amp;= \int_{\Omega} fv~\mathrm{d}x + \int_{\partial\Omega}  -(\nabla u_D \cdot n) v  -(\nabla v \cdot n) u_D + \frac{\alpha}{h} u_Dv~\mathrm{d}s
 \end{align}\]</div>
@@ -610,7 +610,7 @@ Falling back to a static output.
         
           By Jørgen S. Dokken<br/>
         
-            &copy; Copyright 2020.<br/>
+            &copy; Copyright 2021.<br/>
           <div class="extra_footer">
             <div>
     This webpage is an adaptation of <a href=https://www.springer.com/gp/book/9783319524610>The FEniCS tutorial</a> and

@@ -451,8 +451,8 @@
 <div class="section" id="variational-formulation">
 <h2>Variational formulation<a class="headerlink" href="#variational-formulation" title="Permalink to this headline">¶</a></h2>
 <p>The Navier-Stokes equations are different from the time-dependent heat equation in that we need to solve a system of equations and the system of a special type. If we apply the same technique as for the heat equation; that is, replacing the time derivative with a simple difference quotient, we obtain a non-linear system of equations. This in itself is not a problem as we saw for the <a class="reference internal" href="nonlinpoisson.html"><span class="doc std std-doc">non-linear Poisson equation</span></a>, but the system has a so-called <em>saddle point structure</em> and requires special techniques (special preconditioners and iterative methods) to be solved efficiently.</p>
-<p>Instead we will apply a simpler and often very efficient approach, known as a <em>splitting method</em>. The idea is to consider the two equations in <a class="reference internal" href="#equation-navier-stokes">(37)</a> separately. There exist many splitting strategies for the incompressible Navier-Stokes equations. One of the oldest is the method proposed by Chorin <span id="id1">[<a class="reference internal" href="#id9"><span>Cho68</span></a>]</span> and Temam <span id="id2">[<a class="reference internal" href="#id10"><span>Tem69</span></a>]</span>, often referred to as <em>Chorin’s method</em>. We will use a modified version of Chorin’s method, the so-called incremental pressure correction scheme (IPCS) due to <span id="id3">[<a class="reference internal" href="#id11"><span>God79</span></a>]</span> which gives improved accuracy compared to the original scheme at little extra cost.</p>
-<p>The IPCS scheme involves three steps. First, we compute a <em>tentative velocity <span class="math notranslate nohighlight">\(u\)</span></em> by advancing the momentum equation by a midpoint finite difference scheme in time, but using <span class="math notranslate nohighlight">\(p^n\)</span> from the previous interval. We will also linearize the nonlinear convective term by using the known velocity <span class="math notranslate nohighlight">\(u^n\)</span> from the previous time step: <span class="math notranslate nohighlight">\(u^n\cdot \nabla u^n\)</span>. Note that there exists several other methods to linearize this term, such as the Adams-Bashforth method, see <span id="id4">[<a class="reference internal" href="#id13"><span>Gue99</span></a>]</span> and <span id="id5">[<a class="reference internal" href="#id12"><span>QSS10</span></a>]</span>. The variational problem for the first step is: For the <span class="math notranslate nohighlight">\(n+1\)</span>th step, find <span class="math notranslate nohighlight">\(u^*\)</span> such that</p>
+<p>Instead we will apply a simpler and often very efficient approach, known as a <em>splitting method</em>. The idea is to consider the two equations in <a class="reference internal" href="#equation-navier-stokes">(37)</a> separately. There exist many splitting strategies for the incompressible Navier-Stokes equations. One of the oldest is the method proposed by Chorin <span id="id1">[<a class="reference internal" href="#id9">Cho68</a>]</span> and Temam <span id="id2">[<a class="reference internal" href="#id10">Tem69</a>]</span>, often referred to as <em>Chorin’s method</em>. We will use a modified version of Chorin’s method, the so-called incremental pressure correction scheme (IPCS) due to <span id="id3">[<a class="reference internal" href="#id11">God79</a>]</span> which gives improved accuracy compared to the original scheme at little extra cost.</p>
+<p>The IPCS scheme involves three steps. First, we compute a <em>tentative velocity <span class="math notranslate nohighlight">\(u\)</span></em> by advancing the momentum equation by a midpoint finite difference scheme in time, but using <span class="math notranslate nohighlight">\(p^n\)</span> from the previous interval. We will also linearize the nonlinear convective term by using the known velocity <span class="math notranslate nohighlight">\(u^n\)</span> from the previous time step: <span class="math notranslate nohighlight">\(u^n\cdot \nabla u^n\)</span>. Note that there exists several other methods to linearize this term, such as the Adams-Bashforth method, see <span id="id4">[<a class="reference internal" href="#id13">Gue99</a>]</span> and <span id="id5">[<a class="reference internal" href="#id12">QSS10</a>]</span>. The variational problem for the first step is: For the <span class="math notranslate nohighlight">\(n+1\)</span>th step, find <span class="math notranslate nohighlight">\(u^*\)</span> such that</p>
 <div class="math notranslate nohighlight" id="equation-ipcs-one">
 <span class="eqno">(39)<a class="headerlink" href="#equation-ipcs-one" title="Permalink to this equation">¶</a></span>\[\begin{split}    &amp;\left\langle \rho \frac{u^*-u^n}{\Delta t}, v\right\rangle
     + \left\langle \rho u^n\cdot \nabla u^n, v \right\rangle
@@ -525,8 +525,8 @@ We may now use the computed tentative velocity to compute the new pressure <span
 </dd>
 </dl>
 </p>
-<div class="toctree-wrapper compound">
 </div>
+<div class="toctree-wrapper compound">
 </div>
 </div>
 
@@ -568,7 +568,7 @@ We may now use the computed tentative velocity to compute the new pressure <span
         
           By Jørgen S. Dokken<br/>
         
-            &copy; Copyright 2020.<br/>
+            &copy; Copyright 2021.<br/>
           <div class="extra_footer">
             <div>
     This webpage is an adaptation of <a href=https://www.springer.com/gp/book/9783319524610>The FEniCS tutorial</a> and
