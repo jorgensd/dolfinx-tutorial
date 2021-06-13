@@ -1,48 +1,49 @@
 format: jb-book
 root: index
 parts:
-- caption: Introduction
-  chapters:
-  - file: fem
-- caption: Fundamentals
-  chapters:
-  - file: chapter1/fundamentals
-    sections:
-    - file: chapter1/fundamentals_code
-  - file: chapter1/nitsche
-  - file: chapter1/membrane
-    sections:
-    - file: chapter1/membrane_code
-    - file: chapter1/membrane_paraview
-- caption: A Gallery of finite element solvers
-  chapters:
-  - file: chapter2/intro
-  - file: chapter2/heat_equation
-    sections:
-    - file: chapter2/diffusion_code
-    - file: chapter2/heat_code
-  - file: chapter2/nonlinpoisson
-    sections:
-    - file: chapter2/nonlinpoisson_code
-  - file: chapter2/linearelasticity
-    sections:
-    - file: chapter2/linearelasticity_code
-    - file: chapter2/elasticity_scaling
-  - file: chapter2/navierstokes
-    sections:
-    - file: chapter2/ns_code1
-    - file: chapter2/ns_code2
-  - file: chapter2/hyperelasticity
-- caption: Subdomains and boundary conditions
-  chapters:
-  - file: chapter3/neumann_dirichlet_code
-  - file: chapter3/multiple_dirichlet
-  - file: chapter3/subdomains
-  - file: chapter3/robin_neumann_dirichlet
-  - file: chapter3/component_bc
-  - file: chapter3/em
-- caption: Improving your FEniCSx code
-  chapters:
-  - file: chapter4/solvers
-  - file: chapter4/compiler_parameters
-  - file: chapter4/convergence
+  - caption: Introduction
+    chapters:
+      - file: fem
+      - file: Changelog
+  - caption: Fundamentals
+    chapters:
+      - file: chapter1/fundamentals
+        sections:
+          - file: chapter1/fundamentals_code
+      - file: chapter1/nitsche
+      - file: chapter1/membrane
+        sections:
+          - file: chapter1/membrane_code
+          - file: chapter1/membrane_paraview
+  - caption: A Gallery of finite element solvers
+    chapters:
+      - file: chapter2/intro
+      - file: chapter2/heat_equation
+        sections:
+          - file: chapter2/diffusion_code
+          - file: chapter2/heat_code
+      - file: chapter2/nonlinpoisson
+        sections:
+          - file: chapter2/nonlinpoisson_code
+      - file: chapter2/linearelasticity
+        sections:
+          - file: chapter2/linearelasticity_code
+          - file: chapter2/elasticity_scaling
+      - file: chapter2/navierstokes
+        sections:
+          - file: chapter2/ns_code1
+          - file: chapter2/ns_code2
+      - file: chapter2/hyperelasticity
+  - caption: Subdomains and boundary conditions
+    chapters:
+      - file: chapter3/neumann_dirichlet_code
+      - file: chapter3/multiple_dirichlet
+      - file: chapter3/subdomains
+      - file: chapter3/robin_neumann_dirichlet
+      - file: chapter3/component_bc
+      - file: chapter3/em
+  - caption: Improving your FEniCSx code
+    chapters:
+      - file: chapter4/solvers
+      - file: chapter4/compiler_parameters
+      - file: chapter4/convergence
