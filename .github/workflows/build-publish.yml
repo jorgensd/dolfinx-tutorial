@@ -84,7 +84,7 @@ jobs:
       - name: Build the book
         run: |
           pip3 uninstall -y ipyvtklink
-          PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
+          PYVISTA_JUPYTER_BACKEND=static PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
       # Add in -W once matplotlib is gone
       # Pusb book to HTML to github pages
       - name: GitHub Pages action
