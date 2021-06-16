@@ -19,7 +19,7 @@ RUN wget -qO - https://deb.nodesource.com/setup_16.x | bash && \
 RUN pip3 install setuptools jupyterhub "nbconvert<6" --upgrade
 
 # Pyvista ITKWidgets dependencies
-RUN pip3 install --no-cache-dir matplotlib itkwidgets ipywidgets ipyvtklink pyvista
+RUN pip3 install --no-cache-dir matplotlib itkwidgets ipywidgets ipyvtklink pyvista seaborn pandas
 RUN jupyter labextension install jupyter-matplotlib jupyterlab-datawidgets itkwidgets && \
     rm -rf /usr/local/share/.cache/*
 

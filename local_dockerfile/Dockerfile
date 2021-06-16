@@ -16,7 +16,7 @@ RUN wget -qO - https://deb.nodesource.com/setup_16.x | bash && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Pyvista ITKWidgets dependencies
-RUN pip3 install --no-cache-dir --upgrade setuptools itkwidgets ipywidgets matplotlib pyvista ipyvtklink
+RUN pip3 install --no-cache-dir --upgrade setuptools itkwidgets ipywidgets matplotlib pyvista ipyvtklink seaborn pandas
 RUN jupyter labextension install jupyter-matplotlib jupyterlab-datawidgets itkwidgets
 
 
