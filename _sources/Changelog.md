@@ -1,6 +1,7 @@
 # Changelog
 
 ## Dev
+- API change: `dolfinx.cpp.la.scatter_forward(u.x)` -> `u.x.scatter_forward`
 - Various plotting updates due to new version of pyvista.
 - Updating of the [Hyperelasticity demo](chapter2/hyperelasticity), now using DOLFINx wrappers to create the non-linear problem
 - Internal updates due to bumping of jupyter-book versions
