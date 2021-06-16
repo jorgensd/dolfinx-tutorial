@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JIT Parameters &#8212; FEniCSx tutorial</title>
+    <title>JIT Parameters and visualization using Pandas &#8212; FEniCSx tutorial</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -309,7 +309,7 @@
  </li>
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
-   JIT Parameters
+   JIT Parameters and visualization using Pandas
   </a>
  </li>
  <li class="toctree-l1">
@@ -426,9 +426,9 @@
         
               <div>
                 
-  <div class="section" id="jit-parameters">
-<h1>JIT Parameters<a class="headerlink" href="#jit-parameters" title="Permalink to this headline">¶</a></h1>
-<p>Author:Jørgen S. Dokken</p>
+  <div class="section" id="jit-parameters-and-visualization-using-pandas">
+<h1>JIT Parameters and visualization using Pandas<a class="headerlink" href="#jit-parameters-and-visualization-using-pandas" title="Permalink to this headline">¶</a></h1>
+<p>Author: Jørgen S. Dokken</p>
 <p>In this chapter, we will explore how to optimize and inspect the integration kernels used in DOLFINx.
 As we have seen in the previous demos, dolfinx uses the <a class="reference external" href="https://github.com/FEniCS/ufl/">Unified form language</a> to describe variational problems.</p>
 <p>These descriptions has to be translated in to code for assembling the right and left hand side of the discrete variational problem.</p>
@@ -469,7 +469,7 @@ This C code is in turned compiled using <a class="reference external" href="http
     <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
     <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a_compiled</span><span class="p">)</span>
     <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">degree</span><span class="si">}</span><span class="s2">) </span><span class="si">{</span><span class="n">jit_parameters</span><span class="p">[</span><span class="s1">&#39;cffi_extra_compile_args&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="si">}</span><span class="s2"> s&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
 </pre></div>
 </div>
 </div>
@@ -493,7 +493,8 @@ This C code is in turned compiled using <a class="reference external" href="http
 <p>We choose a subset of finite element spaces, varying the order of the space to look at the effects it has on the assembly time with different compile options.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;N1curl&quot;</span><span class="p">,</span> <span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="s2">&quot;RT&quot;</span><span class="p">]:</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Space&quot;</span><span class="p">:[],</span> <span class="s2">&quot;Degree&quot;</span><span class="p">:[],</span> <span class="s2">&quot;Options&quot;</span><span class="p">:[],</span> <span class="s2">&quot;Time&quot;</span><span class="p">:[]}</span>
+<span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;N1curl&quot;</span><span class="p">,</span> <span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="s2">&quot;RT&quot;</span><span class="p">]:</span>
     <span class="k">for</span> <span class="n">degree</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]:</span>
         <span class="k">for</span> <span class="n">native</span> <span class="ow">in</span> <span class="n">march_native</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">optimization_options</span><span class="p">:</span>
@@ -503,158 +504,162 @@ This C code is in turned compiled using <a class="reference external" href="http
                     <span class="n">cffi_options</span> <span class="o">=</span> <span class="p">[</span><span class="n">option</span><span class="p">]</span>
                 <span class="n">jit_parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;cffi_extra_compile_args&quot;</span><span class="p">:</span> <span class="n">cffi_options</span><span class="p">,</span> 
                     <span class="s2">&quot;cache_dir&quot;</span><span class="p">:</span> <span class="n">cache_dir</span><span class="p">,</span> <span class="s2">&quot;cffi_libraries&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;m&quot;</span><span class="p">]}</span>
-                <span class="n">compile_form</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">degree</span><span class="p">,</span> <span class="n">jit_parameters</span><span class="o">=</span><span class="n">jit_parameters</span><span class="p">)</span>
+                <span class="n">runtime</span> <span class="o">=</span> <span class="n">compile_form</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">degree</span><span class="p">,</span> <span class="n">jit_parameters</span><span class="o">=</span><span class="n">jit_parameters</span><span class="p">)</span>
+                <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Space&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">space</span><span class="p">)</span>
+                <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Degree&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">degree</span><span class="p">))</span>
+                <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Options&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cffi_options</span><span class="p">))</span>
+                <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">runtime</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We have now stored all the results to a dictionary. To visualize it, we use pandas and its Dataframe class. We can inspect the data in a jupyter notebook as follows</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="n">results_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+<span class="n">results_df</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 1) [&#39;-O1&#39;, &#39;-march=native&#39;]: 0.021204710006713867 s
-(N1curl, 1) [&#39;-O2&#39;, &#39;-march=native&#39;]: 0.020333528518676758 s
-(N1curl, 1) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.019695281982421875 s
-(N1curl, 1) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.01937580108642578 s
-(N1curl, 1) [&#39;-O1&#39;]: 0.02057361602783203 s
-(N1curl, 1) [&#39;-O2&#39;]: 0.02050495147705078 s
-</pre></div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Space</th>
+      <th>Degree</th>
+      <th>Options</th>
+      <th>Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>N1curl</td>
+      <td>1</td>
+      <td>-O1\n-march=native</td>
+      <td>0.023863</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>N1curl</td>
+      <td>1</td>
+      <td>-O2\n-march=native</td>
+      <td>0.022936</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>N1curl</td>
+      <td>1</td>
+      <td>-O3\n-march=native</td>
+      <td>0.022530</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>N1curl</td>
+      <td>1</td>
+      <td>-Ofast\n-march=native</td>
+      <td>0.021304</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>N1curl</td>
+      <td>1</td>
+      <td>-O1</td>
+      <td>0.023114</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>67</th>
+      <td>RT</td>
+      <td>3</td>
+      <td>-Ofast\n-march=native</td>
+      <td>0.452600</td>
+    </tr>
+    <tr>
+      <th>68</th>
+      <td>RT</td>
+      <td>3</td>
+      <td>-O1</td>
+      <td>0.743152</td>
+    </tr>
+    <tr>
+      <th>69</th>
+      <td>RT</td>
+      <td>3</td>
+      <td>-O2</td>
+      <td>0.701746</td>
+    </tr>
+    <tr>
+      <th>70</th>
+      <td>RT</td>
+      <td>3</td>
+      <td>-O3</td>
+      <td>0.535531</td>
+    </tr>
+    <tr>
+      <th>71</th>
+      <td>RT</td>
+      <td>3</td>
+      <td>-Ofast</td>
+      <td>0.515517</td>
+    </tr>
+  </tbody>
+</table>
+<p>72 rows × 4 columns</p>
+</div></div></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 1) [&#39;-O3&#39;]: 0.020088911056518555 s
-(N1curl, 1) [&#39;-Ofast&#39;]: 0.01982283592224121 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 2) [&#39;-O1&#39;, &#39;-march=native&#39;]: 0.1928539276123047 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 2) [&#39;-O2&#39;, &#39;-march=native&#39;]: 0.1969139575958252 s
-(N1curl, 2) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.139068603515625 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 2) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.14219880104064941 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 2) [&#39;-O1&#39;]: 0.1832900047302246 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 2) [&#39;-O2&#39;]: 0.1780533790588379 s
-(N1curl, 2) [&#39;-O3&#39;]: 0.16161632537841797 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 2) [&#39;-Ofast&#39;]: 0.15308356285095215 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-O1&#39;, &#39;-march=native&#39;]: 1.0826349258422852 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-O2&#39;, &#39;-march=native&#39;]: 1.0514297485351562 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.716982364654541 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.7145266532897949 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-O1&#39;]: 1.075977087020874 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-O2&#39;]: 1.0297863483428955 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-O3&#39;]: 0.8683271408081055 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(N1curl, 3) [&#39;-Ofast&#39;]: 0.8442208766937256 s
-(CG, 1) [&#39;-O1&#39;, &#39;-march=native&#39;]: 0.004423856735229492 s
-(CG, 1) [&#39;-O2&#39;, &#39;-march=native&#39;]: 0.0042874813079833984 s
-(CG, 1) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.003953218460083008 s
-(CG, 1) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.003944873809814453 s
-(CG, 1) [&#39;-O1&#39;]: 0.004283905029296875 s
-(CG, 1) [&#39;-O2&#39;]: 0.004314899444580078 s
-(CG, 1) [&#39;-O3&#39;]: 0.003981590270996094 s
-(CG, 1) [&#39;-Ofast&#39;]: 0.003977298736572266 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 2) [&#39;-O1&#39;, &#39;-march=native&#39;]: 0.043090105056762695 s
-(CG, 2) [&#39;-O2&#39;, &#39;-march=native&#39;]: 0.041472434997558594 s
-(CG, 2) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.03616929054260254 s
-(CG, 2) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.03628087043762207 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 2) [&#39;-O1&#39;]: 0.041259765625 s
-(CG, 2) [&#39;-O2&#39;]: 0.040309906005859375 s
-(CG, 2) [&#39;-O3&#39;]: 0.03708171844482422 s
-(CG, 2) [&#39;-Ofast&#39;]: 0.03690052032470703 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 3) [&#39;-O1&#39;, &#39;-march=native&#39;]: 0.19520974159240723 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 3) [&#39;-O2&#39;, &#39;-march=native&#39;]: 0.20331954956054688 s
-(CG, 3) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.15651345252990723 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 3) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.15931296348571777 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 3) [&#39;-O1&#39;]: 0.19959425926208496 s
-(CG, 3) [&#39;-O2&#39;]: 0.19042253494262695 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 3) [&#39;-O3&#39;]: 0.16277217864990234 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(CG, 3) [&#39;-Ofast&#39;]: 0.16337037086486816 s
-(RT, 1) [&#39;-O1&#39;, &#39;-march=native&#39;]: 0.013327360153198242 s
-(RT, 1) [&#39;-O2&#39;, &#39;-march=native&#39;]: 0.01302194595336914 s
-(RT, 1) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.012508630752563477 s
-(RT, 1) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.012827396392822266 s
-(RT, 1) [&#39;-O1&#39;]: 0.013417482376098633 s
-(RT, 1) [&#39;-O2&#39;]: 0.01328277587890625 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 1) [&#39;-O3&#39;]: 0.013054609298706055 s
-(RT, 1) [&#39;-Ofast&#39;]: 0.012972831726074219 s
-(RT, 2) [&#39;-O1&#39;, &#39;-march=native&#39;]: 0.08729243278503418 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 2) [&#39;-O2&#39;, &#39;-march=native&#39;]: 0.09209728240966797 s
-(RT, 2) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.07252120971679688 s
-(RT, 2) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.07206273078918457 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 2) [&#39;-O1&#39;]: 0.0880887508392334 s
-(RT, 2) [&#39;-O2&#39;]: 0.08467364311218262 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 2) [&#39;-O3&#39;]: 0.08257126808166504 s
-(RT, 2) [&#39;-Ofast&#39;]: 0.07988190650939941 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-O1&#39;, &#39;-march=native&#39;]: 0.6409165859222412 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-O2&#39;, &#39;-march=native&#39;]: 0.5811550617218018 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-O3&#39;, &#39;-march=native&#39;]: 0.384350061416626 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-Ofast&#39;, &#39;-march=native&#39;]: 0.3843231201171875 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-O1&#39;]: 0.649888277053833 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-O2&#39;]: 0.6091413497924805 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-O3&#39;]: 0.47086572647094727 s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(RT, 3) [&#39;-Ofast&#39;]: 0.4534628391265869 s
+<p>We can now make a plot for each element type to see the variation given the different compile options. We create a new colum for each element type and degree.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;ticks&quot;</span><span class="p">)</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">font_scale</span><span class="o">=</span><span class="mf">1.2</span><span class="p">)</span>  
+<span class="n">seaborn</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">)</span>
+<span class="n">results_df</span><span class="p">[</span><span class="s2">&quot;Element&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results_df</span><span class="p">[</span><span class="s2">&quot;Space&quot;</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">results_df</span><span class="p">[</span><span class="s2">&quot;Degree&quot;</span><span class="p">]</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">results_df</span><span class="p">[</span><span class="s2">&quot;Element&quot;</span><span class="p">]))</span>
+<span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
+    <span class="n">df_e</span> <span class="o">=</span> <span class="n">results_df</span><span class="p">[</span><span class="n">results_df</span><span class="p">[</span><span class="s2">&quot;Element&quot;</span><span class="p">]</span><span class="o">==</span><span class="n">element</span><span class="p">]</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">seaborn</span><span class="o">.</span><span class="n">catplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;Options&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;Time&quot;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df_e</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;Element&quot;</span><span class="p">)</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<img alt="../_images/compiler_parameters_13_0.png" src="../_images/compiler_parameters_13_0.png" />
+<img alt="../_images/compiler_parameters_13_1.png" src="../_images/compiler_parameters_13_1.png" />
+<img alt="../_images/compiler_parameters_13_2.png" src="../_images/compiler_parameters_13_2.png" />
+<img alt="../_images/compiler_parameters_13_3.png" src="../_images/compiler_parameters_13_3.png" />
+<img alt="../_images/compiler_parameters_13_4.png" src="../_images/compiler_parameters_13_4.png" />
+<img alt="../_images/compiler_parameters_13_5.png" src="../_images/compiler_parameters_13_5.png" />
+<img alt="../_images/compiler_parameters_13_6.png" src="../_images/compiler_parameters_13_6.png" />
+<img alt="../_images/compiler_parameters_13_7.png" src="../_images/compiler_parameters_13_7.png" />
+<img alt="../_images/compiler_parameters_13_8.png" src="../_images/compiler_parameters_13_8.png" />
 </div>
-<p>As we observed in the output, the main influence on the compilation time is the optimization level, but in certain cases, <code class="docutils literal notranslate"><span class="pre">-march=native</span></code> can reduce the compilation file significantly.</p>
+</div>
+<p>We observe that the compile time increases when increasing the degree of the function space, and that we get most speedup by using “-O3” or “-Ofast” combined with “-march=native”.</p>
 </div>
 
     <script type="text/x-thebe-config">

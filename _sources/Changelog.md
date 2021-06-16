@@ -1,6 +1,7 @@
 # Changelog
 
 ## Dev
+- Major improvements in [Form compiler parameters](chapter4/compiler_parameters), using pandas and seaborn for visualization of speed-ups gained using form compiler parameters.
 - API change: `dolfinx.cpp.la.scatter_forward(u.x)` -> `u.x.scatter_forward`
 - Various plotting updates due to new version of pyvista.
 - Updating of the [Hyperelasticity demo](chapter2/hyperelasticity), now using DOLFINx wrappers to create the non-linear problem
