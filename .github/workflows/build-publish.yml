@@ -83,7 +83,6 @@ jobs:
       # Runs a single command using the runners shell
       - name: Build the book
         run: |
-          pip3 uninstall -y ipyvtklink
           PYVISTA_JUPYTER_BACKEND=static PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
       # Add in -W once matplotlib is gone
       # Pusb book to HTML to github pages
