@@ -20,7 +20,7 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container: dokken92/dolfinx_custom:13062021
+    container: dokken92/dolfinx_custom:16062021
 
     env:
       HDF5_MPI: "ON"
@@ -83,6 +83,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: Build the book
         run: |
+          pip3 uninstall ipyvtklink
           PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
       # Add in -W once matplotlib is gone
       # Pusb book to HTML to github pages
