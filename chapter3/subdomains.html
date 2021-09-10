@@ -583,7 +583,15 @@ u=u_D=1 \qquad \text{on } \partial\Omega_D=[0,y], y\in[0,1]
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/subdomains_11_0.png" src="../_images/subdomains_11_0.png" />
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING:py.warnings:/usr/local/lib/python3.9/dist-packages/pyvista/core/dataset.py:1332: PyvistaDeprecationWarning: Use of `cell_arrays` is deprecated. Use `cell_data` instead.
+  warnings.warn(
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING:py.warnings:/usr/local/lib/python3.9/dist-packages/pyvista/core/dataset.py:1192: PyvistaDeprecationWarning: Use of `point_arrays` is deprecated. Use `point_data` instead.
+  warnings.warn(
+</pre></div>
+</div>
+<img alt="../_images/subdomains_11_2.png" src="../_images/subdomains_11_2.png" />
 </div>
 </div>
 <p>We clearly observe different behavior in the two regions, whose both has the same Dirichlet boundary condition on the left side, where <span class="math notranslate nohighlight">\(x=0\)</span>.</p>
@@ -665,6 +673,26 @@ u=u_D=1 \qquad \text{on } \partial\Omega_D=[0,y], y\in[0,1]
     <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
     <span class="n">gmsh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;mesh.msh&quot;</span><span class="p">)</span>
 <span class="n">gmsh</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : Meshing 1D...
+Info    : [  0%] Meshing curve 1 (Line)
+Info    : [ 20%] Meshing curve 2 (Line)
+Info    : [ 30%] Meshing curve 3 (Line)
+Info    : [ 50%] Meshing curve 4 (Line)
+Info    : [ 60%] Meshing curve 5 (Line)
+Info    : [ 80%] Meshing curve 6 (Line)
+Info    : [ 90%] Meshing curve 7 (Line)
+Info    : Done meshing 1D (Wall 0.000594511s, CPU 0.000831s)
+Info    : Meshing 2D...
+Info    : [  0%] Meshing surface 1 (Plane, Frontal-Delaunay)
+Info    : [ 50%] Meshing surface 2 (Plane, Frontal-Delaunay)
+Info    : Done meshing 2D (Wall 0.00424678s, CPU 0.004526s)
+Info    : 103 nodes 218 elements
+Info    : Writing &#39;mesh.msh&#39;...
+Info    : Done writing &#39;mesh.msh&#39;
 </pre></div>
 </div>
 </div>
@@ -792,7 +820,11 @@ u=u_D=1 \qquad \text{on } \partial\Omega_D=[0,y], y\in[0,1]
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/subdomains_30_0.png" src="../_images/subdomains_30_0.png" />
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING:py.warnings:/usr/local/lib/python3.9/dist-packages/pyvista/core/dataset.py:1332: PyvistaDeprecationWarning: Use of `cell_arrays` is deprecated. Use `cell_data` instead.
+  warnings.warn(
+</pre></div>
+</div>
+<img alt="../_images/subdomains_30_1.png" src="../_images/subdomains_30_1.png" />
 </div>
 </div>
 </div>
