@@ -630,7 +630,7 @@ Info    : [ 80%] Meshing curve 16 (Ellipse)
 Info    : [ 90%] Meshing curve 17 (Ellipse)
 Info    : [ 90%] Meshing curve 18 (Ellipse)
 Info    : [100%] Meshing curve 19 (Ellipse)
-Info    : Done meshing 1D (Wall 0.0203338s, CPU 0.022979s)
+Info    : Done meshing 1D (Wall 0.0213749s, CPU 0.018528s)
 Info    : Meshing 2D...
 Info    : [  0%] Meshing surface 1 (Plane, Bamg)
 Info    : [  0%] BAMG succeeded 794 vertices 1316 triangles
@@ -695,16 +695,16 @@ Info    : [ 90%] BAMG succeeded 22 vertices 29 triangles
 Info    : [ 90%] Meshing surface 19 (Plane, Bamg)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : [ 90%] BAMG succeeded 1814 vertices 3331 triangles
-Info    : [ 90%] BAMG succeeded 1805 vertices 3313 triangles
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : [ 90%] BAMG succeeded 1804 vertices 3311 triangles
+Info    : [ 90%] BAMG succeeded 1803 vertices 3309 triangles
 Info    : [100%] Meshing surface 20 (Plane, Bamg)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : [100%] BAMG succeeded 1190 vertices 2164 triangles
-Info    : [100%] BAMG succeeded 1168 vertices 2120 triangles
-Info    : [100%] BAMG succeeded 1166 vertices 2116 triangles
-Info    : Done meshing 2D (Wall 1.84184s, CPU 1.12013s)
-Info    : 3633 nodes 7763 elements
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : [100%] BAMG succeeded 1193 vertices 2170 triangles
+Info    : [100%] BAMG succeeded 1173 vertices 2130 triangles
+Info    : [100%] BAMG succeeded 1170 vertices 2124 triangles
+Info    : Done meshing 2D (Wall 1.76442s, CPU 1.12397s)
+Info    : 3635 nodes 7767 elements
 </pre></div>
 </div>
 </div>
@@ -901,7 +901,7 @@ Info    : 3633 nodes 7763 elements
 <span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">create_vtk_topology</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
 <span class="n">num_dofs_local</span> <span class="o">=</span> <span class="n">V</span><span class="o">.</span><span class="n">dofmap</span><span class="o">.</span><span class="n">index_map</span><span class="o">.</span><span class="n">size_local</span>
 <span class="n">grid</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">(</span><span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
-<span class="n">grid</span><span class="o">.</span><span class="n">point_arrays</span><span class="p">[</span><span class="s2">&quot;A_z&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">A_z</span><span class="o">.</span><span class="n">compute_point_values</span><span class="p">()</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">point_data</span><span class="p">[</span><span class="s2">&quot;A_z&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">A_z</span><span class="o">.</span><span class="n">compute_point_values</span><span class="p">()</span>
 <span class="n">grid</span><span class="o">.</span><span class="n">set_active_scalars</span><span class="p">(</span><span class="s2">&quot;A_z&quot;</span><span class="p">)</span>
 <span class="n">warp</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">warp_by_scalar</span><span class="p">(</span><span class="s2">&quot;A_z&quot;</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1e7</span><span class="p">)</span>
 <span class="n">actor</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">warp</span><span class="p">)</span>
@@ -913,11 +913,7 @@ Info    : 3633 nodes 7763 elements
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING:py.warnings:/usr/local/lib/python3.9/dist-packages/pyvista/core/dataset.py:1192: PyvistaDeprecationWarning: Use of `point_arrays` is deprecated. Use `point_data` instead.
-  warnings.warn(
-</pre></div>
-</div>
-<img alt="../_images/em_20_1.png" src="../_images/em_20_1.png" />
+<img alt="../_images/em_20_0.png" src="../_images/em_20_0.png" />
 </div>
 </div>
 </div>

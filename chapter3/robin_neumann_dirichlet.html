@@ -695,7 +695,7 @@ We can now create all the necessary variable definitions and the traditional par
 <span class="n">point_values</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">compute_point_values</span><span class="p">()</span>
 <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">iscomplexobj</span><span class="p">(</span><span class="n">point_values</span><span class="p">):</span>
     <span class="n">point_values</span> <span class="o">=</span> <span class="n">point_values</span><span class="o">.</span><span class="n">real</span>
-<span class="n">grid</span><span class="o">.</span><span class="n">point_arrays</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">point_values</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">point_data</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">point_values</span>
 <span class="n">grid</span><span class="o">.</span><span class="n">set_active_scalars</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">)</span>
 
 <span class="n">plotter</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">()</span>
@@ -710,11 +710,7 @@ We can now create all the necessary variable definitions and the traditional par
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING:py.warnings:/usr/local/lib/python3.9/dist-packages/pyvista/core/dataset.py:1192: PyvistaDeprecationWarning: Use of `point_arrays` is deprecated. Use `point_data` instead.
-  warnings.warn(
-</pre></div>
-</div>
-<img alt="../_images/robin_neumann_dirichlet_18_1.png" src="../_images/robin_neumann_dirichlet_18_1.png" />
+<img alt="../_images/robin_neumann_dirichlet_18_0.png" src="../_images/robin_neumann_dirichlet_18_0.png" />
 </div>
 </div>
 </div>
