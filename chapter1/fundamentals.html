@@ -451,8 +451,8 @@ This will include:</p>
 <li><p>How to visualize the solution</p></li>
 </ul>
 <p>The Poisson equation is the following boundary-value problem</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d0204c2e-b8ca-4265-a89a-03e42a12496f">
-<span class="eqno">(1)<a class="headerlink" href="#equation-d0204c2e-b8ca-4265-a89a-03e42a12496f" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-60fc8a10-59a0-4163-babc-36a4924d092e">
+<span class="eqno">(1)<a class="headerlink" href="#equation-60fc8a10-59a0-4163-babc-36a4924d092e" title="Permalink to this equation">¶</a></span>\[\begin{align}
 -\nabla^2 u(\mathbf{x}) &amp;= f(\mathbf{x})&amp;&amp;\mathbf{x} \in \Omega\\
 u(\mathbf{x}) &amp;= u_D(\mathbf{x})&amp;&amp; \mathbf{x} \in \partial\Omega
 \end{align}\]</div>
@@ -507,8 +507,8 @@ The formula reads</p>
 Find <span class="math notranslate nohighlight">\(u\in V\)</span> such that</p>
 <p><span class="math notranslate nohighlight">\(\int_\Omega \nabla u \cdot \nabla v \mathrm{d} x = \int_\Omega f v\mathrm{d} x\qquad \forall v \in \hat{V}.\)</span></p>
 <p>For the present problem, the test and trial spaces <span class="math notranslate nohighlight">\(V\)</span> and <span class="math notranslate nohighlight">\(\hat{V}\)</span> is defined as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-764c950d-44cb-413b-94bf-1bb5bcc53501">
-<span class="eqno">(2)<a class="headerlink" href="#equation-764c950d-44cb-413b-94bf-1bb5bcc53501" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-6ff95509-8060-4a00-babc-05b6dd5f9436">
+<span class="eqno">(2)<a class="headerlink" href="#equation-6ff95509-8060-4a00-babc-05b6dd5f9436" title="Permalink to this equation">¶</a></span>\[\begin{align}
 V&amp;=\{v\in H^1(\Omega) \vert v=u_D&amp;&amp;\text{on } \partial \Omega \},\\
 \hat{V}&amp;=\{v\in H^1(\Omega) \vert v=0 &amp;&amp;\text{on } \partial \Omega \}.
 \end{align}\]</div>
@@ -522,8 +522,8 @@ hexahedra.</p>
 <p>The variational problem is a <em>continuous problem</em>: it defines the solution <span class="math notranslate nohighlight">\(u\)</span> in the infinite-dimensional function space <span class="math notranslate nohighlight">\(V\)</span>.
 The finite element method for the  Poisson equation finds an approximate solution of the variational problem by replacing the infinite-dimensional function spaces <span class="math notranslate nohighlight">\(V\)</span> and <span class="math notranslate nohighlight">\(\hat V\)</span> by <em>discrete</em> (finite dimensional) trial and test spaces <span class="math notranslate nohighlight">\(V_h\subset V\)</span> and <span class="math notranslate nohighlight">\(\hat{V}_h \subset \hat{V}\)</span>. The discrete
 variational problem reads: Find <span class="math notranslate nohighlight">\(u_h\in V_h\)</span> such that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-dcb1425e-1d39-46ab-9f26-c83f3ecb79b3">
-<span class="eqno">(3)<a class="headerlink" href="#equation-dcb1425e-1d39-46ab-9f26-c83f3ecb79b3" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-aae62a7d-6f4b-42ff-8cb6-20eda9e4eb32">
+<span class="eqno">(3)<a class="headerlink" href="#equation-aae62a7d-6f4b-42ff-8cb6-20eda9e4eb32" title="Permalink to this equation">¶</a></span>\[\begin{align}
 \int_\Omega \nabla u_h \cdot \nabla v ~\mathrm{d} x &amp;= \int_\Omega fv~ \mathrm{d} x &amp;&amp; \forall v \in \hat{V}_h.
 \end{align}\]</div>
 <p>This variational problem, together with suitable definitions of <span class="math notranslate nohighlight">\(V_h\)</span> and <span class="math notranslate nohighlight">\(\hat{V}_h\)</span> uniquely define our approximate numerical solution of the Poisson equation.
@@ -534,13 +534,13 @@ but means that the finite element variational problem and the continuous variati
 <h2>Abstract finite element variational formulation<a class="headerlink" href="#abstract-finite-element-variational-formulation" title="Permalink to this headline">¶</a></h2>
 <p>We will introduce the following notations for variational problems:
 Find <span class="math notranslate nohighlight">\(u\in V\)</span> such that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-17dc72fd-4c11-43a9-b412-7a1e9b716d84">
-<span class="eqno">(4)<a class="headerlink" href="#equation-17dc72fd-4c11-43a9-b412-7a1e9b716d84" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-7beb2d79-0fc5-4573-a09e-0418073b0d63">
+<span class="eqno">(4)<a class="headerlink" href="#equation-7beb2d79-0fc5-4573-a09e-0418073b0d63" title="Permalink to this equation">¶</a></span>\[\begin{align}
 a(u,v)&amp;=L(v)&amp;&amp; \forall v \in \hat{V}.
 \end{align}\]</div>
 <p>For the Poisson equation, we have:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ac50d99d-403c-4b41-962b-172c8d483e87">
-<span class="eqno">(5)<a class="headerlink" href="#equation-ac50d99d-403c-4b41-962b-172c8d483e87" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-ae50fa82-a9b5-4f9a-832b-9b4cc1d15e1b">
+<span class="eqno">(5)<a class="headerlink" href="#equation-ae50fa82-a9b5-4f9a-832b-9b4cc1d15e1b" title="Permalink to this equation">¶</a></span>\[\begin{align}
 a(u,v) &amp;= \int_{\Omega} \nabla u \cdot \nabla v ~\mathrm{d} x,\\
 L(v) &amp;= \int_{\Omega} fv ~\mathrm{d} x.
 \end{align}\]</div>
