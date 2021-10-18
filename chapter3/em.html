@@ -22,8 +22,8 @@
       
 
     
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
@@ -33,21 +33,21 @@
     
   <link rel="preload" as="script" href="../_static/js/index.1c5a1a01449ed65a7b51.js">
 
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/togglebutton.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
-    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
-    <script >
+    <script>
         const thebe_selector = ".thebe"
         const thebe_selector_input = "pre"
         const thebe_selector_output = ".output"
@@ -97,7 +97,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Introduction
  </span>
@@ -114,7 +114,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Fundamentals
  </span>
@@ -165,7 +165,7 @@
   </ul>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   A Gallery of finite element solvers
  </span>
@@ -265,7 +265,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Subdomains and boundary conditions
  </span>
@@ -302,7 +302,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Improving your FEniCSx code
  </span>
@@ -450,7 +450,7 @@
         
               <div>
                 
-  <div class="section" id="electromagnetics-example">
+  <div class="tex2jax_ignore mathjax_ignore section" id="electromagnetics-example">
 <h1>Electromagnetics example<a class="headerlink" href="#electromagnetics-example" title="Permalink to this headline">¶</a></h1>
 <p>Theoretical introduction by: Hans Petter Langtangen and Anders Logg</p>
 <p>Implementation by: Jørgen S. Dokken</p>
@@ -634,7 +634,7 @@ Info    : [ 80%] Meshing curve 16 (Ellipse)
 Info    : [ 90%] Meshing curve 17 (Ellipse)
 Info    : [ 90%] Meshing curve 18 (Ellipse)
 Info    : [100%] Meshing curve 19 (Ellipse)
-Info    : Done meshing 1D (Wall 0.021039s, CPU 0.02233s)
+Info    : Done meshing 1D (Wall 0.019249s, CPU 0.020528s)
 Info    : Meshing 2D...
 Info    : [  0%] Meshing surface 1 (Plane, Bamg)
 Info    : [  0%] BAMG succeeded 794 vertices 1316 triangles
@@ -699,16 +699,16 @@ Info    : [ 90%] BAMG succeeded 22 vertices 29 triangles
 Info    : [ 90%] Meshing surface 19 (Plane, Bamg)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : [ 90%] BAMG succeeded 1823 vertices 3349 triangles
-Info    : [ 90%] BAMG succeeded 1820 vertices 3343 triangles
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : [ 90%] BAMG succeeded 1804 vertices 3311 triangles
+Info    : [ 90%] BAMG succeeded 1798 vertices 3299 triangles
 Info    : [100%] Meshing surface 20 (Plane, Bamg)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : [100%] BAMG succeeded 1195 vertices 2174 triangles
-Info    : [100%] BAMG succeeded 1171 vertices 2126 triangles
-Info    : [100%] BAMG succeeded 1169 vertices 2122 triangles
-Info    : Done meshing 2D (Wall 1.82956s, CPU 1.12816s)
-Info    : 3651 nodes 7799 elements
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : [100%] BAMG succeeded 1192 vertices 2168 triangles
+Info    : [100%] BAMG succeeded 1165 vertices 2114 triangles
+Info    : [100%] BAMG succeeded 1165 vertices 2114 triangles
+Info    : Done meshing 2D (Wall 1.83167s, CPU 1.14314s)
+Info    : 3625 nodes 7747 elements
 </pre></div>
 </div>
 </div>
