@@ -46,7 +46,7 @@ We then in turn use the finite element method. This means that we have to turn t
 where 
 \begin{align}
     a(u,v)&=\int_{\Omega}(uv + \Delta t \nabla u \cdot \nabla v )~\mathrm{d} x\\
-    L_{n+1}(v)&=\int_{\Omega} (u^n+\Delta t f^{n+1})~\mathrm{d} x.
+    L_{n+1}(v)&=\int_{\Omega} (u^n+\Delta t f^{n+1}) \cdot v~\mathrm{d} x.
 \end{align}
 
 
