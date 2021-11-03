@@ -3,11 +3,10 @@ FROM dolfinx/lab
 WORKDIR /tmp/
 
 ENV HDF5_MPI="ON" \
-    CC=mpicc \
     HDF5_DIR="/usr/lib/x86_64-linux-gnu/hdf5/mpich/"
 
 # Install meshio
-RUN pip3 install --no-cache-dir --no-binary=h5py h5py meshio
+RUN CC=mpicc pip3 install --no-cache-dir --no-binary=h5py h5py meshio
 
 # Dependencies for pyvista and related packages
 RUN wget -qO - https://deb.nodesource.com/setup_16.x | bash && \
