@@ -7,8 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Electromagnetics example &#8212; FEniCSx tutorial</title>
     
-  <link href="../_static/css/theme.css" rel="stylesheet" />
-  <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+  <link href="../_static/css/theme.css" rel="stylesheet">
+  <link href="../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -31,7 +31,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     
-  <link rel="preload" as="script" href="../_static/js/index.1c5a1a01449ed65a7b51.js">
+  <link rel="preload" as="script" href="../_static/js/index.be7d3bbb2ef33a8344ce.js">
 
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -58,7 +58,10 @@
     <link rel="next" title="Solver configuration" href="../chapter4/solvers.html" />
     <link rel="prev" title="Component-wise Dirichlet BC" href="component_bc.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
     
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -97,7 +100,7 @@
   </a>
  </li>
 </ul>
-<p class="caption" role="heading">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   Introduction
  </span>
@@ -114,7 +117,7 @@
   </a>
  </li>
 </ul>
-<p class="caption" role="heading">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   Fundamentals
  </span>
@@ -165,7 +168,7 @@
   </ul>
  </li>
 </ul>
-<p class="caption" role="heading">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   A Gallery of finite element solvers
  </span>
@@ -265,7 +268,7 @@
   </a>
  </li>
 </ul>
-<p class="caption" role="heading">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   Subdomains and boundary conditions
  </span>
@@ -302,7 +305,7 @@
   </a>
  </li>
 </ul>
-<p class="caption" role="heading">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   Improving your FEniCSx code
  </span>
@@ -634,53 +637,51 @@ Info    : [ 80%] Meshing curve 16 (Ellipse)
 Info    : [ 90%] Meshing curve 17 (Ellipse)
 Info    : [ 90%] Meshing curve 18 (Ellipse)
 Info    : [100%] Meshing curve 19 (Ellipse)
-Info    : Done meshing 1D (Wall 0.0261126s, CPU 0.027711s)
+Info    : Done meshing 1D (Wall 0.0196621s, CPU 0.021866s)
 Info    : Meshing 2D...
 Info    : [  0%] Meshing surface 1 (Plane, Bamg)
 Info    : [  0%] BAMG succeeded 794 vertices 1316 triangles
 Info    : [ 10%] Meshing surface 3 (Plane, Bamg)
 Info    : [ 10%] BAMG succeeded 22 vertices 29 triangles
+Info    : [ 10%] BAMG succeeded 22 vertices 29 triangles
+Info    : [ 20%] Meshing surface 4 (Plane, Bamg)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : [ 10%] BAMG succeeded 22 vertices 29 triangles
-Info    : [ 20%] Meshing surface 4 (Plane, Bamg)
-Info    : [ 20%] BAMG succeeded 22 vertices 29 triangles
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : [ 20%] BAMG succeeded 22 vertices 29 triangles
 Info    : [ 20%] BAMG succeeded 22 vertices 29 triangles
 Info    : [ 20%] Meshing surface 5 (Plane, Bamg)
 Info    : [ 20%] BAMG succeeded 21 vertices 27 triangles
 Info    : [ 20%] BAMG succeeded 21 vertices 27 triangles
 Info    : [ 30%] Meshing surface 6 (Plane, Bamg)
+Info    : [ 30%] BAMG succeeded 21 vertices 27 triangles
+Info    : [ 30%] BAMG succeeded 21 vertices 27 triangles
+Info    : [ 30%] Meshing surface 7 (Plane, Bamg)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : [ 30%] BAMG succeeded 21 vertices 27 triangles
 Info    : [ 30%] BAMG succeeded 21 vertices 27 triangles
-Info    : [ 30%] Meshing surface 7 (Plane, Bamg)
-Info    : [ 30%] BAMG succeeded 21 vertices 27 triangles
-Info    : [ 30%] BAMG succeeded 21 vertices 27 triangles
 Info    : [ 40%] Meshing surface 8 (Plane, Bamg)
 Info    : [ 40%] BAMG succeeded 22 vertices 29 triangles
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : [ 40%] BAMG succeeded 22 vertices 29 triangles
+Info    : [ 40%] BAMG succeeded 22 vertices 29 triangles
 Info    : [ 40%] Meshing surface 9 (Plane, Bamg)
 Info    : [ 40%] BAMG succeeded 22 vertices 29 triangles
 Info    : [ 40%] BAMG succeeded 22 vertices 29 triangles
 Info    : [ 50%] Meshing surface 10 (Plane, Bamg)
-Info    : [ 50%] BAMG succeeded 22 vertices 29 triangles
-Info    : [ 50%] BAMG succeeded 22 vertices 29 triangles
-Info    : [ 50%] Meshing surface 11 (Plane, Bamg)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : [ 50%] BAMG succeeded 22 vertices 29 triangles
+Info    : [ 50%] BAMG succeeded 22 vertices 29 triangles
+Info    : [ 50%] Meshing surface 11 (Plane, Bamg)
+Info    : [ 50%] BAMG succeeded 22 vertices 29 triangles
 Info    : [ 50%] BAMG succeeded 22 vertices 29 triangles
 Info    : [ 60%] Meshing surface 12 (Plane, Bamg)
 Info    : [ 60%] BAMG succeeded 22 vertices 29 triangles
 Info    : [ 60%] BAMG succeeded 22 vertices 29 triangles
 Info    : [ 60%] Meshing surface 13 (Plane, Bamg)
-Info    : [ 60%] BAMG succeeded 22 vertices 29 triangles
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : [ 60%] BAMG succeeded 22 vertices 29 triangles
+Info    : [ 60%] BAMG succeeded 22 vertices 29 triangles
 Info    : [ 70%] Meshing surface 14 (Plane, Bamg)
 Info    : [ 70%] BAMG succeeded 22 vertices 29 triangles
 Info    : [ 70%] BAMG succeeded 22 vertices 29 triangles
@@ -701,18 +702,18 @@ Info    : [ 90%] BAMG succeeded 22 vertices 29 triangles
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : [ 90%] BAMG succeeded 22 vertices 29 triangles
 Info    : [ 90%] Meshing surface 19 (Plane, Bamg)
-Info    : [ 90%] BAMG succeeded 1819 vertices 3341 triangles
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : [ 90%] BAMG succeeded 1815 vertices 3333 triangles
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : [ 90%] BAMG succeeded 1812 vertices 3327 triangles
+Info    : [ 90%] BAMG succeeded 1803 vertices 3309 triangles
 Info    : [100%] Meshing surface 20 (Plane, Bamg)
-Info    : [100%] BAMG succeeded 1194 vertices 2172 triangles
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : [100%] BAMG succeeded 1173 vertices 2130 triangles
-Info    : [100%] BAMG succeeded 1171 vertices 2126 triangles
-Info    : Done meshing 2D (Wall 2.15576s, CPU 1.37874s)
-Info    : 3648 nodes 7793 elements
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : [100%] BAMG succeeded 1196 vertices 2176 triangles
+Info    : [100%] BAMG succeeded 1172 vertices 2128 triangles
+Info    : [100%] BAMG succeeded 1167 vertices 2118 triangles
+Info    : Done meshing 2D (Wall 2.08461s, CPU 1.33616s)
+Info    : 3632 nodes 7761 elements
 </pre></div>
 </div>
 </div>
@@ -984,31 +985,22 @@ We connect the vector field with the midpoint by using <code class="docutils lit
               </div>
               
         
-            
-
-
-
-<div class='prev-next-bottom'>
-    
-    <div id="prev">
-        <a class="left-prev" href="component_bc.html" title="previous page">
-            <i class="prevnext-label fas fa-angle-left"></i>
-            <div class="prevnext-info">
-                <p class="prevnext-label">previous</p>
-                <p class="prevnext-title">Component-wise Dirichlet BC</p>
-            </div>
-        </a>
+            <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="component_bc.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Component-wise Dirichlet BC</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="../chapter4/solvers.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Solver configuration</p>
     </div>
-     <div id="next">
-        <a class="right-next" href="../chapter4/solvers.html" title="next page">
-            <div class="prevnext-info">
-                <p class="prevnext-label">next</p>
-                <p class="prevnext-title">Solver configuration</p>
-            </div>
-            <i class="prevnext-label fas fa-angle-right"></i>
-        </a>
-     </div>
-
+    <i class="fas fa-angle-right"></i>
+    </a>
 </div>
         
         </div>
@@ -1038,8 +1030,7 @@ We connect the vector field with the midpoint by using <code class="docutils lit
       </div>
     </div>
   
-  <script src="../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+  <script src="../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
 
-  
   </body>
 </html>

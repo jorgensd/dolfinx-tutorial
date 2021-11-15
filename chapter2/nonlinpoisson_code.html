@@ -7,8 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Implementation &#8212; FEniCSx tutorial</title>
     
-  <link href="../_static/css/theme.css" rel="stylesheet" />
-  <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+  <link href="../_static/css/theme.css" rel="stylesheet">
+  <link href="../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -31,7 +31,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     
-  <link rel="preload" as="script" href="../_static/js/index.1c5a1a01449ed65a7b51.js">
+  <link rel="preload" as="script" href="../_static/js/index.be7d3bbb2ef33a8344ce.js">
 
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -58,7 +58,10 @@
     <link rel="next" title="The equations of linear elasticity" href="linearelasticity.html" />
     <link rel="prev" title="A nonlinear Poisson equation" href="nonlinpoisson.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
     
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -97,7 +100,7 @@
   </a>
  </li>
 </ul>
-<p class="caption" role="heading">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   Introduction
  </span>
@@ -114,7 +117,7 @@
   </a>
  </li>
 </ul>
-<p class="caption" role="heading">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   Fundamentals
  </span>
@@ -165,7 +168,7 @@
   </ul>
  </li>
 </ul>
-<p class="caption" role="heading">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   A Gallery of finite element solvers
  </span>
@@ -265,7 +268,7 @@
   </a>
  </li>
 </ul>
-<p class="caption" role="heading">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   Subdomains and boundary conditions
  </span>
@@ -302,7 +305,7 @@
   </a>
  </li>
 </ul>
-<p class="caption" role="heading">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   Improving your FEniCSx code
  </span>
@@ -548,25 +551,25 @@ Newton’s method requires methods for evaluating the residual <code class="docu
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of interations: 8
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-08 08:17:48.120 (   0.255s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-08 08:17:48.122 (   0.257s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-08 08:17:48.123 (   0.258s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 20.3794 (tol = 1e-10) r (rel) = 0.922544(tol = 1e-06)
-2021-11-08 08:17:48.123 (   0.258s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-08 08:17:48.125 (   0.261s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 6.95285 (tol = 1e-10) r (rel) = 0.314745(tol = 1e-06)
-2021-11-08 08:17:48.126 (   0.261s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-08 08:17:48.128 (   0.263s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 2.93575 (tol = 1e-10) r (rel) = 0.132897(tol = 1e-06)
-2021-11-08 08:17:48.128 (   0.264s) [main            ]  PETScKrylovSol
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-15 08:17:37.771 (   0.230s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-15 08:17:37.773 (   0.232s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-15 08:17:37.774 (   0.233s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 20.3794 (tol = 1e-10) r (rel) = 0.922544(tol = 1e-06)
+2021-11-15 08:17:37.774 (   0.233s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-15 08:17:37.775 (   0.235s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 6.95285 (tol = 1e-10) r (rel) = 0.314745(tol = 1e-06)
+2021-11-15 08:17:37.775 (   0.235s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-15 08:17:37.777 (   0.236s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 2.93575 (tol = 1e-10) r (rel) = 0.132897(tol = 1e-06)
+2021-11-15 08:17:37.777 (   0.236s) [main            ]  PETScKrylovSol
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-08 08:17:48.130 (   0.265s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 0.700593 (tol = 1e-10) r (rel) = 0.0317148(tol = 1e-06)
-2021-11-08 08:17:48.130 (   0.265s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-08 08:17:48.131 (   0.266s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 0.0490796 (tol = 1e-10) r (rel) = 0.00222176(tol = 1e-06)
-2021-11-08 08:17:48.131 (   0.267s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-08 08:17:48.133 (   0.268s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 7: r (abs) = 0.000299464 (tol = 1e-10) r (rel) = 1.35563e-05(tol = 1e-06)
-2021-11-08 08:17:48.133 (   0.268s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-08 08:17:48.134 (   0.269s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 8: r (abs) = 1.52969e-08 (tol = 1e-10) r (rel) = 6.92466e-10(tol = 1e-06)
-2021-11-08 08:17:48.134 (   0.269s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 8 iterations and 45 linear solver iterations.
+2021-11-15 08:17:37.778 (   0.237s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 0.700593 (tol = 1e-10) r (rel) = 0.0317148(tol = 1e-06)
+2021-11-15 08:17:37.778 (   0.237s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-15 08:17:37.779 (   0.238s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 0.0490796 (tol = 1e-10) r (rel) = 0.00222176(tol = 1e-06)
+2021-11-15 08:17:37.779 (   0.238s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-15 08:17:37.780 (   0.239s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 7: r (abs) = 0.000299464 (tol = 1e-10) r (rel) = 1.35563e-05(tol = 1e-06)
+2021-11-15 08:17:37.780 (   0.239s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-15 08:17:37.782 (   0.241s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 8: r (abs) = 1.52969e-08 (tol = 1e-10) r (rel) = 6.92466e-10(tol = 1e-06)
+2021-11-15 08:17:37.782 (   0.241s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 8 iterations and 45 linear solver iterations.
 </pre></div>
 </div>
 </div>
@@ -596,8 +599,8 @@ If we think of the problem in terms of finite differences on a uniform mesh, <sp
 Error_max: 5.77e-15
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-08 08:17:48.151 (   0.286s) [main            ]topologycomputation.cpp:616   INFO| Computing mesh entities of dimension 0
-2021-11-08 08:17:48.151 (   0.286s) [main            ]topologycomputation.cpp:616   INFO| Computing mesh entities of dimension 1
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-15 08:17:37.796 (   0.255s) [main            ]topologycomputation.cpp:616   INFO| Computing mesh entities of dimension 0
+2021-11-15 08:17:37.796 (   0.255s) [main            ]topologycomputation.cpp:616   INFO| Computing mesh entities of dimension 1
 </pre></div>
 </div>
 </div>
@@ -628,31 +631,22 @@ Error_max: 5.77e-15
               </div>
               
         
-            
-
-
-
-<div class='prev-next-bottom'>
-    
-    <div id="prev">
-        <a class="left-prev" href="nonlinpoisson.html" title="previous page">
-            <i class="prevnext-label fas fa-angle-left"></i>
-            <div class="prevnext-info">
-                <p class="prevnext-label">previous</p>
-                <p class="prevnext-title">A nonlinear Poisson equation</p>
-            </div>
-        </a>
+            <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="nonlinpoisson.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">A nonlinear Poisson equation</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="linearelasticity.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">The equations of linear elasticity</p>
     </div>
-     <div id="next">
-        <a class="right-next" href="linearelasticity.html" title="next page">
-            <div class="prevnext-info">
-                <p class="prevnext-label">next</p>
-                <p class="prevnext-title">The equations of linear elasticity</p>
-            </div>
-            <i class="prevnext-label fas fa-angle-right"></i>
-        </a>
-     </div>
-
+    <i class="fas fa-angle-right"></i>
+    </a>
 </div>
         
         </div>
@@ -682,8 +676,7 @@ Error_max: 5.77e-15
       </div>
     </div>
   
-  <script src="../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+  <script src="../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
 
-  
   </body>
 </html>

@@ -7,8 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JIT Parameters and visualization using Pandas &#8212; FEniCSx tutorial</title>
     
-  <link href="../_static/css/theme.css" rel="stylesheet" />
-  <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+  <link href="../_static/css/theme.css" rel="stylesheet">
+  <link href="../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -31,7 +31,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     
-  <link rel="preload" as="script" href="../_static/js/index.1c5a1a01449ed65a7b51.js">
+  <link rel="preload" as="script" href="../_static/js/index.be7d3bbb2ef33a8344ce.js">
 
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -56,7 +56,10 @@
     <link rel="next" title="Error control: Computing convergence rates" href="convergence.html" />
     <link rel="prev" title="Solver configuration" href="solvers.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
     
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -95,7 +98,7 @@
   </a>
  </li>
 </ul>
-<p class="caption" role="heading">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   Introduction
  </span>
@@ -112,7 +115,7 @@
   </a>
  </li>
 </ul>
-<p class="caption" role="heading">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   Fundamentals
  </span>
@@ -163,7 +166,7 @@
   </ul>
  </li>
 </ul>
-<p class="caption" role="heading">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   A Gallery of finite element solvers
  </span>
@@ -263,7 +266,7 @@
   </a>
  </li>
 </ul>
-<p class="caption" role="heading">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   Subdomains and boundary conditions
  </span>
@@ -300,7 +303,7 @@
   </a>
  </li>
 </ul>
-<p class="caption" role="heading">
+<p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   Improving your FEniCSx code
  </span>
@@ -557,35 +560,35 @@ This C code is in turned compiled using <a class="reference external" href="http
       <td>N1curl</td>
       <td>1</td>
       <td>-O1\n-march=native</td>
-      <td>0.021178</td>
+      <td>0.018724</td>
     </tr>
     <tr>
       <th>1</th>
       <td>N1curl</td>
       <td>1</td>
       <td>-O2\n-march=native</td>
-      <td>0.028672</td>
+      <td>0.017436</td>
     </tr>
     <tr>
       <th>2</th>
       <td>N1curl</td>
       <td>1</td>
       <td>-O3\n-march=native</td>
-      <td>0.020022</td>
+      <td>0.016365</td>
     </tr>
     <tr>
       <th>3</th>
       <td>N1curl</td>
       <td>1</td>
       <td>-Ofast\n-march=native</td>
-      <td>0.019678</td>
+      <td>0.016513</td>
     </tr>
     <tr>
       <th>4</th>
       <td>N1curl</td>
       <td>1</td>
       <td>-O1</td>
-      <td>0.019977</td>
+      <td>0.017700</td>
     </tr>
     <tr>
       <th>...</th>
@@ -599,35 +602,35 @@ This C code is in turned compiled using <a class="reference external" href="http
       <td>RT</td>
       <td>3</td>
       <td>-Ofast\n-march=native</td>
-      <td>0.511082</td>
+      <td>0.426406</td>
     </tr>
     <tr>
       <th>68</th>
       <td>RT</td>
       <td>3</td>
       <td>-O1</td>
-      <td>0.863948</td>
+      <td>0.680302</td>
     </tr>
     <tr>
       <th>69</th>
       <td>RT</td>
       <td>3</td>
       <td>-O2</td>
-      <td>0.741516</td>
+      <td>0.631226</td>
     </tr>
     <tr>
       <th>70</th>
       <td>RT</td>
       <td>3</td>
       <td>-O3</td>
-      <td>0.615086</td>
+      <td>0.557472</td>
     </tr>
     <tr>
       <th>71</th>
       <td>RT</td>
       <td>3</td>
       <td>-Ofast</td>
-      <td>0.612164</td>
+      <td>0.524919</td>
     </tr>
   </tbody>
 </table>
@@ -689,31 +692,22 @@ This C code is in turned compiled using <a class="reference external" href="http
               </div>
               
         
-            
-
-
-
-<div class='prev-next-bottom'>
-    
-    <div id="prev">
-        <a class="left-prev" href="solvers.html" title="previous page">
-            <i class="prevnext-label fas fa-angle-left"></i>
-            <div class="prevnext-info">
-                <p class="prevnext-label">previous</p>
-                <p class="prevnext-title">Solver configuration</p>
-            </div>
-        </a>
+            <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="solvers.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Solver configuration</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="convergence.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Error control: Computing convergence rates</p>
     </div>
-     <div id="next">
-        <a class="right-next" href="convergence.html" title="next page">
-            <div class="prevnext-info">
-                <p class="prevnext-label">next</p>
-                <p class="prevnext-title">Error control: Computing convergence rates</p>
-            </div>
-            <i class="prevnext-label fas fa-angle-right"></i>
-        </a>
-     </div>
-
+    <i class="fas fa-angle-right"></i>
+    </a>
 </div>
         
         </div>
@@ -743,8 +737,7 @@ This C code is in turned compiled using <a class="reference external" href="http
       </div>
     </div>
   
-  <script src="../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+  <script src="../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
 
-  
   </body>
 </html>
