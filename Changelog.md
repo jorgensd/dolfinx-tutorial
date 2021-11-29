@@ -1,6 +1,9 @@
 # Changelog
 
-## Dev
+## Dev 
+- Various API changes relating to the import structure of DOLFINx
+
+## 0.3.0 (09.09.2021)
 - Major improvements in [Form compiler parameters](chapter4/compiler_parameters), using pandas and seaborn for visualization of speed-ups gained using form compiler parameters.
 - API change: `dolfinx.cpp.la.scatter_forward(u.x)` -> `u.x.scatter_forward`
 - Various plotting updates due to new version of pyvista.

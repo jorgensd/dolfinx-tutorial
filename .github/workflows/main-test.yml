@@ -27,9 +27,6 @@ jobs:
 
     env:
       HDF5_MPI: "ON"
-      CC: mpicc
-      HDF5_DIR: "/usr/lib/x86_64-linux-gnu/hdf5/mpich/"
-      DISPLAY: ":99.0"
       PYVISTA_OFF_SCREEN: true
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -39,12 +36,12 @@ jobs:
 
       - name: Install dependencies
         run: |
-          wget -qO - https://deb.nodesource.com/setup_16.x | bash
+          wget -qO - https://deb.nodesource.com/setup_17.x | bash
           apt-get -qq update
           apt-get install -y libgl1-mesa-dev xvfb nodejs
           apt-get clean
           rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-          pip3 install --no-cache-dir --no-binary=h5py h5py meshio
+          CC=mpicc HDF_MPI="ON" HDF5_DIR="/usr/lib/x86_64-linux-gnu/hdf5/mpich/" pip3 install --no-cache-dir --no-binary=h5py h5py meshio
           pip3 install --no-cache-dir tqdm pandas seaborn
           pip3 install notebook nbconvert jupyter-book myst_parser pyvista jupyterlab
           pip3 install --no-cache-dir matplotlib itkwidgets ipywidgets setuptools --upgrade
