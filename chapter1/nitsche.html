@@ -443,7 +443,7 @@ The idea of weak imposition is that we add additional terms to the variational f
 <p>We start by importing the required modules and creating the mesh and function space for our solution</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.fem</span> <span class="k">as</span> <span class="nn">fem</span><span class="o">,</span> <span class="nn">dolfinx.generation</span> <span class="k">as</span> <span class="nn">generation</span>
 <span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
 <span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
@@ -451,8 +451,8 @@ The idea of weak imposition is that we add additional terms to the variational f
                  <span class="n">div</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">grad</span><span class="p">,</span> <span class="n">inner</span><span class="p">)</span>
 
 <span class="n">N</span> <span class="o">=</span> <span class="mi">8</span>
-<span class="n">mesh</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">UnitSquareMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
-<span class="n">V</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">generation</span><span class="o">.</span><span class="n">UnitSquareMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -460,9 +460,8 @@ The idea of weak imposition is that we add additional terms to the variational f
 <p>Next, we create a function containing the exact solution (which will also be used in the Dirichlet boundary condition) and the corresponding source function for the right hand side.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">uD</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">uD</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">uD</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">uD</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">scatter_forward</span><span class="p">()</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
 <span class="n">f</span> <span class="o">=</span> <span class="o">-</span><span class="n">div</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
 </pre></div>
@@ -471,21 +470,21 @@ The idea of weak imposition is that we add additional terms to the variational f
 </div>
 <p>As opposed to the first tutorial, we now have to have another look at the variational form.
 We start by integrating the problem by parts, to obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3c496655-9a8f-4806-b8ad-bc2b700a6d48">
-<span class="eqno">(8)<a class="headerlink" href="#equation-3c496655-9a8f-4806-b8ad-bc2b700a6d48" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-0be38fcb-8724-432b-86a3-e88a9e0a52fe">
+<span class="eqno">(8)<a class="headerlink" href="#equation-0be38fcb-8724-432b-86a3-e88a9e0a52fe" title="Permalink to this equation">¶</a></span>\[\begin{align}
     \int_{\Omega} \nabla u \cdot \nabla v~\mathrm{d}x - \int_{\partial\Omega}\nabla u \cdot n v~\mathrm{d}s = \int_{\Omega} f v~\mathrm{d}x.
 \end{align}\]</div>
 <p>As we are not using strong enforcement, we do not set the trace of the test function to <span class="math notranslate nohighlight">\(0\)</span> on the outer boundary.
 Instead, we add the following two terms to the variational formulation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0d8565f0-474e-4c34-a586-3751f1089d26">
-<span class="eqno">(9)<a class="headerlink" href="#equation-0d8565f0-474e-4c34-a586-3751f1089d26" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-58e9109a-4b88-48dc-aaf6-f759e9e0d965">
+<span class="eqno">(9)<a class="headerlink" href="#equation-58e9109a-4b88-48dc-aaf6-f759e9e0d965" title="Permalink to this equation">¶</a></span>\[\begin{align}
     -\int_{\partial\Omega} \nabla  v \cdot n (u-u_D)~\mathrm{d}s + \frac{\alpha}{h} \int_{\partial\Omega} (u-u_D)v~\mathrm{d}s.
 \end{align}\]</div>
 <p>where the first term enforces symmetry to the bilinear form, while the latter term enforces coercivity.
 <span class="math notranslate nohighlight">\(u_D\)</span> is the known Dirichlet condition, and <span class="math notranslate nohighlight">\(h\)</span> is the diameter of the circumscribed sphere of the mesh element.
 We create bilinear and linear form, <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(L\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-1b35d63d-503c-4006-b461-18260a45cd5d">
-<span class="eqno">(10)<a class="headerlink" href="#equation-1b35d63d-503c-4006-b461-18260a45cd5d" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-e1bddb14-1248-477f-915f-e164f2722c70">
+<span class="eqno">(10)<a class="headerlink" href="#equation-e1bddb14-1248-477f-915f-e164f2722c70" title="Permalink to this equation">¶</a></span>\[\begin{align}
     a(u, v) &amp;= \int_{\Omega} \nabla u \cdot \nabla v~\mathrm{d}x + \int_{\partial\Omega}-(n \cdot\nabla u) v - (n \cdot \nabla v) u + \frac{\alpha}{h} uv~\mathrm{d}s,\\
     L(v) &amp;= \int_{\Omega} fv~\mathrm{d}x + \int_{\partial\Omega} -(n \cdot \nabla v) u_D + \frac{\alpha}{h} u_Dv~\mathrm{d}s
 \end{align}\]</div>
@@ -507,7 +506,7 @@ We create bilinear and linear form, <span class="math notranslate nohighlight">\
 <p>As we now have the variational form, we can solve the linear problem</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">)</span>
 <span class="n">uh</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -517,7 +516,7 @@ We create bilinear and linear form, <span class="math notranslate nohighlight">\
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">error_form</span> <span class="o">=</span> <span class="n">inner</span><span class="p">(</span><span class="n">uh</span><span class="o">-</span><span class="n">uD</span><span class="p">,</span> <span class="n">uh</span><span class="o">-</span><span class="n">uD</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span>
-<span class="n">errorL2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span><span class="n">error_form</span><span class="p">))</span>
+<span class="n">errorL2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span><span class="n">error_form</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">fr</span><span class="s2">&quot;$L^2$-error: </span><span class="si">{</span><span class="n">errorL2</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>

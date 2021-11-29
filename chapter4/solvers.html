@@ -459,7 +459,13 @@ u&amp;= u_D &amp;&amp;\text{ on } \partial \Omega.\end{split}\]</div>
 We start by creating a generic module for evaluating the analytical solution  at any point <span class="math notranslate nohighlight">\(x\)</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+<span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
+<span class="kn">from</span> <span class="nn">dolfinx.generation</span> <span class="kn">import</span> <span class="n">UnitSquareMesh</span>
+<span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">DirichletBC</span><span class="p">,</span> <span class="n">FunctionSpace</span><span class="p">,</span> <span class="n">Function</span><span class="p">,</span> <span class="n">LinearProblem</span><span class="p">,</span> <span class="n">locate_dofs_topological</span>
+<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">locate_entities_boundary</span>
+<span class="kn">from</span> <span class="nn">ufl</span> <span class="kn">import</span> <span class="n">SpatialCoordinate</span><span class="p">,</span> <span class="n">TestFunction</span><span class="p">,</span> <span class="n">TrialFunction</span><span class="p">,</span> <span class="n">div</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">inner</span><span class="p">,</span> <span class="n">grad</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">import</span> <span class="nn">ufl</span>
 
@@ -481,10 +487,9 @@ We start by creating a generic module for evaluating the analytical solution  at
 <p>We start by using ufl to define our source term, using <code class="docutils literal notranslate"><span class="pre">ufl.SpatialCoordinate</span></code> as input to <code class="docutils literal notranslate"><span class="pre">u_ufl</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
-<span class="n">mesh</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">UnitSquareMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-<span class="n">f</span> <span class="o">=</span> <span class="o">-</span><span class="n">ufl</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u_ufl</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span> <span class="o">=</span> <span class="n">UnitSquareMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<span class="n">f</span> <span class="o">=</span> <span class="o">-</span><span class="n">div</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">u_ufl</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
 </pre></div>
 </div>
 </div>
@@ -492,18 +497,16 @@ We start by creating a generic module for evaluating the analytical solution  at
 <p>Next, we define our linear variational problem</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
-<span class="n">V</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-<span class="n">u</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-<span class="n">v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
-<span class="n">L</span> <span class="o">=</span> <span class="n">f</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
-<span class="n">u_bc</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">V</span> <span class="o">=</span> <span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">inner</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">dx</span>
+<span class="n">L</span> <span class="o">=</span> <span class="n">f</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">dx</span>
+<span class="n">u_bc</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">u_bc</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">u_numpy</span><span class="p">)</span>
-<span class="n">u_bc</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">scatter_forward</span><span class="p">()</span>
-<span class="n">facets</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">locate_entities_boundary</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="kc">True</span><span class="p">))</span>
-<span class="n">dofs</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">facets</span><span class="p">)</span>
-<span class="n">bcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_bc</span><span class="p">,</span> <span class="n">dofs</span><span class="p">)]</span>
+<span class="n">facets</span> <span class="o">=</span> <span class="n">locate_entities_boundary</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="kc">True</span><span class="p">))</span>
+<span class="n">dofs</span> <span class="o">=</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">facets</span><span class="p">)</span>
+<span class="n">bcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_bc</span><span class="p">,</span> <span class="n">dofs</span><span class="p">)]</span>
 </pre></div>
 </div>
 </div>
@@ -511,7 +514,7 @@ We start by creating a generic module for evaluating the analytical solution  at
 <p>We start by solving the problem with an LU factorization, a direct solver method (similar to Gaussian elimination).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">default_problem</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcs</span><span class="p">,</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">default_problem</span> <span class="o">=</span> <span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcs</span><span class="p">,</span>
 <span class="n">petsc_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ksp_type&quot;</span><span class="p">:</span> <span class="s2">&quot;preonly&quot;</span><span class="p">,</span> <span class="s2">&quot;pc_type&quot;</span><span class="p">:</span> <span class="s2">&quot;lu&quot;</span><span class="p">})</span>
 <span class="n">uh</span> <span class="o">=</span> <span class="n">default_problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
 </pre></div>
@@ -531,7 +534,7 @@ We start by creating a generic module for evaluating the analytical solution  at
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_139824075163152) 1 MPI processes
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_139743816639152) 1 MPI processes
 
   type: preonly
 
@@ -543,7 +546,7 @@ We start by creating a generic module for evaluating the analytical solution  at
 
   using NONE norm type for convergence test
 
-PC Object: (dolfinx_solve_139824075163152) 1 MPI processes
+PC Object: (dolfinx_solve_139743816639152) 1 MPI processes
 
   type: lu
 
@@ -594,7 +597,7 @@ PC Object: (dolfinx_solve_139824075163152) 1 MPI processes
 You can set any opition in <code class="docutils literal notranslate"><span class="pre">PETSc</span></code> through the <code class="docutils literal notranslate"><span class="pre">petsc_options</span></code> input, such as the absolute tolerance (<code class="docutils literal notranslate"><span class="pre">&quot;ksp_atol&quot;</span></code>), relative tolerance (<code class="docutils literal notranslate"><span class="pre">&quot;ksp_rtol&quot;</span></code>) and maximum number of iterations (<code class="docutils literal notranslate"><span class="pre">&quot;ksp_max_it&quot;</span></code>).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cg_problem</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcs</span><span class="p">,</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cg_problem</span> <span class="o">=</span> <span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcs</span><span class="p">,</span>
 <span class="n">petsc_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ksp_type&quot;</span><span class="p">:</span> <span class="s2">&quot;cg&quot;</span><span class="p">,</span> <span class="s2">&quot;ksp_rtol&quot;</span><span class="p">:</span><span class="mf">1e-6</span><span class="p">,</span> <span class="s2">&quot;ksp_atol&quot;</span><span class="p">:</span><span class="mf">1e-10</span><span class="p">,</span> <span class="s2">&quot;ksp_max_it&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">})</span>
 <span class="n">uh</span> <span class="o">=</span> <span class="n">cg_problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
 <span class="n">cg_solver</span> <span class="o">=</span> <span class="n">cg_problem</span><span class="o">.</span><span class="n">solver</span>
@@ -607,7 +610,7 @@ You can set any opition in <code class="docutils literal notranslate"><span clas
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_139824075678816) 1 MPI processes
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_139742844961024) 1 MPI processes
 
   type: cg
 
@@ -619,7 +622,7 @@ You can set any opition in <code class="docutils literal notranslate"><span clas
 
   using PRECONDITIONED norm type for convergence test
 
-PC Object: (dolfinx_solve_139824075678816) 1 MPI processes
+PC Object: (dolfinx_solve_139742844961024) 1 MPI processes
 
   type: ilu
 
@@ -667,7 +670,7 @@ PC Object: (dolfinx_solve_139824075678816) 1 MPI processes
 <p>For non-symmetrix problems, a Krylov solver for non-symmetrix systems, such as GMRES is a better.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gmres_problem</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcs</span><span class="p">,</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gmres_problem</span> <span class="o">=</span> <span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcs</span><span class="p">,</span>
 <span class="n">petsc_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ksp_type&quot;</span><span class="p">:</span> <span class="s2">&quot;gmres&quot;</span><span class="p">,</span> <span class="s2">&quot;ksp_rtol&quot;</span><span class="p">:</span><span class="mf">1e-6</span><span class="p">,</span> <span class="s2">&quot;ksp_atol&quot;</span><span class="p">:</span><span class="mf">1e-10</span><span class="p">,</span> <span class="s2">&quot;ksp_max_it&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span> <span class="s2">&quot;pc_type&quot;</span><span class="p">:</span> <span class="s2">&quot;none&quot;</span><span class="p">})</span>
 <span class="n">uh</span> <span class="o">=</span> <span class="n">gmres_problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
 <span class="n">gmres_solver</span> <span class="o">=</span> <span class="n">gmres_problem</span><span class="o">.</span><span class="n">solver</span>
@@ -680,7 +683,7 @@ PC Object: (dolfinx_solve_139824075678816) 1 MPI processes
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_139823076804256) 1 MPI processes
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_139742985392080) 1 MPI processes
 
   type: gmres
 
@@ -696,7 +699,7 @@ PC Object: (dolfinx_solve_139824075678816) 1 MPI processes
 
   using PRECONDITIONED norm type for convergence test
 
-PC Object: (dolfinx_solve_139823076804256) 1 MPI processes
+PC Object: (dolfinx_solve_139742985392080) 1 MPI processes
 
   type: none
 

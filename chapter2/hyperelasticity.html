@@ -443,15 +443,17 @@
 Then, we create a slender cantilever consisting of hexahedral elements and create the function space <code class="docutils literal notranslate"><span class="pre">V</span></code> for our unknown.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.fem</span> <span class="k">as</span> <span class="nn">fem</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">ufl</span>
 
 <span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+<span class="kn">from</span> <span class="nn">dolfinx.generation</span> <span class="kn">import</span> <span class="n">BoxMesh</span>
+<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">CellType</span><span class="p">,</span> <span class="n">locate_entities_boundary</span><span class="p">,</span> <span class="n">MeshTags</span>
 <span class="n">L</span> <span class="o">=</span> <span class="mf">20.0</span>
-<span class="n">mesh</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">BoxMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,[[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">L</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">cpp</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">CellType</span><span class="o">.</span><span class="n">hexahedron</span><span class="p">)</span>
-<span class="n">V</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">VectorFunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">BoxMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,[[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">L</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">CellType</span><span class="o">.</span><span class="n">hexahedron</span><span class="p">)</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">VectorFunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -465,8 +467,8 @@ Then, we create a slender cantilever consisting of hexahedral elements and creat
 <span class="k">def</span> <span class="nf">right</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">L</span><span class="p">)</span>
 
-<span class="n">left_facets</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">locate_entities_boundary</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">left</span><span class="p">)</span>
-<span class="n">right_facets</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">locate_entities_boundary</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+<span class="n">left_facets</span> <span class="o">=</span> <span class="n">locate_entities_boundary</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">left</span><span class="p">)</span>
+<span class="n">right_facets</span> <span class="o">=</span> <span class="n">locate_entities_boundary</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -478,7 +480,7 @@ Then, we create a slender cantilever consisting of hexahedral elements and creat
 <span class="n">marked_facets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">left_facets</span><span class="p">,</span> <span class="n">right_facets</span><span class="p">])</span>
 <span class="n">marked_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">left_facets</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">right_facets</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)])</span>
 <span class="n">sorted_facets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">marked_facets</span><span class="p">)</span>
-<span class="n">facet_tag</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">MeshTags</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">marked_facets</span><span class="p">[</span><span class="n">sorted_facets</span><span class="p">],</span> <span class="n">marked_values</span><span class="p">[</span><span class="n">sorted_facets</span><span class="p">])</span>
+<span class="n">facet_tag</span> <span class="o">=</span> <span class="n">MeshTags</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">marked_facets</span><span class="p">[</span><span class="n">sorted_facets</span><span class="p">],</span> <span class="n">marked_values</span><span class="p">[</span><span class="n">sorted_facets</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -486,7 +488,7 @@ Then, we create a slender cantilever consisting of hexahedral elements and creat
 <p>We then create a function for supplying the boundary condition on the left side, which is fixed.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">u_bc</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">u_bc</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="k">with</span> <span class="n">u_bc</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
     <span class="n">loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
@@ -496,8 +498,8 @@ Then, we create a slender cantilever consisting of hexahedral elements and creat
 <p>To apply the boundary condition, we identity the dofs located on the facets marked by the <code class="docutils literal notranslate"><span class="pre">MeshTag</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">left_dofs</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">facet_tag</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">facet_tag</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">facet_tag</span><span class="o">.</span><span class="n">values</span><span class="o">==</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">bcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_bc</span><span class="p">,</span> <span class="n">left_dofs</span><span class="p">)]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">left_dofs</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">facet_tag</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">facet_tag</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">facet_tag</span><span class="o">.</span><span class="n">values</span><span class="o">==</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">bcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">fem</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_bc</span><span class="p">,</span> <span class="n">left_dofs</span><span class="p">)]</span>
 </pre></div>
 </div>
 </div>
@@ -505,8 +507,8 @@ Then, we create a slender cantilever consisting of hexahedral elements and creat
 <p>Next, we define the body force on the reference configuration (<code class="docutils literal notranslate"><span class="pre">B</span></code>), and nominal (first Piola-Kirchhoff) traction (<code class="docutils literal notranslate"><span class="pre">T</span></code>).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">B</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-<span class="n">T</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">B</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -515,7 +517,7 @@ Then, we create a slender cantilever consisting of hexahedral elements and creat
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-<span class="n">u</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -547,8 +549,8 @@ Then, we create a slender cantilever consisting of hexahedral elements and creat
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Elasticity parameters</span>
 <span class="n">E</span><span class="p">,</span> <span class="n">nu</span> <span class="o">=</span> <span class="mf">1.0e4</span><span class="p">,</span> <span class="mf">0.3</span>
-<span class="n">mu</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">E</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">nu</span><span class="p">)))</span>
-<span class="n">lmbda</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">E</span><span class="o">*</span><span class="n">nu</span><span class="o">/</span><span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">nu</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">nu</span><span class="p">)))</span>
+<span class="n">mu</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">E</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">nu</span><span class="p">)))</span>
+<span class="n">lmbda</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">E</span><span class="o">*</span><span class="n">nu</span><span class="o">/</span><span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">nu</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">nu</span><span class="p">)))</span>
 <span class="c1"># Stored strain energy density (compressible neo-Hookean model)</span>
 <span class="n">psi</span> <span class="o">=</span> <span class="p">(</span><span class="n">mu</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">Ic</span> <span class="o">-</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="n">J</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">lmbda</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">ln</span><span class="p">(</span><span class="n">J</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
 <span class="c1"># Stress</span>
@@ -584,7 +586,7 @@ Then, we create a slender cantilever consisting of hexahedral elements and creat
 <p>As the varitional form is non-linear and written on residual form, we use the non-linear problem class from DOLFINx to set up required structures to use a Newton solver.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">NonlinearProblem</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">bcs</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">NonlinearProblem</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">bcs</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -592,7 +594,8 @@ Then, we create a slender cantilever consisting of hexahedral elements and creat
 <p>and then create and customize the Newton solver</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">solver</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">NewtonSolver</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">problem</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.nls</span> <span class="kn">import</span> <span class="n">NewtonSolver</span>
+<span class="n">solver</span> <span class="o">=</span> <span class="n">NewtonSolver</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">problem</span><span class="p">)</span>
 
 <span class="c1"># Set Newton solver options</span>
 <span class="n">solver</span><span class="o">.</span><span class="n">atol</span> <span class="o">=</span> <span class="mf">1e-8</span>
@@ -653,7 +656,7 @@ Then, we create a slender cantilever consisting of hexahedral elements and creat
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING:py.warnings:/usr/local/dolfinx-real/lib/python3.8/dist-packages/dolfinx/plot.py:135: UserWarning: Plotting of higher order functions is experimental.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING:py.warnings:/usr/local/dolfinx-real/lib/python3.8/dist-packages/dolfinx/plot.py:120: UserWarning: Plotting of higher order functions is experimental.
   warnings.warn(&quot;Plotting of higher order functions is experimental.&quot;)
 </pre></div>
 </div>
@@ -663,7 +666,8 @@ Then, we create a slender cantilever consisting of hexahedral elements and creat
 <p>Finally, we solve the problem over several time steps, updating the y-component of the traction</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dolfinx</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">set_log_level</span><span class="p">(</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">LogLevel</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.log</span> <span class="kn">import</span> <span class="n">set_log_level</span><span class="p">,</span> <span class="n">LogLevel</span>
+<span class="n">set_log_level</span><span class="p">(</span><span class="n">LogLevel</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 <span class="n">tval0</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.5</span>
 <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
     <span class="n">T</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="n">tval0</span>
@@ -676,318 +680,307 @@ Then, we create a slender cantilever consisting of hexahedral elements and creat
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:18.651 (   1.605s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:41:48.839 (   1.674s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:19.548 (   2.503s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:41:49.761 (   2.596s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:20.041 (   2.996s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 22.2455 (tol = 1e-08) r (rel) = 0.134278(tol = 1e-08)
-2021-11-29 08:17:20.279 (   3.234s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:41:50.303 (   3.138s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 22.2455 (tol = 1e-08) r (rel) = 0.134278(tol = 1e-08)
+2021-11-29 08:41:50.529 (   3.364s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:20.772 (   3.727s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 2.43261 (tol = 1e-08) r (rel) = 0.0146837(tol = 1e-08)
-2021-11-29 08:17:21.021 (   3.975s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:41:51.077 (   3.911s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 2.43261 (tol = 1e-08) r (rel) = 0.0146837(tol = 1e-08)
+2021-11-29 08:41:51.315 (   4.150s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:41:51.860 (   4.695s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 4.43158 (tol = 1e-08) r (rel) = 0.0267498(tol = 1e-08)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:21.521 (   4.476s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 4.43158 (tol = 1e-08) r (rel) = 0.0267498(tol = 1e-08)
-2021-11-29 08:17:21.768 (   4.722s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:41:52.088 (   4.923s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:41:52.635 (   5.470s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 0.144189 (tol = 1e-08) r (rel) = 0.000870353(tol = 1e-08)
+2021-11-29 08:41:52.863 (   5.698s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:22.271 (   5.226s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 0.144189 (tol = 1e-08) r (rel) = 0.000870353(tol = 1e-08)
-2021-11-29 08:17:22.513 (   5.467s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:41:53.408 (   6.243s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 0.021424 (tol = 1e-08) r (rel) = 0.000129319(tol = 1e-08)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:23.018 (   5.972s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 0.021424 (tol = 1e-08) r (rel) = 0.000129319(tol = 1e-08)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:23.268 (   6.223s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:23.780 (   6.734s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 7: r (abs) = 4.80066e-06 (tol = 1e-08) r (rel) = 2.89777e-08(tol = 1e-08)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:24.024 (   6.978s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:17:24.517 (   7.471s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 8: r (abs) = 2.63698e-11 (tol = 1e-08) r (rel) = 1.59173e-13(tol = 1e-08)
-2021-11-29 08:17:24.517 (   7.471s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 8 iterations and 8 linear solver iterations.
-WARNING:py.warnings:/usr/local/dolfinx-real/lib/python3.8/dist-packages/dolfinx/plot.py:135: UserWarning: Plotting of higher order functions is experimental.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:41:53.635 (   6.470s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:41:54.184 (   7.019s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 7: r (abs) = 4.80068e-06 (tol = 1e-08) r (rel) = 2.89778e-08(tol = 1e-08)
+2021-11-29 08:41:54.415 (   7.250s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+WARNING:py.warnings:/usr/local/dolfinx-real/lib/python3.8/dist-packages/dolfinx/plot.py:120: UserWarning: Plotting of higher order functions is experimental.
   warnings.warn(&quot;Plotting of higher order functions is experimental.&quot;)
+
+2021-11-29 08:41:54.967 (   7.802s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 8: r (abs) = 2.61713e-11 (tol = 1e-08) r (rel) = 1.57975e-13(tol = 1e-08)
+2021-11-29 08:41:54.967 (   7.802s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 8 iterations and 8 linear solver iterations.
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time step 1, Number of iterations 8, Load [ 0.   0.  -1.5]
 </pre></div>
 </div>
-<img alt="../_images/hyperelasticity_29_11.png" src="../_images/hyperelasticity_29_11.png" />
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:25.069 (   8.024s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:17:25.819 (   8.773s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<img alt="../_images/hyperelasticity_29_8.png" src="../_images/hyperelasticity_29_8.png" />
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:41:55.539 (   8.374s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:26.318 (   9.272s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 17.3254 (tol = 1e-08) r (rel) = 0.117842(tol = 1e-08)
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:41:56.308 (   9.143s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:26.555 (   9.509s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:17:27.046 (  10.001s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 5.14882 (tol = 1e-08) r (rel) = 0.0350207(tol = 1e-08)
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:41:56.858 (   9.693s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 17.3254 (tol = 1e-08) r (rel) = 0.117842(tol = 1e-08)
+2021-11-29 08:41:57.080 (   9.915s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:27.282 (  10.237s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:17:27.776 (  10.730s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 7.24003 (tol = 1e-08) r (rel) = 0.0492445(tol = 1e-08)
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:41:57.632 (  10.466s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 5.14882 (tol = 1e-08) r (rel) = 0.0350207(tol = 1e-08)
+2021-11-29 08:41:57.857 (  10.692s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:28.014 (  10.969s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:17:28.510 (  11.465s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 0.777889 (tol = 1e-08) r (rel) = 0.00529096(tol = 1e-08)
-2021-11-29 08:17:28.751 (  11.706s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:17:29.250 (  12.205s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 1.25525 (tol = 1e-08) r (rel) = 0.00853785(tol = 1e-08)
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:41:58.408 (  11.243s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 7.24003 (tol = 1e-08) r (rel) = 0.0492445(tol = 1e-08)
+2021-11-29 08:41:58.634 (  11.469s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:41:59.182 (  12.017s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 0.777889 (tol = 1e-08) r (rel) = 0.00529096(tol = 1e-08)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:29.496 (  12.450s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:17:29.992 (  12.946s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 7: r (abs) = 0.00849512 (tol = 1e-08) r (rel) = 5.77813e-05(tol = 1e-08)
-2021-11-29 08:17:30.235 (  13.189s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:41:59.424 (  12.259s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:41:59.975 (  12.810s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 1.25525 (tol = 1e-08) r (rel) = 0.00853785(tol = 1e-08)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:30.728 (  13.683s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 8: r (abs) = 0.000192107 (tol = 1e-08) r (rel) = 1.30665e-06(tol = 1e-08)
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:00.206 (  13.041s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:30.974 (  13.929s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:17:31.473 (  14.427s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 9: r (abs) = 1.70961e-10 (tol = 1e-08) r (rel) = 1.16283e-12(tol = 1e-08)
-2021-11-29 08:17:31.473 (  14.427s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 9 iterations and 9 linear solver iterations.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:00.750 (  13.585s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 7: r (abs) = 0.00849512 (tol = 1e-08) r (rel) = 5.77813e-05(tol = 1e-08)
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:00.976 (  13.811s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:01.541 (  14.376s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 8: r (abs) = 0.000192107 (tol = 1e-08) r (rel) = 1.30665e-06(tol = 1e-08)
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:01.771 (  14.606s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:02.318 (  15.153s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 9: r (abs) = 1.70479e-10 (tol = 1e-08) r (rel) = 1.15955e-12(tol = 1e-08)
+2021-11-29 08:42:02.318 (  15.153s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 9 iterations and 9 linear solver iterations.
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time step 2, Number of iterations 9, Load [ 0.  0. -3.]
 </pre></div>
 </div>
-<img alt="../_images/hyperelasticity_29_21.png" src="../_images/hyperelasticity_29_21.png" />
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:32.015 (  14.969s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<img alt="../_images/hyperelasticity_29_20.png" src="../_images/hyperelasticity_29_20.png" />
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:02.909 (  15.744s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:32.755 (  15.710s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:17:33.250 (  16.204s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 10.0011 (tol = 1e-08) r (rel) = 0.0887471(tol = 1e-08)
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:03.691 (  16.526s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:33.488 (  16.443s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:17:33.982 (  16.937s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 5.33026 (tol = 1e-08) r (rel) = 0.0472992(tol = 1e-08)
-2021-11-29 08:17:34.225 (  17.179s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:04.239 (  17.074s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 10.0011 (tol = 1e-08) r (rel) = 0.0887471(tol = 1e-08)
+2021-11-29 08:42:04.470 (  17.305s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:05.018 (  17.853s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 5.33026 (tol = 1e-08) r (rel) = 0.0472992(tol = 1e-08)
+2021-11-29 08:42:05.250 (  18.085s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:05.802 (  18.637s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 11.9901 (tol = 1e-08) r (rel) = 0.106397(tol = 1e-08)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:34.723 (  17.677s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 11.9901 (tol = 1e-08) r (rel) = 0.106397(tol = 1e-08)
-2021-11-29 08:17:34.965 (  17.919s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:06.035 (  18.870s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:35.459 (  18.414s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 2.29702 (tol = 1e-08) r (rel) = 0.0203831(tol = 1e-08)
-2021-11-29 08:17:35.704 (  18.658s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:06.589 (  19.424s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 2.29702 (tol = 1e-08) r (rel) = 0.0203831(tol = 1e-08)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:36.206 (  19.160s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 3.90234 (tol = 1e-08) r (rel) = 0.0346282(tol = 1e-08)
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:06.823 (  19.658s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:07.365 (  20.200s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 3.90234 (tol = 1e-08) r (rel) = 0.0346282(tol = 1e-08)
+2021-11-29 08:42:07.593 (  20.428s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:36.450 (  19.404s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:08.148 (  20.982s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 7: r (abs) = 0.236535 (tol = 1e-08) r (rel) = 0.00209895(tol = 1e-08)
+2021-11-29 08:42:08.373 (  21.208s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:08.922 (  21.757s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 8: r (abs) = 0.0427142 (tol = 1e-08) r (rel) = 0.000379034(tol = 1e-08)
+2021-11-29 08:42:09.154 (  21.989s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:09.708 (  22.543s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 9: r (abs) = 2.87798e-05 (tol = 1e-08) r (rel) = 2.55384e-07(tol = 1e-08)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:36.945 (  19.899s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 7: r (abs) = 0.236535 (tol = 1e-08) r (rel) = 0.00209895(tol = 1e-08)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:37.181 (  20.136s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:17:37.681 (  20.635s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 8: r (abs) = 0.0427142 (tol = 1e-08) r (rel) = 0.000379034(tol = 1e-08)
-2021-11-29 08:17:37.924 (  20.878s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:38.419 (  21.374s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 9: r (abs) = 2.87798e-05 (tol = 1e-08) r (rel) = 2.55384e-07(tol = 1e-08)
-2021-11-29 08:17:38.661 (  21.615s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:17:39.158 (  22.113s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 10: r (abs) = 6.08641e-10 (tol = 1e-08) r (rel) = 5.40091e-12(tol = 1e-08)
-2021-11-29 08:17:39.158 (  22.113s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 10 iterations and 10 linear solver iterations.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:09.943 (  22.778s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:10.495 (  23.330s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 10: r (abs) = 6.0852e-10 (tol = 1e-08) r (rel) = 5.39983e-12(tol = 1e-08)
+2021-11-29 08:42:10.495 (  23.330s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 10 iterations and 10 linear solver iterations.
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time step 3, Number of iterations 10, Load [ 0.   0.  -4.5]
 </pre></div>
 </div>
-<img alt="../_images/hyperelasticity_29_33.png" src="../_images/hyperelasticity_29_33.png" />
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:39.708 (  22.663s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<img alt="../_images/hyperelasticity_29_30.png" src="../_images/hyperelasticity_29_30.png" />
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:11.071 (  23.906s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:40.434 (  23.388s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:11.860 (  24.695s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:40.926 (  23.880s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 5.50693 (tol = 1e-08) r (rel) = 0.0653918(tol = 1e-08)
-2021-11-29 08:17:41.168 (  24.123s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:12.415 (  25.250s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 5.50693 (tol = 1e-08) r (rel) = 0.0653918(tol = 1e-08)
+2021-11-29 08:42:12.638 (  25.473s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:41.674 (  24.629s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 26.2489 (tol = 1e-08) r (rel) = 0.311692(tol = 1e-08)
-2021-11-29 08:17:41.914 (  24.868s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:17:42.417 (  25.372s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 2.30927 (tol = 1e-08) r (rel) = 0.0274213(tol = 1e-08)
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:13.199 (  26.034s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 26.2489 (tol = 1e-08) r (rel) = 0.311692(tol = 1e-08)
+2021-11-29 08:42:13.429 (  26.263s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:13.977 (  26.812s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 2.30927 (tol = 1e-08) r (rel) = 0.0274213(tol = 1e-08)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:42.656 (  25.611s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:14.208 (  27.043s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:14.757 (  27.591s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 14.0562 (tol = 1e-08) r (rel) = 0.16691(tol = 1e-08)
+2021-11-29 08:42:14.988 (  27.823s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:43.155 (  26.109s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 14.0562 (tol = 1e-08) r (rel) = 0.16691(tol = 1e-08)
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:15.539 (  28.373s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 0.222774 (tol = 1e-08) r (rel) = 0.00264532(tol = 1e-08)
+2021-11-29 08:42:15.768 (  28.603s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:16.321 (  29.155s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 7: r (abs) = 0.286671 (tol = 1e-08) r (rel) = 0.00340406(tol = 1e-08)
+2021-11-29 08:42:16.545 (  29.379s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:43.395 (  26.350s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:17:43.896 (  26.850s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 0.222774 (tol = 1e-08) r (rel) = 0.00264532(tol = 1e-08)
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:17.098 (  29.932s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 8: r (abs) = 0.000321869 (tol = 1e-08) r (rel) = 3.82203e-06(tol = 1e-08)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:44.134 (  27.089s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:44.628 (  27.582s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 7: r (abs) = 0.286671 (tol = 1e-08) r (rel) = 0.00340406(tol = 1e-08)
-2021-11-29 08:17:44.864 (  27.818s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:45.361 (  28.315s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 8: r (abs) = 0.000321869 (tol = 1e-08) r (rel) = 3.82203e-06(tol = 1e-08)
-2021-11-29 08:17:45.613 (  28.567s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:17:46.116 (  29.070s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 9: r (abs) = 2.63796e-07 (tol = 1e-08) r (rel) = 3.13244e-09(tol = 1e-08)
-2021-11-29 08:17:46.116 (  29.070s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 9 iterations and 9 linear solver iterations.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:17.336 (  30.170s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:17.888 (  30.723s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 9: r (abs) = 2.63796e-07 (tol = 1e-08) r (rel) = 3.13244e-09(tol = 1e-08)
+2021-11-29 08:42:17.888 (  30.723s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 9 iterations and 9 linear solver iterations.
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time step 4, Number of iterations 9, Load [ 0.  0. -6.]
 </pre></div>
 </div>
-<img alt="../_images/hyperelasticity_29_45.png" src="../_images/hyperelasticity_29_45.png" />
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:46.660 (  29.614s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<img alt="../_images/hyperelasticity_29_40.png" src="../_images/hyperelasticity_29_40.png" />
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:18.464 (  31.299s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:47.389 (  30.343s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:19.242 (  32.077s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:47.889 (  30.844s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 3.19462 (tol = 1e-08) r (rel) = 0.0496479(tol = 1e-08)
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:19.796 (  32.631s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 3.19462 (tol = 1e-08) r (rel) = 0.0496479(tol = 1e-08)
+2021-11-29 08:42:20.031 (  32.865s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:48.129 (  31.084s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:17:48.617 (  31.571s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 7.71429 (tol = 1e-08) r (rel) = 0.119888(tol = 1e-08)
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:20.584 (  33.418s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 7.71429 (tol = 1e-08) r (rel) = 0.119888(tol = 1e-08)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:48.855 (  31.810s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:20.823 (  33.658s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:49.351 (  32.305s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 0.850873 (tol = 1e-08) r (rel) = 0.0132235(tol = 1e-08)
-2021-11-29 08:17:49.591 (  32.545s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:21.372 (  34.207s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 0.850873 (tol = 1e-08) r (rel) = 0.0132235(tol = 1e-08)
+2021-11-29 08:42:21.588 (  34.422s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:50.089 (  33.043s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 0.371434 (tol = 1e-08) r (rel) = 0.0057725(tol = 1e-08)
-2021-11-29 08:17:50.332 (  33.286s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:22.125 (  34.960s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 0.371434 (tol = 1e-08) r (rel) = 0.0057725(tol = 1e-08)
+2021-11-29 08:42:22.345 (  35.180s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:22.879 (  35.714s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 0.00215066 (tol = 1e-08) r (rel) = 3.34236e-05(tol = 1e-08)
+2021-11-29 08:42:23.100 (  35.935s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:50.835 (  33.789s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 0.00215066 (tol = 1e-08) r (rel) = 3.34236e-05(tol = 1e-08)
-2021-11-29 08:17:51.077 (  34.031s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:51.577 (  34.532s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 7: r (abs) = 2.54607e-06 (tol = 1e-08) r (rel) = 3.95687e-08(tol = 1e-08)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:51.822 (  34.777s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:17:52.322 (  35.277s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 8: r (abs) = 2.11016e-13 (tol = 1e-08) r (rel) = 3.27942e-15(tol = 1e-08)
-2021-11-29 08:17:52.323 (  35.277s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 8 iterations and 8 linear solver iterations.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:23.645 (  36.480s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 7: r (abs) = 2.54607e-06 (tol = 1e-08) r (rel) = 3.95687e-08(tol = 1e-08)
+2021-11-29 08:42:23.865 (  36.700s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:24.407 (  37.242s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 8: r (abs) = 2.24783e-13 (tol = 1e-08) r (rel) = 3.49337e-15(tol = 1e-08)
+2021-11-29 08:42:24.407 (  37.242s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 8 iterations and 8 linear solver iterations.
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time step 5, Number of iterations 8, Load [ 0.   0.  -7.5]
 </pre></div>
 </div>
-<img alt="../_images/hyperelasticity_29_57.png" src="../_images/hyperelasticity_29_57.png" />
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:52.840 (  35.795s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:17:53.573 (  36.528s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<img alt="../_images/hyperelasticity_29_50.png" src="../_images/hyperelasticity_29_50.png" />
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:24.957 (  37.792s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:25.714 (  38.549s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:54.072 (  37.027s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 2.00649 (tol = 1e-08) r (rel) = 0.0395622(tol = 1e-08)
-2021-11-29 08:17:54.313 (  37.268s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:26.259 (  39.094s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 2.00649 (tol = 1e-08) r (rel) = 0.0395622(tol = 1e-08)
+2021-11-29 08:42:26.487 (  39.322s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:54.811 (  37.766s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 4.60977 (tol = 1e-08) r (rel) = 0.0908914(tol = 1e-08)
-2021-11-29 08:17:55.057 (  38.011s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:17:55.557 (  38.512s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 0.185372 (tol = 1e-08) r (rel) = 0.00365501(tol = 1e-08)
-2021-11-29 08:17:55.795 (  38.750s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:27.033 (  39.867s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 4.60977 (tol = 1e-08) r (rel) = 0.0908914(tol = 1e-08)
+2021-11-29 08:42:27.255 (  40.090s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:27.794 (  40.629s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 0.185372 (tol = 1e-08) r (rel) = 0.00365501(tol = 1e-08)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:56.298 (  39.252s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 0.024688 (tol = 1e-08) r (rel) = 0.000486777(tol = 1e-08)
-2021-11-29 08:17:56.531 (  39.485s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:17:57.025 (  39.980s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 5.69255e-06 (tol = 1e-08) r (rel) = 1.12241e-07(tol = 1e-08)
-2021-11-29 08:17:57.268 (  40.222s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:17:57.763 (  40.718s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 7: r (abs) = 2.65479e-11 (tol = 1e-08) r (rel) = 5.23449e-13(tol = 1e-08)
-2021-11-29 08:17:57.764 (  40.718s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 7 iterations and 7 linear solver iterations.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:28.013 (  40.848s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:28.561 (  41.396s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 0.024688 (tol = 1e-08) r (rel) = 0.000486777(tol = 1e-08)
+2021-11-29 08:42:28.788 (  41.623s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:29.341 (  42.176s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 5.69255e-06 (tol = 1e-08) r (rel) = 1.12241e-07(tol = 1e-08)
+2021-11-29 08:42:29.570 (  42.404s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:30.110 (  42.944s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 7: r (abs) = 2.64622e-11 (tol = 1e-08) r (rel) = 5.21759e-13(tol = 1e-08)
+2021-11-29 08:42:30.110 (  42.945s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 7 iterations and 7 linear solver iterations.
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time step 6, Number of iterations 7, Load [ 0.  0. -9.]
 </pre></div>
 </div>
-<img alt="../_images/hyperelasticity_29_63.png" src="../_images/hyperelasticity_29_63.png" />
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:58.302 (  41.256s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<img alt="../_images/hyperelasticity_29_57.png" src="../_images/hyperelasticity_29_57.png" />
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:30.679 (  43.514s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:59.027 (  41.982s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:31.457 (  44.292s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:31.999 (  44.834s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 1.38506 (tol = 1e-08) r (rel) = 0.0336622(tol = 1e-08)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:17:59.524 (  42.479s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 1.38506 (tol = 1e-08) r (rel) = 0.0336622(tol = 1e-08)
-2021-11-29 08:17:59.768 (  42.722s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:32.227 (  45.062s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:32.767 (  45.602s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 3.03739 (tol = 1e-08) r (rel) = 0.07382(tol = 1e-08)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:18:00.280 (  43.234s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 3.03739 (tol = 1e-08) r (rel) = 0.07382(tol = 1e-08)
-2021-11-29 08:18:00.522 (  43.476s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:32.996 (  45.831s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:33.543 (  46.378s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 0.0412386 (tol = 1e-08) r (rel) = 0.00100225(tol = 1e-08)
+2021-11-29 08:42:33.769 (  46.604s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:34.314 (  47.148s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 0.00205057 (tol = 1e-08) r (rel) = 4.98364e-05(tol = 1e-08)
+2021-11-29 08:42:34.545 (  47.380s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:18:01.023 (  43.978s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 0.0412386 (tol = 1e-08) r (rel) = 0.00100225(tol = 1e-08)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:18:01.266 (  44.221s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:18:01.765 (  44.719s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 0.00205057 (tol = 1e-08) r (rel) = 4.98364e-05(tol = 1e-08)
-2021-11-29 08:18:02.002 (  44.957s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:18:02.506 (  45.460s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 1.7887e-08 (tol = 1e-08) r (rel) = 4.34721e-10(tol = 1e-08)
-2021-11-29 08:18:02.506 (  45.460s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 6 iterations and 6 linear solver iterations.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:35.100 (  47.935s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 1.78861e-08 (tol = 1e-08) r (rel) = 4.34698e-10(tol = 1e-08)
+2021-11-29 08:42:35.100 (  47.935s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 6 iterations and 6 linear solver iterations.
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time step 7, Number of iterations 6, Load [  0.    0.  -10.5]
 </pre></div>
 </div>
-<img alt="../_images/hyperelasticity_29_71.png" src="../_images/hyperelasticity_29_71.png" />
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:18:03.033 (  45.987s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<img alt="../_images/hyperelasticity_29_64.png" src="../_images/hyperelasticity_29_64.png" />
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:35.673 (  48.508s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:18:03.787 (  46.742s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:36.452 (  49.286s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:18:04.292 (  47.247s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 1.06336 (tol = 1e-08) r (rel) = 0.031085(tol = 1e-08)
-2021-11-29 08:18:04.536 (  47.490s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:18:05.030 (  47.985s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 2.0477 (tol = 1e-08) r (rel) = 0.0598598(tol = 1e-08)
-2021-11-29 08:18:05.274 (  48.228s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:37.003 (  49.838s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 1.06336 (tol = 1e-08) r (rel) = 0.031085(tol = 1e-08)
+2021-11-29 08:42:37.234 (  50.068s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:18:05.770 (  48.725s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 0.00897719 (tol = 1e-08) r (rel) = 0.000262427(tol = 1e-08)
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:37.784 (  50.619s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 2.0477 (tol = 1e-08) r (rel) = 0.0598598(tol = 1e-08)
+2021-11-29 08:42:38.018 (  50.852s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:18:06.014 (  48.969s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:18:06.515 (  49.469s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 0.000167422 (tol = 1e-08) r (rel) = 4.89419e-06(tol = 1e-08)
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:38.568 (  51.402s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 0.00897719 (tol = 1e-08) r (rel) = 0.000262427(tol = 1e-08)
+2021-11-29 08:42:38.796 (  51.631s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:18:06.750 (  49.705s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:18:07.245 (  50.200s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 3.25471e-11 (tol = 1e-08) r (rel) = 9.5144e-13(tol = 1e-08)
-2021-11-29 08:18:07.245 (  50.200s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 6 iterations and 6 linear solver iterations.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:39.349 (  52.184s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 0.000167422 (tol = 1e-08) r (rel) = 4.89419e-06(tol = 1e-08)
+2021-11-29 08:42:39.582 (  52.417s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:40.143 (  52.978s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 3.24597e-11 (tol = 1e-08) r (rel) = 9.48883e-13(tol = 1e-08)
+2021-11-29 08:42:40.143 (  52.978s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 6 iterations and 6 linear solver iterations.
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time step 8, Number of iterations 6, Load [  0.   0. -12.]
 </pre></div>
 </div>
-<img alt="../_images/hyperelasticity_29_79.png" src="../_images/hyperelasticity_29_79.png" />
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:18:07.794 (  50.748s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<img alt="../_images/hyperelasticity_29_72.png" src="../_images/hyperelasticity_29_72.png" />
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:40.720 (  53.555s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:18:08.540 (  51.494s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:18:09.036 (  51.991s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 0.898789 (tol = 1e-08) r (rel) = 0.0309666(tol = 1e-08)
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:41.500 (  54.335s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:42.045 (  54.880s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 0.898789 (tol = 1e-08) r (rel) = 0.0309666(tol = 1e-08)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:18:09.283 (  52.238s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:18:09.783 (  52.737s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 1.38354 (tol = 1e-08) r (rel) = 0.0476679(tol = 1e-08)
-2021-11-29 08:18:10.028 (  52.983s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:42.275 (  55.110s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:42.822 (  55.657s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 1.38354 (tol = 1e-08) r (rel) = 0.0476679(tol = 1e-08)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:18:10.541 (  53.495s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 0.00185096 (tol = 1e-08) r (rel) = 6.37724e-05(tol = 1e-08)
-2021-11-29 08:18:10.778 (  53.732s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:18:11.275 (  54.230s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 7.87183e-06 (tol = 1e-08) r (rel) = 2.71213e-07(tol = 1e-08)
-2021-11-29 08:18:11.524 (  54.478s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:18:12.031 (  54.985s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 2.94842e-13 (tol = 1e-08) r (rel) = 1.01584e-14(tol = 1e-08)
-2021-11-29 08:18:12.031 (  54.985s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 6 iterations and 6 linear solver iterations.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:43.051 (  55.886s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:43.595 (  56.429s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 0.00185096 (tol = 1e-08) r (rel) = 6.37724e-05(tol = 1e-08)
+2021-11-29 08:42:43.824 (  56.659s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:44.378 (  57.213s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 7.87183e-06 (tol = 1e-08) r (rel) = 2.71213e-07(tol = 1e-08)
+2021-11-29 08:42:44.608 (  57.443s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:45.159 (  57.994s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 2.7346e-13 (tol = 1e-08) r (rel) = 9.42168e-15(tol = 1e-08)
+2021-11-29 08:42:45.159 (  57.994s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 6 iterations and 6 linear solver iterations.
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time step 9, Number of iterations 6, Load [  0.    0.  -13.5]
 </pre></div>
 </div>
-<img alt="../_images/hyperelasticity_29_85.png" src="../_images/hyperelasticity_29_85.png" />
+<img alt="../_images/hyperelasticity_29_79.png" src="../_images/hyperelasticity_29_79.png" />
 </div>
 </div>
 </div>

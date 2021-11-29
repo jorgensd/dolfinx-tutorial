@@ -488,8 +488,8 @@
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#interactive-plotting-in-notebooks">
-   Interactive plotting in notebooks
+  <a class="reference internal nav-link" href="#alternative-plotting">
+   Alternative plotting
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -532,13 +532,13 @@ Therefore, we need to make specific choices of <span class="math notranslate noh
 <!-- Particularly, piecewise linear continuous Galerkin finite elements are able to exactly reproduce a quadratic polynomial on 
 a uniformly partitioned mesh. -->
 <p>We use this fact to construct a quadratic function in <span class="math notranslate nohighlight">\(2D\)</span>. In particular we choose</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e0757475-b6c4-44f3-b8b0-8e673dfe2365">
-<span class="eqno">(6)<a class="headerlink" href="#equation-e0757475-b6c4-44f3-b8b0-8e673dfe2365" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-184d335f-54bb-4f0b-8879-bf4c93339f52">
+<span class="eqno">(6)<a class="headerlink" href="#equation-184d335f-54bb-4f0b-8879-bf4c93339f52" title="Permalink to this equation">¶</a></span>\[\begin{align}
  u_e(x,y)=1+x^2+2y^2
  \end{align}\]</div>
 <p>Inserting <span class="math notranslate nohighlight">\(u_e\)</span> in the original boundary problem, we find that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3f2e6bc9-c50b-4c4a-ae84-dacbad48850c">
-<span class="eqno">(7)<a class="headerlink" href="#equation-3f2e6bc9-c50b-4c4a-ae84-dacbad48850c" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-07ac54f1-91f7-40b8-856a-1bf99b95bd76">
+<span class="eqno">(7)<a class="headerlink" href="#equation-07ac54f1-91f7-40b8-856a-1bf99b95bd76" title="Permalink to this equation">¶</a></span>\[\begin{align}
     f(x,y)= -6,\qquad u_d(x,y)=u_e(x,y)=1+x^2+2y^2,
 \end{align}\]</div>
 <p>regardless of the shape of the domain as long as we prescribe
@@ -552,25 +552,26 @@ the equation to obtain the right-hand side (source term <span class="math notran
 we usually know about the numerical errors <em>asymptotic properties</em>. For instance that it is proportional to <span class="math notranslate nohighlight">\(h^2\)</span> if <span class="math notranslate nohighlight">\(h\)</span> is the size of a cell in the mesh. We can then compare the error on meshes with different <span class="math notranslate nohighlight">\(h\)</span>-values to see if the asymptotic behavior is correct. This technique will be explained in detail in the chapter <a class="reference internal" href="../chapter4/convergence.html"><span class="doc std std-doc">Improving your fenics code</span></a>.</p>
 <p>However, in cases where we have a solution we know that should have no approximation error, we know that the solution should
 be produced to machine precision by the program.</p>
-<p>The first eight lines of the program are importing the different modules required for solving the problem.</p>
+<p>We start by importing external modules used alongside <code class="docutils literal notranslate"><span class="pre">dolfinx</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx</span>
-<span class="kn">import</span> <span class="nn">numpy</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">import</span> <span class="nn">ufl</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>A major difference between a traditional FEniCS code and a FEniCSx code, is that one is not advised to use the wildcard import.</p>
+<p>A major difference between a traditional FEniCS code and a FEniCSx code, is that one is not advised to use the wildcard import. We will see this throughout this first example.</p>
 </div>
 <div class="section" id="generating-simple-meshes">
 <h2>Generating  simple meshes<a class="headerlink" href="#generating-simple-meshes" title="Permalink to this headline">¶</a></h2>
-<p>The next step is to define the discrete domain, <em>the mesh</em></p>
+<p>The next step is to define the discrete domain, <em>the mesh</em>. We do this by importing the built-in <code class="docutils literal notranslate"><span class="pre">dolfinx.generation.UnitSquareMesh</span></code> function, that can build a <span class="math notranslate nohighlight">\([0,1]\times[0,1]\)</span> mesh, consisting of either triangles or quadrilaterals.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">UnitSquareMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">cpp</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">CellType</span><span class="o">.</span><span class="n">quadrilateral</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.generation</span> <span class="kn">import</span> <span class="n">UnitSquareMesh</span>
+<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">CellType</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">UnitSquareMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">CellType</span><span class="o">.</span><span class="n">quadrilateral</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -593,7 +594,8 @@ multiple parameters.</p>
 <p>Once the mesh has been created, we can create the finite element function space <span class="math notranslate nohighlight">\(V\)</span>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span> <span class="n">V</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">FunctionSpace</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -603,17 +605,20 @@ DOLFINx supports a large variety on elements on simplices
 (triangles and tetrahedra) and non-simplices (quadrilaterals
 and hexahedra). For an overview, see:
 <em>FIXME: Add link to all the elements we support</em></p>
-<p>The element degree in the code is 1. This means that we are choosing the standard <span class="math notranslate nohighlight">\(P_1\)</span> linear Lagrange element, which has degrees of freedom at the vertices. The computed solution will be continuous across elements and linearly varying in <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> inside each element. Higher degree polynomial approximations are obtained by increasing the degree argument.</p>
+<p>The element degree in the code is 1. This means that we are choosing the standard <span class="math notranslate nohighlight">\(P_1\)</span> linear Lagrange element, which has degrees of freedom at the vertices.
+The computed solution will be continuous across elements and linearly varying in <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> inside each element. Higher degree polynomial approximations are obtained by increasing the degree argument.</p>
 </div>
 <div class="section" id="defining-the-boundary-conditions">
 <h2>Defining the boundary conditions<a class="headerlink" href="#defining-the-boundary-conditions" title="Permalink to this headline">¶</a></h2>
-<p>The next step is to specify the boundary condition <span class="math notranslate nohighlight">\(u=u_D\)</span> on <span class="math notranslate nohighlight">\(\partial\Omega_D\)</span>, which is done by over several steps. The first step is to define the function <span class="math notranslate nohighlight">\(u_D\)</span>. Into this function, we would like to interpolate the boundary condition <span class="math notranslate nohighlight">\(1 + x^2+2y^2\)</span>. We do this by first defining a <code class="docutils literal notranslate"><span class="pre">dolfinx.Function</span></code>, and then using a <a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions">lambda-function</a> in Python to define the
-spatially varying function. As we would like this program to work on one or multiple processors, we have to update the coefficients of <span class="math notranslate nohighlight">\(u_D\)</span> that data shared between the processors. We do this by sending (scattering) the ghost values in the underlying data structure of <code class="docutils literal notranslate"><span class="pre">uD</span></code>.</p>
+<p>The next step is to specify the boundary condition <span class="math notranslate nohighlight">\(u=u_D\)</span> on <span class="math notranslate nohighlight">\(\partial\Omega_D\)</span>, which is done by over several steps.
+The first step is to define the function <span class="math notranslate nohighlight">\(u_D\)</span>. Into this function, we would like to interpolate the boundary condition <span class="math notranslate nohighlight">\(1 + x^2+2y^2\)</span>.
+We do this by first defining a <code class="docutils literal notranslate"><span class="pre">dolfinx.Function</span></code>, and then using a <a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions">lambda-function</a> in Python to define the
+spatially varying function.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">uD</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">Function</span>
+<span class="n">uD</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">uD</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">uD</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">scatter_forward</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -626,8 +631,9 @@ This function returns an array of booleans of the same size as the number of fac
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fdim</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span> <span class="mi">1</span>
 <span class="c1"># Create facet to cell connectivity required to determine boundary facets</span>
+<span class="kn">from</span> <span class="nn">dolfinx.cpp.mesh</span> <span class="kn">import</span> <span class="n">compute_boundary_facets</span>
 <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">create_connectivity</span><span class="p">(</span><span class="n">fdim</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
-<span class="n">boundary_facets</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">cpp</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">compute_boundary_facets</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">boundary_facets</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">compute_boundary_facets</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -642,8 +648,9 @@ However, this is only true in the case of <code class="docutils literal notransl
 <p>With this data at hand, we can create the Dirichlet boundary condition</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">boundary_dofs</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">boundary_facets</span><span class="p">)</span>
-<span class="n">bc</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">uD</span><span class="p">,</span> <span class="n">boundary_dofs</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">locate_dofs_topological</span><span class="p">,</span> <span class="n">DirichletBC</span>
+<span class="n">boundary_dofs</span> <span class="o">=</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">boundary_facets</span><span class="p">)</span>
+<span class="n">bc</span> <span class="o">=</span> <span class="n">DirichletBC</span><span class="p">(</span><span class="n">uD</span><span class="p">,</span> <span class="n">boundary_dofs</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -667,7 +674,8 @@ In FEniCSx, we do not specify boundary conditions as part of the function space,
 <p>As the source term is constant over the domain, we use <code class="docutils literal notranslate"><span class="pre">dolfinx.Constant</span></code></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">Constant</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -704,7 +712,8 @@ The integration over the domain <span class="math notranslate nohighlight">\(\Om
 the variational problem: Find <span class="math notranslate nohighlight">\(u_h\in V\)</span> such that <span class="math notranslate nohighlight">\(a(u_h, v)==L(v) \quad \forall v \in \hat{V}\)</span>. We will use PETSc as our linear algebra backend, using a direct solver (LU-factorization).  See the <a class="reference external" href="https://petsc.org/main/docs/manual/ksp/?highlight=ksp#ksp-linear-system-solvers">PETSc-documentation</a> of the method for more information.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="p">[</span><span class="n">bc</span><span class="p">],</span> <span class="n">petsc_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ksp_type&quot;</span><span class="p">:</span> <span class="s2">&quot;preonly&quot;</span><span class="p">,</span> <span class="s2">&quot;pc_type&quot;</span><span class="p">:</span> <span class="s2">&quot;lu&quot;</span><span class="p">})</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">LinearProblem</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="p">[</span><span class="n">bc</span><span class="p">],</span> <span class="n">petsc_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ksp_type&quot;</span><span class="p">:</span> <span class="s2">&quot;preonly&quot;</span><span class="p">,</span> <span class="s2">&quot;pc_type&quot;</span><span class="p">:</span> <span class="s2">&quot;lu&quot;</span><span class="p">})</span>
 <span class="n">uh</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -717,19 +726,19 @@ the variational problem: Find <span class="math notranslate nohighlight">\(u_h\i
 <p>Finally, we want to compute the error to check the accuracy of the solution. We do this by comparing the finite element solution <code class="docutils literal notranslate"><span class="pre">u</span></code> with the exact solution. We do this by interpolating the exact solution into the the <span class="math notranslate nohighlight">\(P_2\)</span>-function space.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">V2</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-<span class="n">uex</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V2</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">V2</span> <span class="o">=</span> <span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">uex</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">V2</span><span class="p">)</span>
 <span class="n">uex</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">uex</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">scatter_forward</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>We compute the error in two different ways. First, we compute the <span class="math notranslate nohighlight">\(L^2\)</span>-norm of the error, defined by <span class="math notranslate nohighlight">\(E=\sqrt{\int_\Omega (u_D-u_h)^2\mathrm{d} x}\)</span>. We use UFL to express the <span class="math notranslate nohighlight">\(L^2\)</span>-error:</p>
+<p>We compute the error in two different ways. First, we compute the <span class="math notranslate nohighlight">\(L^2\)</span>-norm of the error, defined by <span class="math notranslate nohighlight">\(E=\sqrt{\int_\Omega (u_D-u_h)^2\mathrm{d} x}\)</span>. We use UFL to express the <span class="math notranslate nohighlight">\(L^2\)</span>-error, and use <code class="docutils literal notranslate"><span class="pre">dolfinx.fem.assemble_scalar</span></code> to compute the scalar value.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">L2_error</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">uh</span> <span class="o">-</span> <span class="n">uex</span><span class="p">,</span> <span class="n">uh</span> <span class="o">-</span> <span class="n">uex</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
-<span class="n">error_L2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span><span class="n">L2_error</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">assemble_scalar</span>
+<span class="n">L2_error</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">uh</span> <span class="o">-</span> <span class="n">uex</span><span class="p">,</span> <span class="n">uh</span> <span class="o">-</span> <span class="n">uex</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
+<span class="n">error_L2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">assemble_scalar</span><span class="p">(</span><span class="n">L2_error</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -752,7 +761,7 @@ Therefore we compute the values of both <code class="docutils literal notranslat
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Error_L2 : 8.24e-03
-Error_max : 2.22e-15
+Error_max : 3.11e-15
 </pre></div>
 </div>
 </div>
@@ -812,9 +821,9 @@ In the jupyter notebook environment, we use the default setting of <code class="
 </div>
 </div>
 </div>
-<div class="section" id="interactive-plotting-in-notebooks">
-<h2>Interactive plotting in notebooks<a class="headerlink" href="#interactive-plotting-in-notebooks" title="Permalink to this headline">¶</a></h2>
-<p>To create an interactive plot using pyvista in a Jupyter notebook we us <code class="docutils literal notranslate"><span class="pre">pyvista.ITKPlotter</span></code> which uses <code class="docutils literal notranslate"><span class="pre">itkwidgets</span></code>. To modify the visualization, click on the three bars in the top left corner.</p>
+<div class="section" id="alternative-plotting">
+<h2>Alternative plotting<a class="headerlink" href="#alternative-plotting" title="Permalink to this headline">¶</a></h2>
+<p>To create a more interactive plot using pyvista in a Jupyter notebook we us <code class="docutils literal notranslate"><span class="pre">pyvista.ITKPlotter</span></code> which uses <code class="docutils literal notranslate"><span class="pre">itkwidgets</span></code>. To modify the visualization, click on the three bars in the top left corner.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="ow">not</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">OFF_SCREEN</span><span class="p">:</span>
@@ -827,7 +836,7 @@ In the jupyter notebook environment, we use the default setting of <code class="
 </div>
 <div class="cell_output docutils container">
 <script type="application/vnd.jupyter.widget-view+json">
-{"version_major": 2, "version_minor": 0, "model_id": "8497525d58a54da785f4aa0006164b99"}
+{"version_major": 2, "version_minor": 0, "model_id": "e55ab9a750db4994b7d9269c282995d6"}
 </script></div>
 </div>
 </div>
@@ -845,18 +854,13 @@ In the jupyter notebook environment, we use the default setting of <code class="
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:16:46.394 (   7.393s) [main            ]            VTKFile.cpp:617   WARN| Output data is interpolated into a first order Lagrange space.
-</pre></div>
-</div>
-</div>
 </div>
 <span class="target" id="id2"></span></div>
 </div>
 
 
 <script type="application/vnd.jupyter.widget-state+json">
-{"state": {"5da884224c0b492ba12e4583d369ebfd": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "8497525d58a54da785f4aa0006164b99": {"model_name": "ViewerModel", "model_module": "itkwidgets", "model_module_version": "^0.32.1", "state": {"_custom_cmap": null, "_dom_classes": [], "_downsampling": false, "_largest_roi": {"shape": [2, 3], "dtype": "float64"}, "_model_module": "itkwidgets", "_model_module_version": "^0.32.1", "_model_name": "ViewerModel", "_rendering_image": false, "_reset_crop_requested": false, "_scale_factors": {"shape": [3], "dtype": "uint8"}, "_view_count": null, "_view_module": "itkwidgets", "_view_module_version": "^0.32.1", "_view_name": "ViewerView", "annotations": true, "axes": false, "background": [], "blend_mode": "composite", "camera": {"shape": [3, 3], "dtype": "float32"}, "channels": null, "clicked_slice_point": null, "cmap": null, "geometries": [{"vtkClass": "vtkPolyData", "points": {"vtkClass": "vtkPoints", "name": "_points", "numberOfComponents": 3, "dataType": "Float32Array", "size": 243}, "polys": {"vtkClass": "vtkCellArray", "name": "_polys", "numberOfComponents": 1, "size": 320, "dataType": "Uint32Array"}, "pointData": {"vtkClass": "vtkDataSetAttributes", "activeScalars": 0, "arrays": [{"data": {"vtkClass": "vtkDataArray", "name": "u", "numberOfComponents": 1, "size": 81, "dataType": "Float64Array"}}]}, "metadata": {"name": "Geometry 0"}}], "geometry_colors": {"shape": [1, 3], "dtype": "float32"}, "geometry_opacities": {"shape": [1], "dtype": "float32"}, "gradient_opacity": 0.2, "interpolation": true, "label_image_blend": 0.5, "label_image_names": null, "label_image_weights": null, "layout": "IPY_MODEL_5da884224c0b492ba12e4583d369ebfd", "lut": "glasbey", "mode": "v", "opacity_gaussians": null, "point_set_colors": {"shape": [0, 3], "dtype": "float32"}, "point_set_opacities": {"shape": [0], "dtype": "float32"}, "point_set_representations": [], "point_set_sizes": {"shape": [0], "dtype": "uint8"}, "point_sets": [], "rendered_image": null, "rendered_label_image": null, "roi": {"shape": [2, 3], "dtype": "float64"}, "rotate": false, "sample_distance": 0.25, "select_roi": false, "shadow": true, "slicing_planes": false, "ui_collapsed": true, "units": "", "vmax": null, "vmin": null, "x_slice": null, "y_slice": null, "z_slice": null}, "buffers": [{"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["_largest_roi", "buffer"]}, {"data": "AQEB", "encoding": "base64", "path": ["_scale_factors", "buffer"]}, {"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["camera", "buffer"]}, {"data": "KLUv/WDMAl0KAGKIHihQV6EDsNhZIbVcH2iRHey8K/cO3sJzW1rlnNWjkjJV3qWtQQFBaQ1T+Q8IfAeCb8EjfL0Nh6/ixp9AfBeXQQYI2fJHHN+HBDSeKobynXwaUewjfjMiR7YidTwhU43V8fM0KqFsf7pULRzs+6S9dDkLPzy3+9zcsvIBgJaoAJtiDrACIankBhCAMusYy4vcxIrHvqGFtgMYtnT+cRepODAM+gTL+/x+eCMF8rddnVP9QC3JTidGP0skDOadWQ0v5y+il8fQP0I+J88WVvjXpg4+98eFBXVm5n7WzXCK/53vOvCG4PNpaEQfi7tTVa8jzBDevfeN06mLfZyf8p7fdxJGyka44tAPxsc/vq74H1w85Jeqq/WVizL+/utxdlmyGz0ZS/+zJedf09fnx2UNcyzfzrv61TkzO0KHU/xtC27j1Ie53OL5GBI=", "encoding": "base64", "path": ["geometries", 0, "points", "compressedValues"]}, {"data": "KLUv/WAABH0MAGIIGQwQ4NMYwMt+9NUWbyl/+qPH1FhEiUNhEPjz/dv7l3fuqi6H+/dmq9HqTGbGYOfL1aqslSqFOv2mEmkkMkOgz+/pcDaaDObyWyqUiSQC+R+OBmNRKv4E4mAo/CVhINgf8Ad+8g2A46hQ2bJnIALinNkDEKCBtDXPe670tHvIzV424LDcE3s3y57bO1hoaNdvvl3aisN3Y7Zy8NGIfYfvxmzlYKYV+w7zrVl+zK3aP7Nr8HV/Pv/fOfhe92F/8HM/jEWUj4Pf+jp+8PuexwN/8yQtb2Iyeu4+qb/OG53w13Wb7uvcyAl8XW9iYnpY2sRndIoj/9C3600n/ue+GZPoc9qICXRdbWJiem6bMYk+p434QHdLm3ST5SMW7nl72A8+bg/7oeftsD/83B7mh56bw1ikjxUOcf/d7Ubv2/n1fBzOXNf1MueKP8d57uhhYZZb2ZPGux9+vODH8fsVPW9fr/tl8ZO72Imeu09dPMALbVl+FY6hdGQ7vY+8OecDX0F4YiFH6MPyX2N8d6pgBw==", "encoding": "base64", "path": ["geometries", 0, "polys", "compressedValues"]}, {"data": "KLUv/WCIAUUIAMLLJCOgpelEyDctKB36oaoeraoqcPif9++Cf1WA/T9v25KR3mTvFCbIzEzJjI9JpgWHyY2vzUDjINTnjmPwg54afhBRR9jMI5YhiODEmaVbV0jvdITKB01g1MQTqlNU6+mFpTM8/XhfIMdwva2nCuOFpbGuZSFbkuPsh1kzrrhhaeqFEpRDHsF1gTzA+wAlM3N60tq2AU6oQVBZeX8D0KIxswMQQOTaAaOjtedb4lSCWbNBmX+XRy5+Gzuh4xlNmDXd4tZ6SLxpNvZix+k/af9O+6hh2GXGZmF5uRZ6VzzQxk5MLqhsTPNmmW2rpmoF59AC+1jLmaXuHJrbw3/kbFr/Vk3kpX+ZVQ==", "encoding": "base64", "path": ["geometries", 0, "pointData", "arrays", 0, "data", "compressedValues"]}, {"data": "AACAPwAAgD8AAIA/", "encoding": "base64", "path": ["geometry_colors", "buffer"]}, {"data": "AACAPw==", "encoding": "base64", "path": ["geometry_opacities", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_colors", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_opacities", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_sizes", "buffer"]}, {"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["roi", "buffer"]}]}}, "version_major": 2, "version_minor": 0}
+{"state": {"007be834e56a4eb3a4c6b23f0581fc60": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "e55ab9a750db4994b7d9269c282995d6": {"model_name": "ViewerModel", "model_module": "itkwidgets", "model_module_version": "^0.32.1", "state": {"_custom_cmap": null, "_dom_classes": [], "_downsampling": false, "_largest_roi": {"shape": [2, 3], "dtype": "float64"}, "_model_module": "itkwidgets", "_model_module_version": "^0.32.1", "_model_name": "ViewerModel", "_rendering_image": false, "_reset_crop_requested": false, "_scale_factors": {"shape": [3], "dtype": "uint8"}, "_view_count": null, "_view_module": "itkwidgets", "_view_module_version": "^0.32.1", "_view_name": "ViewerView", "annotations": true, "axes": false, "background": [], "blend_mode": "composite", "camera": {"shape": [3, 3], "dtype": "float32"}, "channels": null, "clicked_slice_point": null, "cmap": null, "geometries": [{"vtkClass": "vtkPolyData", "points": {"vtkClass": "vtkPoints", "name": "_points", "numberOfComponents": 3, "dataType": "Float32Array", "size": 243}, "polys": {"vtkClass": "vtkCellArray", "name": "_polys", "numberOfComponents": 1, "size": 320, "dataType": "Uint32Array"}, "pointData": {"vtkClass": "vtkDataSetAttributes", "activeScalars": 0, "arrays": [{"data": {"vtkClass": "vtkDataArray", "name": "u", "numberOfComponents": 1, "size": 81, "dataType": "Float64Array"}}]}, "metadata": {"name": "Geometry 0"}}], "geometry_colors": {"shape": [1, 3], "dtype": "float32"}, "geometry_opacities": {"shape": [1], "dtype": "float32"}, "gradient_opacity": 0.2, "interpolation": true, "label_image_blend": 0.5, "label_image_names": null, "label_image_weights": null, "layout": "IPY_MODEL_007be834e56a4eb3a4c6b23f0581fc60", "lut": "glasbey", "mode": "v", "opacity_gaussians": null, "point_set_colors": {"shape": [0, 3], "dtype": "float32"}, "point_set_opacities": {"shape": [0], "dtype": "float32"}, "point_set_representations": [], "point_set_sizes": {"shape": [0], "dtype": "uint8"}, "point_sets": [], "rendered_image": null, "rendered_label_image": null, "roi": {"shape": [2, 3], "dtype": "float64"}, "rotate": false, "sample_distance": 0.25, "select_roi": false, "shadow": true, "slicing_planes": false, "ui_collapsed": true, "units": "", "vmax": null, "vmin": null, "x_slice": null, "y_slice": null, "z_slice": null}, "buffers": [{"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["_largest_roi", "buffer"]}, {"data": "AQEB", "encoding": "base64", "path": ["_scale_factors", "buffer"]}, {"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["camera", "buffer"]}, {"data": "KLUv/WDMAv0KAMIKIyxQVSGNAbAy+egtEdVgvD9oeCjMeilomxSUQ0WhXQFH880SDuHHRuJ4Rj9OCp4v3eQ8mRqcN2KJsXkmT7TSQjNCcjKaeaEOjwdSogLzQGnjgURSXl6qiwqKcYSICuVZXOIHYuJpfFSow9fwEPEyMBCewPB5nmdwdXawUAqXywmugXWq4EoXuABWwHUHgImo8JqCc5ACmbGrBxBoQnnGdNCGqf2fOcO3UxqeYZrxD+uNi8+2v3HzkeV8+NSH46JbsgUW3n05tqTXEPyEWl6I78QQePn38d9svBfo/kANz2Kal91n43+zL9/gC/4IH7k3M8m4a7A00wCcF0i34MejH/7EOeL95uyrTmz5Y8HB69W2NhwcX/PmL5OhLZ/ujp3e97XZPM7iO3lKnxH3QlyVwwOOuQ+48dGcRfyna/5Mm5PGjcHca3d0RF05+dB/BC9ckgPCtb81iP0Ql5XFBg==", "encoding": "base64", "path": ["geometries", 0, "points", "compressedValues"]}, {"data": "KLUv/WAABNUMADJJGxMQkDxzBBgAGFjNKqdSrlKO5K4p797SsayopKCcPJMSkhGRFwLy4dHxODY0MjAuLLgKiomIS0A8ODQwLGwKTzg4gkEBRzDwTeABswPIYrDXdhfrrZUqhfqpdBNpJHroc5Cnc47mGy3zrh3zyxeA5ahgV7WeASBCBtF6EKhB2hrHkZO9/Dx6zrc7HT05/MfWk8N/bD05/AlbT17/PXjn9ThtyYX/cZevHnnu/PX/CEev/EZze+0NvW1938gb1t0be/wPi7p39r/PjaN/WgCD9cf3AU/4/795zM8L33bFxG8XOMWEpwsdYqK3C5xiwp+vm/j7gqeZ8LMXYhkT/zRPUu58uMzLJ35fwKknPC3k0BO9LeDUE54WcuiJfmoBp56wc8t5YoOdLXbgw3943zv53//GwT/9t13+633vZP/ceil/38A7+K/fXvsd7+T1/0jHr/xHc3vtjfGs27VR7AT39rOv/w8dfPF/3P2rI5+zbq8esRPcx88e/rft8PBPYkYcRlu8Z8bF33yLTZr3PTyy0petjRpsEwMk", "encoding": "base64", "path": ["geometries", 0, "polys", "compressedValues"]}, {"data": "KLUv/WCIAX0IAFKMJyWwJembELLJtpsQS5oPAyCNYQCHEgg1AM7krNDa3GxrpLW27d4yH8DEBQ6IWCQYhRuQgyBAsXAlhDQkCFRXV4jSVfABFzFTopawwB+MdHzy7nOUz+xod4V86f5QAPyAFHp26/TZp85TJu/LTrZtbtnYOXqekOjIWLMHZtrc1jHEGCxj5iabG3pR58XLKJONfKwshtzYtaKRFSv5XLAbUaggTKUH0AKhKfMQSKMPk/Y8oUOdhcHMYgCssWMmYXGb5XskOChMu0FxRg5zE20xpAPukjQozpuWEtOPbeadyf13HdJAgNhJfQ7D2cQjgnYtZ2J97OxPwlNsbiA9aR9jkIB/vYTkZDCEUa8FwCc=", "encoding": "base64", "path": ["geometries", 0, "pointData", "arrays", 0, "data", "compressedValues"]}, {"data": "AACAPwAAgD8AAIA/", "encoding": "base64", "path": ["geometry_colors", "buffer"]}, {"data": "AACAPw==", "encoding": "base64", "path": ["geometry_opacities", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_colors", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_opacities", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_sizes", "buffer"]}, {"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["roi", "buffer"]}]}}, "version_major": 2, "version_minor": 0}
 </script>
 
 

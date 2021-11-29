@@ -472,11 +472,19 @@ Such a function can be created over any mesh in the following way</p>
 <h2>Subdomains on built-in meshes<a class="headerlink" href="#subdomains-on-built-in-meshes" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Constant</span><span class="p">,</span> <span class="n">DirichletBC</span><span class="p">,</span> <span class="n">Function</span><span class="p">,</span> <span class="n">FunctionSpace</span><span class="p">,</span> <span class="n">LinearProblem</span><span class="p">,</span>
+                         <span class="n">assemble_scalar</span><span class="p">,</span> <span class="n">locate_dofs_geometrical</span><span class="p">,</span> <span class="n">locate_dofs_topological</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">dolfinx.generation</span> <span class="kn">import</span> <span class="n">UnitSquareMesh</span>
+<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">locate_entities</span>
+
+<span class="kn">from</span> <span class="nn">ufl</span> <span class="kn">import</span> <span class="p">(</span><span class="n">SpatialCoordinate</span><span class="p">,</span> <span class="n">TestFunction</span><span class="p">,</span> <span class="n">TrialFunction</span><span class="p">,</span>
+                 <span class="n">dx</span><span class="p">,</span> <span class="n">grad</span><span class="p">,</span> <span class="n">inner</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
 
-<span class="n">mesh</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">UnitSquareMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-<span class="n">Q</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">UnitSquareMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">Q</span> <span class="o">=</span> <span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -511,9 +519,9 @@ u=u_D=1 \qquad \text{on } \partial\Omega_D=[0,y], y\in[0,1]
 <p>Our next step is to define <span class="math notranslate nohighlight">\(\kappa\)</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kappa</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
-<span class="n">cells_0</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">locate_entities</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">Omega_0</span><span class="p">)</span>
-<span class="n">cells_1</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">locate_entities</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">Omega_1</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kappa</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">cells_0</span> <span class="o">=</span> <span class="n">locate_entities</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">Omega_0</span><span class="p">)</span>
+<span class="n">cells_1</span> <span class="o">=</span> <span class="n">locate_entities</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">Omega_1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -524,8 +532,7 @@ u=u_D=1 \qquad \text{on } \partial\Omega_D=[0,y], y\in[0,1]
 \end{cases}\)</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="k">with</span> <span class="n">kappa</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">kappa</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
     <span class="n">loc</span><span class="o">.</span><span class="n">setValues</span><span class="p">(</span><span class="n">cells_0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cells_0</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
     <span class="n">loc</span><span class="o">.</span><span class="n">setValues</span><span class="p">(</span><span class="n">cells_1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cells_1</span><span class="p">),</span> <span class="mf">0.1</span><span class="p">))</span>
 </pre></div>
@@ -535,17 +542,16 @@ u=u_D=1 \qquad \text{on } \partial\Omega_D=[0,y], y\in[0,1]
 <p>We are now ready to define our variational formulation and  Dirichlet boundary condition after using integration by parts</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ufl</span>
-<span class="n">V</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-<span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">kappa</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-<span class="n">L</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
-<span class="n">dofs</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_geometrical</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">))</span>
-<span class="n">u_D</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">V</span> <span class="o">=</span> <span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">inner</span><span class="p">(</span><span class="n">kappa</span><span class="o">*</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">dx</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<span class="n">L</span> <span class="o">=</span> <span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">dx</span>
+<span class="n">dofs</span> <span class="o">=</span> <span class="n">locate_dofs_geometrical</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">u_D</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="k">with</span> <span class="n">u_D</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
     <span class="n">loc</span><span class="o">.</span><span class="n">setValues</span><span class="p">(</span><span class="n">dofs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dofs</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
-<span class="n">bcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_D</span><span class="p">,</span> <span class="n">dofs</span><span class="p">)]</span>
+<span class="n">bcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_D</span><span class="p">,</span> <span class="n">dofs</span><span class="p">)]</span>
 </pre></div>
 </div>
 </div>
@@ -553,7 +559,7 @@ u=u_D=1 \qquad \text{on } \partial\Omega_D=[0,y], y\in[0,1]
 <p>We can now solve and visualize the solution of the problem</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcs</span><span class="p">,</span> <span class="n">petsc_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ksp_type&quot;</span><span class="p">:</span> <span class="s2">&quot;preonly&quot;</span><span class="p">,</span> <span class="s2">&quot;pc_type&quot;</span><span class="p">:</span> <span class="s2">&quot;lu&quot;</span><span class="p">})</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcs</span><span class="p">,</span> <span class="n">petsc_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ksp_type&quot;</span><span class="p">:</span> <span class="s2">&quot;preonly&quot;</span><span class="p">,</span> <span class="s2">&quot;pc_type&quot;</span><span class="p">:</span> <span class="s2">&quot;lu&quot;</span><span class="p">})</span>
 <span class="n">uh</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
 
 <span class="kn">import</span> <span class="nn">pyvista</span>
@@ -571,7 +577,7 @@ u=u_D=1 \qquad \text{on } \partial\Omega_D=[0,y], y\in[0,1]
 <span class="n">marker</span><span class="p">[</span><span class="n">cells_1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
 <span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">create_vtk_topology</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num_cells_local</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">))</span>
 <span class="n">grid</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">(</span><span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
-<span class="n">grid</span><span class="o">.</span><span class="n">cell_arrays</span><span class="p">[</span><span class="s2">&quot;Marker&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">marker</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">cell_data</span><span class="p">[</span><span class="s2">&quot;Marker&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">marker</span>
 <span class="n">grid</span><span class="o">.</span><span class="n">set_active_scalars</span><span class="p">(</span><span class="s2">&quot;Marker&quot;</span><span class="p">)</span>
 <span class="n">p</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">actor0</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">show_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -590,11 +596,7 @@ u=u_D=1 \qquad \text{on } \partial\Omega_D=[0,y], y\in[0,1]
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING:py.warnings:/usr/local/lib/python3.9/dist-packages/pyvista/core/dataset.py:1332: PyvistaDeprecationWarning: Use of `cell_arrays` is deprecated. Use `cell_data` instead.
-  warnings.warn(
-</pre></div>
-</div>
-<img alt="../_images/subdomains_11_1.png" src="../_images/subdomains_11_1.png" />
+<img alt="../_images/subdomains_11_0.png" src="../_images/subdomains_11_0.png" />
 </div>
 </div>
 <p>We clearly observe different behavior in the two regions, whose both has the same Dirichlet boundary condition on the left side, where <span class="math notranslate nohighlight">\(x=0\)</span>.</p>
@@ -614,9 +616,8 @@ u=u_D=1 \qquad \text{on } \partial\Omega_D=[0,y], y\in[0,1]
     <span class="n">values</span><span class="p">[</span><span class="n">top_coords</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">top_coords</span><span class="p">),</span> <span class="mf">0.1</span><span class="p">)</span>
     <span class="n">values</span><span class="p">[</span><span class="n">bottom_coords</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">bottom_coords</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">values</span>
-<span class="n">kappa2</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">kappa2</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
 <span class="n">kappa2</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">eval_kappa</span><span class="p">)</span>
-<span class="n">kappa2</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">scatter_forward</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -625,7 +626,7 @@ u=u_D=1 \qquad \text{on } \partial\Omega_D=[0,y], y\in[0,1]
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Difference in kappa&#39;s</span>
-<span class="n">error</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">mpi_comm</span><span class="p">()</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">((</span><span class="n">kappa</span><span class="o">-</span><span class="n">kappa2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span>
+<span class="n">error</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">assemble_scalar</span><span class="p">((</span><span class="n">kappa</span><span class="o">-</span><span class="n">kappa2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">dx</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -688,11 +689,11 @@ Info    : [ 50%] Meshing curve 4 (Line)
 Info    : [ 60%] Meshing curve 5 (Line)
 Info    : [ 80%] Meshing curve 6 (Line)
 Info    : [ 90%] Meshing curve 7 (Line)
-Info    : Done meshing 1D (Wall 0.000761419s, CPU 0.001073s)
+Info    : Done meshing 1D (Wall 0.000849106s, CPU 0.001322s)
 Info    : Meshing 2D...
 Info    : [  0%] Meshing surface 1 (Plane, Frontal-Delaunay)
 Info    : [ 50%] Meshing surface 2 (Plane, Frontal-Delaunay)
-Info    : Done meshing 2D (Wall 0.00568584s, CPU 0.006014s)
+Info    : Done meshing 2D (Wall 0.00574704s, CPU 0.006229s)
 Info    : 103 nodes 218 elements
 Info    : Writing &#39;mesh.msh&#39;...
 Info    : Done writing &#39;mesh.msh&#39;
@@ -759,8 +760,8 @@ Info    : Done writing &#39;mesh.msh&#39;
 <p>We have now read in the mesh and corresponding cell and facet data. We can now create our discontinuous function <code class="docutils literal notranslate"><span class="pre">kappa</span></code> as follows</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Q</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-<span class="n">kappa</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Q</span> <span class="o">=</span> <span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">kappa</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
 <span class="k">with</span> <span class="n">kappa</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
     <span class="n">bottom_cells</span> <span class="o">=</span> <span class="n">ct</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">ct</span><span class="o">.</span><span class="n">values</span><span class="o">==</span><span class="n">bottom_marker</span><span class="p">]</span>
     <span class="n">loc</span><span class="o">.</span><span class="n">setValues</span><span class="p">(</span><span class="n">bottom_cells</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bottom_cells</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
@@ -773,13 +774,13 @@ Info    : Done writing &#39;mesh.msh&#39;
 <p>We can also efficiently use the facet data <code class="docutils literal notranslate"><span class="pre">ft</span></code> to create the Dirichlet boundary condition</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">V</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-<span class="n">u_bc</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">V</span> <span class="o">=</span> <span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">u_bc</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">left_facets</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">ft</span><span class="o">.</span><span class="n">values</span><span class="o">==</span><span class="n">left_marker</span><span class="p">]</span>
-<span class="n">left_dofs</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">left_facets</span><span class="p">)</span>
+<span class="n">left_dofs</span> <span class="o">=</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">left_facets</span><span class="p">)</span>
 <span class="k">with</span> <span class="n">u_bc</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
     <span class="n">loc</span><span class="o">.</span><span class="n">setValues</span><span class="p">(</span><span class="n">left_dofs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">left_dofs</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
-<span class="n">bcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_bc</span><span class="p">,</span> <span class="n">left_dofs</span><span class="p">)]</span>
+<span class="n">bcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_bc</span><span class="p">,</span> <span class="n">left_dofs</span><span class="p">)]</span>
 </pre></div>
 </div>
 </div>
@@ -787,13 +788,12 @@ Info    : Done writing &#39;mesh.msh&#39;
 <p>We can now solve the problem in a similar fashion as above</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ufl</span>
-<span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">kappa</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-<span class="n">L</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">inner</span><span class="p">(</span><span class="n">kappa</span><span class="o">*</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">dx</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<span class="n">L</span> <span class="o">=</span> <span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">dx</span>
 
-<span class="n">problem</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcs</span><span class="p">,</span> <span class="n">petsc_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ksp_type&quot;</span><span class="p">:</span> <span class="s2">&quot;preonly&quot;</span><span class="p">,</span> <span class="s2">&quot;pc_type&quot;</span><span class="p">:</span> <span class="s2">&quot;lu&quot;</span><span class="p">})</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcs</span><span class="p">,</span> <span class="n">petsc_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ksp_type&quot;</span><span class="p">:</span> <span class="s2">&quot;preonly&quot;</span><span class="p">,</span> <span class="s2">&quot;pc_type&quot;</span><span class="p">:</span> <span class="s2">&quot;lu&quot;</span><span class="p">})</span>
 <span class="n">uh</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
 
 <span class="c1"># As the dolfinx.MeshTag contains a value for every cell in the</span>
@@ -802,7 +802,7 @@ Info    : Done writing &#39;mesh.msh&#39;
 <span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">create_vtk_topology</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
 <span class="n">grid</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">(</span><span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
 <span class="n">num_local_cells</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">index_map</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span><span class="o">.</span><span class="n">size_local</span>
-<span class="n">grid</span><span class="o">.</span><span class="n">cell_arrays</span><span class="p">[</span><span class="s2">&quot;Marker&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ct</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">ct</span><span class="o">.</span><span class="n">indices</span><span class="o">&lt;</span><span class="n">num_local_cells</span><span class="p">]</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">cell_data</span><span class="p">[</span><span class="s2">&quot;Marker&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ct</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">ct</span><span class="o">.</span><span class="n">indices</span><span class="o">&lt;</span><span class="n">num_local_cells</span><span class="p">]</span>
 <span class="n">grid</span><span class="o">.</span><span class="n">set_active_scalars</span><span class="p">(</span><span class="s2">&quot;Marker&quot;</span><span class="p">)</span>
 
 <span class="n">p</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">window_size</span><span class="o">=</span><span class="p">[</span><span class="mi">800</span><span class="p">,</span> <span class="mi">800</span><span class="p">],</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
@@ -823,11 +823,7 @@ Info    : Done writing &#39;mesh.msh&#39;
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING:py.warnings:/usr/local/lib/python3.9/dist-packages/pyvista/core/dataset.py:1332: PyvistaDeprecationWarning: Use of `cell_arrays` is deprecated. Use `cell_data` instead.
-  warnings.warn(
-</pre></div>
-</div>
-<img alt="../_images/subdomains_30_1.png" src="../_images/subdomains_30_1.png" />
+<img alt="../_images/subdomains_30_0.png" src="../_images/subdomains_30_0.png" />
 </div>
 </div>
 </div>

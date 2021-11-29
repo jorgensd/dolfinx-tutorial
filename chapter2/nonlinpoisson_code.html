@@ -457,14 +457,20 @@
 <p>For this problem, we will choose <span class="math notranslate nohighlight">\(q(u) = 1 + u^2\)</span> and define a two dimensional manufactured solution that is linear in <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx</span>
-<span class="kn">import</span> <span class="nn">ufl</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ufl</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+
+<span class="kn">from</span> <span class="nn">dolfinx.generation</span> <span class="kn">import</span> <span class="n">UnitSquareMesh</span>
+<span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="p">(</span><span class="n">DirichletBC</span><span class="p">,</span> <span class="n">Function</span><span class="p">,</span> <span class="n">FunctionSpace</span><span class="p">,</span> <span class="n">NonlinearProblem</span><span class="p">,</span>
+                         <span class="n">assemble_scalar</span><span class="p">,</span> <span class="n">locate_dofs_topological</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">dolfinx.log</span> <span class="kn">import</span> <span class="n">set_log_level</span><span class="p">,</span> <span class="n">LogLevel</span>
+<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">locate_entities_boundary</span>
+<span class="kn">from</span> <span class="nn">dolfinx.nls</span> <span class="kn">import</span> <span class="n">NewtonSolver</span>
 
 <span class="k">def</span> <span class="nf">q</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
     <span class="k">return</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">u</span><span class="o">**</span><span class="mi">2</span>
 
-<span class="n">mesh</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">UnitSquareMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">UnitSquareMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
 <span class="n">u_ufl</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">f</span> <span class="o">=</span> <span class="o">-</span> <span class="n">ufl</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">q</span><span class="p">(</span><span class="n">u_ufl</span><span class="p">)</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u_ufl</span><span class="p">))</span>
@@ -479,15 +485,14 @@ Note that as we have already defined the exact solution, we only have to convert
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
 <span class="kn">import</span> <span class="nn">numpy</span>
-<span class="n">V</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="n">u_exact</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">eval</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">u_ufl</span><span class="p">))</span>
-<span class="n">u_D</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">u_D</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">u_D</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">u_exact</span><span class="p">)</span>
 <span class="n">u_D</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">scatter_forward</span><span class="p">()</span>
 <span class="n">fdim</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span> <span class="mi">1</span>
-<span class="n">boundary_facets</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">locate_entities_boundary</span><span class="p">(</span>
-    <span class="n">mesh</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">))</span>
-<span class="n">bc</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_D</span><span class="p">,</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">boundary_facets</span><span class="p">))</span>
+<span class="n">boundary_facets</span> <span class="o">=</span> <span class="n">locate_entities_boundary</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">))</span>
+<span class="n">bc</span> <span class="o">=</span> <span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_D</span><span class="p">,</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">boundary_facets</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -495,7 +500,7 @@ Note that as we have already defined the exact solution, we only have to convert
 <p>We are now ready to define the variational formulation. Note that as the problem is non-linear, we have replace the <code class="docutils literal notranslate"><span class="pre">TrialFunction</span></code> with a <code class="docutils literal notranslate"><span class="pre">Function</span></code>, which serves as the unknown of our problem.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">uh</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">uh</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">F</span> <span class="o">=</span> <span class="n">q</span><span class="p">(</span><span class="n">uh</span><span class="p">)</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">uh</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">dx</span> <span class="o">-</span> <span class="n">f</span><span class="o">*</span><span class="n">v</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
 </pre></div>
@@ -506,7 +511,7 @@ Note that as we have already defined the exact solution, we only have to convert
 Newton’s method requires methods for evaluating the residual <code class="docutils literal notranslate"><span class="pre">F</span></code> (including application of boundary conditions), as well as a method for computing the Jacobian matrix. DOLFINx provides the function <code class="docutils literal notranslate"><span class="pre">NonlinearProblem</span></code> that implements these methods. In addition to the boundary conditions, you can supply the variational form for the Jacobian (computed if not supplied), and form and jit parameters, see the <a class="reference internal" href="../chapter4/compiler_parameters.html"><span class="doc std std-doc">JIT parameters section</span></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">NonlinearProblem</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">uh</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="p">[</span><span class="n">bc</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">NonlinearProblem</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">uh</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="p">[</span><span class="n">bc</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -514,7 +519,7 @@ Newton’s method requires methods for evaluating the residual <code class="docu
 <p>Next, we use the dolfinx Newton solver. We can set the convergence criterions for the solver by changing the absolute tolerance (<code class="docutils literal notranslate"><span class="pre">atol</span></code>), relative tolerance (<code class="docutils literal notranslate"><span class="pre">rtol</span></code>) or the convergence criterion (<code class="docutils literal notranslate"><span class="pre">residual</span></code> or <code class="docutils literal notranslate"><span class="pre">incremental</span></code>).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">solver</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">NewtonSolver</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">problem</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">solver</span> <span class="o">=</span> <span class="n">NewtonSolver</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">problem</span><span class="p">)</span>
 <span class="n">solver</span><span class="o">.</span><span class="n">convergence_criterion</span> <span class="o">=</span> <span class="s2">&quot;incremental&quot;</span>
 <span class="n">solver</span><span class="o">.</span><span class="n">rtol</span> <span class="o">=</span> <span class="mf">1e-6</span>
 <span class="n">solver</span><span class="o">.</span><span class="n">report</span> <span class="o">=</span> <span class="kc">True</span>
@@ -539,7 +544,7 @@ Newton’s method requires methods for evaluating the residual <code class="docu
 <p>We are now ready to solve the non-linear problem. We assert that the solver has converged and print the number of iterations.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dolfinx</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">set_log_level</span><span class="p">(</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">LogLevel</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">set_log_level</span><span class="p">(</span><span class="n">LogLevel</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 <span class="n">n</span><span class="p">,</span> <span class="n">converged</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">uh</span><span class="p">)</span>
 <span class="n">uh</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">scatter_forward</span><span class="p">()</span>
 <span class="k">assert</span><span class="p">(</span><span class="n">converged</span><span class="p">)</span>
@@ -551,22 +556,22 @@ Newton’s method requires methods for evaluating the residual <code class="docu
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of interations: 8
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:18:24.464 (   0.246s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:18:24.466 (   0.248s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:18:24.467 (   0.249s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 20.3794 (tol = 1e-10) r (rel) = 0.922544(tol = 1e-06)
-2021-11-29 08:18:24.467 (   0.249s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:18:24.469 (   0.251s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 6.95285 (tol = 1e-10) r (rel) = 0.314745(tol = 1e-06)
-2021-11-29 08:18:24.469 (   0.251s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:18:24.470 (   0.252s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 2.93575 (tol = 1e-10) r (rel) = 0.132897(tol = 1e-06)
-2021-11-29 08:18:24.470 (   0.253s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:18:24.471 (   0.254s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 0.700593 (tol = 1e-10) r (rel) = 0.0317148(tol = 1e-06)
-2021-11-29 08:18:24.472 (   0.254s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:18:24.473 (   0.255s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 0.0490796 (tol = 1e-10) r (rel) = 0.00222176(tol = 1e-06)
-2021-11-29 08:18:24.473 (   0.255s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:18:24.474 (   0.256s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 7: r (abs) = 0.000299464 (tol = 1e-10) r (rel) = 1.35563e-05(tol = 1e-06)
-2021-11-29 08:18:24.474 (   0.256s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-11-29 08:18:24.477 (   0.259s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 8: r (abs) = 1.52969e-08 (tol = 1e-10) r (rel) = 6.92466e-10(tol = 1e-06)
-2021-11-29 08:18:24.477 (   0.259s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 8 iterations and 45 linear solver iterations.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:57.110 (   0.107s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:57.112 (   0.109s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:57.113 (   0.110s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 20.3794 (tol = 1e-10) r (rel) = 0.922544(tol = 1e-06)
+2021-11-29 08:42:57.115 (   0.112s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:57.116 (   0.113s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 6.95285 (tol = 1e-10) r (rel) = 0.314745(tol = 1e-06)
+2021-11-29 08:42:57.117 (   0.114s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:57.118 (   0.115s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 2.93575 (tol = 1e-10) r (rel) = 0.132897(tol = 1e-06)
+2021-11-29 08:42:57.118 (   0.115s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:57.120 (   0.117s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 0.700593 (tol = 1e-10) r (rel) = 0.0317148(tol = 1e-06)
+2021-11-29 08:42:57.120 (   0.117s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:57.121 (   0.118s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 0.0490796 (tol = 1e-10) r (rel) = 0.00222176(tol = 1e-06)
+2021-11-29 08:42:57.122 (   0.119s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:57.123 (   0.120s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 7: r (abs) = 0.000299464 (tol = 1e-10) r (rel) = 1.35563e-05(tol = 1e-06)
+2021-11-29 08:42:57.123 (   0.120s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
+2021-11-29 08:42:57.125 (   0.122s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 8: r (abs) = 1.52969e-08 (tol = 1e-10) r (rel) = 6.92466e-10(tol = 1e-06)
+2021-11-29 08:42:57.125 (   0.122s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 8 iterations and 45 linear solver iterations.
 </pre></div>
 </div>
 </div>
@@ -576,11 +581,10 @@ If we think of the problem in terms of finite differences on a uniform mesh, <sp
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute L2 error and error at nodes</span>
-<span class="n">V_ex</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-<span class="n">u_ex</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V_ex</span><span class="p">)</span>
+<span class="n">V_ex</span> <span class="o">=</span> <span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">u_ex</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">V_ex</span><span class="p">)</span>
 <span class="n">u_ex</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">u_exact</span><span class="p">)</span>
-<span class="n">u_ex</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">scatter_forward</span><span class="p">()</span>
-<span class="n">error_L2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">((</span><span class="n">uh</span> <span class="o">-</span> <span class="n">u_ex</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span>
+<span class="n">error_L2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">assemble_scalar</span><span class="p">((</span><span class="n">uh</span> <span class="o">-</span> <span class="n">u_ex</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;L2-error: </span><span class="si">{</span><span class="n">error_L2</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <span class="c1"># Compute values at mesh vertices</span>
@@ -592,12 +596,12 @@ If we think of the problem in terms of finite differences on a uniform mesh, <sp
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>L2-error: 1.49e-15
-Error_max: 5.77e-15
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>L2-error: 1.51e-15
+Error_max: 5.55e-15
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:18:24.493 (   0.276s) [main            ]topologycomputation.cpp:616   INFO| Computing mesh entities of dimension 0
-2021-11-29 08:18:24.493 (   0.276s) [main            ]topologycomputation.cpp:616   INFO| Computing mesh entities of dimension 1
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-11-29 08:42:57.139 (   0.136s) [main            ]topologycomputation.cpp:612   INFO| Computing mesh entities of dimension 0
+2021-11-29 08:42:57.139 (   0.136s) [main            ]topologycomputation.cpp:612   INFO| Computing mesh entities of dimension 1
 </pre></div>
 </div>
 </div>
