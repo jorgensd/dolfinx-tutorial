@@ -470,21 +470,21 @@ The idea of weak imposition is that we add additional terms to the variational f
 </div>
 <p>As opposed to the first tutorial, we now have to have another look at the variational form.
 We start by integrating the problem by parts, to obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-16164441-2393-4429-b575-e5ff9fa471fe">
-<span class="eqno">(8)<a class="headerlink" href="#equation-16164441-2393-4429-b575-e5ff9fa471fe" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-baed0287-e61d-4f2f-8933-35a0a6855351">
+<span class="eqno">(8)<a class="headerlink" href="#equation-baed0287-e61d-4f2f-8933-35a0a6855351" title="Permalink to this equation">¶</a></span>\[\begin{align}
     \int_{\Omega} \nabla u \cdot \nabla v~\mathrm{d}x - \int_{\partial\Omega}\nabla u \cdot n v~\mathrm{d}s = \int_{\Omega} f v~\mathrm{d}x.
 \end{align}\]</div>
 <p>As we are not using strong enforcement, we do not set the trace of the test function to <span class="math notranslate nohighlight">\(0\)</span> on the outer boundary.
 Instead, we add the following two terms to the variational formulation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-70ea4a41-cbc2-4194-80b4-dc5ff2d8f9a3">
-<span class="eqno">(9)<a class="headerlink" href="#equation-70ea4a41-cbc2-4194-80b4-dc5ff2d8f9a3" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-db7f43f8-cf78-47e2-9a04-6ab4b0d2769c">
+<span class="eqno">(9)<a class="headerlink" href="#equation-db7f43f8-cf78-47e2-9a04-6ab4b0d2769c" title="Permalink to this equation">¶</a></span>\[\begin{align}
     -\int_{\partial\Omega} \nabla  v \cdot n (u-u_D)~\mathrm{d}s + \frac{\alpha}{h} \int_{\partial\Omega} (u-u_D)v~\mathrm{d}s.
 \end{align}\]</div>
 <p>where the first term enforces symmetry to the bilinear form, while the latter term enforces coercivity.
 <span class="math notranslate nohighlight">\(u_D\)</span> is the known Dirichlet condition, and <span class="math notranslate nohighlight">\(h\)</span> is the diameter of the circumscribed sphere of the mesh element.
 We create bilinear and linear form, <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(L\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-2ef14256-ecd2-4afb-831d-622ff499fa1f">
-<span class="eqno">(10)<a class="headerlink" href="#equation-2ef14256-ecd2-4afb-831d-622ff499fa1f" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-7d2c7e91-976a-4745-b9f4-0647455eb3d5">
+<span class="eqno">(10)<a class="headerlink" href="#equation-7d2c7e91-976a-4745-b9f4-0647455eb3d5" title="Permalink to this equation">¶</a></span>\[\begin{align}
     a(u, v) &amp;= \int_{\Omega} \nabla u \cdot \nabla v~\mathrm{d}x + \int_{\partial\Omega}-(n \cdot\nabla u) v - (n \cdot \nabla v) u + \frac{\alpha}{h} uv~\mathrm{d}s,\\
     L(v) &amp;= \int_{\Omega} fv~\mathrm{d}x + \int_{\partial\Omega} -(n \cdot \nabla v) u_D + \frac{\alpha}{h} u_Dv~\mathrm{d}s
 \end{align}\]</div>
