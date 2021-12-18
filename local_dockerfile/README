@@ -5,5 +5,5 @@ Can be ran by
 ```
 docker build --tag=local_jupyter .
 cd ..
-docker run --rm -v $PWD:/root/shared  --init -p 8888:8888 local_jupyter
+docker run --rm -v $PWD:/root/shared -w /root/shared  --init -p 8888:8888 local_jupyter
 ```
