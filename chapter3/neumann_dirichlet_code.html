@@ -44,7 +44,7 @@
     <script src="../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
     <script>
@@ -546,10 +546,12 @@ L(v) = \int_{\Omega} fv ~\mathrm{d} x - \int_{\Lambda_N} gv~\mathrm{d} s.
 
 <span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Constant</span><span class="p">,</span> <span class="n">DirichletBC</span><span class="p">,</span> <span class="n">Function</span><span class="p">,</span> <span class="n">FunctionSpace</span><span class="p">,</span> <span class="n">LinearProblem</span><span class="p">,</span> 
                          <span class="n">assemble_scalar</span><span class="p">,</span> <span class="n">locate_dofs_geometrical</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">dolfinx.generation</span> <span class="kn">import</span> <span class="n">UnitSquareMesh</span>
+<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">create_unit_square</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+<span class="kn">from</span> <span class="nn">petsc4py.PETSc</span> <span class="kn">import</span> <span class="n">ScalarType</span>
 <span class="kn">from</span> <span class="nn">ufl</span> <span class="kn">import</span> <span class="n">SpatialCoordinate</span><span class="p">,</span> <span class="n">TestFunction</span><span class="p">,</span> <span class="n">TrialFunction</span><span class="p">,</span> <span class="n">dot</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">grad</span>
-<span class="n">mesh</span> <span class="o">=</span> <span class="n">UnitSquareMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">create_unit_square</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 <span class="n">V</span> <span class="o">=</span> <span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="n">u</span> <span class="o">=</span> <span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">v</span> <span class="o">=</span> <span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
@@ -580,7 +582,7 @@ L(v) = \int_{\Omega} fv ~\mathrm{d} x - \int_{\Lambda_N} gv~\mathrm{d} s.
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
 <span class="n">g</span> <span class="o">=</span> <span class="o">-</span><span class="mi">4</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">f</span> <span class="o">=</span> <span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">ScalarType</span><span class="p">(</span><span class="o">-</span><span class="mi">6</span><span class="p">))</span>
 <span class="n">L</span> <span class="o">=</span> <span class="n">f</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">dx</span> <span class="o">-</span> <span class="n">g</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">ds</span>
 </pre></div>
 </div>
@@ -624,8 +626,8 @@ Error_max : 2.22e-15
 <span class="c1"># Start virtual framebuffer</span>
 <span class="n">pyvista</span><span class="o">.</span><span class="n">start_xvfb</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
 
-<span class="kn">import</span> <span class="nn">dolfinx.plot</span>
-<span class="n">pyvista_cells</span><span class="p">,</span> <span class="n">cell_types</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">create_vtk_topology</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">dolfinx.plot</span> <span class="kn">import</span> <span class="n">create_vtk_topology</span>
+<span class="n">pyvista_cells</span><span class="p">,</span> <span class="n">cell_types</span> <span class="o">=</span> <span class="n">create_vtk_topology</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
 <span class="n">grid</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">(</span><span class="n">pyvista_cells</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
 <span class="n">point_values</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">compute_point_values</span><span class="p">()</span>
 <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">iscomplexobj</span><span class="p">(</span><span class="n">point_values</span><span class="p">):</span>

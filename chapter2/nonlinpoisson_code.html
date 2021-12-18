@@ -44,7 +44,7 @@
     <script src="../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
     <script>
@@ -460,17 +460,16 @@
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ufl</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
 
-<span class="kn">from</span> <span class="nn">dolfinx.generation</span> <span class="kn">import</span> <span class="n">UnitSquareMesh</span>
 <span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="p">(</span><span class="n">DirichletBC</span><span class="p">,</span> <span class="n">Function</span><span class="p">,</span> <span class="n">FunctionSpace</span><span class="p">,</span> <span class="n">NonlinearProblem</span><span class="p">,</span>
                          <span class="n">assemble_scalar</span><span class="p">,</span> <span class="n">locate_dofs_topological</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">dolfinx.log</span> <span class="kn">import</span> <span class="n">set_log_level</span><span class="p">,</span> <span class="n">LogLevel</span>
-<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">locate_entities_boundary</span>
+<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">create_unit_square</span><span class="p">,</span> <span class="n">locate_entities_boundary</span>
 <span class="kn">from</span> <span class="nn">dolfinx.nls</span> <span class="kn">import</span> <span class="n">NewtonSolver</span>
 
 <span class="k">def</span> <span class="nf">q</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
     <span class="k">return</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">u</span><span class="o">**</span><span class="mi">2</span>
 
-<span class="n">mesh</span> <span class="o">=</span> <span class="n">UnitSquareMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">create_unit_square</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
 <span class="n">u_ufl</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">f</span> <span class="o">=</span> <span class="o">-</span> <span class="n">ufl</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">q</span><span class="p">(</span><span class="n">u_ufl</span><span class="p">)</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u_ufl</span><span class="p">))</span>
@@ -556,22 +555,23 @@ Newton’s method requires methods for evaluating the residual <code class="docu
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of interations: 8
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-12-13 08:16:48.782 (   0.084s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-12-13 08:16:48.784 (   0.085s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-12-13 08:16:48.785 (   0.086s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 20.3794 (tol = 1e-10) r (rel) = 0.922544(tol = 1e-06)
-2021-12-13 08:16:48.785 (   0.087s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-12-13 08:16:48.788 (   0.089s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 6.95285 (tol = 1e-10) r (rel) = 0.314745(tol = 1e-06)
-2021-12-13 08:16:48.788 (   0.089s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-12-13 08:16:48.789 (   0.090s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 2.93575 (tol = 1e-10) r (rel) = 0.132897(tol = 1e-06)
-2021-12-13 08:16:48.789 (   0.090s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-12-13 08:16:48.790 (   0.091s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 0.700593 (tol = 1e-10) r (rel) = 0.0317148(tol = 1e-06)
-2021-12-13 08:16:48.790 (   0.092s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-12-13 08:16:48.791 (   0.093s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 0.0490796 (tol = 1e-10) r (rel) = 0.00222176(tol = 1e-06)
-2021-12-13 08:16:48.791 (   0.093s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-12-13 08:16:48.793 (   0.094s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 7: r (abs) = 0.000299464 (tol = 1e-10) r (rel) = 1.35563e-05(tol = 1e-06)
-2021-12-13 08:16:48.793 (   0.094s) [main            ]  PETScKrylovSolver.cpp:98    INFO| PETSc Krylov solver starting to solve system.
-2021-12-13 08:16:48.794 (   0.096s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 8: r (abs) = 1.52969e-08 (tol = 1e-10) r (rel) = 6.92466e-10(tol = 1e-06)
-2021-12-13 08:16:48.795 (   0.096s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 8 iterations and 45 linear solver iterations.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-12-18 23:07:35.720 (   0.098s) [main            ]  PETScKrylovSolver.cpp:97    INFO| PETSc Krylov solver starting to solve system.
+2021-12-18 23:07:35.721 (   0.099s) [main            ]  PETScKrylovSolver.cpp:97    INFO| PETSc Krylov solver starting to solve system.
+2021-12-18 23:07:35.723 (   0.100s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 20.3794 (tol = 1e-10) r (rel) = 0.922544(tol = 1e-06)
+2021-12-18 23:07:35.723 (   0.101s) [main            ]  PETScKrylovSolver.cpp:97    INFO| PETSc Krylov solver starting to solve system.
+2021-12-18 23:07:35.725 (   0.103s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 6.95285 (tol = 1e-10) r (rel) = 0.314745(tol = 1e-06)
+2021-12-18 23:07:35.725 (   0.103s) [main            ]  PETScKrylovSolver.cpp:97    INFO| PETSc Krylov solver starting to solve system.
+2021-12-18 23:07:35.726 (   0.104s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 2.93575 (tol = 1e-10) r (rel) = 0.132897(tol = 1e-06)
+2021-12-18 23:07:35.726 (   0.104s) [main            ]  PETScKrylovSol
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ver.cpp:97    INFO| PETSc Krylov solver starting to solve system.
+2021-12-18 23:07:35.728 (   0.105s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 0.700593 (tol = 1e-10) r (rel) = 0.0317148(tol = 1e-06)
+2021-12-18 23:07:35.728 (   0.106s) [main            ]  PETScKrylovSolver.cpp:97    INFO| PETSc Krylov solver starting to solve system.
+2021-12-18 23:07:35.729 (   0.107s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 0.0490796 (tol = 1e-10) r (rel) = 0.00222176(tol = 1e-06)
+2021-12-18 23:07:35.729 (   0.107s) [main            ]  PETScKrylovSolver.cpp:97    INFO| PETSc Krylov solver starting to solve system.
+2021-12-18 23:07:35.730 (   0.108s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 7: r (abs) = 0.000299464 (tol = 1e-10) r (rel) = 1.35563e-05(tol = 1e-06)
+2021-12-18 23:07:35.730 (   0.108s) [main            ]  PETScKrylovSolver.cpp:97    INFO| PETSc Krylov solver starting to solve
 </pre></div>
 </div>
 </div>
@@ -600,8 +600,11 @@ If we think of the problem in terms of finite differences on a uniform mesh, <sp
 Error_max: 5.55e-15
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2021-12-13 08:16:48.806 (   0.108s) [main            ]topologycomputation.cpp:612   INFO| Computing mesh entities of dimension 0
-2021-12-13 08:16:48.806 (   0.108s) [main            ]topologycomputation.cpp:612   INFO| Computing mesh entities of dimension 1
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> system.
+2021-12-18 23:07:35.732 (   0.109s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 8: r (abs) = 1.52969e-08 (tol = 1e-10) r (rel) = 6.92466e-10(tol = 1e-06)
+2021-12-18 23:07:35.732 (   0.109s) [main            ]       NewtonSolver.cpp:252   INFO| Newton solver finished in 8 iterations and 45 linear solver iterations.
+2021-12-18 23:07:35.745 (   0.123s) [main            ]topologycomputation.cpp:612   INFO| Computing mesh entities of dimension 0
+2021-12-18 23:07:35.745 (   0.123s) [main            ]topologycomputation.cpp:612   INFO| Computing mesh entities of dimension 1
 </pre></div>
 </div>
 </div>

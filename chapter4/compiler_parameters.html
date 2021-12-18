@@ -459,8 +459,8 @@ This C code is in turned compiled using <a class="reference external" href="http
 <p>Next we generate a general function to assemble the mass matrix for a UnitCube. Note that we use <code class="docutils literal notranslate"><span class="pre">dolfinx.fem.Form</span></code> to compile the variational form. For codes using <code class="docutils literal notranslate"><span class="pre">dolfinx.LinearProblem</span></code>, you can supply <code class="docutils literal notranslate"><span class="pre">jit_parameters</span></code> as a keyword argument.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.generation</span> <span class="kn">import</span> <span class="n">UnitCubeMesh</span>
-<span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">Form</span><span class="p">,</span> <span class="n">FunctionSpace</span><span class="p">,</span> <span class="n">assemble_matrix</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">Form</span><span class="p">,</span> <span class="n">FunctionSpace</span><span class="p">,</span> <span class="n">assemble_matrix</span>
+<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">create_unit_cube</span>
 <span class="kn">from</span> <span class="nn">ufl</span> <span class="kn">import</span> <span class="n">TestFunction</span><span class="p">,</span> <span class="n">TrialFunction</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">inner</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
@@ -469,7 +469,7 @@ This C code is in turned compiled using <a class="reference external" href="http
 
 <span class="k">def</span> <span class="nf">compile_form</span><span class="p">(</span><span class="n">space</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">degree</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">jit_parameters</span><span class="p">:</span><span class="n">Dict</span><span class="p">):</span>
     <span class="n">N</span> <span class="o">=</span> <span class="mi">10</span>
-    <span class="n">mesh</span> <span class="o">=</span> <span class="n">UnitCubeMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+    <span class="n">mesh</span> <span class="o">=</span> <span class="n">create_unit_cube</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
     <span class="n">V</span> <span class="o">=</span> <span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">degree</span><span class="p">))</span>
     <span class="n">u</span> <span class="o">=</span> <span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
     <span class="n">v</span> <span class="o">=</span> <span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
@@ -562,35 +562,35 @@ This C code is in turned compiled using <a class="reference external" href="http
       <td>N1curl</td>
       <td>1</td>
       <td>-O1\n-march=native</td>
-      <td>0.016142</td>
+      <td>0.018576</td>
     </tr>
     <tr>
       <th>1</th>
       <td>N1curl</td>
       <td>1</td>
       <td>-O2\n-march=native</td>
-      <td>0.014839</td>
+      <td>0.017694</td>
     </tr>
     <tr>
       <th>2</th>
       <td>N1curl</td>
       <td>1</td>
       <td>-O3\n-march=native</td>
-      <td>0.013734</td>
+      <td>0.016416</td>
     </tr>
     <tr>
       <th>3</th>
       <td>N1curl</td>
       <td>1</td>
       <td>-Ofast\n-march=native</td>
-      <td>0.013683</td>
+      <td>0.016420</td>
     </tr>
     <tr>
       <th>4</th>
       <td>N1curl</td>
       <td>1</td>
       <td>-O1</td>
-      <td>0.014786</td>
+      <td>0.017289</td>
     </tr>
     <tr>
       <th>...</th>
@@ -604,35 +604,35 @@ This C code is in turned compiled using <a class="reference external" href="http
       <td>RT</td>
       <td>3</td>
       <td>-Ofast\n-march=native</td>
-      <td>0.375472</td>
+      <td>0.397679</td>
     </tr>
     <tr>
       <th>68</th>
       <td>RT</td>
       <td>3</td>
       <td>-O1</td>
-      <td>0.615732</td>
+      <td>0.640700</td>
     </tr>
     <tr>
       <th>69</th>
       <td>RT</td>
       <td>3</td>
       <td>-O2</td>
-      <td>0.539263</td>
+      <td>0.566047</td>
     </tr>
     <tr>
       <th>70</th>
       <td>RT</td>
       <td>3</td>
       <td>-O3</td>
-      <td>0.452272</td>
+      <td>0.472833</td>
     </tr>
     <tr>
       <th>71</th>
       <td>RT</td>
       <td>3</td>
       <td>-Ofast</td>
-      <td>0.449673</td>
+      <td>0.488494</td>
     </tr>
   </tbody>
 </table>

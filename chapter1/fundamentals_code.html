@@ -44,7 +44,7 @@
     <script src="../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
     <script>
@@ -532,13 +532,13 @@ Therefore, we need to make specific choices of <span class="math notranslate noh
 <!-- Particularly, piecewise linear continuous Galerkin finite elements are able to exactly reproduce a quadratic polynomial on 
 a uniformly partitioned mesh. -->
 <p>We use this fact to construct a quadratic function in <span class="math notranslate nohighlight">\(2D\)</span>. In particular we choose</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3811c4e5-98f3-48e2-a2d1-b21ca4acc3a9">
-<span class="eqno">(6)<a class="headerlink" href="#equation-3811c4e5-98f3-48e2-a2d1-b21ca4acc3a9" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-ddd991b5-f3b4-42d5-8acc-b81051f52f21">
+<span class="eqno">(6)<a class="headerlink" href="#equation-ddd991b5-f3b4-42d5-8acc-b81051f52f21" title="Permalink to this equation">¶</a></span>\[\begin{align}
  u_e(x,y)=1+x^2+2y^2
  \end{align}\]</div>
 <p>Inserting <span class="math notranslate nohighlight">\(u_e\)</span> in the original boundary problem, we find that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-998c5236-5a9b-436f-8fb2-1f22212a719b">
-<span class="eqno">(7)<a class="headerlink" href="#equation-998c5236-5a9b-436f-8fb2-1f22212a719b" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-0d2f27a5-ad0c-47f7-ab2a-4ea3aa87e010">
+<span class="eqno">(7)<a class="headerlink" href="#equation-0d2f27a5-ad0c-47f7-ab2a-4ea3aa87e010" title="Permalink to this equation">¶</a></span>\[\begin{align}
     f(x,y)= -6,\qquad u_d(x,y)=u_e(x,y)=1+x^2+2y^2,
 \end{align}\]</div>
 <p>regardless of the shape of the domain as long as we prescribe
@@ -552,46 +552,35 @@ the equation to obtain the right-hand side (source term <span class="math notran
 we usually know about the numerical errors <em>asymptotic properties</em>. For instance that it is proportional to <span class="math notranslate nohighlight">\(h^2\)</span> if <span class="math notranslate nohighlight">\(h\)</span> is the size of a cell in the mesh. We can then compare the error on meshes with different <span class="math notranslate nohighlight">\(h\)</span>-values to see if the asymptotic behavior is correct. This technique will be explained in detail in the chapter <a class="reference internal" href="../chapter4/convergence.html"><span class="doc std std-doc">Improving your fenics code</span></a>.</p>
 <p>However, in cases where we have a solution we know that should have no approximation error, we know that the solution should
 be produced to machine precision by the program.</p>
-<p>We start by importing external modules used alongside <code class="docutils literal notranslate"><span class="pre">dolfinx</span></code>.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
-<span class="kn">import</span> <span class="nn">ufl</span>
-<span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
-</pre></div>
-</div>
-</div>
-</div>
 <p>A major difference between a traditional FEniCS code and a FEniCSx code, is that one is not advised to use the wildcard import. We will see this throughout this first example.</p>
 </div>
 <div class="section" id="generating-simple-meshes">
 <h2>Generating  simple meshes<a class="headerlink" href="#generating-simple-meshes" title="Permalink to this headline">¶</a></h2>
-<p>The next step is to define the discrete domain, <em>the mesh</em>. We do this by importing the built-in <code class="docutils literal notranslate"><span class="pre">dolfinx.generation.UnitSquareMesh</span></code> function, that can build a <span class="math notranslate nohighlight">\([0,1]\times[0,1]\)</span> mesh, consisting of either triangles or quadrilaterals.</p>
+<p>The next step is to define the discrete domain, <em>the mesh</em>. We do this by importing one of the built-in mesh generators. We will build a unit square mesh, i.e. a mesh spanning <span class="math notranslate nohighlight">\([0,1]\times[0,1]\)</span>. It can consist of either triangles or quadrilaterals.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.generation</span> <span class="kn">import</span> <span class="n">UnitSquareMesh</span>
-<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">CellType</span>
-<span class="n">mesh</span> <span class="o">=</span> <span class="n">UnitSquareMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">CellType</span><span class="o">.</span><span class="n">quadrilateral</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">CellType</span><span class="p">,</span> <span class="n">create_unit_square</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">create_unit_square</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">CellType</span><span class="o">.</span><span class="n">quadrilateral</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>which defines a uniform finite element mesh over the unit square <span class="math notranslate nohighlight">\([0,1]\times[0, 1]\)</span>. The mesh consists of <em>cells</em>, which in 2D can be either triangles of quadrilaterals. Note that in addition to give how many elements we would like to have in each direction.
-Note that we also supply the <em>MPI-communicator</em>.
-This is to specify how we would like the program to behave in parallel. If we supply <code class="docutils literal notranslate"><span class="pre">MPI.COMM_WORLD</span></code> we create a single mesh,
-whose data is distributed over the number of processors we
-would like to use. We can for instance run the program in
-parallel on two processors by using <code class="docutils literal notranslate"><span class="pre">mpirun</span></code>, as:</p>
+<p>Note that in addition to give how many elements we would like to have in each direction.
+We also have to supply the <em>MPI-communicator</em>.
+This is to specify how we would like the program to behave in parallel.
+If we supply <code class="docutils literal notranslate"><span class="pre">MPI.COMM_WORLD</span></code> we create a single mesh, whose data is distributed over the number of processors we
+would like to use. We can for instance run the program in  parallel on two processors by using <code class="docutils literal notranslate"><span class="pre">mpirun</span></code>, as:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span> mpirun -n <span class="m">2</span> python3 t1.py
 </pre></div>
 </div>
-<p>However, if we would like to create a separate mesh on each processor, we can use <code class="docutils literal notranslate"><span class="pre">MPI.COMM_SELF</span></code>. This is for instance
-useful if we run a small problem, and would like to run it with
-multiple parameters.</p>
+<p>However, if we would like to create a separate mesh on each processor, we can use <code class="docutils literal notranslate"><span class="pre">MPI.COMM_SELF</span></code>.
+This is for instance  useful if we run a small problem, and would like to run it with multiple parameters.</p>
 </div>
 <div class="section" id="defining-the-finite-element-function-space">
 <h2>Defining the finite element function space<a class="headerlink" href="#defining-the-finite-element-function-space" title="Permalink to this headline">¶</a></h2>
-<p>Once the mesh has been created, we can create the finite element function space <span class="math notranslate nohighlight">\(V\)</span>:</p>
+<p>Once the mesh has been created, we can create the finite element function space <span class="math notranslate nohighlight">\(V\)</span>.
+We import the function space initializer from the <code class="docutils literal notranslate"><span class="pre">dolfinx.fem</span></code> module.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">FunctionSpace</span>
@@ -612,7 +601,7 @@ The computed solution will be continuous across elements and linearly varying in
 <h2>Defining the boundary conditions<a class="headerlink" href="#defining-the-boundary-conditions" title="Permalink to this headline">¶</a></h2>
 <p>The next step is to specify the boundary condition <span class="math notranslate nohighlight">\(u=u_D\)</span> on <span class="math notranslate nohighlight">\(\partial\Omega_D\)</span>, which is done by over several steps.
 The first step is to define the function <span class="math notranslate nohighlight">\(u_D\)</span>. Into this function, we would like to interpolate the boundary condition <span class="math notranslate nohighlight">\(1 + x^2+2y^2\)</span>.
-We do this by first defining a <code class="docutils literal notranslate"><span class="pre">dolfinx.Function</span></code>, and then using a <a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions">lambda-function</a> in Python to define the
+We do this by first defining a <code class="docutils literal notranslate"><span class="pre">dolfinx.fem.Function</span></code>, and then using a <a class="reference external" href="https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions">lambda-function</a> in Python to define the
 spatially varying function.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -625,15 +614,17 @@ spatially varying function.</p>
 </div>
 <p>We now have the boundary data (and in this case the solution of
 the finite element problem) represented in the discrete function space.
-Next we would like to apply the boundary values to all degrees of freedom that are on the boundary of the discrete domain. We start by identifying the facets (line-segments) representing the outer boundary, using <code class="docutils literal notranslate"><span class="pre">dolfinx.cpp.mesh.compute_boundary_facets</span></code>.
-This function returns an array of booleans of the same size as the number of facets on this processor, where <code class="docutils literal notranslate"><span class="pre">True</span></code> indicates that the local facet <span class="math notranslate nohighlight">\(i\)</span> is on the boundary. To reduce this to only the indices that are <code class="docutils literal notranslate"><span class="pre">True</span></code>, we use <code class="docutils literal notranslate"><span class="pre">numpy.where</span></code>.</p>
+Next we would like to apply the boundary values to all degrees of freedom that are on the boundary of the discrete domain. We start by identifying the facets (line-segments) representing the outer boundary, using <code class="docutils literal notranslate"><span class="pre">dolfinx.mesh.compute_boundary_facets</span></code>.
+This function returns an array of booleans of the same size as the number of facets on this processor, where <code class="docutils literal notranslate"><span class="pre">True</span></code> indicates that the local facet <span class="math notranslate nohighlight">\(i\)</span> is on the boundary. To reduce this to only the indices that are <code class="docutils literal notranslate"><span class="pre">True</span></code>, we use <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.flatnonzero.html"><code class="docutils literal notranslate"><span class="pre">numpy.flatnonzero</span></code></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fdim</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span> <span class="mi">1</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">compute_boundary_facets</span>
 <span class="c1"># Create facet to cell connectivity required to determine boundary facets</span>
-<span class="kn">from</span> <span class="nn">dolfinx.cpp.mesh</span> <span class="kn">import</span> <span class="n">compute_boundary_facets</span>
-<span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">create_connectivity</span><span class="p">(</span><span class="n">fdim</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
-<span class="n">boundary_facets</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">compute_boundary_facets</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">tdim</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span>
+<span class="n">fdim</span> <span class="o">=</span> <span class="n">tdim</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">create_connectivity</span><span class="p">(</span><span class="n">fdim</span><span class="p">,</span> <span class="n">tdim</span><span class="p">)</span>
+<span class="n">boundary_facets</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">compute_boundary_facets</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -659,10 +650,12 @@ However, this is only true in the case of <code class="docutils literal notransl
 <div class="section" id="defining-the-trial-and-test-function">
 <h2>Defining the trial and test function<a class="headerlink" href="#defining-the-trial-and-test-function" title="Permalink to this headline">¶</a></h2>
 <p>In mathematics, we distinguish between trial and test spaces <span class="math notranslate nohighlight">\(V\)</span> and <span class="math notranslate nohighlight">\(\hat{V}\)</span>. The only difference in the present problem is the boundary conditions.
-In FEniCSx, we do not specify boundary conditions as part of the function space, so it is sufficient to use a common space for the trial and test function:</p>
+In FEniCSx, we do not specify boundary conditions as part of the function space, so it is sufficient to use a common space for the trial and test function.</p>
+<p>We use the <a class="reference external" href="https://github.com/FEniCS/ufl/">Unified Form Language</a> (UFL) to specify the varitional formulations.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">u</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ufl</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -675,7 +668,8 @@ In FEniCSx, we do not specify boundary conditions as part of the function space,
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">Constant</span>
-<span class="n">f</span> <span class="o">=</span> <span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">petsc4py.PETSc</span> <span class="kn">import</span> <span class="n">ScalarType</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">ScalarType</span><span class="p">(</span><span class="o">-</span><span class="mi">6</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -704,7 +698,13 @@ The integration over the domain <span class="math notranslate nohighlight">\(\Om
 </div>
 <div class="section" id="expressing-inner-products">
 <h2>Expressing inner products<a class="headerlink" href="#expressing-inner-products" title="Permalink to this headline">¶</a></h2>
-<p>The inner product <span class="math notranslate nohighlight">\(\int_\Omega \nabla u \cdot \nabla v ~\mathrm{d} x\)</span> can be expressed in various ways in UFL. We have used the notation <code class="docutils literal notranslate"><span class="pre">ufl.dot(ufl.grad(u),</span> <span class="pre">ufl.grad(v))*uf.dx</span></code>. The dot product in UFL computes the sum (contraction) over the last index of the first factor and first index of the second factor. In this case, both factors are tensors of rank one (vectors) and so the sum is just over the single index of both <span class="math notranslate nohighlight">\(\nabla u\)</span> and <span class="math notranslate nohighlight">\(\nabla v\)</span>. To compute an inner product of matrices (with two indices), one must instead of <code class="docutils literal notranslate"><span class="pre">ufl.dot</span></code> use the function <code class="docutils literal notranslate"><span class="pre">ufl.inner</span></code>. For vectors, <code class="docutils literal notranslate"><span class="pre">ufl.dot</span></code> and <code class="docutils literal notranslate"><span class="pre">ufl.inner</span></code> are equivalent.</p>
+<p>The inner product <span class="math notranslate nohighlight">\(\int_\Omega \nabla u \cdot \nabla v ~\mathrm{d} x\)</span> can be expressed in various ways in UFL. We have used the notation <code class="docutils literal notranslate"><span class="pre">ufl.dot(ufl.grad(u),</span> <span class="pre">ufl.grad(v))*ufl.dx</span></code>. The dot product in UFL computes the sum (contraction) over the last index of the first factor and first index of the second factor. In this case, both factors are tensors of rank one (vectors) and so the sum is just over the single index of both <span class="math notranslate nohighlight">\(\nabla u\)</span> and <span class="math notranslate nohighlight">\(\nabla v\)</span>. To compute an inner product of matrices (with two indices), one must instead of <code class="docutils literal notranslate"><span class="pre">ufl.dot</span></code> use the function <code class="docutils literal notranslate"><span class="pre">ufl.inner</span></code>. For vectors, <code class="docutils literal notranslate"><span class="pre">ufl.dot</span></code> and <code class="docutils literal notranslate"><span class="pre">ufl.inner</span></code> are equivalent.</p>
+<div class="admonition-complex-numbers admonition">
+<p class="admonition-title">Complex numbers</p>
+<p>In DOLFINx, one can solve complex number problems by using an installation of PETSc using complex numbers.
+For variational formulations with complex numbers, one cannot use <code class="docutils literal notranslate"><span class="pre">ufl.dot</span></code> to compute inner products.
+One has to use <code class="docutils literal notranslate"><span class="pre">ufl.inner</span></code>, with the test-function as the second input argument for <code class="docutils literal notranslate"><span class="pre">ufl.inner</span></code>.</p>
+</div>
 </div>
 <div class="section" id="forming-and-solving-the-linear-system">
 <h2>Forming and solving the linear system<a class="headerlink" href="#forming-and-solving-the-linear-system" title="Permalink to this headline">¶</a></h2>
@@ -733,12 +733,14 @@ the variational problem: Find <span class="math notranslate nohighlight">\(u_h\i
 </div>
 </div>
 </div>
-<p>We compute the error in two different ways. First, we compute the <span class="math notranslate nohighlight">\(L^2\)</span>-norm of the error, defined by <span class="math notranslate nohighlight">\(E=\sqrt{\int_\Omega (u_D-u_h)^2\mathrm{d} x}\)</span>. We use UFL to express the <span class="math notranslate nohighlight">\(L^2\)</span>-error, and use <code class="docutils literal notranslate"><span class="pre">dolfinx.fem.assemble_scalar</span></code> to compute the scalar value.</p>
+<p>We compute the error in two different ways. First, we compute the <span class="math notranslate nohighlight">\(L^2\)</span>-norm of the error, defined by <span class="math notranslate nohighlight">\(E=\sqrt{\int_\Omega (u_D-u_h)^2\mathrm{d} x}\)</span>. We use UFL to express the <span class="math notranslate nohighlight">\(L^2\)</span>-error, and use <code class="docutils literal notranslate"><span class="pre">dolfinx.fem.assemble_scalar</span></code> to compute the scalar value. In DOLFINx, <code class="docutils literal notranslate"><span class="pre">assemble_scalar</span></code> only assembles over the cells on the local process. This means that if we use 2 processes to solve our problem, we need to gather the solution to one (or all the processes.
+We can do this with the <code class="docutils literal notranslate"><span class="pre">MPI.allreduce</span></code> function.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">assemble_scalar</span>
 <span class="n">L2_error</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">uh</span> <span class="o">-</span> <span class="n">uex</span><span class="p">,</span> <span class="n">uh</span> <span class="o">-</span> <span class="n">uex</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
-<span class="n">error_L2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">assemble_scalar</span><span class="p">(</span><span class="n">L2_error</span><span class="p">))</span>
+<span class="n">error_local</span> <span class="o">=</span> <span class="n">assemble_scalar</span><span class="p">(</span><span class="n">L2_error</span><span class="p">)</span>
+<span class="n">error_L2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">error_local</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -754,14 +756,16 @@ Therefore we compute the values of both <code class="docutils literal notranslat
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">u_vertex_values</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">compute_point_values</span><span class="p">()</span>
 <span class="n">u_ex_vertex_values</span> <span class="o">=</span> <span class="n">uex</span><span class="o">.</span><span class="n">compute_point_values</span><span class="p">()</span>
 <span class="n">error_max</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">u_vertex_values</span> <span class="o">-</span> <span class="n">u_ex_vertex_values</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error_L2 : </span><span class="si">{</span><span class="n">error_L2</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error_max : </span><span class="si">{</span><span class="n">error_max</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># Only print the error on one process</span>
+<span class="k">if</span> <span class="n">mesh</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error_L2 : </span><span class="si">{</span><span class="n">error_L2</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error_max : </span><span class="si">{</span><span class="n">error_max</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Error_L2 : 8.24e-03
-Error_max : 2.66e-15
+Error_max : 2.00e-15
 </pre></div>
 </div>
 </div>
@@ -774,8 +778,8 @@ We start by converting the mesh to a format that can be used with <code class="d
 To do this we use the function <code class="docutils literal notranslate"><span class="pre">dolfinx.plot.create_vtk_topology</span></code>. The first step is to create an unstructured grid that can be used by <code class="docutils literal notranslate"><span class="pre">pyvista</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.plot</span>
-<span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">create_vtk_topology</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.plot</span> <span class="kn">import</span> <span class="n">create_vtk_topology</span>
+<span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span> <span class="o">=</span> <span class="n">create_vtk_topology</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -817,7 +821,7 @@ In the jupyter notebook environment, we use the default setting of <code class="
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/fundamentals_code_32_0.png" src="../_images/fundamentals_code_32_0.png" />
+<img alt="../_images/fundamentals_code_31_0.png" src="../_images/fundamentals_code_31_0.png" />
 </div>
 </div>
 </div>
@@ -836,7 +840,7 @@ In the jupyter notebook environment, we use the default setting of <code class="
 </div>
 <div class="cell_output docutils container">
 <script type="application/vnd.jupyter.widget-view+json">
-{"version_major": 2, "version_minor": 0, "model_id": "2a29f206a71e498f89351ea6c8df92d9"}
+{"version_major": 2, "version_minor": 0, "model_id": "3729180dd84148f5bd14f290fa115737"}
 </script></div>
 </div>
 </div>
@@ -860,7 +864,7 @@ In the jupyter notebook environment, we use the default setting of <code class="
 
 
 <script type="application/vnd.jupyter.widget-state+json">
-{"state": {"4fc6c3a70573460190e28fc71e1fd672": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "2a29f206a71e498f89351ea6c8df92d9": {"model_name": "ViewerModel", "model_module": "itkwidgets", "model_module_version": "^0.32.1", "state": {"_custom_cmap": null, "_dom_classes": [], "_downsampling": false, "_largest_roi": {"shape": [2, 3], "dtype": "float64"}, "_model_module": "itkwidgets", "_model_module_version": "^0.32.1", "_model_name": "ViewerModel", "_rendering_image": false, "_reset_crop_requested": false, "_scale_factors": {"shape": [3], "dtype": "uint8"}, "_view_count": null, "_view_module": "itkwidgets", "_view_module_version": "^0.32.1", "_view_name": "ViewerView", "annotations": true, "axes": false, "background": [], "blend_mode": "composite", "camera": {"shape": [3, 3], "dtype": "float32"}, "channels": null, "clicked_slice_point": null, "cmap": null, "geometries": [{"vtkClass": "vtkPolyData", "points": {"vtkClass": "vtkPoints", "name": "_points", "numberOfComponents": 3, "dataType": "Float32Array", "size": 243}, "polys": {"vtkClass": "vtkCellArray", "name": "_polys", "numberOfComponents": 1, "size": 320, "dataType": "Uint32Array"}, "pointData": {"vtkClass": "vtkDataSetAttributes", "activeScalars": 0, "arrays": [{"data": {"vtkClass": "vtkDataArray", "name": "u", "numberOfComponents": 1, "size": 81, "dataType": "Float64Array"}}]}, "metadata": {"name": "Geometry 0"}}], "geometry_colors": {"shape": [1, 3], "dtype": "float32"}, "geometry_opacities": {"shape": [1], "dtype": "float32"}, "gradient_opacity": 0.2, "interpolation": true, "label_image_blend": 0.5, "label_image_names": null, "label_image_weights": null, "layout": "IPY_MODEL_4fc6c3a70573460190e28fc71e1fd672", "lut": "glasbey", "mode": "v", "opacity_gaussians": null, "point_set_colors": {"shape": [0, 3], "dtype": "float32"}, "point_set_opacities": {"shape": [0], "dtype": "float32"}, "point_set_representations": [], "point_set_sizes": {"shape": [0], "dtype": "uint8"}, "point_sets": [], "rendered_image": null, "rendered_label_image": null, "roi": {"shape": [2, 3], "dtype": "float64"}, "rotate": false, "sample_distance": 0.25, "select_roi": false, "shadow": true, "slicing_planes": false, "ui_collapsed": true, "units": "", "vmax": null, "vmin": null, "x_slice": null, "y_slice": null, "z_slice": null}, "buffers": [{"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["_largest_roi", "buffer"]}, {"data": "AQEB", "encoding": "base64", "path": ["_scale_factors", "buffer"]}, {"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["camera", "buffer"]}, {"data": "KLUv/WDMAv0KAMIKIyxQVSGNAbAy+egtEdVgvD9oeCjMeilomxSUQ0WhXQFH880SDuHHRuJ4Rj9OCp4v3eQ8mRqcN2KJsXkmT7TSQjNCcjKaeaEOjwdSogLzQGnjgURSXl6qiwqKcYSICuVZXOIHYuJpfFSow9fwEPEyMBCewPB5nmdwdXawUAqXywmugXWq4EoXuABWwHUHgImo8JqCc5ACmbGrBxBoQnnGdNCGqf2fOcO3UxqeYZrxD+uNi8+2v3HzkeV8+NSH46JbsgUW3n05tqTXEPyEWl6I78QQePn38d9svBfo/kANz2Kal91n43+zL9/gC/4IH7k3M8m4a7A00wCcF0i34MejH/7EOeL95uyrTmz5Y8HB69W2NhwcX/PmL5OhLZ/ujp3e97XZPM7iO3lKnxH3QlyVwwOOuQ+48dGcRfyna/5Mm5PGjcHca3d0RF05+dB/BC9ckgPCtb81iP0Ql5XFBg==", "encoding": "base64", "path": ["geometries", 0, "points", "compressedValues"]}, {"data": "KLUv/WAABNUMADJJGxMQkDxzBBgAGFjNKqdSrlKO5K4p797SsayopKCcPJMSkhGRFwLy4dHxODY0MjAuLLgKiomIS0A8ODQwLGwKTzg4gkEBRzDwTeABswPIYrDXdhfrrZUqhfqpdBNpJHroc5Cnc47mGy3zrh3zyxeA5ahgV7WeASBCBtF6EKhB2hrHkZO9/Dx6zrc7HT05/MfWk8N/bD05/AlbT17/PXjn9ThtyYX/cZevHnnu/PX/CEev/EZze+0NvW1938gb1t0be/wPi7p39r/PjaN/WgCD9cf3AU/4/795zM8L33bFxG8XOMWEpwsdYqK3C5xiwp+vm/j7gqeZ8LMXYhkT/zRPUu58uMzLJ35fwKknPC3k0BO9LeDUE54WcuiJfmoBp56wc8t5YoOdLXbgw3943zv53//GwT/9t13+633vZP/ceil/38A7+K/fXvsd7+T1/0jHr/xHc3vtjfGs27VR7AT39rOv/w8dfPF/3P2rI5+zbq8esRPcx88e/rft8PBPYkYcRlu8Z8bF33yLTZr3PTyy0petjRpsEwMk", "encoding": "base64", "path": ["geometries", 0, "polys", "compressedValues"]}, {"data": "KLUv/WCIAX0IAFKMJyWwJembELLJtpsQS5oPAyCNYQCHEgg1AM7krNDa3GxrpLW27d4yH8DEBQ6IWCQYhRuQgyBAsXAlhDQkCFRXV4jSVfABFzFTopawwB+MdHzy7nOUz+xod4V86f5QAPyAFHp26/TZp85TJu/LTrZtbtnYOXqekOjIWLMHZtrc1jHEGCxj5iabG3pR58XLKJONfKwshtzYtaKRFSv5XLAbUaggTKUH0AKhKfMQSKMPk/Y8oUOdhcHMYgCssWMmYXGb5XskOChMu0FxRg5zE20xpAPukjQozpuWEtOPbeadyf13HdJAgNhJfQ7D2cQjgnYtZ2J97OxPwlNsbiA9aR9jkIB/vYTkZDCEUa8FwCc=", "encoding": "base64", "path": ["geometries", 0, "pointData", "arrays", 0, "data", "compressedValues"]}, {"data": "AACAPwAAgD8AAIA/", "encoding": "base64", "path": ["geometry_colors", "buffer"]}, {"data": "AACAPw==", "encoding": "base64", "path": ["geometry_opacities", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_colors", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_opacities", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_sizes", "buffer"]}, {"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["roi", "buffer"]}]}}, "version_major": 2, "version_minor": 0}
+{"state": {"e7428db69385491683d9fc4a9620a72b": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "3729180dd84148f5bd14f290fa115737": {"model_name": "ViewerModel", "model_module": "itkwidgets", "model_module_version": "^0.32.1", "state": {"_custom_cmap": null, "_dom_classes": [], "_downsampling": false, "_largest_roi": {"shape": [2, 3], "dtype": "float64"}, "_model_module": "itkwidgets", "_model_module_version": "^0.32.1", "_model_name": "ViewerModel", "_rendering_image": false, "_reset_crop_requested": false, "_scale_factors": {"shape": [3], "dtype": "uint8"}, "_view_count": null, "_view_module": "itkwidgets", "_view_module_version": "^0.32.1", "_view_name": "ViewerView", "annotations": true, "axes": false, "background": [], "blend_mode": "composite", "camera": {"shape": [3, 3], "dtype": "float32"}, "channels": null, "clicked_slice_point": null, "cmap": null, "geometries": [{"vtkClass": "vtkPolyData", "points": {"vtkClass": "vtkPoints", "name": "_points", "numberOfComponents": 3, "dataType": "Float32Array", "size": 243}, "polys": {"vtkClass": "vtkCellArray", "name": "_polys", "numberOfComponents": 1, "size": 320, "dataType": "Uint32Array"}, "pointData": {"vtkClass": "vtkDataSetAttributes", "activeScalars": 0, "arrays": [{"data": {"vtkClass": "vtkDataArray", "name": "u", "numberOfComponents": 1, "size": 81, "dataType": "Float64Array"}}]}, "metadata": {"name": "Geometry 0"}}], "geometry_colors": {"shape": [1, 3], "dtype": "float32"}, "geometry_opacities": {"shape": [1], "dtype": "float32"}, "gradient_opacity": 0.2, "interpolation": true, "label_image_blend": 0.5, "label_image_names": null, "label_image_weights": null, "layout": "IPY_MODEL_e7428db69385491683d9fc4a9620a72b", "lut": "glasbey", "mode": "v", "opacity_gaussians": null, "point_set_colors": {"shape": [0, 3], "dtype": "float32"}, "point_set_opacities": {"shape": [0], "dtype": "float32"}, "point_set_representations": [], "point_set_sizes": {"shape": [0], "dtype": "uint8"}, "point_sets": [], "rendered_image": null, "rendered_label_image": null, "roi": {"shape": [2, 3], "dtype": "float64"}, "rotate": false, "sample_distance": 0.25, "select_roi": false, "shadow": true, "slicing_planes": false, "ui_collapsed": true, "units": "", "vmax": null, "vmin": null, "x_slice": null, "y_slice": null, "z_slice": null}, "buffers": [{"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["_largest_roi", "buffer"]}, {"data": "AQEB", "encoding": "base64", "path": ["_scale_factors", "buffer"]}, {"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["camera", "buffer"]}, {"data": "KLUv/WDMAv0KAMIKIyxQVSGNAbAy+egtEdVgvD9oeCjMeilomxSUQ0WhXQFH880SDuHHRuJ4Rj9OCp4v3eQ8mRqcN2KJsXkmT7TSQjNCcjKaeaEOjwdSogLzQGnjgURSXl6qiwqKcYSICuVZXOIHYuJpfFSow9fwEPEyMBCewPB5nmdwdXawUAqXywmugXWq4EoXuABWwHUHgImo8JqCc5ACmbGrBxBoQnnGdNCGqf2fOcO3UxqeYZrxD+uNi8+2v3HzkeV8+NSH46JbsgUW3n05tqTXEPyEWl6I78QQePn38d9svBfo/kANz2Kal91n43+zL9/gC/4IH7k3M8m4a7A00wCcF0i34MejH/7EOeL95uyrTmz5Y8HB69W2NhwcX/PmL5OhLZ/ujp3e97XZPM7iO3lKnxH3QlyVwwOOuQ+48dGcRfyna/5Mm5PGjcHca3d0RF05+dB/BC9ckgPCtb81iP0Ql5XFBg==", "encoding": "base64", "path": ["geometries", 0, "points", "compressedValues"]}, {"data": "KLUv/WAABNUMADJJGxMQkDxzBBgAGFjNKqdSrlKO5K4p797SsayopKCcPJMSkhGRFwLy4dHxODY0MjAuLLgKiomIS0A8ODQwLGwKTzg4gkEBRzDwTeABswPIYrDXdhfrrZUqhfqpdBNpJHroc5Cnc47mGy3zrh3zyxeA5ahgV7WeASBCBtF6EKhB2hrHkZO9/Dx6zrc7HT05/MfWk8N/bD05/AlbT17/PXjn9ThtyYX/cZevHnnu/PX/CEev/EZze+0NvW1938gb1t0be/wPi7p39r/PjaN/WgCD9cf3AU/4/795zM8L33bFxG8XOMWEpwsdYqK3C5xiwp+vm/j7gqeZ8LMXYhkT/zRPUu58uMzLJ35fwKknPC3k0BO9LeDUE54WcuiJfmoBp56wc8t5YoOdLXbgw3943zv53//GwT/9t13+633vZP/ceil/38A7+K/fXvsd7+T1/0jHr/xHc3vtjfGs27VR7AT39rOv/w8dfPF/3P2rI5+zbq8esRPcx88e/rft8PBPYkYcRlu8Z8bF33yLTZr3PTyy0petjRpsEwMk", "encoding": "base64", "path": ["geometries", 0, "polys", "compressedValues"]}, {"data": "KLUv/WCIAV0IAJLLJSSgpembljQr2tInG6rqOFVV0VjFE6ph/KsC/L+x1tptre22twwPSMQBCmlQEMvgBKQxB4QlgoWgGPLrYBgyuPGCykxSlWKkQFlvy3OjJ4WOhk+v44zJN4S9pTJklqEjJ62jk640iWdf6NtnjTzpuzqm50IOsmJh6D1DB/XRgX0iK1Ty80s7zvG6yY8mtHES2zhHN7oW2A1RqCCO3QOwAqkxPhBAhB9TC7R+hNu52+nKNzwb3ekgD9pujF+E/VC6HEibVibYYhgnXZO0xRe53FHUBcoWw4ZrVw38RMXBWuuu1oZBWObv6aCHaxPr+JCJ+XErGHPTYKueiL04N8QuHKZc3DHJ4jmAAQ==", "encoding": "base64", "path": ["geometries", 0, "pointData", "arrays", 0, "data", "compressedValues"]}, {"data": "AACAPwAAgD8AAIA/", "encoding": "base64", "path": ["geometry_colors", "buffer"]}, {"data": "AACAPw==", "encoding": "base64", "path": ["geometry_opacities", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_colors", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_opacities", "buffer"]}, {"data": "", "encoding": "base64", "path": ["point_set_sizes", "buffer"]}, {"data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "encoding": "base64", "path": ["roi", "buffer"]}]}}, "version_major": 2, "version_minor": 0}
 </script>
 
 

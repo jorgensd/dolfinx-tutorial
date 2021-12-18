@@ -44,7 +44,7 @@
     <script src="../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
     <script>
@@ -443,7 +443,8 @@ The idea of weak imposition is that we add additional terms to the variational f
 <p>We start by importing the required modules and creating the mesh and function space for our solution</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.fem</span> <span class="k">as</span> <span class="nn">fem</span><span class="o">,</span> <span class="nn">dolfinx.generation</span> <span class="k">as</span> <span class="nn">generation</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx</span> <span class="kn">import</span> <span class="n">fem</span>
+<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">create_unit_square</span>
 <span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
 <span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
@@ -451,7 +452,7 @@ The idea of weak imposition is that we add additional terms to the variational f
                  <span class="n">div</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">grad</span><span class="p">,</span> <span class="n">inner</span><span class="p">)</span>
 
 <span class="n">N</span> <span class="o">=</span> <span class="mi">8</span>
-<span class="n">mesh</span> <span class="o">=</span> <span class="n">generation</span><span class="o">.</span><span class="n">UnitSquareMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">create_unit_square</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
 <span class="n">V</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -470,21 +471,21 @@ The idea of weak imposition is that we add additional terms to the variational f
 </div>
 <p>As opposed to the first tutorial, we now have to have another look at the variational form.
 We start by integrating the problem by parts, to obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-baed0287-e61d-4f2f-8933-35a0a6855351">
-<span class="eqno">(8)<a class="headerlink" href="#equation-baed0287-e61d-4f2f-8933-35a0a6855351" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-f31e5f85-5c5d-412d-8a03-c55ce17a72aa">
+<span class="eqno">(8)<a class="headerlink" href="#equation-f31e5f85-5c5d-412d-8a03-c55ce17a72aa" title="Permalink to this equation">¶</a></span>\[\begin{align}
     \int_{\Omega} \nabla u \cdot \nabla v~\mathrm{d}x - \int_{\partial\Omega}\nabla u \cdot n v~\mathrm{d}s = \int_{\Omega} f v~\mathrm{d}x.
 \end{align}\]</div>
 <p>As we are not using strong enforcement, we do not set the trace of the test function to <span class="math notranslate nohighlight">\(0\)</span> on the outer boundary.
 Instead, we add the following two terms to the variational formulation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-db7f43f8-cf78-47e2-9a04-6ab4b0d2769c">
-<span class="eqno">(9)<a class="headerlink" href="#equation-db7f43f8-cf78-47e2-9a04-6ab4b0d2769c" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-6d9635c9-ff1f-4360-8fdc-c7d0ac39ee47">
+<span class="eqno">(9)<a class="headerlink" href="#equation-6d9635c9-ff1f-4360-8fdc-c7d0ac39ee47" title="Permalink to this equation">¶</a></span>\[\begin{align}
     -\int_{\partial\Omega} \nabla  v \cdot n (u-u_D)~\mathrm{d}s + \frac{\alpha}{h} \int_{\partial\Omega} (u-u_D)v~\mathrm{d}s.
 \end{align}\]</div>
 <p>where the first term enforces symmetry to the bilinear form, while the latter term enforces coercivity.
 <span class="math notranslate nohighlight">\(u_D\)</span> is the known Dirichlet condition, and <span class="math notranslate nohighlight">\(h\)</span> is the diameter of the circumscribed sphere of the mesh element.
 We create bilinear and linear form, <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(L\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-7d2c7e91-976a-4745-b9f4-0647455eb3d5">
-<span class="eqno">(10)<a class="headerlink" href="#equation-7d2c7e91-976a-4745-b9f4-0647455eb3d5" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-def0cad7-ec48-44f3-aece-8deb12df6988">
+<span class="eqno">(10)<a class="headerlink" href="#equation-def0cad7-ec48-44f3-aece-8deb12df6988" title="Permalink to this equation">¶</a></span>\[\begin{align}
     a(u, v) &amp;= \int_{\Omega} \nabla u \cdot \nabla v~\mathrm{d}x + \int_{\partial\Omega}-(n \cdot\nabla u) v - (n \cdot \nabla v) u + \frac{\alpha}{h} uv~\mathrm{d}s,\\
     L(v) &amp;= \int_{\Omega} fv~\mathrm{d}x + \int_{\partial\Omega} -(n \cdot \nabla v) u_D + \frac{\alpha}{h} u_Dv~\mathrm{d}s
 \end{align}\]</div>
@@ -547,9 +548,9 @@ As in the previous tutorial, we also compute the error at the mesh vertices</p>
 <p>We observe that as we weakly impose the boundary condition, we no longer fullfill the equation to machine precision at the mesh vertices. We also plot the solution using <code class="docutils literal notranslate"><span class="pre">pyvista</span></code></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.plot</span>
-<span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">create_vtk_topology</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.plot</span> <span class="kn">import</span> <span class="n">create_vtk_topology</span>
 <span class="kn">import</span> <span class="nn">pyvista</span>
+<span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span> <span class="o">=</span> <span class="n">create_vtk_topology</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
 <span class="n">grid</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">(</span><span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
 <span class="n">grid</span><span class="o">.</span><span class="n">point_data</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">u_vertex_values</span><span class="o">.</span><span class="n">real</span>
 <span class="n">grid</span><span class="o">.</span><span class="n">set_active_scalars</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">)</span>

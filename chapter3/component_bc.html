@@ -44,7 +44,7 @@
     <script src="../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
     <script>
@@ -507,14 +507,13 @@ We will prescribe a displacement <span class="math notranslate nohighlight">\(u_
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">Constant</span><span class="p">,</span> <span class="n">DirichletBC</span><span class="p">,</span> <span class="n">Function</span><span class="p">,</span> <span class="n">FunctionSpace</span><span class="p">,</span> <span class="n">LinearProblem</span><span class="p">,</span> <span class="n">locate_dofs_geometrical</span>
-<span class="kn">from</span> <span class="nn">dolfinx.generation</span> <span class="kn">import</span> <span class="n">RectangleMesh</span>
-<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">CellType</span>
+<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">CellType</span><span class="p">,</span> <span class="n">create_rectangle</span>
 <span class="kn">from</span> <span class="nn">ufl</span> <span class="kn">import</span> <span class="n">Identity</span><span class="p">,</span> <span class="n">Measure</span><span class="p">,</span> <span class="n">TestFunction</span><span class="p">,</span> <span class="n">TrialFunction</span><span class="p">,</span> <span class="n">VectorElement</span><span class="p">,</span> <span class="n">dot</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">inner</span><span class="p">,</span> <span class="n">grad</span><span class="p">,</span> <span class="n">nabla_div</span><span class="p">,</span> <span class="n">sym</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="n">mesh</span> <span class="o">=</span> <span class="n">RectangleMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="n">L</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span><span class="mi">0</span><span class="p">]]),</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span><span class="mi">30</span><span class="p">],</span> <span class="n">cell_type</span><span class="o">=</span><span class="n">CellType</span><span class="o">.</span><span class="n">triangle</span><span class="p">)</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">create_rectangle</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="n">L</span><span class="p">,</span> <span class="n">H</span><span class="p">]]),</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span><span class="mi">30</span><span class="p">],</span> <span class="n">cell_type</span><span class="o">=</span><span class="n">CellType</span><span class="o">.</span><span class="n">triangle</span><span class="p">)</span>
 <span class="n">element</span> <span class="o">=</span> <span class="n">VectorElement</span><span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">ufl_cell</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">V</span> <span class="o">=</span> <span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
 </pre></div>
@@ -530,8 +529,7 @@ We will prescribe a displacement <span class="math notranslate nohighlight">\(u_
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
 
 <span class="n">u_D</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-<span class="k">with</span> <span class="n">u_D</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
-    <span class="n">loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">u_D</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="n">bc</span> <span class="o">=</span> <span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_D</span><span class="p">,</span> <span class="n">locate_dofs_geometrical</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">clamped_boundary</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -543,8 +541,7 @@ We will prescribe a displacement <span class="math notranslate nohighlight">\(u_
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">V0</span> <span class="o">=</span> <span class="n">V</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">collapse</span><span class="p">()</span>
 <span class="n">uDx</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">V0</span><span class="p">)</span>
-<span class="k">with</span> <span class="n">uDx</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">uDx_loc</span><span class="p">:</span>
-    <span class="n">uDx_loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">uDx</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">0</span>
 </pre></div>
 </div>
 </div>
@@ -571,7 +568,8 @@ We will prescribe a displacement <span class="math notranslate nohighlight">\(u_
 <p>As we want the traction <span class="math notranslate nohighlight">\(T\)</span> over the remaining boundary to be <span class="math notranslate nohighlight">\(0\)</span>, we create a <code class="docutils literal notranslate"><span class="pre">dolfinx.Constant</span></code></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">T</span> <span class="o">=</span> <span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">petsc4py.PETSc</span> <span class="kn">import</span> <span class="n">ScalarType</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">ScalarType</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span>
 </pre></div>
 </div>
 </div>
@@ -597,7 +595,7 @@ We will prescribe a displacement <span class="math notranslate nohighlight">\(u_
 
 <span class="n">u</span> <span class="o">=</span> <span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">v</span> <span class="o">=</span> <span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-<span class="n">f</span> <span class="o">=</span> <span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">rho</span><span class="o">*</span><span class="n">g</span><span class="p">))</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">ScalarType</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">rho</span><span class="o">*</span><span class="n">g</span><span class="p">)))</span>
 <span class="n">a</span> <span class="o">=</span> <span class="n">inner</span><span class="p">(</span><span class="n">sigma</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">epsilon</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">dx</span>
 <span class="n">L</span> <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span> <span class="o">+</span> <span class="n">dot</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">ds</span>
 </pre></div>
@@ -622,13 +620,13 @@ We will prescribe a displacement <span class="math notranslate nohighlight">\(u_
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyvista</span>
-<span class="kn">import</span> <span class="nn">dolfinx.plot</span>
+<span class="kn">from</span> <span class="nn">dolfinx.plot</span> <span class="kn">import</span> <span class="n">create_vtk_topology</span>
 <span class="c1"># Start virtual framebuffer</span>
 <span class="n">pyvista</span><span class="o">.</span><span class="n">start_xvfb</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
 
 <span class="c1"># Create plotter and pyvista grid</span>
 <span class="n">p</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Deflection&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="p">[</span><span class="mi">800</span><span class="p">,</span> <span class="mi">800</span><span class="p">])</span>
-<span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">create_vtk_topology</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
+<span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span> <span class="o">=</span> <span class="n">create_vtk_topology</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
 <span class="n">grid</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">(</span><span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
 
 <span class="c1"># Attach vector values to grid and warp grid by vector</span>

@@ -44,7 +44,7 @@
     <script src="../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
     <script>
@@ -483,8 +483,8 @@
 <p>Author: Jørgen S. Dokken</p>
 <p>Just as for the <a class="reference internal" href="../chapter1/fundamentals_code.html"><span class="doc std std-doc">Poisson problem</span></a>, we construct a test problem which makes it easy to determine if the calculations are correct.</p>
 <p>Since we know that our first-order time-stepping scheme is exact for linear functions, we create a problem which has linear variation in time. We combine this with a quadratic variation in space. Therefore, we choose the analytical solution to be</p>
-<div class="amsmath math notranslate nohighlight" id="equation-de4d7f6f-afb0-436f-b0b0-10e02738fa1f">
-<span class="eqno">(27)<a class="headerlink" href="#equation-de4d7f6f-afb0-436f-b0b0-10e02738fa1f" title="Permalink to this equation">¶</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-540c11b1-0e96-4eb7-a539-bdf75f8ec8f0">
+<span class="eqno">(27)<a class="headerlink" href="#equation-540c11b1-0e96-4eb7-a539-bdf75f8ec8f0" title="Permalink to this equation">¶</a></span>\[\begin{align}
 u = 1 + x^2+\alpha y^2 + \beta t
 \end{align}\]</div>
 <p>which yields a function whose computed values at the degrees of freedom will be exact, regardless of the mesh size and <span class="math notranslate nohighlight">\(\Delta t\)</span> as long as the mesh is uniformly partitioned.
@@ -505,15 +505,14 @@ By inserting this into our original PDE, we find that the right hand side <span 
 <p>As for the previous problem, we define the mesh and appropriate function spaces.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx.fem</span> <span class="k">as</span> <span class="nn">fem</span>
-<span class="kn">import</span> <span class="nn">numpy</span>
-<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">CellType</span><span class="p">,</span> <span class="n">locate_entities_boundary</span>
-<span class="kn">from</span> <span class="nn">dolfinx.generation</span> <span class="kn">import</span> <span class="n">UnitSquareMesh</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">dolfinx</span> <span class="kn">import</span> <span class="n">fem</span>
+<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">CellType</span><span class="p">,</span> <span class="n">create_unit_square</span><span class="p">,</span> <span class="n">locate_entities_boundary</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
 <span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
 
 <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span>
-<span class="n">mesh</span> <span class="o">=</span> <span class="n">UnitSquareMesh</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">CellType</span><span class="o">.</span><span class="n">triangle</span><span class="p">)</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">create_unit_square</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">CellType</span><span class="o">.</span><span class="n">triangle</span><span class="p">)</span>
 <span class="n">V</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 </pre></div>
 </div>
