@@ -1,7 +1,8 @@
 FROM dolfinx/lab
 
 # Install meshio
-RUN HDF5_MPI="ON" CC=mpicc HDF5_DIR="/usr/lib/x86_64-linux-gnu/hdf5/mpich/" pip3 install --no-cache-dir --no-binary=h5py h5py meshio
+RUN HDF5_MPI="ON" CC=mpicc HDF5_DIR="/usr/lib/x86_64-linux-gnu/hdf5/mpich/" pip3 install --no-cache-dir --no-binary=h5py h5py 
+RUN pip3 install --no-cache-dir  --upgrade meshio
 
 # Pyvista ITKWidgets dependencies
 RUN pip3 install --no-cache-dir --upgrade setuptools itkwidgets ipywidgets matplotlib pyvista ipyvtklink seaborn pandas
