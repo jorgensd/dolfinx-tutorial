@@ -20,7 +20,7 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container: dokken92/dolfinx_custom:18122021
+    container: dokken92/dolfinx_custom:26122021
 
     env:
       HDF5_MPI: "ON"
