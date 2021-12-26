@@ -554,9 +554,8 @@ Since we have two different function spaces, we need to create two sets of trial
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">walls</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">1</span><span class="p">))</span>
 <span class="n">wall_dofs</span> <span class="o">=</span> <span class="n">locate_dofs_geometrical</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">walls</span><span class="p">)</span>
-<span class="n">u_noslip</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-<span class="n">u_noslip</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">bc_noslip</span> <span class="o">=</span> <span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_noslip</span><span class="p">,</span> <span class="n">wall_dofs</span><span class="p">)</span>
+<span class="n">u_noslip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mi">0</span><span class="p">,)</span> <span class="o">*</span> <span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScalarType</span><span class="p">)</span>
+<span class="n">bc_noslip</span> <span class="o">=</span> <span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_noslip</span><span class="p">,</span> <span class="n">wall_dofs</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -567,9 +566,7 @@ Since we have two different function spaces, we need to create two sets of trial
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">inflow</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">inflow_dofs</span> <span class="o">=</span> <span class="n">locate_dofs_geometrical</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">inflow</span><span class="p">)</span>
-<span class="n">p_inflow</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
-<span class="n">p_inflow</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">8</span>
-<span class="n">bc_inflow</span> <span class="o">=</span> <span class="n">DirichletBC</span><span class="p">(</span><span class="n">p_inflow</span><span class="p">,</span> <span class="n">inflow_dofs</span><span class="p">)</span>
+<span class="n">bc_inflow</span> <span class="o">=</span> <span class="n">DirichletBC</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScalarType</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span> <span class="n">inflow_dofs</span><span class="p">,</span> <span class="n">Q</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -580,9 +577,7 @@ Since we have two different function spaces, we need to create two sets of trial
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">outflow</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">outflow_dofs</span> <span class="o">=</span> <span class="n">locate_dofs_geometrical</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">outflow</span><span class="p">)</span>
-<span class="n">p_outflow</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
-<span class="n">p_outflow</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">bc_outflow</span> <span class="o">=</span> <span class="n">DirichletBC</span><span class="p">(</span><span class="n">p_outflow</span><span class="p">,</span> <span class="n">outflow_dofs</span><span class="p">)</span>
+<span class="n">bc_outflow</span> <span class="o">=</span> <span class="n">DirichletBC</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScalarType</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">outflow_dofs</span><span class="p">,</span> <span class="n">Q</span><span class="p">)</span>
 <span class="n">bcu</span> <span class="o">=</span> <span class="p">[</span><span class="n">bc_noslip</span><span class="p">]</span>
 <span class="n">bcp</span> <span class="o">=</span> <span class="p">[</span><span class="n">bc_inflow</span><span class="p">,</span> <span class="n">bc_outflow</span><span class="p">]</span>
 </pre></div>

@@ -506,10 +506,12 @@ We will prescribe a displacement <span class="math notranslate nohighlight">\(u_
 <p>As in the previous demos, we define our mesh and function space. We will create a <code class="docutils literal notranslate"><span class="pre">ufl.VectorElement</span></code> to create a two dimensional vector space.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">Constant</span><span class="p">,</span> <span class="n">DirichletBC</span><span class="p">,</span> <span class="n">Function</span><span class="p">,</span> <span class="n">FunctionSpace</span><span class="p">,</span> <span class="n">LinearProblem</span><span class="p">,</span> <span class="n">locate_dofs_geometrical</span>
-<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">CellType</span><span class="p">,</span> <span class="n">create_rectangle</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Constant</span><span class="p">,</span> <span class="n">DirichletBC</span><span class="p">,</span> <span class="n">Function</span><span class="p">,</span> <span class="n">FunctionSpace</span><span class="p">,</span> <span class="n">LinearProblem</span><span class="p">,</span> <span class="n">locate_dofs_geometrical</span><span class="p">,</span>
+                         <span class="n">locate_dofs_topological</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">CellType</span><span class="p">,</span> <span class="n">create_rectangle</span><span class="p">,</span> <span class="n">locate_entities_boundary</span>
 <span class="kn">from</span> <span class="nn">ufl</span> <span class="kn">import</span> <span class="n">Identity</span><span class="p">,</span> <span class="n">Measure</span><span class="p">,</span> <span class="n">TestFunction</span><span class="p">,</span> <span class="n">TrialFunction</span><span class="p">,</span> <span class="n">VectorElement</span><span class="p">,</span> <span class="n">dot</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">inner</span><span class="p">,</span> <span class="n">grad</span><span class="p">,</span> <span class="n">nabla_div</span><span class="p">,</span> <span class="n">sym</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+<span class="kn">from</span> <span class="nn">petsc4py.PETSc</span> <span class="kn">import</span> <span class="n">ScalarType</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -528,30 +530,21 @@ We will prescribe a displacement <span class="math notranslate nohighlight">\(u_
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">clamped_boundary</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
 
-<span class="n">u_D</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-<span class="n">u_D</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">bc</span> <span class="o">=</span> <span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_D</span><span class="p">,</span> <span class="n">locate_dofs_geometrical</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">clamped_boundary</span><span class="p">))</span>
+<span class="n">u_zero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mi">0</span><span class="p">,)</span><span class="o">*</span><span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">ScalarType</span><span class="p">)</span>
+<span class="n">bc</span> <span class="o">=</span> <span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_zero</span><span class="p">,</span> <span class="n">locate_dofs_geometrical</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">clamped_boundary</span><span class="p">),</span> <span class="n">V</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <p>Next we would like to constrain the <span class="math notranslate nohighlight">\(x\)</span>-component of our solution at <span class="math notranslate nohighlight">\(x=L\)</span> to <span class="math notranslate nohighlight">\(0\)</span>. We start by creating the sub space only containing the <span class="math notranslate nohighlight">\(x\)</span>
 -component.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">V0</span> <span class="o">=</span> <span class="n">V</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">collapse</span><span class="p">()</span>
-<span class="n">uDx</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">V0</span><span class="p">)</span>
-<span class="n">uDx</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">0</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Next, we locate the degrees of freedom on the top boundary. However, as the boundary condition is in a sub space of our solution, we need to supply both the parent space <span class="math notranslate nohighlight">\(V\)</span> and the sub space <span class="math notranslate nohighlight">\(V_0\)</span> to <code class="docutils literal notranslate"><span class="pre">dolfinx.locate_dofs_geometrical</span></code>.</p>
+<p>Next, we locate the degrees of freedom on the top boundary. However, as the boundary condition is in a sub space of our solution, we need to supply both the parent space <span class="math notranslate nohighlight">\(V\)</span> and the sub space <span class="math notranslate nohighlight">\(V_0\)</span> to <code class="docutils literal notranslate"><span class="pre">dolfinx.locate_dofs_topological</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">right</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">L</span><span class="p">),</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">H</span><span class="p">)</span>
-<span class="n">boundary_dofs_x</span> <span class="o">=</span> <span class="n">locate_dofs_geometrical</span><span class="p">((</span><span class="n">V</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">V0</span><span class="p">),</span> <span class="n">right</span><span class="p">)</span>
+<span class="n">boundary_facets</span> <span class="o">=</span> <span class="n">locate_entities_boundary</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+<span class="n">boundary_dofs_x</span> <span class="o">=</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">boundary_facets</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -559,7 +552,7 @@ We will prescribe a displacement <span class="math notranslate nohighlight">\(u_
 <p>We can now create our Dirichlet condition</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bcx</span> <span class="o">=</span> <span class="n">DirichletBC</span><span class="p">(</span><span class="n">uDx</span><span class="p">,</span> <span class="n">boundary_dofs_x</span><span class="p">,</span> <span class="n">V</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bcx</span> <span class="o">=</span> <span class="n">DirichletBC</span><span class="p">(</span><span class="n">ScalarType</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">boundary_dofs_x</span><span class="p">,</span> <span class="n">V</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
 <span class="n">bcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">bc</span><span class="p">,</span> <span class="n">bcx</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -568,8 +561,7 @@ We will prescribe a displacement <span class="math notranslate nohighlight">\(u_
 <p>As we want the traction <span class="math notranslate nohighlight">\(T\)</span> over the remaining boundary to be <span class="math notranslate nohighlight">\(0\)</span>, we create a <code class="docutils literal notranslate"><span class="pre">dolfinx.Constant</span></code></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">petsc4py.PETSc</span> <span class="kn">import</span> <span class="n">ScalarType</span>
-<span class="n">T</span> <span class="o">=</span> <span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">ScalarType</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">T</span> <span class="o">=</span> <span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">ScalarType</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span>
 </pre></div>
 </div>
 </div>
@@ -646,7 +638,7 @@ We will prescribe a displacement <span class="math notranslate nohighlight">\(u_
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/component_bc_21_0.png" src="../_images/component_bc_21_0.png" />
+<img alt="../_images/component_bc_20_0.png" src="../_images/component_bc_20_0.png" />
 </div>
 </div>
 </div>

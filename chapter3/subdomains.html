@@ -547,10 +547,7 @@ u=u_D=1 \qquad \text{on } \partial\Omega_D=[0,y], y\in[0,1]
 <span class="n">x</span> <span class="o">=</span> <span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
 <span class="n">L</span> <span class="o">=</span> <span class="n">Constant</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">ScalarType</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">dx</span>
 <span class="n">dofs</span> <span class="o">=</span> <span class="n">locate_dofs_geometrical</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">))</span>
-<span class="n">u_D</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-<span class="k">with</span> <span class="n">u_D</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
-    <span class="n">loc</span><span class="o">.</span><span class="n">setValues</span><span class="p">(</span><span class="n">dofs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dofs</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
-<span class="n">bcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_D</span><span class="p">,</span> <span class="n">dofs</span><span class="p">)]</span>
+<span class="n">bcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">ScalarType</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">dofs</span><span class="p">,</span> <span class="n">V</span><span class="p">)]</span>
 </pre></div>
 </div>
 </div>
@@ -687,11 +684,11 @@ Info    : [ 50%] Meshing curve 4 (Line)
 Info    : [ 60%] Meshing curve 5 (Line)
 Info    : [ 80%] Meshing curve 6 (Line)
 Info    : [ 90%] Meshing curve 7 (Line)
-Info    : Done meshing 1D (Wall 0.00072296s, CPU 0s)
+Info    : Done meshing 1D (Wall 0.0006852s, CPU 0.000783s)
 Info    : Meshing 2D...
 Info    : [  0%] Meshing surface 1 (Plane, Frontal-Delaunay)
 Info    : [ 50%] Meshing surface 2 (Plane, Frontal-Delaunay)
-Info    : Done meshing 2D (Wall 0.00495962s, CPU 0.003236s)
+Info    : Done meshing 2D (Wall 0.0045236s, CPU 0.004908s)
 Info    : 103 nodes 218 elements
 Info    : Writing &#39;mesh.msh&#39;...
 Info    : Done writing &#39;mesh.msh&#39;
@@ -774,8 +771,7 @@ Info    : Done writing &#39;mesh.msh&#39;
 <span class="n">u_bc</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">left_facets</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">ft</span><span class="o">.</span><span class="n">values</span><span class="o">==</span><span class="n">left_marker</span><span class="p">]</span>
 <span class="n">left_dofs</span> <span class="o">=</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">left_facets</span><span class="p">)</span>
-<span class="n">u_bc</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="n">left_dofs</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">left_dofs</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">bcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_bc</span><span class="p">,</span> <span class="n">left_dofs</span><span class="p">)]</span>
+<span class="n">bcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">ScalarType</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">left_dofs</span><span class="p">,</span> <span class="n">V</span><span class="p">)]</span>
 </pre></div>
 </div>
 </div>
