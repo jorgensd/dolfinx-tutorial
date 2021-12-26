@@ -1,6 +1,8 @@
 # Changelog
 
 ## Dev 
+- Added tutorial on interpolation of `ufl.Expression` in [Deflection of a membrane](chapter1/membrane_code).
+- Added tutorial on how to apply constant-valued Dirichet conditions in [Deflection of a membrane](chapter1/membrane_code).
 - Various API changes relating to the import structure of DOLFINx
 
 ## 0.3.0 (09.09.2021)
