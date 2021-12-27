@@ -435,6 +435,13 @@
   <a class="reference internal nav-link" href="#computing-error-norms">
    Computing error norms
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#reliable-error-norm-computation">
+     Reliable error norm computation
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#computing-convergence-rates">
@@ -442,13 +449,8 @@
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#to-be-implemented-interpolation-into-higher-order-function-spaces">
-     To be implemented: interpolation into higher order function spaces
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#add-implementation-infinity-norm-estimates">
-     Add implementation + infinity norm estimates
+    <a class="reference internal nav-link" href="#infinity-norm-estimates">
+     Infinity norm estimates
     </a>
    </li>
   </ul>
@@ -474,8 +476,8 @@
 <p>We start by creating a manufactured problem, using the same problem as in <a class="reference internal" href="solvers.html"><span class="doc std std-doc">the solver configuration</span></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
-<span class="kn">import</span> <span class="nn">ufl</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ufl</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
 <span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
 <span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">DirichletBC</span><span class="p">,</span> <span class="n">Function</span><span class="p">,</span> <span class="n">FunctionSpace</span><span class="p">,</span> <span class="n">LinearProblem</span><span class="p">,</span> <span class="n">assemble_scalar</span><span class="p">,</span> <span class="n">locate_dofs_topological</span>
@@ -485,7 +487,7 @@
 <span class="k">def</span> <span class="nf">u_ex</span><span class="p">(</span><span class="n">mod</span><span class="p">):</span>
     <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">mod</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">mod</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">mod</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">mod</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-<span class="n">u_numpy</span> <span class="o">=</span> <span class="n">u_ex</span><span class="p">(</span><span class="n">numpy</span><span class="p">)</span>
+<span class="n">u_numpy</span> <span class="o">=</span> <span class="n">u_ex</span><span class="p">(</span><span class="n">np</span><span class="p">)</span>
 <span class="n">u_ufl</span> <span class="o">=</span> <span class="n">u_ex</span><span class="p">(</span><span class="n">ufl</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">solve_poisson</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
@@ -500,7 +502,7 @@
     <span class="n">L</span> <span class="o">=</span> <span class="n">f</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">dx</span>
     <span class="n">u_bc</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
     <span class="n">u_bc</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">u_numpy</span><span class="p">)</span>
-    <span class="n">facets</span> <span class="o">=</span> <span class="n">locate_entities_boundary</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="kc">True</span><span class="p">))</span>
+    <span class="n">facets</span> <span class="o">=</span> <span class="n">locate_entities_boundary</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="kc">True</span><span class="p">))</span>
     <span class="n">dofs</span> <span class="o">=</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">facets</span><span class="p">)</span>
     <span class="n">bcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_bc</span><span class="p">,</span> <span class="n">dofs</span><span class="p">)]</span>
     <span class="n">default_problem</span> <span class="o">=</span> <span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcs</span><span class="p">,</span> <span class="n">petsc_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ksp_type&quot;</span><span class="p">:</span> <span class="s2">&quot;preonly&quot;</span><span class="p">,</span> <span class="s2">&quot;pc_type&quot;</span><span class="p">:</span> <span class="s2">&quot;lu&quot;</span><span class="p">})</span>
@@ -512,8 +514,7 @@
 <p>Now, we can compute the error between the analyical solution <code class="docutils literal notranslate"><span class="pre">u_ex=u_ufl(x)</span></code> and approximated solution <code class="docutils literal notranslate"><span class="pre">uh</span></code>. A natural choice might seem to compute <code class="docutils literal notranslate"><span class="pre">(u_ex-uh)**2*ufl.dx</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="n">uh</span><span class="p">,</span> <span class="n">u_ex</span> <span class="o">=</span> <span class="n">solve_poisson</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">uh</span><span class="p">,</span> <span class="n">u_ex</span> <span class="o">=</span> <span class="n">solve_poisson</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 <span class="n">comm</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">function_space</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">comm</span>
 <span class="n">error</span> <span class="o">=</span> <span class="p">(</span><span class="n">uh</span> <span class="o">-</span> <span class="n">u_ex</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
 <span class="n">E</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">assemble_scalar</span><span class="p">(</span><span class="n">error</span><span class="p">),</span> <span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">))</span>
@@ -545,6 +546,47 @@
 </div>
 </div>
 </div>
+<div class="section" id="reliable-error-norm-computation">
+<h3>Reliable error norm computation<a class="headerlink" href="#reliable-error-norm-computation" title="Permalink to this headline">¶</a></h3>
+<p>However, as this gets expanded to <code class="docutils literal notranslate"><span class="pre">u_ex**2</span> <span class="pre">+</span> <span class="pre">uh**2</span> <span class="pre">-</span> <span class="pre">2*u_ex*uh</span></code>. If the error is small, (and the solution itself is of moderate size), this calculation will correspond to subtract two positive numbers <code class="docutils literal notranslate"><span class="pre">u_ex**2</span> <span class="pre">+</span> <span class="pre">uh**2</span></code><span class="math notranslate nohighlight">\(\sim 1\)</span> and <code class="docutils literal notranslate"><span class="pre">2*u_ex*u</span></code><span class="math notranslate nohighlight">\(\sim 1\)</span> yielding a small number, prone to round-off errors.</p>
+<p>To avoid this issue, we interpolate the approximate and exact solution into a higher order function space. Then we subtract the degrees of freedom from the interpolated functions to create a new error function. Then, finally, we assemble/integrate the square difference and take the square root to get the L2 norm.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">Expression</span>
+
+<span class="k">def</span> <span class="nf">error_L2</span><span class="p">(</span><span class="n">uh</span><span class="p">,</span> <span class="n">u_ex</span><span class="p">,</span> <span class="n">degree_raise</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="c1"># Create higher order function space</span>
+    <span class="n">degree</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">function_space</span><span class="o">.</span><span class="n">ufl_element</span><span class="p">()</span><span class="o">.</span><span class="n">degree</span><span class="p">()</span>
+    <span class="n">family</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">function_space</span><span class="o">.</span><span class="n">ufl_element</span><span class="p">()</span><span class="o">.</span><span class="n">family</span><span class="p">()</span>
+    <span class="n">mesh</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">function_space</span><span class="o">.</span><span class="n">mesh</span>
+    <span class="n">W</span> <span class="o">=</span> <span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="n">family</span><span class="p">,</span> <span class="n">degree</span><span class="o">+</span> <span class="n">degree_raise</span><span class="p">))</span>
+    <span class="c1"># Interpolate approximate solution</span>
+    <span class="n">u_W</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
+    <span class="n">u_W</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">uh</span><span class="p">)</span>
+
+    <span class="c1"># Interpolate exact solution, special handling if exact solution</span>
+    <span class="c1"># is a ufl expression or a python lambda function</span>
+    <span class="n">u_ex_W</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">u_ex</span><span class="p">,</span> <span class="n">ufl</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">expr</span><span class="o">.</span><span class="n">Expr</span><span class="p">):</span>
+        <span class="n">u_expr</span> <span class="o">=</span> <span class="n">Expression</span><span class="p">(</span><span class="n">u_ex</span><span class="p">,</span> <span class="n">W</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">interpolation_points</span><span class="p">)</span>
+        <span class="n">u_ex_W</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">u_expr</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">u_ex_W</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">u_ex</span><span class="p">)</span>
+    
+    <span class="c1"># Compute the error in the higher order function space</span>
+    <span class="n">e_W</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
+    <span class="n">e_W</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">u_W</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span> <span class="o">-</span> <span class="n">u_ex_W</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span>
+    
+    <span class="c1"># Integrate the error</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">e_W</span><span class="p">,</span> <span class="n">e_W</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
+    <span class="n">error_local</span> <span class="o">=</span> <span class="n">assemble_scalar</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+    <span class="n">error_global</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">error_local</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">error_global</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div class="section" id="computing-convergence-rates">
 <h2>Computing convergence rates<a class="headerlink" href="#computing-convergence-rates" title="Permalink to this headline">¶</a></h2>
@@ -557,8 +599,10 @@
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">N</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Ns</span><span class="p">):</span>
     <span class="n">uh</span><span class="p">,</span> <span class="n">u_ex</span> <span class="o">=</span> <span class="n">solve_poisson</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">comm</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">function_space</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">comm</span>
-    <span class="n">error</span> <span class="o">=</span><span class="p">(</span><span class="n">uh</span> <span class="o">-</span> <span class="n">u_ex</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
-    <span class="n">Es</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">assemble_scalar</span><span class="p">(</span><span class="n">error</span><span class="p">),</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">))</span>
+    <span class="c1"># One can send in either u_numpy or u_ex</span>
+    <span class="c1"># For L2 error estimations it is reccommended to send in u_numpy</span>
+    <span class="c1"># as no JIT compilation is required</span>
+    <span class="n">Es</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">error_L2</span><span class="p">(</span><span class="n">uh</span><span class="p">,</span> <span class="n">u_numpy</span><span class="p">)</span>
     <span class="n">hs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="n">Ns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">comm</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;h: </span><span class="si">{</span><span class="n">hs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2"> Error: </span><span class="si">{</span><span class="n">Es</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -588,7 +632,7 @@ h: 1.56e-02 Error: 1.37e-03
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Rates: [1.61185364 1.89145161 1.97191103 1.99290373]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Rates: [1.61228695 1.89147568 1.97191247 1.99290382]
 </pre></div>
 </div>
 </div>
@@ -596,15 +640,14 @@ h: 1.56e-02 Error: 1.37e-03
 <p>We also do a similar study for different orders of polynomial spaces to verify our previous claim.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ns</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">]</span>
-<span class="k">for</span> <span class="n">degree</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]:</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">degrees</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">degree</span> <span class="ow">in</span> <span class="n">degrees</span><span class="p">:</span>
     <span class="n">Es</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Ns</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScalarType</span><span class="p">)</span>
     <span class="n">hs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Ns</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">N</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Ns</span><span class="p">):</span>
         <span class="n">uh</span><span class="p">,</span> <span class="n">u_ex</span> <span class="o">=</span> <span class="n">solve_poisson</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="n">degree</span><span class="p">)</span>
         <span class="n">comm</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">function_space</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">comm</span>
-        <span class="n">error</span> <span class="o">=</span> <span class="p">(</span><span class="n">uh</span> <span class="o">-</span> <span class="n">u_ex</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
-        <span class="n">Es</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">assemble_scalar</span><span class="p">(</span><span class="n">error</span><span class="p">),</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">))</span>
+        <span class="n">Es</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">error_L2</span><span class="p">(</span><span class="n">uh</span><span class="p">,</span> <span class="n">u_numpy</span><span class="p">,</span> <span class="n">degree_raise</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span> 
         <span class="n">hs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">Ns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">comm</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;h: </span><span class="si">{</span><span class="n">hs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2"> Error: </span><span class="si">{</span><span class="n">Es</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -620,44 +663,128 @@ h: 1.25e-01 Error: 7.96e-02
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 6.25e-02 Error: 2.15e-02
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 3.12e-02 Error: 5.47e-03
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 1.56e-02 Error: 1.37e-03
-Polynomial degree 1, Rates [1.61185364 1.89145161 1.97191103 1.99290373]
+h: 3.12e-02 Error: 5.47e-03
+h: 1.56e-02 Error: 1.37e-03
+Polynomial degree 1, Rates [1.61228695 1.89147568 1.97191247 1.99290382]
 h: 2.50e-01 Error: 3.52e-02
 h: 1.25e-01 Error: 4.39e-03
-h: 6.25e-02 Error: 5.50e-04
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 6.25e-02 Error: 5.50e-04
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 3.12e-02 Error: 6.88e-05
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 1.56e-02 Error: 8.60e-06
-Polynomial degree 2, Rates [3.00111375 2.99827831 2.99822257 2.99930784]
+Polynomial degree 2, Rates [3.00109101 2.99828073 2.99822291 2.99930786]
 h: 2.50e-01 Error: 5.54e-03
-h: 1.25e-01 Error: 3.35e-04
-h: 6.25e-02 Error: 1.99e-05
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 3.12e-02 Error: 1.21e-06
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 1.25e-01 Error: 3.35e-04
+h: 6.25e-02 Error: 1.99e-05
+h: 3.12e-02 Error: 1.21e-06
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 1.56e-02 Error: 7.49e-08
-Polynomial degree 3, Rates [4.04793801 4.07358165 4.03729055 4.01645275]
+Polynomial degree 3, Rates [4.04795047 4.07357659 4.03728992 4.0164527 ]
+h: 2.50e-01 Error: 7.20e-04
+h: 1.25e-01 Error: 2.42e-05
+h: 6.25e-02 Error: 7.75e-07
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 3.12e-02 Error: 2.44e-08
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 1.56e-02 Error: 7.64e-10
+Polynomial degree 4, Rates [4.896908   4.96084158 4.98926012 4.99766464]
 </pre></div>
 </div>
 </div>
 </div>
-<div class="section" id="to-be-implemented-interpolation-into-higher-order-function-spaces">
-<h3>To be implemented: interpolation into higher order function spaces<a class="headerlink" href="#to-be-implemented-interpolation-into-higher-order-function-spaces" title="Permalink to this headline">¶</a></h3>
-<p>However, as this gets expanded to <code class="docutils literal notranslate"><span class="pre">u_ex**2</span> <span class="pre">+</span> <span class="pre">uh**2</span> <span class="pre">-</span> <span class="pre">2*u_ex*uh</span></code>. If the error is small, (and the solution itself is of moderate size), this calculation will correspond to subtract two positive numbers <code class="docutils literal notranslate"><span class="pre">u_ex**2</span> <span class="pre">+</span> <span class="pre">uh**2</span></code><span class="math notranslate nohighlight">\(\sim 1\)</span> and <code class="docutils literal notranslate"><span class="pre">2*u_ex*u</span></code><span class="math notranslate nohighlight">\(\sim 1\)</span> yielding a small number, prone to round-off errors.</p>
-<p>We start by interpolating the analytical solution and the approximated solution into a higher order function space.</p>
+<div class="section" id="infinity-norm-estimates">
+<h3>Infinity norm estimates<a class="headerlink" href="#infinity-norm-estimates" title="Permalink to this headline">¶</a></h3>
+<p>We start by creating a function to compute the infinity norm, the max difference between the approximate and exact solution.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">error_infinity</span><span class="p">(</span><span class="n">u_h</span><span class="p">,</span> <span class="n">u_ex</span><span class="p">):</span>
+    <span class="c1"># Interpolate exact solution, special handling if exact solution</span>
+    <span class="c1"># is a ufl expression or a python lambda function</span>
+    <span class="n">comm</span> <span class="o">=</span> <span class="n">u_h</span><span class="o">.</span><span class="n">function_space</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">comm</span>
+    <span class="n">u_ex_V</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">u_h</span><span class="o">.</span><span class="n">function_space</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">u_ex</span><span class="p">,</span> <span class="n">ufl</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">expr</span><span class="o">.</span><span class="n">Expr</span><span class="p">):</span>
+        <span class="n">u_expr</span> <span class="o">=</span> <span class="n">Expression</span><span class="p">(</span><span class="n">u_ex</span><span class="p">,</span> <span class="n">u_h</span><span class="o">.</span><span class="n">function_space</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">interpolation_points</span><span class="p">)</span>
+        <span class="n">u_ex_V</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">u_expr</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">u_ex_V</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">u_ex</span><span class="p">)</span>
+    <span class="c1"># Compute infinity norm, furst local to process, then gather the max</span>
+    <span class="c1"># value over all processes</span>
+    <span class="n">error_max_local</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">u_h</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="o">-</span><span class="n">u_ex_V</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">))</span>
+    <span class="n">error_max</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">error_max_local</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">MAX</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">error_max</span>
+</pre></div>
 </div>
-<div class="section" id="add-implementation-infinity-norm-estimates">
-<h3>Add implementation + infinity norm estimates<a class="headerlink" href="#add-implementation-infinity-norm-estimates" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<p>Running this for various polynomial degrees yields:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">degree</span> <span class="ow">in</span> <span class="n">degrees</span><span class="p">:</span>
+    <span class="n">Es</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Ns</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScalarType</span><span class="p">)</span>
+    <span class="n">hs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Ns</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">N</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Ns</span><span class="p">):</span>
+        <span class="n">uh</span><span class="p">,</span> <span class="n">u_ex</span> <span class="o">=</span> <span class="n">solve_poisson</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="n">degree</span><span class="p">)</span>
+        <span class="n">comm</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">function_space</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">comm</span>
+        <span class="n">Es</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">error_infinity</span><span class="p">(</span><span class="n">uh</span><span class="p">,</span> <span class="n">u_numpy</span><span class="p">)</span> 
+        <span class="n">hs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">Ns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">comm</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;h: </span><span class="si">{</span><span class="n">hs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2"> Error: </span><span class="si">{</span><span class="n">Es</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">rates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Es</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">/</span> <span class="n">Es</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">hs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">/</span> <span class="n">hs</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">comm</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Polynomial degree </span><span class="si">{</span><span class="n">degree</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="s2">, Rates </span><span class="si">{</span><span class="n">rates</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 2.50e-01 Error: 2.73e-01
+h: 1.25e-01 Error: 6.96e-02
+h: 6.25e-02 Error: 1.75e-02
+h: 3.12e-02 Error: 4.38e-03
+h: 1.56e-02 Error: 1.10e-03
+Polynomial degree 1, Rates [1.96828918 1.9917697  1.99791282 1.99947611]
+h: 2.50e-01 Error: 4.85e-02
+h: 1.25e-01 Error: 3.65e-03
+h: 6.25e-02 Error: 2.37e-04
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 3.12e-02 Error: 1.50e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 1.56e-02 Error: 9.38e-07
+Polynomial degree 2, Rates [3.73213705 3.94227924 3.98612529 3.99656577]
+h: 2.50e-01 Error: 1.08e-02
+h: 1.25e-01 Error: 8.13e-04
+h: 6.25e-02 Error: 5.86e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 3.12e-02 Error: 3.80e-06
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 1.56e-02 Error: 2.41e-07
+Polynomial degree 3, Rates [3.72903577 3.79406598 3.94800701 3.97888414]
+h: 2.50e-01 Error: 1.63e-03
+h: 1.25e-01 Error: 5.23e-05
+h: 6.25e-02 Error: 1.67e-06
+h: 3.12e-02 Error: 5.25e-08
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 1.56e-02 Error: 1.64e-09
+Polynomial degree 4, Rates [4.96133103 4.96807694 4.99161592 4.99787705]
+</pre></div>
+</div>
+</div>
+</div>
+<p>We observe super convergence for second order polynomials, yielding a fourth order convergence.</p>
 </div>
 </div>
 </div>
