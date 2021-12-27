@@ -1,7 +1,7 @@
 # Changelog
 
 ## Dev 
-- Updates on error computations in [Error control: Computing convergence rates](hapter4/convergence).
+- Updates on error computations in [Error control: Computing convergence rates](chapter4/convergence).
 - Added tutorial on interpolation of `ufl.Expression` in [Deflection of a membrane](chapter1/membrane_code).
 - Added tutorial on how to apply constant-valued Dirichet conditions in [Deflection of a membrane](chapter1/membrane_code).
 - Various API changes relating to the import structure of DOLFINx
