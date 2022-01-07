@@ -20,7 +20,7 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container: dokken92/dolfinx_custom:26122021
+    container: dokken92/dolfinx_custom:07012022
 
     env:
       HDF5_MPI: "ON"
@@ -35,12 +35,11 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Install dependencies
-        run: pip3 install notebook nbconvert "jupyter-book<6" --upgrade
+        run: pip3 install notebook nbconvert jupyter-book --upgrade
       - name: Test notebooks in parallel
         run: |
           cd chapter1
           jupyter-nbconvert --to python fundamentals_code.ipynb
-          python3 -c "from pyvista import start_xvfb; start_xvfb(0.1)"
           mpirun -n 2 python3 fundamentals_code.py
           jupyter-nbconvert --to python membrane_code.ipynb
           mpirun -n 2 python3 membrane_code.py

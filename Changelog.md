@@ -1,6 +1,8 @@
 # Changelog
 
 ## Dev 
+- API updates wrt. DOLFINx. `Form`->`form`, `DirichletBC`->`dirichletbc`.
+- Switch plotting backend to `ipygany` and `pythreejs`
 - Updates on error computations in [Error control: Computing convergence rates](chapter4/convergence).
 - Added tutorial on interpolation of `ufl.Expression` in [Deflection of a membrane](chapter1/membrane_code).
 - Added tutorial on how to apply constant-valued Dirichet conditions in [Deflection of a membrane](chapter1/membrane_code).
