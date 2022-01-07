@@ -20,7 +20,7 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container: dokken92/dolfinx_custom:26122021
+    container: dokken92/dolfinx_custom:07012022
 
     env:
       HDF5_MPI: "ON"
@@ -35,7 +35,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Install dependencies
-        run: pip3 install notebook nbconvert "jupyter-book<6" --upgrade
+        run: pip3 install notebook nbconvert jupyter-book --upgrade
       - name: Test notebooks in parallel
         run: |
           cd chapter1
