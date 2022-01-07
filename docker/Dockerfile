@@ -22,6 +22,12 @@ RUN pip3 install jupyterlab --upgrade
 RUN pip3 install pythreejs ipygany
 RUN jupyter nbextension enable --py --sys-prefix ipygany
 
+# Install xvfb for screenshots
+RUN apt-get -qq update && \
+    apt-get install -y libgl1-mesa-dev xvfb && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 # Install progress-bar
 RUN pip3 install tqdm pygments --upgrade
 
