@@ -38,6 +38,7 @@ jobs:
         run: pip3 install notebook nbconvert jupyter-book --upgrade
       - name: Test notebooks in parallel
         run: |
+          python3 -c "from pyvista import start_xvfb; start_xvfb(0.1)"
           cd chapter1
           jupyter-nbconvert --to python fundamentals_code.ipynb
           mpirun -n 2 python3 fundamentals_code.py
