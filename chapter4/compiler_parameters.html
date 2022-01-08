@@ -41,7 +41,7 @@
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <script src="../_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
     <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
@@ -370,7 +370,7 @@
                 data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
-            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
     </div>
 </div>
 
@@ -423,14 +423,24 @@
         </div>
 
         <!-- Table of contents -->
-        <div class="d-none d-md-block col-md-2 bd-toc show">
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
             
         </div>
     </div>
 </div>
     <div id="main-content" class="row">
         <div class="col-12 col-md-9 pl-md-3 pr-md-0">
-        
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>JIT Parameters and visualization using Pandas</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            
               <div>
                 
   <div class="tex2jax_ignore mathjax_ignore section" id="jit-parameters-and-visualization-using-pandas">
@@ -459,7 +469,7 @@ This C code is in turned compiled using <a class="reference external" href="http
 <p>Next we generate a general function to assemble the mass matrix for a UnitCube. Note that we use <code class="docutils literal notranslate"><span class="pre">dolfinx.fem.Form</span></code> to compile the variational form. For codes using <code class="docutils literal notranslate"><span class="pre">dolfinx.LinearProblem</span></code>, you can supply <code class="docutils literal notranslate"><span class="pre">jit_parameters</span></code> as a keyword argument.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">Form</span><span class="p">,</span> <span class="n">FunctionSpace</span><span class="p">,</span> <span class="n">assemble_matrix</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">FunctionSpace</span><span class="p">,</span> <span class="n">assemble_matrix</span><span class="p">,</span> <span class="n">form</span>
 <span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">create_unit_cube</span>
 <span class="kn">from</span> <span class="nn">ufl</span> <span class="kn">import</span> <span class="n">TestFunction</span><span class="p">,</span> <span class="n">TrialFunction</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">inner</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
@@ -474,7 +484,7 @@ This C code is in turned compiled using <a class="reference external" href="http
     <span class="n">u</span> <span class="o">=</span> <span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
     <span class="n">v</span> <span class="o">=</span> <span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">inner</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span>
-    <span class="n">a_compiled</span> <span class="o">=</span> <span class="n">Form</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">jit_parameters</span><span class="o">=</span><span class="n">jit_parameters</span><span class="p">)</span>
+    <span class="n">a_compiled</span> <span class="o">=</span> <span class="n">form</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">jit_parameters</span><span class="o">=</span><span class="n">jit_parameters</span><span class="p">)</span>
     <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
     <span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a_compiled</span><span class="p">)</span>
     <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
@@ -562,35 +572,35 @@ This C code is in turned compiled using <a class="reference external" href="http
       <td>N1curl</td>
       <td>1</td>
       <td>-O1\n-march=native</td>
-      <td>0.018350</td>
+      <td>0.017946</td>
     </tr>
     <tr>
       <th>1</th>
       <td>N1curl</td>
       <td>1</td>
       <td>-O2\n-march=native</td>
-      <td>0.017122</td>
+      <td>0.016961</td>
     </tr>
     <tr>
       <th>2</th>
       <td>N1curl</td>
       <td>1</td>
       <td>-O3\n-march=native</td>
-      <td>0.015997</td>
+      <td>0.015829</td>
     </tr>
     <tr>
       <th>3</th>
       <td>N1curl</td>
       <td>1</td>
       <td>-Ofast\n-march=native</td>
-      <td>0.016016</td>
+      <td>0.015352</td>
     </tr>
     <tr>
       <th>4</th>
       <td>N1curl</td>
       <td>1</td>
       <td>-O1</td>
-      <td>0.016944</td>
+      <td>0.016630</td>
     </tr>
     <tr>
       <th>...</th>
@@ -604,35 +614,35 @@ This C code is in turned compiled using <a class="reference external" href="http
       <td>RT</td>
       <td>3</td>
       <td>-Ofast\n-march=native</td>
-      <td>0.427650</td>
+      <td>0.419319</td>
     </tr>
     <tr>
       <th>68</th>
       <td>RT</td>
       <td>3</td>
       <td>-O1</td>
-      <td>0.687937</td>
+      <td>0.683100</td>
     </tr>
     <tr>
       <th>69</th>
       <td>RT</td>
       <td>3</td>
       <td>-O2</td>
-      <td>0.605550</td>
+      <td>0.598956</td>
     </tr>
     <tr>
       <th>70</th>
       <td>RT</td>
       <td>3</td>
       <td>-O3</td>
-      <td>0.507111</td>
+      <td>0.500802</td>
     </tr>
     <tr>
       <th>71</th>
       <td>RT</td>
       <td>3</td>
       <td>-Ofast</td>
-      <td>0.508169</td>
+      <td>0.499448</td>
     </tr>
   </tbody>
 </table>
@@ -693,8 +703,8 @@ This C code is in turned compiled using <a class="reference external" href="http
 
               </div>
               
-        
-            <!-- Previous / next buttons -->
+            
+                <!-- Previous / next buttons -->
 <div class='prev-next-area'> 
     <a class='left-prev' id="prev-link" href="solvers.html" title="previous page">
         <i class="fas fa-angle-left"></i>
@@ -711,28 +721,26 @@ This C code is in turned compiled using <a class="reference external" href="http
     <i class="fas fa-angle-right"></i>
     </a>
 </div>
-        
+            
         </div>
     </div>
     <footer class="footer">
-    <div class="container">
-      <p>
-        
-          By Jørgen S. Dokken<br/>
-        
-            &copy; Copyright 2021.<br/>
-          <div class="extra_footer">
-            <div>
+  <p>
+    
+      By Jørgen S. Dokken<br/>
+    
+        &copy; Copyright 2021.<br/>
+      <div class="extra_footer">
+        <div>
     This webpage is an adaptation of <a href=https://www.springer.com/gp/book/9783319524610>The FEniCS tutorial</a> and
     is distributed under the terms of the      <a href=http://creativecommons.org/licenses/by/4.0/>Creative Commons Attribution 4.0 International License  </a>
     which permits use, duplication, adaptation, distribution and reproduction in any medium or format, as long as you give appropriate credit to the original author(s) and the source,
     provide a link to the Creative Commons license and indicate if changes were made.
 </div>
 
-          </div>
-      </p>
-    </div>
-  </footer>
+      </div>
+  </p>
+</footer>
 </main>
 
 

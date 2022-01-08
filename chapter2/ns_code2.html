@@ -41,7 +41,7 @@
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <script src="../_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -372,7 +372,7 @@
                 data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
-            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
     </div>
 </div>
 
@@ -425,7 +425,7 @@
         </div>
 
         <!-- Table of contents -->
-        <div class="d-none d-md-block col-md-2 bd-toc show">
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
             
             <div class="tocsection onthispage pt-5 pb-3">
                 <i class="fas fa-list"></i> Contents
@@ -485,7 +485,70 @@
 </div>
     <div id="main-content" class="row">
         <div class="col-12 col-md-9 pl-md-3 pr-md-0">
-        
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Test problem 2: Flow past a cylinder (DFG 2D-3 benchmark)</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#mesh-generation">
+   Mesh generation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#generating-the-mesh">
+   Generating the mesh
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#loading-mesh-and-boundary-markers">
+   Loading mesh and boundary markers
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#physical-and-discretization-parameters">
+   Physical and discretization parameters
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#boundary-conditions">
+   Boundary conditions
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#variational-form">
+   Variational form
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#verification-of-the-implementation-compute-known-physical-quantities">
+   Verification of the implementation compute known physical quantities
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#solving-the-time-dependent-problem">
+   Solving the time-dependent problem
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#verification-using-data-from-featflow">
+   Verification using data from FEATFLOW
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            
               <div>
                 
   <div class="tex2jax_ignore mathjax_ignore section" id="test-problem-2-flow-past-a-cylinder-dfg-2d-3-benchmark">
@@ -634,17 +697,17 @@ Info    : [ 20%] Meshing curve 6 (Line)
 Info    : [ 40%] Meshing curve 7 (Line)
 Info    : [ 60%] Meshing curve 8 (Line)
 Info    : [ 80%] Meshing curve 9 (Line)
-Info    : Done meshing 1D (Wall 0.00853536s, CPU 0.009263s)
+Info    : Done meshing 1D (Wall 0.00898114s, CPU 0.010718s)
 Info    : Meshing 2D...
 Info    : Meshing surface 1 (Plane, Frontal-Delaunay)
-Info    : Simple recombination completed (Wall 0.005591s, CPU 0.005585s): 307 quads, 90 triangles, 0 invalid quads, 0 quads with Q &lt; 0.1, avg Q = 0.746284, min Q = 0.426971
-Info    : Simple recombination completed (Wall 0.0129325s, CPU 0.012932s): 1498 quads, 0 triangles, 0 invalid quads, 0 quads with Q &lt; 0.1, avg Q = 0.798747, min Q = 0.364541
+Info    : Simple recombination completed (Wall 0.00557733s, CPU 0.005579s): 307 quads, 90 triangles, 0 invalid quads, 0 quads with Q &lt; 0.1, avg Q = 0.746284, min Q = 0.426971
+Info    : Simple recombination completed (Wall 0.012967s, CPU 0.013043s): 1498 quads, 0 triangles, 0 invalid quads, 0 quads with Q &lt; 0.1, avg Q = 0.798747, min Q = 0.364541
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : Done meshing 2D (Wall 0.031535s, CPU 0.032003s)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : Done meshing 2D (Wall 0.0316058s, CPU 0.031988s)
 Info    : 1582 nodes 1671 elements
 Info    : Optimizing mesh (Netgen)...
-Info    : Done optimizing mesh (Wall 1.5e-06s, CPU 3e-06s)
+Info    : Done optimizing mesh (Wall 1.801e-06s, CPU 5e-06s)
 </pre></div>
 </div>
 </div>
@@ -731,8 +794,8 @@ To load the mesh, we follow the same structure as in  <a class="reference intern
 <p>Following the DGF-2 benchmark, we define our problem specific parameters</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Constant</span><span class="p">,</span> <span class="n">DirichletBC</span><span class="p">,</span> <span class="n">Function</span><span class="p">,</span> <span class="n">FunctionSpace</span><span class="p">,</span> <span class="n">apply_lifting</span><span class="p">,</span> <span class="n">assemble_matrix</span><span class="p">,</span> 
-                         <span class="n">assemble_scalar</span><span class="p">,</span> <span class="n">assemble_vector</span><span class="p">,</span> <span class="n">create_vector</span><span class="p">,</span> <span class="n">locate_dofs_topological</span><span class="p">,</span> <span class="n">set_bc</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Constant</span><span class="p">,</span> <span class="n">dirichletbc</span><span class="p">,</span> <span class="n">Function</span><span class="p">,</span> <span class="n">FunctionSpace</span><span class="p">,</span> <span class="n">apply_lifting</span><span class="p">,</span> <span class="n">assemble_matrix</span><span class="p">,</span> 
+                         <span class="n">assemble_scalar</span><span class="p">,</span> <span class="n">assemble_vector</span><span class="p">,</span> <span class="n">create_vector</span><span class="p">,</span> <span class="n">form</span><span class="p">,</span> <span class="n">locate_dofs_topological</span><span class="p">,</span> <span class="n">set_bc</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
 <span class="kn">from</span> <span class="nn">ufl</span> <span class="kn">import</span> <span class="p">(</span><span class="n">FacetNormal</span><span class="p">,</span> <span class="n">FiniteElement</span><span class="p">,</span> <span class="n">Identity</span><span class="p">,</span> <span class="n">Measure</span><span class="p">,</span> <span class="n">TestFunction</span><span class="p">,</span> <span class="n">TrialFunction</span><span class="p">,</span> <span class="n">VectorElement</span><span class="p">,</span>
                  <span class="n">as_vector</span><span class="p">,</span> <span class="n">div</span><span class="p">,</span> <span class="n">dot</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">inner</span><span class="p">,</span> <span class="n">lhs</span><span class="p">,</span> <span class="n">grad</span><span class="p">,</span> <span class="n">nabla_grad</span><span class="p">,</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">sym</span><span class="p">)</span>
@@ -781,18 +844,18 @@ To load the mesh, we follow the same structure as in  <a class="reference intern
 <span class="n">u_inlet</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">inlet_velocity</span><span class="p">)</span>
 <span class="n">inlet_facets</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">ft</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">inlet_marker</span><span class="p">]</span>
 
-<span class="n">bcu_inflow</span> <span class="o">=</span> <span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_inlet</span><span class="p">,</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">inlet_facets</span><span class="p">))</span>
+<span class="n">bcu_inflow</span> <span class="o">=</span> <span class="n">dirichletbc</span><span class="p">(</span><span class="n">u_inlet</span><span class="p">,</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">inlet_facets</span><span class="p">))</span>
 <span class="c1"># Walls</span>
 <span class="n">u_nonslip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mi">0</span><span class="p">,)</span> <span class="o">*</span><span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScalarType</span><span class="p">)</span>
 <span class="n">wall_facets</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">ft</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">wall_marker</span><span class="p">]</span>
-<span class="n">bcu_walls</span> <span class="o">=</span> <span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_nonslip</span><span class="p">,</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">wall_facets</span><span class="p">),</span> <span class="n">V</span><span class="p">)</span>
+<span class="n">bcu_walls</span> <span class="o">=</span> <span class="n">dirichletbc</span><span class="p">(</span><span class="n">u_nonslip</span><span class="p">,</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">wall_facets</span><span class="p">),</span> <span class="n">V</span><span class="p">)</span>
 <span class="c1"># Obstacle</span>
 <span class="n">obstacle_facets</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">ft</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">obstacle_marker</span><span class="p">]</span>
-<span class="n">bcu_obstacle</span> <span class="o">=</span> <span class="n">DirichletBC</span><span class="p">(</span><span class="n">u_nonslip</span><span class="p">,</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">obstacle_facets</span><span class="p">),</span> <span class="n">V</span><span class="p">)</span>
+<span class="n">bcu_obstacle</span> <span class="o">=</span> <span class="n">dirichletbc</span><span class="p">(</span><span class="n">u_nonslip</span><span class="p">,</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">obstacle_facets</span><span class="p">),</span> <span class="n">V</span><span class="p">)</span>
 <span class="n">bcu</span> <span class="o">=</span> <span class="p">[</span><span class="n">bcu_inflow</span><span class="p">,</span> <span class="n">bcu_obstacle</span><span class="p">,</span> <span class="n">bcu_walls</span><span class="p">]</span>
 <span class="c1"># Outlet</span>
 <span class="n">outlet_facets</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">ft</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">outlet_marker</span><span class="p">]</span>
-<span class="n">bcp_outlet</span> <span class="o">=</span> <span class="n">DirichletBC</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScalarType</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">outlet_facets</span><span class="p">),</span> <span class="n">Q</span><span class="p">)</span>
+<span class="n">bcp_outlet</span> <span class="o">=</span> <span class="n">dirichletbc</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScalarType</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">outlet_facets</span><span class="p">),</span> <span class="n">Q</span><span class="p">)</span>
 <span class="n">bcp</span> <span class="o">=</span> <span class="p">[</span><span class="n">bcp_outlet</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -860,8 +923,8 @@ u^{n+1} = u^{*}-\delta t \phi.
 <span class="n">F1</span> <span class="o">+=</span> <span class="n">inner</span><span class="p">(</span><span class="mf">1.5</span> <span class="o">*</span> <span class="n">dot</span><span class="p">(</span><span class="n">u_n</span><span class="p">,</span> <span class="n">nabla_grad</span><span class="p">(</span><span class="n">u_n</span><span class="p">))</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">dot</span><span class="p">(</span><span class="n">u_n1</span><span class="p">,</span> <span class="n">nabla_grad</span><span class="p">(</span><span class="n">u_n1</span><span class="p">)),</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span>
 <span class="n">F1</span> <span class="o">+=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">inner</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="o">+</span><span class="n">u_n</span><span class="p">),</span> <span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="o">*</span><span class="n">dx</span> <span class="o">-</span> <span class="n">dot</span><span class="p">(</span><span class="n">p_</span><span class="p">,</span> <span class="n">div</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="o">*</span><span class="n">dx</span>
 <span class="n">F1</span> <span class="o">+=</span> <span class="n">dot</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span>
-<span class="n">a1</span> <span class="o">=</span> <span class="n">lhs</span><span class="p">(</span><span class="n">F1</span><span class="p">)</span>
-<span class="n">L1</span> <span class="o">=</span> <span class="n">rhs</span><span class="p">(</span><span class="n">F1</span><span class="p">)</span>
+<span class="n">a1</span> <span class="o">=</span> <span class="n">form</span><span class="p">(</span><span class="n">lhs</span><span class="p">(</span><span class="n">F1</span><span class="p">))</span>
+<span class="n">L1</span> <span class="o">=</span> <span class="n">form</span><span class="p">(</span><span class="n">rhs</span><span class="p">(</span><span class="n">F1</span><span class="p">))</span>
 <span class="n">A1</span> <span class="o">=</span> <span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcu</span><span class="p">)</span>
 <span class="n">A1</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
 <span class="n">b1</span> <span class="o">=</span> <span class="n">create_vector</span><span class="p">(</span><span class="n">L1</span><span class="p">)</span>
@@ -872,8 +935,8 @@ u^{n+1} = u^{*}-\delta t \phi.
 <p>Next we define the second step</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">a2</span> <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">grad</span><span class="p">(</span><span class="n">q</span><span class="p">))</span><span class="o">*</span><span class="n">dx</span>
-<span class="n">L2</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="n">k</span> <span class="o">*</span> <span class="n">dot</span><span class="p">(</span><span class="n">div</span><span class="p">(</span><span class="n">u_s</span><span class="p">),</span> <span class="n">q</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">a2</span> <span class="o">=</span> <span class="n">form</span><span class="p">(</span><span class="n">dot</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">grad</span><span class="p">(</span><span class="n">q</span><span class="p">))</span><span class="o">*</span><span class="n">dx</span><span class="p">)</span>
+<span class="n">L2</span> <span class="o">=</span> <span class="n">form</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="n">k</span> <span class="o">*</span> <span class="n">dot</span><span class="p">(</span><span class="n">div</span><span class="p">(</span><span class="n">u_s</span><span class="p">),</span> <span class="n">q</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span><span class="p">)</span>
 <span class="n">A2</span> <span class="o">=</span> <span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcp</span><span class="p">)</span>
 <span class="n">A2</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
 <span class="n">b2</span> <span class="o">=</span> <span class="n">create_vector</span><span class="p">(</span><span class="n">L2</span><span class="p">)</span>
@@ -884,8 +947,8 @@ u^{n+1} = u^{*}-\delta t \phi.
 <p>We finally create the last step</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">a3</span> <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span>
-<span class="n">L3</span> <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="n">u_s</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span> <span class="o">-</span> <span class="n">k</span> <span class="o">*</span> <span class="n">dot</span><span class="p">(</span><span class="n">nabla_grad</span><span class="p">(</span><span class="n">phi</span><span class="p">),</span> <span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">a3</span> <span class="o">=</span> <span class="n">form</span><span class="p">(</span><span class="n">dot</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span><span class="p">)</span>
+<span class="n">L3</span> <span class="o">=</span> <span class="n">form</span><span class="p">(</span><span class="n">dot</span><span class="p">(</span><span class="n">u_s</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span> <span class="o">-</span> <span class="n">k</span> <span class="o">*</span> <span class="n">dot</span><span class="p">(</span><span class="n">nabla_grad</span><span class="p">(</span><span class="n">phi</span><span class="p">),</span> <span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span><span class="p">)</span>
 <span class="n">A3</span> <span class="o">=</span> <span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a3</span><span class="p">)</span>
 <span class="n">A3</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
 <span class="n">b3</span> <span class="o">=</span> <span class="n">create_vector</span><span class="p">(</span><span class="n">L3</span><span class="p">)</span>
@@ -939,8 +1002,8 @@ u^{n+1} = u^{*}-\delta t \phi.
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="o">-</span><span class="n">FacetNormal</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span> <span class="c1"># Normal pointing out of obstacle</span>
 <span class="n">dObs</span> <span class="o">=</span> <span class="n">Measure</span><span class="p">(</span><span class="s2">&quot;ds&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">mesh</span><span class="p">,</span> <span class="n">subdomain_data</span><span class="o">=</span><span class="n">ft</span><span class="p">,</span> <span class="n">subdomain_id</span><span class="o">=</span><span class="n">obstacle_marker</span><span class="p">)</span>
 <span class="n">u_t</span> <span class="o">=</span> <span class="n">inner</span><span class="p">(</span><span class="n">as_vector</span><span class="p">((</span><span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span> <span class="n">u_</span><span class="p">)</span>
-<span class="n">drag</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">/</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="p">(</span><span class="n">mu</span> <span class="o">/</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">inner</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">u_t</span><span class="p">),</span> <span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">p_</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">dObs</span>
-<span class="n">lift</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">/</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="p">(</span><span class="n">mu</span> <span class="o">/</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">inner</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">u_t</span><span class="p">),</span> <span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">p_</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">dObs</span>
+<span class="n">drag</span> <span class="o">=</span> <span class="n">form</span><span class="p">(</span><span class="mi">2</span> <span class="o">/</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="p">(</span><span class="n">mu</span> <span class="o">/</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">inner</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">u_t</span><span class="p">),</span> <span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">p_</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">dObs</span><span class="p">)</span>
+<span class="n">lift</span> <span class="o">=</span> <span class="n">form</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">/</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="p">(</span><span class="n">mu</span> <span class="o">/</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">inner</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">u_t</span><span class="p">),</span> <span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">p_</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">dObs</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
     <span class="n">C_D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_steps</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScalarType</span><span class="p">)</span>
     <span class="n">C_L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_steps</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScalarType</span><span class="p">)</span>
@@ -1069,7 +1132,7 @@ As in the previous example, we create output files for the velocity and pressure
 </div>
 <div class="cell_output docutils container">
 <script type="application/vnd.jupyter.widget-view+json">
-{"version_major": 2, "version_minor": 0, "model_id": "9183aababa84497cbce65e57ae76fc3d"}
+{"version_major": 2, "version_minor": 0, "model_id": "383780c8b104421cb8c5d9e7db7bfd95"}
 </script></div>
 </div>
 </div>
@@ -1127,7 +1190,7 @@ As in the previous example, we create output files for the velocity and pressure
 
 
 <script type="application/vnd.jupyter.widget-state+json">
-{"state": {"e98c031e9c9b41539f27f5ab57f7cad6": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "9a987d7043e8481794a8680ef7a35f26": {"model_name": "ProgressStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "bar_color": null, "description_width": ""}}, "70ce6ac207e44d6dad02f2d0e03f376f": {"model_name": "FloatProgressModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "ProgressView", "bar_style": "", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_e98c031e9c9b41539f27f5ab57f7cad6", "max": 1600.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_9a987d7043e8481794a8680ef7a35f26", "value": 1600.0}}, "c160b62ec7ba4d058229c2f8fa24b4cb": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "fd361e63e266472bb882c67418517cb9": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "df8e0d17cb744b94bd439fef0ce8a979": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_c160b62ec7ba4d058229c2f8fa24b4cb", "placeholder": "\u200b", "style": "IPY_MODEL_fd361e63e266472bb882c67418517cb9", "value": "Solving PDE: 100%"}}, "9a867eaa5fb146538c3f80825f54ac9c": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "2b87cff283d447df8a8cc88a5708295b": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "a3d53f65b80a4838a6f650582d479f41": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_9a867eaa5fb146538c3f80825f54ac9c", "placeholder": "\u200b", "style": "IPY_MODEL_2b87cff283d447df8a8cc88a5708295b", "value": " 1600/1600 [02:19&lt;00:00, 11.06it/s]"}}, "4e7d9cc0dfa346859688cca6c55da4cd": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "9183aababa84497cbce65e57ae76fc3d": {"model_name": "HBoxModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_df8e0d17cb744b94bd439fef0ce8a979", "IPY_MODEL_70ce6ac207e44d6dad02f2d0e03f376f", "IPY_MODEL_a3d53f65b80a4838a6f650582d479f41"], "layout": "IPY_MODEL_4e7d9cc0dfa346859688cca6c55da4cd"}}}, "version_major": 2, "version_minor": 0}
+{"state": {"f43b11198f8a43569e5b3ebd51edd387": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "b8f22e348966405f89e4cf32b2369864": {"model_name": "ProgressStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "bar_color": null, "description_width": ""}}, "04f72616ccb744b18c1d9c3b1e013fb6": {"model_name": "FloatProgressModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "ProgressView", "bar_style": "", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_f43b11198f8a43569e5b3ebd51edd387", "max": 1600.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_b8f22e348966405f89e4cf32b2369864", "value": 1599.0}}, "db0b96e8bcc04a019043dc8db6298954": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "6627fe0aa28b4dca9cd288deca879f20": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "4e862a4fddd5476d8e4e6bac3b3eaee0": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_db0b96e8bcc04a019043dc8db6298954", "placeholder": "\u200b", "style": "IPY_MODEL_6627fe0aa28b4dca9cd288deca879f20", "value": "Solving PDE: 100%"}}, "9208848b5dda4163add1faeaae0d2a89": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "3a4e5b12c6ba4aa598fae1f9f6862de3": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "663ab4d4b8e8458c99fd6897210605ab": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_9208848b5dda4163add1faeaae0d2a89", "placeholder": "\u200b", "style": "IPY_MODEL_3a4e5b12c6ba4aa598fae1f9f6862de3", "value": " 1599/1600 [02:10&lt;00:00, 12.86it/s]"}}, "cff1d9e3aa8d487885f2c8d140d3cf2a": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "383780c8b104421cb8c5d9e7db7bfd95": {"model_name": "HBoxModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_4e862a4fddd5476d8e4e6bac3b3eaee0", "IPY_MODEL_04f72616ccb744b18c1d9c3b1e013fb6", "IPY_MODEL_663ab4d4b8e8458c99fd6897210605ab"], "layout": "IPY_MODEL_cff1d9e3aa8d487885f2c8d140d3cf2a"}}}, "version_major": 2, "version_minor": 0}
 </script>
 
 
@@ -1153,8 +1216,8 @@ As in the previous example, we create output files for the velocity and pressure
 
               </div>
               
-        
-            <!-- Previous / next buttons -->
+            
+                <!-- Previous / next buttons -->
 <div class='prev-next-area'> 
     <a class='left-prev' id="prev-link" href="ns_code1.html" title="previous page">
         <i class="fas fa-angle-left"></i>
@@ -1171,28 +1234,26 @@ As in the previous example, we create output files for the velocity and pressure
     <i class="fas fa-angle-right"></i>
     </a>
 </div>
-        
+            
         </div>
     </div>
     <footer class="footer">
-    <div class="container">
-      <p>
-        
-          By Jørgen S. Dokken<br/>
-        
-            &copy; Copyright 2021.<br/>
-          <div class="extra_footer">
-            <div>
+  <p>
+    
+      By Jørgen S. Dokken<br/>
+    
+        &copy; Copyright 2021.<br/>
+      <div class="extra_footer">
+        <div>
     This webpage is an adaptation of <a href=https://www.springer.com/gp/book/9783319524610>The FEniCS tutorial</a> and
     is distributed under the terms of the      <a href=http://creativecommons.org/licenses/by/4.0/>Creative Commons Attribution 4.0 International License  </a>
     which permits use, duplication, adaptation, distribution and reproduction in any medium or format, as long as you give appropriate credit to the original author(s) and the source,
     provide a link to the Creative Commons license and indicate if changes were made.
 </div>
 
-          </div>
-      </p>
-    </div>
-  </footer>
+      </div>
+  </p>
+</footer>
 </main>
 
 
