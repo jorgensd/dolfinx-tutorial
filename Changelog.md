@@ -1,8 +1,10 @@
 # Changelog
 
 ## Dev 
+- All `pyvista` plotting has been rewritten to use `ipygany` and `pythreejs` as well as using a cleaner interface.
+- `dolfinx.plot.create_vtk_topology` has been renamed to `dolfinx.plot.create_vtk_mesh` and can now be directly used as input to `pyvista.UnstructuredGrid`.
+- `dolfinx.fem.Function.compute_point_values` has been deprecated. Interpolation into a CG-1 is now the way of getting vertex values.
 - API updates wrt. DOLFINx. `Form`->`form`, `DirichletBC`->`dirichletbc`.
-- Switch plotting backend to `ipygany` and `pythreejs`
 - Updates on error computations in [Error control: Computing convergence rates](chapter4/convergence).
 - Added tutorial on interpolation of `ufl.Expression` in [Deflection of a membrane](chapter1/membrane_code).
 - Added tutorial on how to apply constant-valued Dirichet conditions in [Deflection of a membrane](chapter1/membrane_code).
