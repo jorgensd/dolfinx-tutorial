@@ -44,8 +44,8 @@
     <script src="../_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
     <script>
         const thebe_selector = ".thebe"
@@ -578,25 +578,24 @@ Newton’s method requires methods for evaluating the residual <code class="docu
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of interations: 8
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2022-01-17 08:24:29.814 (   0.142s) [main            ]              petsc.cpp:769   INFO| PETSc Krylov solver starting to solve system.
-2022-01-17 08:24:29.816 (   0.144s) [main            ]              petsc.cpp:769   INFO| PETSc Krylov solver starting to solve system.
-2022-01-17 08:24:29.818 (   0.146s) [main            ]       NewtonSolver.cpp:34    INFO| Newton iteration 2: r (abs) = 20.3794 (tol = 1e-10) r (rel) = 0.922544(tol = 1e-06)
-2022-01-17 08:24:29.819 (   0.147s) [main            ]              petsc.cpp:769   INFO| PETSc Krylov solver starting to solve system.
-2022-01-17 08:24:29.820 (   0.148s) [main            ]       NewtonSolver.cpp:34    INFO| Newton iteration 3: r (abs) = 6.95285 (tol = 1e-10) r (rel) = 0.314745(tol = 1e-06)
-2022-01-17 08:24:29.820 (   0.148s) [main            ]              petsc.cpp:769   INFO| PETSc Krylov solver starting to solve system.
-2022-01-17 08:24:29.822 (   0.150s) [main            ]       NewtonSolver.cpp:34    INFO| Newton iteration 4: r (abs) = 2.93575 (tol = 1e-10) r (rel) = 0.132897(tol = 1e-06)
-2022-01-17 08:24:29.822 (   0.150s) [main            ]              petsc.cpp:769   INFO| PETSc Krylov solver starting to solve system.
-2022-01-17 08:24:29.823 (   0.151s) [main            ]       NewtonSolver.cpp:34    INFO| Newton iteration 5: r (abs) = 0.700593 (tol = 1e-10) r (rel) = 0.0317148(tol = 1e-06)
-2022-01-17 08:24:29.823 (   0.152s) [main            ]              petsc.cpp:769   INFO| PETSc Krylov solver starting to solve system.
-2022-01-17 08:24:29.826 (   0.154s) [main            ]       NewtonSolver.cpp:34    INFO| Newton iteration 6: r (abs) = 0.0490796 (tol = 1e-10) r (rel) = 0.00222176(tol = 1e-06)
-2022-01-17 08:24:29.826 (   0.154s) [main            ]              petsc.cpp:769   INFO| PETSc Krylov solver starting to solve system.
-2022-01-17 08:24:29.827 (   0.155s) [main            ]       NewtonSolver.cpp:34    INFO| Newton iteration 7: r (abs) = 0.000299464 (tol = 1e-10) r (rel) = 1.35563e-05(tol = 1e-06)
-2022-01-17 08:24:29.827 (   0.156s) [main            ]              petsc.cpp:769   INFO| PETSc Krylov solver starting to solve
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2022-01-24 22:07:11.158 (   0.127s) [main            ]              petsc.cpp:769   INFO| PETSc Krylov solver starting to solve system.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> system.
-2022-01-17 08:24:29.829 (   0.158s) [main            ]       NewtonSolver.cpp:34    INFO| Newton iteration 8: r (abs) = 1.52969e-08 (tol = 1e-10) r (rel) = 6.92466e-10(tol = 1e-06)
-2022-01-17 08:24:29.829 (   0.158s) [main            ]       NewtonSolver.cpp:250   INFO| Newton solver finished in 8 iterations and 45 linear solver iterations.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2022-01-24 22:07:11.159 (   0.128s) [main            ]              petsc.cpp:769   INFO| PETSc Krylov solver starting to solve system.
+2022-01-24 22:07:11.161 (   0.130s) [main            ]       NewtonSolver.cpp:34    INFO| Newton iteration 2: r (abs) = 20.3794 (tol = 1e-10) r (rel) = 0.922544(tol = 1e-06)
+2022-01-24 22:07:11.161 (   0.130s) [main            ]              petsc.cpp:769   INFO| PETSc Krylov solver starting to solve system.
+2022-01-24 22:07:11.162 (   0.131s) [main            ]       NewtonSolver.cpp:34    INFO| Newton iteration 3: r (abs) = 6.95285 (tol = 1e-10) r (rel) = 0.314745(tol = 1e-06)
+2022-01-24 22:07:11.163 (   0.132s) [main            ]              petsc.cpp:769   INFO| PETSc Krylov solver starting to solve system.
+2022-01-24 22:07:11.164 (   0.133s) [main            ]       NewtonSolver.cpp:34    INFO| Newton iteration 4: r (abs) = 2.93575 (tol = 1e-10) r (rel) = 0.132897(tol = 1e-06)
+2022-01-24 22:07:11.164 (   0.133s) [main            ]              petsc.cpp:769   INFO| PETSc Krylov solver starting to solve system.
+2022-01-24 22:07:11.165 (   0.134s) [main            ]       NewtonSolver.cpp:34    INFO| Newton iteration 5: r (abs) = 0.700593 (tol = 1e-10) r (rel) = 0.0317148(tol = 1e-06)
+2022-01-24 22:07:11.165 (   0.134s) [main            ]              petsc.cpp:769   INFO| PETSc Krylov solver starting to solve system.
+2022-01-24 22:07:11.167 (   0.135s) [main            ]       NewtonSolver.cpp:34    INFO| Newton iteration 6: r (abs) = 0.0490796 (tol = 1e-10) r (rel) = 0.00222176(tol = 1e-06)
+2022-01-24 22:07:11.167 (   0.136s) [main            ]              petsc.cpp:769   INFO| PETSc Krylov solver starting to solve system.
+2022-01-24 22:07:11.168 (   0.137s) [main            ]       NewtonSolver.cpp:34    INFO| Newton iteration 7: r (abs) = 0.000299464 (tol = 1e-10) r (rel) = 1.35563e-05(tol = 1e-06)
+2022-01-24 22:07:11.168 (   0.137s) [main            ]              petsc.cpp:769   INFO| PETSc Krylov solver starting to solve system.
+2022-01-24 22:07:11.170 (   0.138s) [main            ]       NewtonSolver.cpp:34    INFO| Newton iteration 8: r (abs) = 1.52969e-08 (tol = 1e-10) r (rel) = 6.92466e-10(tol = 1e-06)
+2022-01-24 22:07:11.170 (   0.138s) [main            ]       NewtonSolver.cpp:250   INFO| Newton solver finished in 8 iterations and 45 linear solver iterations.
 </pre></div>
 </div>
 </div>
@@ -615,9 +614,7 @@ If we think of the problem in terms of finite differences on a uniform mesh, <sp
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;L2-error: </span><span class="si">{</span><span class="n">error_L2</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <span class="c1"># Compute values at mesh vertices</span>
-<span class="n">u_vertex_values</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">compute_point_values</span><span class="p">()</span>
-<span class="n">u_ex_vertex_values</span> <span class="o">=</span> <span class="n">u_ex</span><span class="o">.</span><span class="n">compute_point_values</span><span class="p">()</span>
-<span class="n">error_max</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">u_vertex_values</span> <span class="o">-</span> <span class="n">u_ex_vertex_values</span><span class="p">)),</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">MAX</span><span class="p">)</span>
+<span class="n">error_max</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">uh</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span> <span class="o">-</span><span class="n">u_D</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">)),</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">MAX</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">mesh</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error_max: </span><span class="si">{</span><span class="n">error_max</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
@@ -625,11 +622,11 @@ If we think of the problem in terms of finite differences on a uniform mesh, <sp
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>L2-error: 1.51e-15
-Error_max: 5.55e-15
+Error_max: 5.77e-15
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2022-01-17 08:24:29.846 (   0.174s) [main            ]topologycomputation.cpp:616   INFO| Computing mesh entities of dimension 0
-2022-01-17 08:24:29.846 (   0.174s) [main            ]topologycomputation.cpp:616   INFO| Computing mesh entities of dimension 1
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2022-01-24 22:07:11.182 (   0.151s) [main            ]topologycomputation.cpp:615   INFO| Computing mesh entities of dimension 0
+2022-01-24 22:07:11.182 (   0.151s) [main            ]topologycomputation.cpp:615   INFO| Computing mesh entities of dimension 1
 </pre></div>
 </div>
 </div>
