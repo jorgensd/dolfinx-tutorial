@@ -43,7 +43,10 @@ jobs:
           rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
           pip3 install --upgrade pip
           pip3 install --no-cache-dir tqdm pandas seaborn
-          pip3 install --no-cache-dir notebook nbconvert jupyter-book myst_parser pyvista jupyterlab jupyter
+          pip3 install --no-cache-dir notebook nbconvert 
+          pip3 install --no-cache-dir jupyter-book myst_parser
+          pip3 install --no-cache-dir pyvista 
+          pip3 install --no-cache-dir jupyterlab jupyter
           pip3 install --no-cache-dir ipygany pythreejs
           pip3 install --no-cache-dir matplotlib setuptools --upgrade
           jupyter nbextension enable --py --sys-prefix ipygany
