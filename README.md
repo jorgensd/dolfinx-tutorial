@@ -20,3 +20,13 @@ Alternatively, if you want to add a separate chapter, a Jupyter notebook can be 
 Docker images for this tutorial can be found at [Docker hub](https://hub.docker.com/repository/docker/dokken92/dolfinx_custom)
 
 Additional requirements on top of the `dolfinx/lab` images can be found at [Dockerfile](docker/Dockerfile) and [requirements.txt](docker/requirements.txt)
+
+##
+An image building DOLFINx, Basix and FFCx from source can be built using:
+```bash
+docker built -f docker/LocalDockerFile -t local_lab_env .
+```
+and run
+```bash
+docker run --rm -v $PWD:/root/shared -w /root/shared  --init -p 8888:8888 local_lab_env
+```
