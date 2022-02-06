@@ -1,0 +1,25 @@
+# Various jupyterlab components
+setuptools
+jupyterhub
+jupyterlab
+jupyter-book
+
+# Notebook conversion
+nbconvert
+
+# Meshio
+meshio
+--no-binary=h5py h5py
+
+# Visualization with pandas
+seaborn
+pandas
+
+# Visualization with Pyvista 
+matplotlib
+pyvista
+pythreejs
+ipygany
+
+# Progress bar
+tqdm
