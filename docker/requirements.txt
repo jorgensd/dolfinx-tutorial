@@ -9,7 +9,8 @@ nbconvert
 
 # Meshio
 meshio
---no-binary=h5py h5py
+--no-binary=h5py
+h5py
 
 # Visualization with pandas
 seaborn
