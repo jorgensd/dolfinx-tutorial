@@ -24,3 +24,6 @@ ipygany
 
 # Progress bar
 tqdm
+
+# To resolve black dependency conflict
+click
