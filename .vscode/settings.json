@@ -26,4 +26,12 @@
     ],
     "python.linting.enabled": true,
     "python.pythonPath": "/usr/bin/python3",
+    "spellright.language": [
+        "en_GB"
+    ],
+    "spellright.documentTypes": [
+        "markdown",
+        "latex",
+        "plaintext"
+    ],
 }

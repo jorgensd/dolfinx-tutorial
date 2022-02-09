@@ -1,4 +1,4 @@
-FROM dokken92/dolfinx_custom:21012022
+FROM dokken92/dolfinx_custom:06022022
 
 # create user with a home directory
 ARG NB_USER
