@@ -1,7 +1,5 @@
 FROM dolfinx/dev-env
 
- # Can be "lab" or "notebook"
-ENV NOTEBOOK_STYLE = "lab"
 
 WORKDIR /tmp/
 
@@ -40,4 +38,4 @@ EXPOSE 8888/tcp
 
 ENV SHELL /bin/bash
 # Second argument should be either "lab" or "notebook"
-ENTRYPOINT ["jupyter", "${NOTEBOOK_STYLE}", "--ip", "0.0.0.0", "--no-browser", "--allow-root"]
+ENTRYPOINT ["jupyter", "lab", "--ip", "0.0.0.0", "--no-browser", "--allow-root"]
