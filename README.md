@@ -22,11 +22,13 @@ Docker images for this tutorial can be found at [Docker hub](https://hub.docker.
 Additional requirements on top of the `dolfinx/lab` images can be found at [Dockerfile](docker/Dockerfile) and [requirements.txt](docker/requirements.txt)
 
 ##
-An image building DOLFINx, Basix and FFCx from source can be built using:
+An image building DOLFINx, Basix, UFL and FFCx from source can be built using:
 ```bash
-docker built -f docker/LocalDockerFile -t local_lab_env .
+cd docker
+docker build -f LocalDockerfile -t local_lab_env .
 ```
 and run
 ```bash
-docker run --rm -v $PWD:/root/shared -w /root/shared  --init -p 8888:8888 local_lab_env
-```
+ docker run --rm -ti -v $(pwd):/root/shared -w /root/shared  --init -p 8888:8888 local_lab_env
+ ```
+from the main directory
