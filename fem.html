@@ -37,20 +37,22 @@
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/togglebutton.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
-    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
-    <script>
-        const thebe_selector = ".thebe"
-        const thebe_selector_input = "pre"
-        const thebe_selector_output = ".output"
-    </script>
-    <script async="async" src="_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Changelog" href="Changelog.html" />
@@ -587,7 +589,7 @@ provides a definitive build recipe. As the DOLFINx docker images are hosted at D
 </div>
 <div class="section" id="introduction-to-python-for-beginners">
 <h2>Introduction to Python for beginners<a class="headerlink" href="#introduction-to-python-for-beginners" title="Permalink to this headline">¶</a></h2>
-<p>If you are a beginner in Python, we suggest reading <span id="id1">[<a class="reference internal" href="#id11">Lan16</a>]</span> by Hans Petter Langtangen, which will give you a gentle introduction to the Python programming language. Note that DOLFINx, being a state of the art finite element solver, only supports Python 3, as Python 2 reached its end of life January 1st, 2020. To automatically transfer Python 2 scripts to Python 3, it is suggested to use the <a class="reference external" href="https://docs.python.org/3/library/2to3.html">2to3</a>-package, which provides automated translation of the code.</p>
+<p>If you are a beginner in Python, we suggest reading <span id="id1">[<a class="reference internal" href="#id11" title="Hans Petter Langtangen. A Primer on Scientific Programming with Python. Springer Berlin Heidelberg, Berlin, Heidelberg, 2016. ISBN 978-3-662-49887-3. doi:10.1007/978-3-662-49887-3.">Lan16</a>]</span> by Hans Petter Langtangen, which will give you a gentle introduction to the Python programming language. Note that DOLFINx, being a state of the art finite element solver, only supports Python 3, as Python 2 reached its end of life January 1st, 2020. To automatically transfer Python 2 scripts to Python 3, it is suggested to use the <a class="reference external" href="https://docs.python.org/3/library/2to3.html">2to3</a>-package, which provides automated translation of the code.</p>
 </div>
 <div class="section" id="introduction-to-the-finite-element-method">
 <h2>Introduction to the finite element method<a class="headerlink" href="#introduction-to-the-finite-element-method" title="Permalink to this headline">¶</a></h2>
@@ -598,7 +600,7 @@ provides a definitive build recipe. As the DOLFINx docker images are hosted at D
 <li><p><a class="reference external" href="https://david-kamensky.eng.ucsd.edu/teaching/mae-207-fea-for-coupled-problems">Finite element analysis for coupled problems</a>, by David Kamensky.</p></li>
 <li><p><a class="reference external" href="https://defelement.com/">DefElement: an encyclopedia of finite element definitions</a>, by Matthew W. Scroggs.</p></li>
 </ul>
-<p>There has been written many good text-books on the finite element method, and we refer to the original FEniCS tutorial, for references to these, see Chapter 1.6.2 of The FEniCS tutorial  <span id="id2">[<a class="reference internal" href="index.html#id11">LL16</a>]</span>.</p>
+<p>There has been written many good text-books on the finite element method, and we refer to the original FEniCS tutorial, for references to these, see Chapter 1.6.2 of The FEniCS tutorial  <span id="id2">[<a class="reference internal" href="index.html#id11" title="Hans Petter Langtangen and Anders Logg. Solving PDEs in Python: The FEniCS Tutorial I. Springer International Publishing, Cham, 2016. ISBN 978-3-319-52462-7. doi:10.1007/978-3-319-52462-7.">LL16</a>]</span>.</p>
 </div>
 <div class="section" id="references">
 <h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>

@@ -37,22 +37,24 @@
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/togglebutton.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="../_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
-    <script>
-        const thebe_selector = ".thebe"
-        const thebe_selector_input = "pre"
-        const thebe_selector_output = ".output"
-    </script>
-    <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="JIT Parameters and visualization using Pandas" href="compiler_parameters.html" />
@@ -476,15 +478,21 @@
 <p>Author: Jørgen S. Dokken</p>
 <p>In this section, we will go through how to specify what linear algebra solver we would like to use to solve our PDEs, as well as how to verify the implemenation by considering convergence rates.</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}-\Delta u &amp;= f &amp;&amp;\text{ in } \Omega\\
-u&amp;= u_D &amp;&amp;\text{ on } \partial \Omega.\end{split}\]</div>
+\[
+-\Delta u = f \text{ in } \Omega
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+u = u_D \text{ on } \partial \Omega.
+\]</div>
 <p>Using the manufactured solution <span class="math notranslate nohighlight">\(u_D=\cos(2\pi x)\cos(2\pi y)\)</span>, we obtain <span class="math notranslate nohighlight">\(f=8\pi^2\cos(2\pi x)\cos(2\pi y)\)</span>.
 We start by creating a generic module for evaluating the analytical solution  at any point <span class="math notranslate nohighlight">\(x\)</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
 <span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
-<span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">dirichletbc</span><span class="p">,</span> <span class="n">FunctionSpace</span><span class="p">,</span> <span class="n">Function</span><span class="p">,</span> <span class="n">LinearProblem</span><span class="p">,</span> <span class="n">locate_dofs_topological</span>
+<span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">dirichletbc</span><span class="p">,</span> <span class="n">FunctionSpace</span><span class="p">,</span> <span class="n">Function</span><span class="p">,</span> <span class="n">locate_dofs_topological</span>
+<span class="kn">from</span> <span class="nn">dolfinx.fem.petsc</span> <span class="kn">import</span> <span class="n">LinearProblem</span>
 <span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">create_unit_square</span><span class="p">,</span> <span class="n">locate_entities_boundary</span>
 <span class="kn">from</span> <span class="nn">ufl</span> <span class="kn">import</span> <span class="n">SpatialCoordinate</span><span class="p">,</span> <span class="n">TestFunction</span><span class="p">,</span> <span class="n">TrialFunction</span><span class="p">,</span> <span class="n">div</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">inner</span><span class="p">,</span> <span class="n">grad</span>
 
@@ -556,7 +564,7 @@ We start by creating a generic module for evaluating the analytical solution  at
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_140504495080352) 1 MPI processes
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_139620802359008) 1 MPI processes
 
   type: preonly
 
@@ -568,7 +576,7 @@ We start by creating a generic module for evaluating the analytical solution  at
 
   using NONE norm type for convergence test
 
-PC Object: (dolfinx_solve_140504495080352) 1 MPI processes
+PC Object: (dolfinx_solve_139620802359008) 1 MPI processes
 
   type: lu
 
@@ -632,7 +640,7 @@ You can set any opition in <code class="docutils literal notranslate"><span clas
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_140503501829312) 1 MPI processes
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_139620802358768) 1 MPI processes
 
   type: cg
 
@@ -644,7 +652,7 @@ You can set any opition in <code class="docutils literal notranslate"><span clas
 
   using PRECONDITIONED norm type for convergence test
 
-PC Object: (dolfinx_solve_140503501829312) 1 MPI processes
+PC Object: (dolfinx_solve_139620802358768) 1 MPI processes
 
   type: ilu
 
@@ -705,7 +713,7 @@ PC Object: (dolfinx_solve_140503501829312) 1 MPI processes
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_140503501829120) 1 MPI processes
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_139620662485200) 1 MPI processes
 
   type: gmres
 
@@ -721,7 +729,7 @@ PC Object: (dolfinx_solve_140503501829312) 1 MPI processes
 
   using PRECONDITIONED norm type for convergence test
 
-PC Object: (dolfinx_solve_140503501829120) 1 MPI processes
+PC Object: (dolfinx_solve_139620662485200) 1 MPI processes
 
   type: none
 

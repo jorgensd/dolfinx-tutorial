@@ -37,22 +37,24 @@
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/togglebutton.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="../_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
-    <script>
-        const thebe_selector = ".thebe"
-        const thebe_selector_input = "pre"
-        const thebe_selector_output = ".output"
-    </script>
-    <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Test problem 1: Channel flow (Poiseuille flow)" href="ns_code1.html" />
@@ -496,8 +498,8 @@
 <div class="section" id="variational-formulation">
 <h2>Variational formulation<a class="headerlink" href="#variational-formulation" title="Permalink to this headline">¶</a></h2>
 <p>The Navier-Stokes equations are different from the time-dependent heat equation in that we need to solve a system of equations and the system of a special type. If we apply the same technique as for the heat equation; that is, replacing the time derivative with a simple difference quotient, we obtain a non-linear system of equations. This in itself is not a problem as we saw for the <a class="reference internal" href="nonlinpoisson.html"><span class="doc std std-doc">non-linear Poisson equation</span></a>, but the system has a so-called <em>saddle point structure</em> and requires special techniques (special preconditioners and iterative methods) to be solved efficiently.</p>
-<p>Instead we will apply a simpler and often very efficient approach, known as a <em>splitting method</em>. The idea is to consider the two equations in <a class="reference internal" href="#equation-navier-stokes">(37)</a> separately. There exist many splitting strategies for the incompressible Navier-Stokes equations. One of the oldest is the method proposed by Chorin <span id="id1">[<a class="reference internal" href="#id9">Cho68</a>]</span> and Temam <span id="id2">[<a class="reference internal" href="#id10">Tem69</a>]</span>, often referred to as <em>Chorin’s method</em>. We will use a modified version of Chorin’s method, the so-called incremental pressure correction scheme (IPCS) due to <span id="id3">[<a class="reference internal" href="#id11">God79</a>]</span> which gives improved accuracy compared to the original scheme at little extra cost.</p>
-<p>The IPCS scheme involves three steps. First, we compute a <em>tentative velocity <span class="math notranslate nohighlight">\(u\)</span></em> by advancing the momentum equation by a midpoint finite difference scheme in time, but using <span class="math notranslate nohighlight">\(p^n\)</span> from the previous interval. We will also linearize the nonlinear convective term by using the known velocity <span class="math notranslate nohighlight">\(u^n\)</span> from the previous time step: <span class="math notranslate nohighlight">\(u^n\cdot \nabla u^n\)</span>. Note that there exists several other methods to linearize this term, such as the Adams-Bashforth method, see <span id="id4">[<a class="reference internal" href="#id13">Gue99</a>]</span> and <span id="id5">[<a class="reference internal" href="#id12">QSS10</a>]</span>. The variational problem for the first step is: For the <span class="math notranslate nohighlight">\(n+1\)</span>th step, find <span class="math notranslate nohighlight">\(u^*\)</span> such that</p>
+<p>Instead we will apply a simpler and often very efficient approach, known as a <em>splitting method</em>. The idea is to consider the two equations in <a class="reference internal" href="#equation-navier-stokes">(37)</a> separately. There exist many splitting strategies for the incompressible Navier-Stokes equations. One of the oldest is the method proposed by Chorin <span id="id1">[<a class="reference internal" href="#id9" title="Alexandre Joel Chorin. Numerical solution of the Navier-Stokes equations. Mathematics of Computation, 22(104):745–762, 1968. doi:10.1090/S0025-5718-1968-0242392-2.">Cho68</a>]</span> and Temam <span id="id2">[<a class="reference internal" href="#id10" title="Roger Temam. Sur l'approximation de la solution des équations de Navier-Stokes par la méthode des pas fractionnaires (I). Archive for Rational Mechanics and Analysis, 32(2):135–153, 1969. doi:10.1007/BF00247696.">Tem69</a>]</span>, often referred to as <em>Chorin’s method</em>. We will use a modified version of Chorin’s method, the so-called incremental pressure correction scheme (IPCS) due to <span id="id3">[<a class="reference internal" href="#id11" title="Katuhiko Goda. A multistep technique with implicit difference schemes for calculating two- or three-dimensional cavity flows. Journal of computational physics, 30(1):76–95, 1979. doi:10.1016/0021-9991(79)90088-3.">God79</a>]</span> which gives improved accuracy compared to the original scheme at little extra cost.</p>
+<p>The IPCS scheme involves three steps. First, we compute a <em>tentative velocity <span class="math notranslate nohighlight">\(u\)</span></em> by advancing the momentum equation by a midpoint finite difference scheme in time, but using <span class="math notranslate nohighlight">\(p^n\)</span> from the previous interval. We will also linearize the nonlinear convective term by using the known velocity <span class="math notranslate nohighlight">\(u^n\)</span> from the previous time step: <span class="math notranslate nohighlight">\(u^n\cdot \nabla u^n\)</span>. Note that there exists several other methods to linearize this term, such as the Adams-Bashforth method, see <span id="id4">[<a class="reference internal" href="#id13" title="Jean-Luc Guermond. Un résultat de convergence d'ordre deux en temps pour l'approximation des équations de Navier–Stokes par une technique de projection incrémentale. ESAIM: Mathematical Modelling and Numerical Analysis, 33(1):169–189, 1999. doi:10.1051/m2an:1999101.">Gue99</a>]</span> and <span id="id5">[<a class="reference internal" href="#id12" title="Alfio Quarteroni, Riccardo Sacco, and Fausto Saleri. Numerical mathematics. Volume 37. Springer Science &amp; Business Media, 2010. doi:10.1007/b98885.">QSS10</a>]</span>. The variational problem for the first step is: For the <span class="math notranslate nohighlight">\(n+1\)</span>th step, find <span class="math notranslate nohighlight">\(u^*\)</span> such that</p>
 <div class="math notranslate nohighlight" id="equation-ipcs-one">
 <span class="eqno">(39)<a class="headerlink" href="#equation-ipcs-one" title="Permalink to this equation">¶</a></span>\[\begin{split}    &amp;\left\langle \rho \frac{u^*-u^n}{\Delta t}, v\right\rangle
     + \left\langle \rho u^n\cdot \nabla u^n, v \right\rangle

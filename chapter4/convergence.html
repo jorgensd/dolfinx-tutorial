@@ -37,22 +37,24 @@
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/togglebutton.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="../_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
-    <script>
-        const thebe_selector = ".thebe"
-        const thebe_selector_input = "pre"
-        const thebe_selector_output = ".output"
-    </script>
-    <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="prev" title="JIT Parameters and visualization using Pandas" href="compiler_parameters.html" />
@@ -522,7 +524,9 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
 <span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
-<span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">dirichletbc</span><span class="p">,</span> <span class="n">Function</span><span class="p">,</span> <span class="n">FunctionSpace</span><span class="p">,</span> <span class="n">LinearProblem</span><span class="p">,</span> <span class="n">assemble_scalar</span><span class="p">,</span> <span class="n">form</span><span class="p">,</span> <span class="n">locate_dofs_topological</span>
+<span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Expression</span><span class="p">,</span> <span class="n">Function</span><span class="p">,</span> <span class="n">FunctionSpace</span><span class="p">,</span>
+                         <span class="n">assemble_scalar</span><span class="p">,</span> <span class="n">dirichletbc</span><span class="p">,</span> <span class="n">form</span><span class="p">,</span> <span class="n">locate_dofs_topological</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">dolfinx.fem.petsc</span> <span class="kn">import</span> <span class="n">LinearProblem</span>
 <span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">create_unit_square</span><span class="p">,</span> <span class="n">locate_entities_boundary</span>
 <span class="kn">from</span> <span class="nn">ufl</span> <span class="kn">import</span> <span class="n">SpatialCoordinate</span><span class="p">,</span> <span class="n">TestFunction</span><span class="p">,</span> <span class="n">TrialFunction</span><span class="p">,</span> <span class="n">div</span><span class="p">,</span> <span class="n">dot</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">grad</span><span class="p">,</span> <span class="n">inner</span>
 
@@ -594,9 +598,7 @@
 <p>To avoid this issue, we interpolate the approximate and exact solution into a higher order function space. Then we subtract the degrees of freedom from the interpolated functions to create a new error function. Then, finally, we assemble/integrate the square difference and take the square root to get the L2 norm.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">Expression</span>
-
-<span class="k">def</span> <span class="nf">error_L2</span><span class="p">(</span><span class="n">uh</span><span class="p">,</span> <span class="n">u_ex</span><span class="p">,</span> <span class="n">degree_raise</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">error_L2</span><span class="p">(</span><span class="n">uh</span><span class="p">,</span> <span class="n">u_ex</span><span class="p">,</span> <span class="n">degree_raise</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
     <span class="c1"># Create higher order function space</span>
     <span class="n">degree</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">function_space</span><span class="o">.</span><span class="n">ufl_element</span><span class="p">()</span><span class="o">.</span><span class="n">degree</span><span class="p">()</span>
     <span class="n">family</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">function_space</span><span class="o">.</span><span class="n">ufl_element</span><span class="p">()</span><span class="o">.</span><span class="n">family</span><span class="p">()</span>
@@ -733,7 +735,7 @@ h: 3.12e-02 Error: 2.44e-08
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 1.56e-02 Error: 7.64e-10
-Polynomial degree 4, Rates [4.896908   4.96084158 4.98926012 4.99766465]
+Polynomial degree 4, Rates [4.896908   4.96084158 4.98926012 4.99766454]
 </pre></div>
 </div>
 </div>
@@ -795,7 +797,7 @@ h: 3.12e-02 Error: 1.50e-05
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 1.56e-02 Error: 9.38e-07
-Polynomial degree 2, Rates [3.73213705 3.94227924 3.98612529 3.99656577]
+Polynomial degree 2, Rates [3.73213705 3.94227924 3.98612529 3.99656538]
 h: 2.50e-01 Error: 1.08e-02
 h: 1.25e-01 Error: 8.13e-04
 h: 6.25e-02 Error: 5.86e-05
@@ -803,7 +805,7 @@ h: 3.12e-02 Error: 3.80e-06
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 1.56e-02 Error: 2.41e-07
-Polynomial degree 3, Rates [3.72903577 3.79406598 3.94800701 3.97888412]
+Polynomial degree 3, Rates [3.72903577 3.79406598 3.94800701 3.97888409]
 h: 2.50e-01 Error: 1.63e-03
 h: 1.25e-01 Error: 5.23e-05
 h: 6.25e-02 Error: 1.67e-06
@@ -811,7 +813,7 @@ h: 3.12e-02 Error: 5.25e-08
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 1.56e-02 Error: 1.64e-09
-Polynomial degree 4, Rates [4.96133103 4.96807694 4.99161593 4.99787814]
+Polynomial degree 4, Rates [4.96133103 4.96807694 4.99161589 4.99787637]
 </pre></div>
 </div>
 </div>

@@ -37,20 +37,22 @@
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/togglebutton.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="../_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
-    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
-    <script>
-        const thebe_selector = ".thebe"
-        const thebe_selector_input = "pre"
-        const thebe_selector_output = ".output"
-    </script>
-    <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Error control: Computing convergence rates" href="convergence.html" />
@@ -469,7 +471,8 @@ This C code is in turned compiled using <a class="reference external" href="http
 <p>Next we generate a general function to assemble the mass matrix for a UnitCube. Note that we use <code class="docutils literal notranslate"><span class="pre">dolfinx.fem.Form</span></code> to compile the variational form. For codes using <code class="docutils literal notranslate"><span class="pre">dolfinx.LinearProblem</span></code>, you can supply <code class="docutils literal notranslate"><span class="pre">jit_parameters</span></code> as a keyword argument.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">FunctionSpace</span><span class="p">,</span> <span class="n">assemble_matrix</span><span class="p">,</span> <span class="n">form</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">FunctionSpace</span><span class="p">,</span> <span class="n">form</span>
+<span class="kn">from</span> <span class="nn">dolfinx.fem.petsc</span> <span class="kn">import</span> <span class="n">assemble_matrix</span>
 <span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">create_unit_cube</span>
 <span class="kn">from</span> <span class="nn">ufl</span> <span class="kn">import</span> <span class="n">TestFunction</span><span class="p">,</span> <span class="n">TrialFunction</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">inner</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
@@ -477,14 +480,14 @@ This C code is in turned compiled using <a class="reference external" href="http
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">ufl</span>
 
-<span class="k">def</span> <span class="nf">compile_form</span><span class="p">(</span><span class="n">space</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">degree</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">jit_parameters</span><span class="p">:</span><span class="n">Dict</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">compile_form</span><span class="p">(</span><span class="n">space</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">degree</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">jit_params</span><span class="p">:</span><span class="n">Dict</span><span class="p">):</span>
     <span class="n">N</span> <span class="o">=</span> <span class="mi">10</span>
     <span class="n">mesh</span> <span class="o">=</span> <span class="n">create_unit_cube</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
     <span class="n">V</span> <span class="o">=</span> <span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">degree</span><span class="p">))</span>
     <span class="n">u</span> <span class="o">=</span> <span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
     <span class="n">v</span> <span class="o">=</span> <span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">inner</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span>
-    <span class="n">a_compiled</span> <span class="o">=</span> <span class="n">form</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">jit_parameters</span><span class="o">=</span><span class="n">jit_parameters</span><span class="p">)</span>
+    <span class="n">a_compiled</span> <span class="o">=</span> <span class="n">form</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">jit_params</span><span class="o">=</span><span class="n">jit_params</span><span class="p">)</span>
     <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
     <span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a_compiled</span><span class="p">)</span>
     <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
@@ -523,7 +526,7 @@ This C code is in turned compiled using <a class="reference external" href="http
                     <span class="n">cffi_options</span> <span class="o">=</span> <span class="p">[</span><span class="n">option</span><span class="p">]</span>
                 <span class="n">jit_parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;cffi_extra_compile_args&quot;</span><span class="p">:</span> <span class="n">cffi_options</span><span class="p">,</span> 
                     <span class="s2">&quot;cache_dir&quot;</span><span class="p">:</span> <span class="n">cache_dir</span><span class="p">,</span> <span class="s2">&quot;cffi_libraries&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;m&quot;</span><span class="p">]}</span>
-                <span class="n">runtime</span> <span class="o">=</span> <span class="n">compile_form</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">degree</span><span class="p">,</span> <span class="n">jit_parameters</span><span class="o">=</span><span class="n">jit_parameters</span><span class="p">)</span>
+                <span class="n">runtime</span> <span class="o">=</span> <span class="n">compile_form</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">degree</span><span class="p">,</span> <span class="n">jit_params</span><span class="o">=</span><span class="n">jit_parameters</span><span class="p">)</span>
                 <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Space&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">space</span><span class="p">)</span>
                 <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Degree&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">degree</span><span class="p">))</span>
                 <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Options&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cffi_options</span><span class="p">))</span>
@@ -572,35 +575,35 @@ This C code is in turned compiled using <a class="reference external" href="http
       <td>N1curl</td>
       <td>1</td>
       <td>-O1\n-march=native</td>
-      <td>0.016449</td>
+      <td>0.016702</td>
     </tr>
     <tr>
       <th>1</th>
       <td>N1curl</td>
       <td>1</td>
       <td>-O2\n-march=native</td>
-      <td>0.015373</td>
+      <td>0.015836</td>
     </tr>
     <tr>
       <th>2</th>
       <td>N1curl</td>
       <td>1</td>
       <td>-O3\n-march=native</td>
-      <td>0.014196</td>
+      <td>0.014904</td>
     </tr>
     <tr>
       <th>3</th>
       <td>N1curl</td>
       <td>1</td>
       <td>-Ofast\n-march=native</td>
-      <td>0.013724</td>
+      <td>0.014369</td>
     </tr>
     <tr>
       <th>4</th>
       <td>N1curl</td>
       <td>1</td>
       <td>-O1</td>
-      <td>0.014858</td>
+      <td>0.015301</td>
     </tr>
     <tr>
       <th>...</th>
@@ -614,35 +617,35 @@ This C code is in turned compiled using <a class="reference external" href="http
       <td>RT</td>
       <td>3</td>
       <td>-Ofast\n-march=native</td>
-      <td>0.388910</td>
+      <td>0.405624</td>
     </tr>
     <tr>
       <th>68</th>
       <td>RT</td>
       <td>3</td>
       <td>-O1</td>
-      <td>0.625055</td>
+      <td>0.630486</td>
     </tr>
     <tr>
       <th>69</th>
       <td>RT</td>
       <td>3</td>
       <td>-O2</td>
-      <td>0.551492</td>
+      <td>0.608429</td>
     </tr>
     <tr>
       <th>70</th>
       <td>RT</td>
       <td>3</td>
       <td>-O3</td>
-      <td>0.459918</td>
+      <td>0.488747</td>
     </tr>
     <tr>
       <th>71</th>
       <td>RT</td>
       <td>3</td>
       <td>-Ofast</td>
-      <td>0.459259</td>
+      <td>0.489622</td>
     </tr>
   </tbody>
 </table>

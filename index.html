@@ -37,20 +37,22 @@
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/togglebutton.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
-    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
-    <script>
-        const thebe_selector = ".thebe"
-        const thebe_selector_input = "pre"
-        const thebe_selector_output = ".output"
-    </script>
-    <script async="async" src="_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="An overview of the FEniCS Project" href="fem.html" />
@@ -445,7 +447,7 @@
   <div class="tex2jax_ignore mathjax_ignore section" id="the-fenicsx-tutorial">
 <h1>The FEniCSx tutorial<a class="headerlink" href="#the-fenicsx-tutorial" title="Permalink to this headline">¶</a></h1>
 <p>Author: Jørgen S. Dokken</p>
-<p>This webpage gives a concise overview of the functionality of <a class="reference external" href="https://github.com/FEniCS/dolfinx/">DOLFINx</a>, including a gentle introduction to the finite element method. This webpage is an adaptation of the FEniCS tutorial <span id="id1">[<a class="reference internal" href="#id11">LL16</a>]</span>.</p>
+<p>This webpage gives a concise overview of the functionality of <a class="reference external" href="https://github.com/FEniCS/dolfinx/">DOLFINx</a>, including a gentle introduction to the finite element method. This webpage is an adaptation of the FEniCS tutorial <span id="id1">[<a class="reference internal" href="#id11" title="Hans Petter Langtangen and Anders Logg. Solving PDEs in Python: The FEniCS Tutorial I. Springer International Publishing, Cham, 2016. ISBN 978-3-319-52462-7. doi:10.1007/978-3-319-52462-7.">LL16</a>]</span>.</p>
 <p>DOLFINx can be used as either a C++ or Python software, but this tutorial will focus on Python programming, as it is the simplest and most effective approach for beginners. After having gone through this tutorial, the reader should familiarize themselves with the DOLFINx <a class="reference external" href="https://docs.fenicsproject.org/dolfinx/main/python/">documentation</a>, which includes the API and numerous demos.</p>
 <p>Comments and corrections to this webpage should be submitted to the issue tracker by going to the relevant page in the tutorial, then click the <img alt="git" src="_images/git.png" />-symbol in the top right corner and “open issue”.</p>
 <p><strong>Interactive tutorials</strong></p>
@@ -458,7 +460,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>DOLFINx version: 0.3.1.0 based on GIT commit: c472d1d95e49031c73aa3c8d16e066c965ef861f of https://github.com/FEniCS/dolfinx/
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>DOLFINx version: 0.3.1.0 based on GIT commit: fdb1d1871945e308db07f94175fe3dd08033be5f of https://github.com/FEniCS/dolfinx/
 </pre></div>
 </div>
 </div>

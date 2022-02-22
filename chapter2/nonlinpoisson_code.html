@@ -37,22 +37,24 @@
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/togglebutton.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="../_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
-    <script>
-        const thebe_selector = ".thebe"
-        const thebe_selector_input = "pre"
-        const thebe_selector_output = ".output"
-    </script>
-    <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="The equations of linear elasticity" href="linearelasticity.html" />
@@ -481,19 +483,18 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ufl</span>
-<span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
 
-<span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="p">(</span><span class="n">dirichletbc</span><span class="p">,</span> <span class="n">Function</span><span class="p">,</span> <span class="n">FunctionSpace</span><span class="p">,</span> <span class="n">NonlinearProblem</span><span class="p">,</span>
-                         <span class="n">assemble_scalar</span><span class="p">,</span> <span class="n">form</span><span class="p">,</span> <span class="n">locate_dofs_topological</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">dolfinx.log</span> <span class="kn">import</span> <span class="n">set_log_level</span><span class="p">,</span> <span class="n">LogLevel</span>
-<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">create_unit_square</span><span class="p">,</span> <span class="n">locate_entities_boundary</span>
-<span class="kn">from</span> <span class="nn">dolfinx.nls</span> <span class="kn">import</span> <span class="n">NewtonSolver</span>
+<span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+<span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
+
+<span class="kn">from</span> <span class="nn">dolfinx</span> <span class="kn">import</span> <span class="n">mesh</span><span class="p">,</span> <span class="n">fem</span><span class="p">,</span> <span class="n">io</span><span class="p">,</span> <span class="n">nls</span><span class="p">,</span> <span class="n">log</span>
 
 <span class="k">def</span> <span class="nf">q</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
     <span class="k">return</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">u</span><span class="o">**</span><span class="mi">2</span>
 
-<span class="n">mesh</span> <span class="o">=</span> <span class="n">create_unit_square</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<span class="n">domain</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">create_unit_square</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
 <span class="n">u_ufl</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">f</span> <span class="o">=</span> <span class="o">-</span> <span class="n">ufl</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">q</span><span class="p">(</span><span class="n">u_ufl</span><span class="p">)</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u_ufl</span><span class="p">))</span>
 </pre></div>
@@ -505,15 +506,13 @@
 Note that as we have already defined the exact solution, we only have to convert it to a python function that can be evaluated in the interpolation function. We do this by employing the Python <code class="docutils literal notranslate"><span class="pre">eval</span></code> and <code class="docutils literal notranslate"><span class="pre">lambda</span></code>-functions.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
-<span class="kn">import</span> <span class="nn">numpy</span>
-<span class="n">V</span> <span class="o">=</span> <span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">V</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="n">u_exact</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">eval</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">u_ufl</span><span class="p">))</span>
-<span class="n">u_D</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">u_D</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">u_D</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">u_exact</span><span class="p">)</span>
-<span class="n">fdim</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span> <span class="mi">1</span>
-<span class="n">boundary_facets</span> <span class="o">=</span> <span class="n">locate_entities_boundary</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">))</span>
-<span class="n">bc</span> <span class="o">=</span> <span class="n">dirichletbc</span><span class="p">(</span><span class="n">u_D</span><span class="p">,</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">boundary_facets</span><span class="p">))</span>
+<span class="n">fdim</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="n">boundary_facets</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">locate_entities_boundary</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">))</span>
+<span class="n">bc</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">dirichletbc</span><span class="p">(</span><span class="n">u_D</span><span class="p">,</span> <span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">boundary_facets</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -521,7 +520,7 @@ Note that as we have already defined the exact solution, we only have to convert
 <p>We are now ready to define the variational formulation. Note that as the problem is non-linear, we have replace the <code class="docutils literal notranslate"><span class="pre">TrialFunction</span></code> with a <code class="docutils literal notranslate"><span class="pre">Function</span></code>, which serves as the unknown of our problem.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">uh</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">uh</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">F</span> <span class="o">=</span> <span class="n">q</span><span class="p">(</span><span class="n">uh</span><span class="p">)</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">uh</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">dx</span> <span class="o">-</span> <span class="n">f</span><span class="o">*</span><span class="n">v</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
 </pre></div>
@@ -532,7 +531,7 @@ Note that as we have already defined the exact solution, we only have to convert
 Newton’s method requires methods for evaluating the residual <code class="docutils literal notranslate"><span class="pre">F</span></code> (including application of boundary conditions), as well as a method for computing the Jacobian matrix. DOLFINx provides the function <code class="docutils literal notranslate"><span class="pre">NonlinearProblem</span></code> that implements these methods. In addition to the boundary conditions, you can supply the variational form for the Jacobian (computed if not supplied), and form and jit parameters, see the <a class="reference internal" href="../chapter4/compiler_parameters.html"><span class="doc std std-doc">JIT parameters section</span></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">NonlinearProblem</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">uh</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="p">[</span><span class="n">bc</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">NonlinearProblem</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">uh</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="p">[</span><span class="n">bc</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -540,7 +539,7 @@ Newton’s method requires methods for evaluating the residual <code class="docu
 <p>Next, we use the dolfinx Newton solver. We can set the convergence criterions for the solver by changing the absolute tolerance (<code class="docutils literal notranslate"><span class="pre">atol</span></code>), relative tolerance (<code class="docutils literal notranslate"><span class="pre">rtol</span></code>) or the convergence criterion (<code class="docutils literal notranslate"><span class="pre">residual</span></code> or <code class="docutils literal notranslate"><span class="pre">incremental</span></code>).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">solver</span> <span class="o">=</span> <span class="n">NewtonSolver</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">problem</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">solver</span> <span class="o">=</span> <span class="n">nls</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">NewtonSolver</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">problem</span><span class="p">)</span>
 <span class="n">solver</span><span class="o">.</span><span class="n">convergence_criterion</span> <span class="o">=</span> <span class="s2">&quot;incremental&quot;</span>
 <span class="n">solver</span><span class="o">.</span><span class="n">rtol</span> <span class="o">=</span> <span class="mf">1e-6</span>
 <span class="n">solver</span><span class="o">.</span><span class="n">report</span> <span class="o">=</span> <span class="kc">True</span>
@@ -565,7 +564,7 @@ Newton’s method requires methods for evaluating the residual <code class="docu
 <p>We are now ready to solve the non-linear problem. We assert that the solver has converged and print the number of iterations.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">set_log_level</span><span class="p">(</span><span class="n">LogLevel</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">log</span><span class="o">.</span><span class="n">set_log_level</span><span class="p">(</span><span class="n">log</span><span class="o">.</span><span class="n">LogLevel</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 <span class="n">n</span><span class="p">,</span> <span class="n">converged</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">uh</span><span class="p">)</span>
 <span class="k">assert</span><span class="p">(</span><span class="n">converged</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of interations: </span><span class="si">{</span><span class="n">n</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -576,24 +575,22 @@ Newton’s method requires methods for evaluating the residual <code class="docu
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of interations: 8
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2022-02-21 08:23:44.128 (   0.092s) [main            ]              petsc.cpp:763   INFO| PETSc Krylov solver starting to solve system.
-2022-02-21 08:23:44.129 (   0.094s) [main            ]              petsc.cpp:763   INFO| PETSc Krylov solver starting to solve system.
-2022-02-21 08:23:44.131 (   0.095s) [main            ]       NewtonSolver.cpp:34    INFO| Newton iteration 2: r (abs) = 20.3794 (tol = 1e-10) r (rel) = 0.922544(tol = 1e-06)
-2022-02-21 08:23:44.131 (   0.095s) [main            ]              petsc.cpp:763   INFO| PETSc Krylov solver starting to solve system.
-2022-02-21 08:23:44.133 (   0.097s) [main            ]       NewtonSolver.cpp:34    INFO| Newton iteration 3: r (abs) = 6.95285 (tol = 1e-10) r (rel) = 0.314745(tol = 1e-06)
-2022-02-21 08:23:44.133 (   0.098s) [main            ]              petsc.cpp:763   INFO| PETSc Krylov solver starting to solve system.
-2022-02-21 08:23:44.134 (   0.099s) [main            ]       NewtonSolver.cpp:34    INFO| Newton iteration 4: r (abs) = 2.93575 (tol = 1e-10) r (rel) = 0.132897(tol = 1e-06)
-2022-02-21 08:23:44.134 (   0.099s) [main            ]              petsc.cpp:763   INFO| PETSc Krylov solver starting to solve system.
-2022-02-21 08:23:44.135 (   0.100s) [main            ]       NewtonSolver.cpp:34    INFO| Newton iteration 5: r (abs) = 0.700593 (tol = 1e-10) r (rel) = 0.0317148(tol = 1e-06)
-2022-02-21 08:23:44.135 (   0.100s) [main            ]              petsc.cpp:763   INFO| PETSc Krylov solver starting to solve system.
-2022-02-21 08:23:44.136 (   0.101s) [main            ]       NewtonSolver.cpp:34    INFO| Newton iteration 6: r (abs) = 0.0490796 (tol = 1e-10) r (rel) = 0.00222176(tol = 1e-06)
-2022-02-21 08:23:44.137 (   0.101s) [main            ]              petsc.cpp:763   INFO| PETSc Krylov solver starting to solve system.
-2022-02-21 08:23:44.139 (   0.103s) [main            ]       NewtonSolver.cpp:34    INFO| Newton iteration 7: r (abs) = 0.000299464 (tol = 1e-10) r (rel) = 1.35563e-05(tol = 1e-06)
-2022-02-21 08:23:44.139 (   0.104s) [main            ]              petsc.cpp:763   INFO| PETSc Krylov solver starting to solve system.
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2022-02-21 08:23:44.140 (   0.105s) [main            ]       NewtonSolver.cpp:34    INFO| Newton iteration 8: r (abs) = 1.52969e-08 (tol = 1e-10) r (rel) = 6.92466e-10(tol = 1e-06)
-2022-02-21 08:23:44.140 (   0.105s) [main            ]       NewtonSolver.cpp:250   INFO| Newton solver finished in 8 iterations and 45 linear solver iterations.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2022-02-22 23:21:22.133 (   0.078s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
+2022-02-22 23:21:22.134 (   0.079s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
+2022-02-22 23:21:22.135 (   0.080s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 20.3794 (tol = 1e-10) r (rel) = 0.922544(tol = 1e-06)
+2022-02-22 23:21:22.135 (   0.080s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
+2022-02-22 23:21:22.136 (   0.081s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 6.95285 (tol = 1e-10) r (rel) = 0.314745(tol = 1e-06)
+2022-02-22 23:21:22.137 (   0.082s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
+2022-02-22 23:21:22.138 (   0.083s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 2.93575 (tol = 1e-10) r (rel) = 0.132897(tol = 1e-06)
+2022-02-22 23:21:22.138 (   0.083s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
+2022-02-22 23:21:22.139 (   0.084s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 0.700593 (tol = 1e-10) r (rel) = 0.0317148(tol = 1e-06)
+2022-02-22 23:21:22.139 (   0.084s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
+2022-02-22 23:21:22.140 (   0.085s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 0.0490796 (tol = 1e-10) r (rel) = 0.00222176(tol = 1e-06)
+2022-02-22 23:21:22.140 (   0.085s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
+2022-02-22 23:21:22.142 (   0.087s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 7: r (abs) = 0.000299464 (tol = 1e-10) r (rel) = 1.35563e-05(tol = 1e-06)
+2022-02-22 23:21:22.142 (   0.087s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
+2022-02-22 23:21:22.143 (   0.088s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 8: r (abs) = 1.52969e-08 (tol = 1e-10) r (rel) = 6.92466e-10(tol = 1e-06)
+2022-02-22 23:21:22.143 (   0.088s) [main            ]       NewtonSolver.cpp:255   INFO| Newton solver finished in 8 iterations and 45 linear solver iterations.
 </pre></div>
 </div>
 </div>
@@ -603,28 +600,28 @@ If we think of the problem in terms of finite differences on a uniform mesh, <sp
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute L2 error and error at nodes</span>
-<span class="n">V_ex</span> <span class="o">=</span> <span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-<span class="n">u_ex</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">V_ex</span><span class="p">)</span>
+<span class="n">V_ex</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">u_ex</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V_ex</span><span class="p">)</span>
 <span class="n">u_ex</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">u_exact</span><span class="p">)</span>
-<span class="n">error_local</span> <span class="o">=</span> <span class="n">assemble_scalar</span><span class="p">(</span><span class="n">form</span><span class="p">((</span><span class="n">uh</span> <span class="o">-</span> <span class="n">u_ex</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span>
-<span class="n">error_L2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">error_local</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">))</span>
-<span class="k">if</span> <span class="n">mesh</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+<span class="n">error_local</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">((</span><span class="n">uh</span> <span class="o">-</span> <span class="n">u_ex</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span>
+<span class="n">error_L2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">error_local</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">))</span>
+<span class="k">if</span> <span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;L2-error: </span><span class="si">{</span><span class="n">error_L2</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <span class="c1"># Compute values at mesh vertices</span>
-<span class="n">error_max</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">uh</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span> <span class="o">-</span><span class="n">u_D</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">)),</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">MAX</span><span class="p">)</span>
-<span class="k">if</span> <span class="n">mesh</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+<span class="n">error_max</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">uh</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span> <span class="o">-</span><span class="n">u_D</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">)),</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">MAX</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error_max: </span><span class="si">{</span><span class="n">error_max</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>L2-error: 1.51e-15
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>L2-error: 1.47e-15
 Error_max: 5.77e-15
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2022-02-21 08:23:44.154 (   0.119s) [main            ]topologycomputation.cpp:615   INFO| Computing mesh entities of dimension 0
-2022-02-21 08:23:44.154 (   0.119s) [main            ]topologycomputation.cpp:615   INFO| Computing mesh entities of dimension 1
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2022-02-22 23:21:22.154 (   0.099s) [main            ]topologycomputation.cpp:615   INFO| Computing mesh entities of dimension 0
+2022-02-22 23:21:22.154 (   0.099s) [main            ]topologycomputation.cpp:615   INFO| Computing mesh entities of dimension 1
 </pre></div>
 </div>
 </div>
