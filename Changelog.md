@@ -1,6 +1,9 @@
 # Changelog
 
-## Dev 
+## Dev
+- No changes
+
+## 0.4.0 (05.02.2021)
 - All `pyvista` plotting has been rewritten to use `ipygany` and `pythreejs` as well as using a cleaner interface.
 - `dolfinx.plot.create_vtk_topology` has been renamed to `dolfinx.plot.create_vtk_mesh` and can now be directly used as input to `pyvista.UnstructuredGrid`.
 - `dolfinx.fem.Function.compute_point_values` has been deprecated. Interpolation into a CG-1 is now the way of getting vertex values.

@@ -31,4 +31,4 @@ and run
 ```bash
  docker run --rm -ti -v $(pwd):/root/shared -w /root/shared  --init -p 8888:8888 local_lab_env
  ```
-from the main directory
+from the main directory.
