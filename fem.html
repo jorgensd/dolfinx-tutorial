@@ -439,6 +439,18 @@ const thebe_selector_output = ".output, .cell_output"
     <a class="reference internal nav-link" href="#obtaining-the-software">
      Obtaining the software
     </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#tutorial-compatible-docker-images">
+       Tutorial compatible docker images
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#official-images">
+       Official images
+      </a>
+     </li>
+    </ul>
    </li>
    <li class="toc-h2 nav-item toc-entry">
     <a class="reference internal nav-link" href="#installation-from-source">
@@ -506,6 +518,18 @@ const thebe_selector_output = ".output, .cell_output"
     <a class="reference internal nav-link" href="#obtaining-the-software">
      Obtaining the software
     </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#tutorial-compatible-docker-images">
+       Tutorial compatible docker images
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#official-images">
+       Official images
+      </a>
+     </li>
+    </ul>
    </li>
    <li class="toc-h2 nav-item toc-entry">
     <a class="reference internal nav-link" href="#installation-from-source">
@@ -569,19 +593,26 @@ Occasionally we will consider a more physically relevant example to remind the r
 The recommended way of installing DOLFINx for new usesers is by using Docker.
 Docker is a software that uses <em>containers</em> to supply software across different kinds of operating systems (Linux, Mac, Windows). The first step is to install docker, following the instructions at their <a class="reference external" href="https://docs.docker.com/get-started/">webpage</a>.</p>
 <p>All notebooks can be converted to python files using <a class="reference external" href="https://nbconvert.readthedocs.io/en/latest/">nbconvert</a>.</p>
-<p>We supply a pre-built docker image at <a class="reference external" href="https://hub.docker.com/r/dolfinx/dolfinx">https://hub.docker.com/r/dolfinx/dolfinx</a>.
+<div class="section" id="tutorial-compatible-docker-images">
+<h3>Tutorial compatible docker images<a class="headerlink" href="#tutorial-compatible-docker-images" title="Permalink to this headline">¶</a></h3>
+<p>The tutorial uses several dependencies for meshing, plotting and timings. A compatible <code class="docutils literal notranslate"><span class="pre">JupyterLab</span></code> image is available at <a class="reference external" href="https://hub.docker.com/r/dokken92/dolfinx_custom/tags">DockerHub/dokken92/dolfinx_custom:labv0.4.0</a></p>
+<p>To use the notebookes in this tutorial with DOLFINx on your own computer, you should use the docker image using the following command</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="n">docker</span> <span class="n">run</span> <span class="o">--</span><span class="n">init</span> <span class="o">-</span><span class="n">p</span> <span class="mi">8888</span><span class="p">:</span><span class="mi">8888</span> <span class="o">-</span><span class="n">v</span> <span class="s2">&quot;$(pwd)&quot;</span><span class="p">:</span><span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="n">shared</span> <span class="n">dokken92</span><span class="o">/</span><span class="n">dolfinx_custom</span><span class="p">:</span><span class="n">labv0</span><span class="o">.</span><span class="mf">4.0</span>
+</pre></div>
+</div>
+<p>The tutorials can also be exported as a notebook or PDF by clicking the <img alt="Download" src="_images/save.png" />-symbol in the top right corner of the relevant tutorialThe notebook can in turn be used with a Python kernel which has DOLFINx.</p>
+</div>
+<div class="section" id="official-images">
+<h3>Official images<a class="headerlink" href="#official-images" title="Permalink to this headline">¶</a></h3>
+<p>The FEniCS project supplies pre-built docker images at <a class="reference external" href="https://hub.docker.com/r/dolfinx/dolfinx">https://hub.docker.com/r/dolfinx/dolfinx</a>.
 The <a class="reference external" href="https://github.com/FEniCS/dolfinx/blob/main/docker/Dockerfile">Dockerfile</a>
 provides a definitive build recipe. As the DOLFINx docker images are hosted at Docker-hub, one can directly access the image</p>
-<div class="highlight-s notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">run</span> <span class="n">dolfinx</span><span class="o">/</span><span class="n">dolfinx</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">run</span> <span class="n">dolfinx</span><span class="o">/</span><span class="n">dolfinx</span>
 </pre></div>
 </div>
 <p>There are several ways of customizing a docker container, such as mounting volumes/sharing folder, setting a working directory, sharing graphical interfaces etc. See <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span> <span class="pre">--help</span></code> for an extensive list.</p>
 <p>Once you have installed DOLFINx, either by using docker or installing form source, you can test the installation by running <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">-c</span> <span class="pre">&quot;import</span> <span class="pre">dolfinx&quot;</span></code>. If all goes well, no error-messages should appear.</p>
-<p>To use the notebookes in this tutorial with DOLFINx on your own computer, you should use the docker image <code class="docutils literal notranslate"><span class="pre">docker/lab</span></code>, using the following command</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="n">docker</span> <span class="n">run</span> <span class="o">--</span><span class="n">init</span> <span class="o">-</span><span class="n">p</span> <span class="mi">8888</span><span class="p">:</span><span class="mi">8888</span> <span class="o">-</span><span class="n">v</span> <span class="s2">&quot;$(pwd)&quot;</span><span class="p">:</span><span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="n">shared</span> <span class="n">dolfinx</span><span class="o">/</span><span class="n">lab</span>
-</pre></div>
 </div>
-<p>The tutorials can also be exported as a notebook or PDF by clicking the <img alt="Download" src="_images/save.png" />-symbol in the top right corner of the relevant tutorialThe notebook can in turn be used with a Python kernel which has DOLFINx.</p>
 </div>
 <div class="section" id="installation-from-source">
 <h2>Installation from source<a class="headerlink" href="#installation-from-source" title="Permalink to this headline">¶</a></h2>
@@ -604,12 +635,13 @@ provides a definitive build recipe. As the DOLFINx docker images are hosted at D
 </div>
 <div class="section" id="references">
 <h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
-<p id="id3"><dl class="citation">
+<div class="docutils container" id="id3">
+<dl class="citation">
 <dt class="label" id="id11"><span class="brackets"><a class="fn-backref" href="#id1">Lan16</a></span></dt>
 <dd><p>Hans Petter Langtangen. <em>A Primer on Scientific Programming with Python</em>. Springer Berlin Heidelberg, Berlin, Heidelberg, 2016. ISBN 978-3-662-49887-3. <a class="reference external" href="https://doi.org/10.1007/978-3-662-49887-3">doi:10.1007/978-3-662-49887-3</a>.</p>
 </dd>
 </dl>
-</p>
+</div>
 </div>
 </div>
 
