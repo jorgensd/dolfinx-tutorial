@@ -32,21 +32,27 @@ Docker is a software that uses *containers* to supply software across different 
 
 All notebooks can be converted to python files using [nbconvert](https://nbconvert.readthedocs.io/en/latest/).
 
-We supply a pre-built docker image at [https://hub.docker.com/r/dolfinx/dolfinx](https://hub.docker.com/r/dolfinx/dolfinx).
+### Tutorial compatible docker images
+The tutorial uses several dependencies for meshing, plotting and timings. A compatible `JupyterLab` image is available at [DockerHub/dokken92/dolfinx_custom:labv0.4.0](https://hub.docker.com/r/dokken92/dolfinx_custom/tags)
+
+To use the notebookes in this tutorial with DOLFINx on your own computer, you should use the docker image using the following command
+```
+  docker run --init -p 8888:8888 -v "$(pwd)":/root/shared dokken92/dolfinx_custom:labv0.4.0
+```
+The tutorials can also be exported as a notebook or PDF by clicking the ![Download](save.png)-symbol in the top right corner of the relevant tutorialThe notebook can in turn be used with a Python kernel which has DOLFINx.
+
+### Official images
+
+The FEniCS project supplies pre-built docker images at [https://hub.docker.com/r/dolfinx/dolfinx](https://hub.docker.com/r/dolfinx/dolfinx).
 The [Dockerfile](https://github.com/FEniCS/dolfinx/blob/main/docker/Dockerfile)
 provides a definitive build recipe. As the DOLFINx docker images are hosted at Docker-hub, one can directly access the image
-```s
+```
 docker run dolfinx/dolfinx
 ```
 There are several ways of customizing a docker container, such as mounting volumes/sharing folder, setting a working directory, sharing graphical interfaces etc. See `docker run --help` for an extensive list.
 
 Once you have installed DOLFINx, either by using docker or installing form source, you can test the installation by running `python3 -c "import dolfinx"`. If all goes well, no error-messages should appear.
 
-To use the notebookes in this tutorial with DOLFINx on your own computer, you should use the docker image `docker/lab`, using the following command
-```
-  docker run --init -p 8888:8888 -v "$(pwd)":/root/shared dolfinx/lab
-```
-The tutorials can also be exported as a notebook or PDF by clicking the ![Download](save.png)-symbol in the top right corner of the relevant tutorialThe notebook can in turn be used with a Python kernel which has DOLFINx.
 
 ## Installation from source
 The software is quite complex, and building the software and all the dependencies from source can be a daunting task. The list of dependencies can be found at [docs.fenicsproject.org/dolfinx/main/python/installation.html](https://docs.fenicsproject.org/dolfinx/main/python/installation.html).
