@@ -1,11 +1,11 @@
-FROM dolfinx/lab:v0.4.0
+FROM dolfinx/lab:v0.4.1
 
 WORKDIR /tmp/
 
 ADD requirements.txt /tmp/requirements.txt
 
 # Install dependencies
-RUN HDF5_MPI="ON" HDF5_DIR="/usr/lib/x86_64-linux-gnu/hdf5/mpich/" CC=mpicc pip3 install --no-cache-dir -r requirements.txt
+RUN HDF5_MPI="ON" HDF5_DIR="/usr/local/" CC=mpicc pip3 install --no-cache-dir -r requirements.txt
 
 # Activate plotting
 RUN jupyter nbextension enable --py --sys-prefix ipygany
