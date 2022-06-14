@@ -37,7 +37,7 @@ The tutorial uses several dependencies for meshing, plotting and timings. A comp
 
 To use the notebookes in this tutorial with DOLFINx on your own computer, you should use the docker image using the following command
 ```
-  docker run --init -p 8888:8888 -v "$(pwd)":/root/shared dokken92/dolfinx_custom:v0.4.1
+  docker run --init -p 8888:8888 -v "$(pwd)":/root/shared -w /root/shared dokken92/dolfinx_custom:v0.4.1
 ```
 The tutorials can also be exported as a notebook or PDF by clicking the ![Download](save.png)-symbol in the top right corner of the relevant tutorialThe notebook can in turn be used with a Python kernel which has DOLFINx.
 
