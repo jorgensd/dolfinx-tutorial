@@ -6,3 +6,6 @@ _build
 */.ipynb_checkpoints/*
 .ipynb_checkpoints/*
 **/.cache
+*.png
+*.pvtu
+*.msh
