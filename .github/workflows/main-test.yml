@@ -23,7 +23,7 @@ jobs:
   test-against-master:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container: dolfinx/dolfinx
+    container: dolfinx/lab
 
     env:
       HDF5_MPI: "ON"
@@ -45,51 +45,42 @@ jobs:
           jupyter nbextension enable --py --sys-prefix ipygany 
           rm -rf /usr/local/share/.cache/*
           jupyter-book -h
-      - name: Test building the book
-        run: 
-          PYVISTA_JUPYTER_BACKEND=static PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
-      - name: Test notebooks in parallel
+      - name: Test complex notebooks in parallel
+        run: |
+          export PKG_CONFIG_PATH=/usr/local/dolfinx-complex/lib/pkgconfig:$PKG_CONFIG_PATH
+          export PETSC_ARCH=linux-gnu-complex-32
+          export PYTHONPATH=/usr/local/dolfinx-complex/lib/python3.10/dist-packages:$PYTHONPATH
+          export LD_LIBRARY_PATH=/usr/local/dolfinx-complex/lib:$LD_LIBRARY_PATH
+          cd chapter1
+          mpirun -n 2 python3 complex_mode.py
+ 
+      - name: Test real notebooks in parallel
         run: |
           cd chapter1
           python3 -c "from pyvista import start_xvfb; start_xvfb(0.1)"
-          jupyter-nbconvert --to python fundamentals_code.ipynb
           mpirun -n 2 python3 fundamentals_code.py
-          jupyter-nbconvert --to python nitsche.ipynb
           mpirun -n 2 python3 nitsche.py
-          jupyter-nbconvert --to python membrane_code.ipynb
           mpirun -n 2 python3 membrane_code.py
           cd ../chapter2
-          jupyter-nbconvert --to python diffusion_code.ipynb
           mpirun -n 2 python3 diffusion_code.py
-          jupyter-nbconvert --to python heat_code.ipynb
           mpirun -n 2 python3 heat_code.py
-          jupyter-nbconvert --to python linearelasticity_code.ipynb
           mpirun -n 2 python3 linearelasticity_code.py
-          jupyter-nbconvert --to python hyperelasticity.ipynb
           mpirun -n 2 python3 hyperelasticity.py
-          jupyter-nbconvert --to python nonlinpoisson_code.ipynb
           mpirun -n 2 python3 nonlinpoisson_code.py
-          jupyter-nbconvert --to python ns_code1.ipynb
           mpirun -n 2 python3 ns_code1.py
-          jupyter-nbconvert --to python ns_code2.ipynb
           mpirun -n 2 python3 ns_code2.py
           cd ../chapter3
-          jupyter-nbconvert --to python neumann_dirichlet_code.ipynb
           mpirun -n 3 python3 neumann_dirichlet_code.py
-          jupyter-nbconvert --to python multiple_dirichlet.ipynb
           mpirun -n 3 python3 multiple_dirichlet.py
-          jupyter-nbconvert --to python subdomains.ipynb
           mpirun -n 3 python3 subdomains.py
-          jupyter-nbconvert --to python robin_neumann_dirichlet.ipynb
           mpirun -n 3 python3 robin_neumann_dirichlet.py
-          jupyter-nbconvert --to python component_bc.ipynb
           mpirun -n 3 python3 component_bc.py
-          jupyter-nbconvert --to python em.ipynb
           mpirun -n 3 python3 em.py
           cd ../chapter4
-          jupyter-nbconvert --to python solvers.ipynb
           mpirun -n 3 python3 solvers.py
-          jupyter-nbconvert --to python convergence.ipynb
           mpirun -n 3 python3 convergence.py
-          jupyter-nbconvert --to python compiler_parameters.ipynb
           mpirun -n 3 python3 compiler_parameters.py
+
+      - name: Test building the book
+        run: 
+          PYVISTA_JUPYTER_BACKEND=static PYVISTA_OFF_SCREEN=false jupyter-book build  -W .

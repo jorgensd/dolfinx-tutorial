@@ -1,6 +1,10 @@
 # Changelog
 
 ## Dev
+- Change all notebooks to use [jupytext](https://jupytext.readthedocs.io/en/latest/install.html) to automatically sync `.ipynb` with `.py` files.
+- Add dummy complex mode test
+
+## 0.4.1
 - No changes
 
 ## 0.4.0 (05.02.2021)
