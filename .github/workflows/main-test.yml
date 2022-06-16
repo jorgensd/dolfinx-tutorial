@@ -45,15 +45,17 @@ jobs:
           jupyter nbextension enable --py --sys-prefix ipygany 
           rm -rf /usr/local/share/.cache/*
           jupyter-book -h
-      - name: Test building the book
-        run: 
-          PYVISTA_JUPYTER_BACKEND=static PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
-      - name: Test notebooks in parallel
+      - name: Test complex notebooks in parallel
+        run: |
+          cd chapter1
+          source dolfinx-complex-mode
+          mpirun -n 2 python3 complex_mode.py
+ 
+      - name: Test real notebooks in parallel
         run: |
           cd chapter1
           python3 -c "from pyvista import start_xvfb; start_xvfb(0.1)"
           mpirun -n 2 python3 fundamentals_code.py
-          mpirun -n 2 python3 complex_mode.py
           mpirun -n 2 python3 nitsche.py
           mpirun -n 2 python3 membrane_code.py
           cd ../chapter2
@@ -75,3 +77,7 @@ jobs:
           mpirun -n 3 python3 solvers.py
           mpirun -n 3 python3 convergence.py
           mpirun -n 3 python3 compiler_parameters.py
+
+      - name: Test building the book
+        run: 
+          PYVISTA_JUPYTER_BACKEND=static PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
