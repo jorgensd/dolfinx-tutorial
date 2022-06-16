@@ -3,7 +3,7 @@
         {
             "name": "Linux",
             "includePath": [
-                "/usr/include/python3.8/",
+                "/usr/include/python3.10/",
                 "${workspaceFolder}/",
                 "/usr/include/eigen3/",
                 "/usr/local/petsc/include/",

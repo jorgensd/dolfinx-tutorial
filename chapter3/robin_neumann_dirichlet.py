@@ -149,14 +149,16 @@ boundaries = [(1, lambda x: np.isclose(x[0], 0)),
 
 # We now loop through all the boundary conditions and create `MeshTags` identifying the facets for each boundary condition.
 
+
+
 facet_indices, facet_markers = [], []
 fdim = mesh.topology.dim - 1
 for (marker, locator) in boundaries:
     facets = locate_entities(mesh, fdim, locator)
     facet_indices.append(facets)
-    facet_markers.append(np.full(len(facets), marker))
-facet_indices = np.array(np.hstack(facet_indices), dtype=np.int32)
-facet_markers = np.array(np.hstack(facet_markers), dtype=np.int32)
+    facet_markers.append(np.full_like(facets, marker))
+facet_indices = np.hstack(facet_indices).astype(np.int32)
+facet_markers = np.hstack(facet_markers).astype(np.int32)
 sorted_facets = np.argsort(facet_indices)
 facet_tag = meshtags(mesh, fdim, facet_indices[sorted_facets], facet_markers[sorted_facets])
 
@@ -182,7 +184,7 @@ class BoundaryCondition():
         if type == "Dirichlet":
             u_D = Function(V)
             u_D.interpolate(values)
-            facets = np.array(facet_tag.indices[facet_tag.values == marker])
+            facets = facet_tag.find(marker)
             dofs = locate_dofs_topological(V, fdim, facets)
             self._bc = dirichletbc(u_D, dofs)
         elif type == "Neumann":

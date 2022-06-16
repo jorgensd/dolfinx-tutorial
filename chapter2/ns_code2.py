@@ -258,20 +258,15 @@ class InletVelocity():
 u_inlet = Function(V)
 inlet_velocity = InletVelocity(t)
 u_inlet.interpolate(inlet_velocity)
-inlet_facets = ft.indices[ft.values == inlet_marker]
-
-bcu_inflow = dirichletbc(u_inlet, locate_dofs_topological(V, fdim, inlet_facets))
+bcu_inflow = dirichletbc(u_inlet, locate_dofs_topological(V, fdim, ft.find(inlet_marker)))
 # Walls
-u_nonslip = np.array((0,) *mesh.geometry.dim, dtype=PETSc.ScalarType)
-wall_facets = ft.indices[ft.values == wall_marker]
-bcu_walls = dirichletbc(u_nonslip, locate_dofs_topological(V, fdim, wall_facets), V)
+u_nonslip = np.array((0,) * mesh.geometry.dim, dtype=PETSc.ScalarType)
+bcu_walls = dirichletbc(u_nonslip, locate_dofs_topological(V, fdim, ft.find(wall_marker)), V)
 # Obstacle
-obstacle_facets = ft.indices[ft.values == obstacle_marker]
-bcu_obstacle = dirichletbc(u_nonslip, locate_dofs_topological(V, fdim, obstacle_facets), V)
+bcu_obstacle = dirichletbc(u_nonslip, locate_dofs_topological(V, fdim, ft.find(obstacle_marker)), V)
 bcu = [bcu_inflow, bcu_obstacle, bcu_walls]
 # Outlet
-outlet_facets = ft.indices[ft.values == outlet_marker]
-bcp_outlet = dirichletbc(PETSc.ScalarType(0), locate_dofs_topological(Q, fdim, outlet_facets), Q)
+bcp_outlet = dirichletbc(PETSc.ScalarType(0), locate_dofs_topological(Q, fdim, ft.find(outlet_marker)), Q)
 bcp = [bcp_outlet]
 # -
 
