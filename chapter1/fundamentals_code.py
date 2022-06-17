@@ -116,8 +116,7 @@ uD.interpolate(lambda x: 1 + x[0]**2 + 2 * x[1]**2)
 
 # We now have the boundary data (and in this case the solution of 
 # the finite element problem) represented in the discrete function space.
-# Next we would like to apply the boundary values to all degrees of freedom that are on the boundary of the discrete domain. We start by identifying the facets (line-segments) representing the outer boundary, using `dolfinx.mesh.compute_boundary_facets`.
-# This function returns an array of integers of the same size as the number of facets on this processor, where `1` indicates that the local facet $i$ is on the boundary. To reduce this to only the indices that are equal to `1`, we use [`numpy.flatnonzero`](https://numpy.org/doc/stable/reference/generated/numpy.flatnonzero.html).
+# Next we would like to apply the boundary values to all degrees of freedom that are on the boundary of the discrete domain. We start by identifying the facets (line-segments) representing the outer boundary, using `dolfinx.mesh.exterior_facet_indices`.
 
 # + vscode={"languageId": "python"}
 import numpy
@@ -125,7 +124,7 @@ import numpy
 tdim = domain.topology.dim
 fdim = tdim - 1
 domain.topology.create_connectivity(fdim, tdim)
-boundary_facets = numpy.flatnonzero(mesh.compute_boundary_facets(domain.topology))
+boundary_facets = mesh.exterior_facet_indices(domain.topology)
 # -
 
 # For the current problem, as we are using the "CG" 1 function space, the degrees of freedom are located at the vertices of each cell, thus each facet contains two degrees of freedom. 
@@ -291,10 +290,10 @@ if not pyvista.OFF_SCREEN:
 # We change plotting from `pythreejs` to `ipygany` by initializing another `Plotter` with `jupyter_backend="ipygany"`. We also warp the mesh by scalar to make use of the 3D plotting.
 
 # + vscode={"languageId": "python"}
+warped = u_grid.warp_by_scalar()
+plotter2 = pyvista.Plotter()
+plotter2.add_mesh(warped, show_edges=True, show_scalar_bar=True)
 if not pyvista.OFF_SCREEN:
-    warped = u_grid.warp_by_scalar()
-    plotter2 = pyvista.Plotter()
-    plotter2.add_mesh(warped, show_edges=True, show_scalar_bar=True)
     plotter2.show(jupyter_backend="ipygany")
 # -
 

@@ -70,7 +70,7 @@ u_D.interpolate(u_exact)
 tdim = domain.topology.dim
 fdim = tdim - 1
 domain.topology.create_connectivity(fdim, tdim)
-boundary_facets = numpy.flatnonzero(mesh.compute_boundary_facets(domain.topology))
+boundary_facets = mesh.exterior_facet_indices(domain.topology)
 bc = fem.dirichletbc(u_D, fem.locate_dofs_topological(V, fdim, boundary_facets))
 
 # ## Defining the variational formualation

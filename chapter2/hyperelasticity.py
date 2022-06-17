@@ -55,7 +55,7 @@ right_facets = mesh.locate_entities_boundary(domain, fdim, right)
 
 # Concatenate and sort the arrays based on facet indices. Left facets marked with 1, right facets with two
 marked_facets = np.hstack([left_facets, right_facets])
-marked_values = np.hstack([np.full(len(left_facets), 1, dtype=np.int32), np.full(len(right_facets), 2, dtype=np.int32)])
+marked_values = np.hstack([np.full_like(left_facets, 1), np.full_like(right_facets, 2)])
 sorted_facets = np.argsort(marked_facets)
 facet_tag = mesh.meshtags(domain, fdim, marked_facets[sorted_facets], marked_values[sorted_facets])
 
@@ -65,7 +65,7 @@ u_bc = np.array((0,) * domain.geometry.dim, dtype=PETSc.ScalarType)
 
 # To apply the boundary condition, we identity the dofs located on the facets marked by the `MeshTag`.
 
-left_dofs = fem.locate_dofs_topological(V, facet_tag.dim, facet_tag.indices[facet_tag.values==1])
+left_dofs = fem.locate_dofs_topological(V, facet_tag.dim, facet_tag.find(1))
 bcs = [fem.dirichletbc(u_bc, left_dofs, V)]
 
 # Next, we define the body force on the reference configuration (`B`), and nominal (first Piola-Kirchhoff) traction (`T`). 

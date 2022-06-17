@@ -282,8 +282,7 @@ J = Function(Q)
 # As we only set some values in J, initialize all as 0
 J.x.array[:] = 0
 for tag in material_tags:
-    cells = ct.indices[ct.values==tag]
-    num_cells = len(cells)
+    cells = ct.find(tag)
     # Set values for mu
     if tag == 0:
         mu_ = 4 * np.pi*1e-7 # Vacuum
@@ -291,11 +290,11 @@ for tag in material_tags:
         mu_ = 1e-5 # Iron (This should really be 6.3e-3)
     else:
         mu_ = 1.26e-6 # Copper
-    mu.x.array[cells] = np.full(num_cells, mu_)
+    mu.x.array[cells] = np.full_like(cells, mu_, dtype=ScalarType)
     if tag in range(2, 2+N):
-        J.x.array[cells] = np.full(num_cells, 1)
+        J.x.array[cells] = np.full_like(cells, 1, dtype=ScalarType)
     elif tag in range(2+N, 2*N + 2):
-        J.x.array[cells] = np.full(num_cells, -1)
+        J.x.array[cells] = np.full_like(cells, -1, dtype=ScalarType)
 # -
 
 # In the code above, we have used a somewhat less extreme value for the magnetic permability of iron. This is to make the solution a little more interesting. It would otherwise be completely dominated by the field in the iron cylinder.

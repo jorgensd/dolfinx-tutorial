@@ -1,6 +1,8 @@
 # Changelog
 
 ## Dev
+- Various minor DOLFINx API updates. `dolfinx.mesh.compute_boundary_facets` -> `dolfinx.mesh.exterior_facet_indices` with slightly different functionality. Use `dolfinx.mesh.MeshTagsMetaClass.find` instead of `mt.indices[mt.values==value]`.
+- Various numpy updates, use `np.full_like`.
 - Change all notebooks to use [jupytext](https://jupytext.readthedocs.io/en/latest/install.html) to automatically sync `.ipynb` with `.py` files.
 - Add dummy complex mode test
 

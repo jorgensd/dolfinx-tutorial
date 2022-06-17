@@ -82,8 +82,8 @@ cells_1 = locate_entities(mesh, mesh.topology.dim, Omega_1)
 # 0.1& \text{if } x\in\Omega_1\\
 # \end{cases}$
 
-kappa.x.array[cells_0] = np.full(len(cells_0), 1)
-kappa.x.array[cells_1] = np.full(len(cells_1), 0.1)
+kappa.x.array[cells_0] = np.full_like(cells_0, 1, dtype=ScalarType)
+kappa.x.array[cells_1] = np.full_like(cells_1, 0.1, dtype=ScalarType)
 
 # We are now ready to define our variational formulation and  Dirichlet boundary condition after using integration by parts 
 
@@ -137,7 +137,7 @@ else:
 # As we saw in the first approach, in many cases, we can use the geometrical coordinates to determine which coefficient we should use. Using the unstructured mesh from the previous example, we illustrate an alternative approach using interpolation:
 
 def eval_kappa(x):
-    values = np.zeros(x.shape[1],dtype=ScalarType)
+    values = np.zeros(x.shape[1], dtype=ScalarType)
     # Create a boolean array indicating which dofs (corresponding to cell centers)
     # that are in each domain
     top_coords = x[1]>0.5 
@@ -237,16 +237,16 @@ with XDMFFile(MPI.COMM_WORLD, "mt.xdmf", "r") as xdmf:
 
 Q = FunctionSpace(mesh, ("DG", 0))
 kappa = Function(Q)
-bottom_cells = ct.indices[ct.values==bottom_marker]
-kappa.x.array[bottom_cells] = np.full(len(bottom_cells), 1)
-top_cells = ct.indices[ct.values==top_marker]
-kappa.x.array[top_cells]  = np.full(len(top_cells), 0.1)
+bottom_cells = ct.find(bottom_marker)
+kappa.x.array[bottom_cells] = np.full_like(bottom_cells, 1, dtype=ScalarType)
+top_cells = ct.find(top_marker)
+kappa.x.array[top_cells]  = np.full_like(top_cells, 0.1, dtype=ScalarType)
 
 # We can also efficiently use the facet data `ft` to create the Dirichlet boundary condition
 
 V = FunctionSpace(mesh, ("CG", 1))
 u_bc = Function(V)
-left_facets = ft.indices[ft.values==left_marker]
+left_facets = ft.find(left_marker)
 left_dofs = locate_dofs_topological(V, mesh.topology.dim-1, left_facets)
 bcs = [dirichletbc(ScalarType(1), left_dofs, V)]
 
@@ -283,6 +283,3 @@ if not pyvista.OFF_SCREEN:
 else:
     pyvista.start_xvfb()
     figure = p.screenshot("subdomains_unstructured.png")
-# -
-
-
