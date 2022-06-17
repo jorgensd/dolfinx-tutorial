@@ -187,6 +187,7 @@ L = f * v * ufl.dx
 # In DOLFINx, one can solve complex number problems by using an installation of PETSc using complex numbers.
 # For variational formulations with complex numbers, one cannot use `ufl.dot` to compute inner products.
 # One has to use `ufl.inner`, with the test-function as the second input argument for `ufl.inner`.
+# See [Running DOLFINx in complex mode](./complex_mode) for more information.
 # ```
 #
 #
