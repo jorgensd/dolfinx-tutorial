@@ -64,6 +64,7 @@ from petsc4py import PETSc
 print(PETSc.ScalarType)
 assert np.dtype(PETSc.ScalarType).kind == 'c'
 
+# ## Variational problem
 # We are now ready to define our variational problem
 
 import ufl
@@ -76,6 +77,8 @@ L = ufl.inner(f, v) * ufl.dx
 # Note that we have used the `PETSc.ScalarType` to wrap the constant source on the right hand side. This is because we want the integration kernels to assemble into the correct floating type.
 #
 # Secondly, note that we are using `ufl.inner` to describe multiplication of $f$ and $v$, even if they are scalar values. This is because `ufl.inner` takes the conjugate of the second argument, as decribed by the $L^2$ inner product. One could alternatively write this out manually
+#
+# ### Inner-products and derivatives
 
 L2 = f * ufl.conj(v) * ufl.dx
 print(L)
@@ -89,6 +92,7 @@ residual = dolfinx.fem.petsc.assemble_vector(dolfinx.fem.form(F))
 print(residual.array)
 
 # We define our Dirichlet condition and setup and solve the variational problem.
+# ## Solve variational problem
 
 mesh.topology.create_connectivity(mesh.topology.dim-1, mesh.topology.dim)
 boundary_facets = dolfinx.mesh.exterior_facet_indices(mesh.topology)
@@ -98,6 +102,7 @@ problem = dolfinx.fem.petsc.LinearProblem(a, L, bcs=[bc])
 uh = problem.solve()
 
 # We compute the $L^2$ error and the max error
+# ## Error computation
 
 x = ufl.SpatialCoordinate(mesh)
 u_ex = 0.5 * x[0]**2 + 1j*x[1]**2
@@ -107,6 +112,7 @@ global_error = np.sqrt(mesh.comm.allreduce(local_error, op=MPI.SUM))
 max_error = mesh.comm.allreduce(np.max(np.abs(u_c.x.array-uh.x.array)))
 print(global_error, max_error)
 
+# ## Plotting
 # Finally, we plot the real and imaginary solution
 
 import pyvista
