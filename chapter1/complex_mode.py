@@ -31,9 +31,12 @@
 #
 # Next, we choose a *real* valued test function $v\in \hat V_h$ where $\hat V_h\subset V_h$ such that $v\vert_{\partial\Omega}=0$, as done in the first tutorial. 
 # We now need to define our inner product space. We choose the $L^2$ inner product spaces, which is a *[sesquilinear](https://en.wikipedia.org/wiki/Sesquilinear_form) 2-form*, Meaning that $\langle u, v\rangle$ is a map from $V_h\times V_h\mapsto K$, and $\langle u, v \rangle = \int_\Omega u \cdot \bar v ~\mathrm{d} x$. As it is sesquilinear, we have the following properties:
+#
 # $$\langle u , v \rangle = \overline{\langle v, u \rangle},$$
 # $$\langle u , u \rangle \geq 0.$$
+#
 # We can now use this inner product space to do integration by parts
+#
 # $$\int_\Omega \nabla u_h \cdot \nabla \overline{v}~ \mathrm{dx} = \int_{\Omega} f \cdot \overline{v} ~\mathrm{d} s \qquad \forall v \in \hat{V}_h.$$
 #
 # ## Installation of FEniCSx with complex number support
