@@ -159,7 +159,7 @@ const thebe_selector_output = ".output, .cell_output"
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../chapter1/complex_mode.html">
-   Running DOLFINx in complex mode
+   The Poisson problem with complex numbers
   </a>
  </li>
  <li class="toctree-l1">
@@ -604,8 +604,8 @@ title="Print to PDF"
     \epsilon(u) &amp;= \frac{1}{2}\left(\nabla u + (\nabla u )^T\right)\end{split}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\sigma\)</span> is the stress tensor, <span class="math notranslate nohighlight">\(f\)</span> is the body force per unit volume, <span class="math notranslate nohighlight">\(\lambda\)</span> and <span class="math notranslate nohighlight">\(\mu\)</span> are Lamé’s elasticity parameters for the material in <span class="math notranslate nohighlight">\(\Omega\)</span>, <span class="math notranslate nohighlight">\(I\)</span> is the identity tensor, <span class="math notranslate nohighlight">\(\mathrm{tr}\)</span> is the trace operator on a tensor, <span class="math notranslate nohighlight">\(\epsilon\)</span> is the symmetric strain-rate tensor (symmetric gradient), and <span class="math notranslate nohighlight">\(u\)</span> is the displacement vector filed. Above we have assumed isotropic elastic conditions.
 By insertion of <span class="math notranslate nohighlight">\(\epsilon(u)\)</span> into <span class="math notranslate nohighlight">\(\sigma\)</span> we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-318ff928-9af0-454a-8ac6-79b7341a7f72">
-<span class="eqno">(34)<a class="headerlink" href="#equation-318ff928-9af0-454a-8ac6-79b7341a7f72" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-cdf70f7d-7af9-4dd2-89b4-a4839b30cddb">
+<span class="eqno">(34)<a class="headerlink" href="#equation-cdf70f7d-7af9-4dd2-89b4-a4839b30cddb" title="Permalink to this equation">#</a></span>\[\begin{align}
     \sigma(u)&amp;=\lambda(\nabla \cdot u)I + \mu(\nabla u + (\nabla u)^T)
 \end{align}\]</div>
 <p>Note that we could have written the PDE above as a single vector PDE for <span class="math notranslate nohighlight">\(u\)</span>, which is the governing PDe for the unknown <span class="math notranslate nohighlight">\(u\)</span> (Navier’s) equation. However, it is convenient to keep the current representation of the PDE for the derivation of the variational formulation.</p>
