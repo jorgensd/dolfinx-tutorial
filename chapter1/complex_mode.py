@@ -22,7 +22,7 @@
 # For simplicity, let us consider a Poisson equation of the form: 
 #
 # $$-\Delta u = f \text{ in } \Omega,$$
-# $$ u = 1 + 2j \text{ on } \partial \Omega,$$
+# $$ f = -1 - 2j \text{ on } \partial \Omega,$$
 # $$u_{exact}(x, y) = \frac{1}{2}x^2 + 1j\cdot y^2,$$
 #
 # As in [Solving the Poisson equation](./fundamentals) we want to express our partial differential equation as a weak formulation.
