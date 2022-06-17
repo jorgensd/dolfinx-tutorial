@@ -27,9 +27,9 @@
 #
 # As in [Solving the Poisson equation](./fundamentals) we want to express our partial differential equation as a weak formulation.
 #
-# We start by defining our discrete function space $V_h$, such that $u_h\in V_h$ and $u_h = \sum_{i=1}^N c_i \phi_i(x, y)$ where $\phi_i$ are the global basis functions of our space $V_h$, $c_i \in \mathcal{C}$ are the complex valued degrees of freedom.
+# We start by defining our discrete function space $V_h$, such that $u_h\in V_h$ and $u_h = \sum_{i=1}^N c_i \phi_i(x, y)$ where $\phi_i$ are **real valued** global basis functions of our space $V_h$, $c_i \in \mathcal{C}$ are the **complex valued** degrees of freedom.
 #
-# Next, we choose a *real* valued test function $v\in \hat V_h$ where $\hat V_h\subset V_h$ such that $v\vert_{\partial\Omega}=0$, as done in the first tutorial. 
+# Next, we choose a test function $v\in \hat V_h$ where $\hat V_h\subset V_h$ such that $v\vert_{\partial\Omega}=0$, as done in the first tutorial. 
 # We now need to define our inner product space. We choose the $L^2$ inner product spaces, which is a *[sesquilinear](https://en.wikipedia.org/wiki/Sesquilinear_form) 2-form*, Meaning that $\langle u, v\rangle$ is a map from $V_h\times V_h\mapsto K$, and $\langle u, v \rangle = \int_\Omega u \cdot \bar v ~\mathrm{d} x$. As it is sesquilinear, we have the following properties:
 #
 # $$\langle u , v \rangle = \overline{\langle v, u \rangle},$$
