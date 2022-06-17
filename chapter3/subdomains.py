@@ -137,8 +137,7 @@ else:
 # As we saw in the first approach, in many cases, we can use the geometrical coordinates to determine which coefficient we should use. Using the unstructured mesh from the previous example, we illustrate an alternative approach using interpolation:
 
 def eval_kappa(x):
-    
-    = np.zeros(x.shape[1],dtype=ScalarType)
+    values = np.zeros(x.shape[1], dtype=ScalarType)
     # Create a boolean array indicating which dofs (corresponding to cell centers)
     # that are in each domain
     top_coords = x[1]>0.5 
