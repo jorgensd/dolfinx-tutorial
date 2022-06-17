@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>The Navier-Stokes equations &#8212; FEniCSx tutorial</title>
     
   <!-- Loaded before other Sphinx assets -->
@@ -152,6 +153,11 @@ const thebe_selector_output = ".output, .cell_output"
    <li class="toctree-l2">
     <a class="reference internal" href="../chapter1/fundamentals_code.html">
      Implementation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter1/complex_mode.html">
+     Running DOLFINx in complex mode
     </a>
    </li>
   </ul>
@@ -595,12 +601,12 @@ title="Print to PDF"
                 
               <div>
                 
-  <div class="tex2jax_ignore mathjax_ignore section" id="the-navier-stokes-equations">
+  <section class="tex2jax_ignore mathjax_ignore" id="the-navier-stokes-equations">
 <h1>The Navier-Stokes equations<a class="headerlink" href="#the-navier-stokes-equations" title="Permalink to this headline">#</a></h1>
 <p>Authors: Anders Logg and Hans Petter Langtangen</p>
 <p>Minor modifications: Jørgen S. Dokken</p>
 <p>In this section, we will solve the incompressible Navier-Stokes equations. This problem combines many of the challenges from our previously studied problems: time-dependencies, non-linearity, and vector-valued variables.</p>
-<div class="section" id="the-pde-problem">
+<section id="the-pde-problem">
 <h2>The PDE problem<a class="headerlink" href="#the-pde-problem" title="Permalink to this headline">#</a></h2>
 <p>The incompressible Navier-Stokes equations form a system of equations for the velocity <span class="math notranslate nohighlight">\(u\)</span> and pressure <span class="math notranslate nohighlight">\(p\)</span> in an  incompressible fluid</p>
 <div class="math notranslate nohighlight" id="equation-navier-stokes">
@@ -613,8 +619,8 @@ title="Print to PDF"
 <div class="math notranslate nohighlight">
 \[    \epsilon(u)=\frac{1}{2}\left(\nabla u + (\nabla u)^T\right).\]</div>
 <p>The parameter <span class="math notranslate nohighlight">\(\mu\)</span> is the dynamic viscosity. Note that the momentum equation <a class="reference internal" href="#equation-navier-stokes">(37)</a> is very similar to the elasticity equation <a class="reference internal" href="linearelasticity.html#equation-elasticity-pde">(33)</a>. The difference is in the two additional terms <span class="math notranslate nohighlight">\(\rho\left(\frac{\partial u}{\partial t}+ u\cdot \nabla u\right)\)</span> and the different expression for the stress tensor. The two extra terms express the acceleration balanced by the force <span class="math notranslate nohighlight">\(F=\nabla \cdot \sigma + f\)</span> per unit volume in Newton’s second law of motion.</p>
-</div>
-<div class="section" id="variational-formulation">
+</section>
+<section id="variational-formulation">
 <h2>Variational formulation<a class="headerlink" href="#variational-formulation" title="Permalink to this headline">#</a></h2>
 <p>The Navier-Stokes equations are different from the time-dependent heat equation in that we need to solve a system of equations and the system of a special type. If we apply the same technique as for the heat equation; that is, replacing the time derivative with a simple difference quotient, we obtain a non-linear system of equations. This in itself is not a problem as we saw for the <a class="reference internal" href="nonlinpoisson.html"><span class="doc std std-doc">non-linear Poisson equation</span></a>, but the system has a so-called <em>saddle point structure</em> and requires special techniques (special preconditioners and iterative methods) to be solved efficiently.</p>
 <p>Instead we will apply a simpler and often very efficient approach, known as a <em>splitting method</em>. The idea is to consider the two equations in <a class="reference internal" href="#equation-navier-stokes">(37)</a> separately. There exist many splitting strategies for the incompressible Navier-Stokes equations. One of the oldest is the method proposed by Chorin <span id="id1">[<a class="reference internal" href="#id9" title="Alexandre Joel Chorin. Numerical solution of the Navier-Stokes equations. Mathematics of Computation, 22(104):745–762, 1968. doi:10.1090/S0025-5718-1968-0242392-2.">Cho68</a>]</span> and Temam <span id="id2">[<a class="reference internal" href="#id10" title="Roger Temam. Sur l'approximation de la solution des équations de Navier-Stokes par la méthode des pas fractionnaires (I). Archive for Rational Mechanics and Analysis, 32(2):135–153, 1969. doi:10.1007/BF00247696.">Tem69</a>]</span>, often referred to as <em>Chorin’s method</em>. We will use a modified version of Chorin’s method, the so-called incremental pressure correction scheme (IPCS) due to <span id="id3">[<a class="reference internal" href="#id11" title="Katuhiko Goda. A multistep technique with implicit difference schemes for calculating two- or three-dimensional cavity flows. Journal of computational physics, 30(1):76–95, 1979. doi:10.1016/0021-9991(79)90088-3.">God79</a>]</span> which gives improved accuracy compared to the original scheme at little extra cost.</p>
@@ -670,8 +676,8 @@ We may now use the computed tentative velocity to compute the new pressure <span
 <div class="math notranslate nohighlight">
 \[    \langle u^{n+1}, v\rangle=\langle u^*, v\rangle -\Delta t\langle \nabla(p^{n+1}-p^n), v\rangle\]</div>
 <p>In summary, we may thus solve the incompressible Navier-Stokes equations efficiently by solving a sequence of three linear variational problems in each step.</p>
-</div>
-<div class="section" id="references">
+</section>
+<section id="references">
 <h2>References<a class="headerlink" href="#references" title="Permalink to this headline">#</a></h2>
 <div class="docutils container" id="id6">
 <dl class="citation">
@@ -692,10 +698,10 @@ We may now use the computed tentative velocity to compute the new pressure <span
 </dd>
 </dl>
 </div>
-</div>
+</section>
 <div class="toctree-wrapper compound">
 </div>
-</div>
+</section>
 
     <script type="text/x-thebe-config">
     {

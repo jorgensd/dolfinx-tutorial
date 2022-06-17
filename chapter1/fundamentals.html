@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Solving the Poisson equation &#8212; FEniCSx tutorial</title>
     
   <!-- Loaded before other Sphinx assets -->
@@ -152,6 +153,11 @@ const thebe_selector_output = ".output, .cell_output"
    <li class="toctree-l2">
     <a class="reference internal" href="fundamentals_code.html">
      Implementation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="complex_mode.html">
+     Running DOLFINx in complex mode
     </a>
    </li>
   </ul>
@@ -595,7 +601,7 @@ title="Print to PDF"
                 
               <div>
                 
-  <div class="tex2jax_ignore mathjax_ignore section" id="solving-the-poisson-equation">
+  <section class="tex2jax_ignore mathjax_ignore" id="solving-the-poisson-equation">
 <h1>Solving the Poisson equation<a class="headerlink" href="#solving-the-poisson-equation" title="Permalink to this headline">#</a></h1>
 <p>Authors: Hans Petter Langtangen, Anders Logg</p>
 <p>Adapted to FEniCSx by Jørgen S. Dokken</p>
@@ -608,8 +614,8 @@ This will include:</p>
 <li><p>How to visualize the solution</p></li>
 </ul>
 <p>The Poisson equation is the following boundary-value problem</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1a087492-66d4-48fd-8567-b7627ff2c9ea">
-<span class="eqno">(1)<a class="headerlink" href="#equation-1a087492-66d4-48fd-8567-b7627ff2c9ea" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-1dca4d0b-2ecf-4dd9-9927-b242020c0981">
+<span class="eqno">(1)<a class="headerlink" href="#equation-1dca4d0b-2ecf-4dd9-9927-b242020c0981" title="Permalink to this equation">#</a></span>\[\begin{align}
 -\nabla^2 u(\mathbf{x}) &amp;= f(\mathbf{x})&amp;&amp;\mathbf{x} \in \Omega\\
 u(\mathbf{x}) &amp;= u_D(\mathbf{x})&amp;&amp; \mathbf{x} \in \partial\Omega
 \end{align}\]</div>
@@ -631,7 +637,7 @@ systems of PDEs, in particular the Navier–Stokes equations.</p>
 and visualize the results.</p></li>
 </ol>
 <p>As we have already covered step 1, we shall now cover step 2-4.</p>
-<div class="section" id="finite-element-variational-formulation">
+<section id="finite-element-variational-formulation">
 <h2>Finite element variational formulation<a class="headerlink" href="#finite-element-variational-formulation" title="Permalink to this headline">#</a></h2>
 <p>FEniCSx is based on the finite element method, which is a general and
 efficient mathematical machinery for the numerical solution of
@@ -664,8 +670,8 @@ The formula reads</p>
 Find <span class="math notranslate nohighlight">\(u\in V\)</span> such that</p>
 <p><span class="math notranslate nohighlight">\(\int_\Omega \nabla u \cdot \nabla v \mathrm{d} x = \int_\Omega f v\mathrm{d} x\qquad \forall v \in \hat{V}.\)</span></p>
 <p>For the present problem, the test and trial spaces <span class="math notranslate nohighlight">\(V\)</span> and <span class="math notranslate nohighlight">\(\hat{V}\)</span> is defined as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-dd31509d-b4eb-4ee7-bc43-a827ae902444">
-<span class="eqno">(2)<a class="headerlink" href="#equation-dd31509d-b4eb-4ee7-bc43-a827ae902444" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-0c2db78b-e966-47c8-8295-a7c7bec4c317">
+<span class="eqno">(2)<a class="headerlink" href="#equation-0c2db78b-e966-47c8-8295-a7c7bec4c317" title="Permalink to this equation">#</a></span>\[\begin{align}
 V&amp;=\{v\in H^1(\Omega) \vert v=u_D&amp;&amp;\text{on } \partial \Omega \},\\
 \hat{V}&amp;=\{v\in H^1(\Omega) \vert v=0 &amp;&amp;\text{on } \partial \Omega \}.
 \end{align}\]</div>
@@ -679,25 +685,25 @@ hexahedra.</p>
 <p>The variational problem is a <em>continuous problem</em>: it defines the solution <span class="math notranslate nohighlight">\(u\)</span> in the infinite-dimensional function space <span class="math notranslate nohighlight">\(V\)</span>.
 The finite element method for the  Poisson equation finds an approximate solution of the variational problem by replacing the infinite-dimensional function spaces <span class="math notranslate nohighlight">\(V\)</span> and <span class="math notranslate nohighlight">\(\hat V\)</span> by <em>discrete</em> (finite dimensional) trial and test spaces <span class="math notranslate nohighlight">\(V_h\subset V\)</span> and <span class="math notranslate nohighlight">\(\hat{V}_h \subset \hat{V}\)</span>. The discrete
 variational problem reads: Find <span class="math notranslate nohighlight">\(u_h\in V_h\)</span> such that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8faa47d8-f3b9-4481-870d-ffb309dd0f19">
-<span class="eqno">(3)<a class="headerlink" href="#equation-8faa47d8-f3b9-4481-870d-ffb309dd0f19" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-89d50ceb-f6c5-4edd-b33d-1e34546f4b1b">
+<span class="eqno">(3)<a class="headerlink" href="#equation-89d50ceb-f6c5-4edd-b33d-1e34546f4b1b" title="Permalink to this equation">#</a></span>\[\begin{align}
 \int_\Omega \nabla u_h \cdot \nabla v ~\mathrm{d} x &amp;= \int_\Omega fv~ \mathrm{d} x &amp;&amp; \forall v \in \hat{V}_h.
 \end{align}\]</div>
 <p>This variational problem, together with suitable definitions of <span class="math notranslate nohighlight">\(V_h\)</span> and <span class="math notranslate nohighlight">\(\hat{V}_h\)</span> uniquely define our approximate numerical solution of the Poisson equation.
 Note that the boundary condition is encoded as part of the test and trial spaces. This might seem complicated at first glance,
 but means that the finite element variational problem and the continuous variational problem looks the same.</p>
-</div>
-<div class="section" id="abstract-finite-element-variational-formulation">
+</section>
+<section id="abstract-finite-element-variational-formulation">
 <h2>Abstract finite element variational formulation<a class="headerlink" href="#abstract-finite-element-variational-formulation" title="Permalink to this headline">#</a></h2>
 <p>We will introduce the following notations for variational problems:
 Find <span class="math notranslate nohighlight">\(u\in V\)</span> such that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2c5b0ebc-a718-492d-b4ec-c4fae0296379">
-<span class="eqno">(4)<a class="headerlink" href="#equation-2c5b0ebc-a718-492d-b4ec-c4fae0296379" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-08265467-c688-48ec-966f-ca06b70b9e25">
+<span class="eqno">(4)<a class="headerlink" href="#equation-08265467-c688-48ec-966f-ca06b70b9e25" title="Permalink to this equation">#</a></span>\[\begin{align}
 a(u,v)&amp;=L(v)&amp;&amp; \forall v \in \hat{V}.
 \end{align}\]</div>
 <p>For the Poisson equation, we have:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1e5852ea-6991-4c8f-a7ea-725d9ebbd7c6">
-<span class="eqno">(5)<a class="headerlink" href="#equation-1e5852ea-6991-4c8f-a7ea-725d9ebbd7c6" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-16dde545-2487-48cd-9347-388c796a3928">
+<span class="eqno">(5)<a class="headerlink" href="#equation-16dde545-2487-48cd-9347-388c796a3928" title="Permalink to this equation">#</a></span>\[\begin{align}
 a(u,v) &amp;= \int_{\Omega} \nabla u \cdot \nabla v ~\mathrm{d} x,\\
 L(v) &amp;= \int_{\Omega} fv ~\mathrm{d} x.
 \end{align}\]</div>
@@ -708,8 +714,8 @@ For every linear problem, we will identify all terms with the unknown <span clas
 <li><p>Choose the finite element spaces <span class="math notranslate nohighlight">\(V\)</span> and <span class="math notranslate nohighlight">\(\hat{V}\)</span> by specifying the domain (the mesh) and the type of function space (polynomial degree and type).</p></li>
 <li><p>Express the PDE as a (discrete) variational problem: Find <span class="math notranslate nohighlight">\(u\in V\)</span> such that <span class="math notranslate nohighlight">\(a(u,v)=L(v)\)</span> for all <span class="math notranslate nohighlight">\(v \in \hat{V}\)</span>.</p></li>
 </ol>
-</div>
-<div class="section" id="references">
+</section>
+<section id="references">
 <h2>References<a class="headerlink" href="#references" title="Permalink to this headline">#</a></h2>
 <div class="docutils container" id="id3">
 <dl class="citation">
@@ -718,10 +724,10 @@ For every linear problem, we will identify all terms with the unknown <span clas
 </dd>
 </dl>
 </div>
-</div>
+</section>
 <div class="toctree-wrapper compound">
 </div>
-</div>
+</section>
 
     <script type="text/x-thebe-config">
     {

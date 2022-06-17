@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Error control: Computing convergence rates &#8212; FEniCSx tutorial</title>
     
   <!-- Loaded before other Sphinx assets -->
@@ -151,6 +152,11 @@ const thebe_selector_output = ".output, .cell_output"
    <li class="toctree-l2">
     <a class="reference internal" href="../chapter1/fundamentals_code.html">
      Implementation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter1/complex_mode.html">
+     Running DOLFINx in complex mode
     </a>
    </li>
   </ul>
@@ -641,12 +647,12 @@ title="Print to PDF"
                 
               <div>
                 
-  <div class="tex2jax_ignore mathjax_ignore section" id="error-control-computing-convergence-rates">
+  <section class="tex2jax_ignore mathjax_ignore" id="error-control-computing-convergence-rates">
 <h1>Error control: Computing convergence rates<a class="headerlink" href="#error-control-computing-convergence-rates" title="Permalink to this headline">#</a></h1>
 <p>Author: Jørgen S. Dokken, Hans Petter Langtangen, Anders Logg</p>
 <p>For any numerical method one of the most central questions is its <em>convergence rate</em>: How fast does the error go to zero when the resolution is increased (mesh size decreased).</p>
 <p>For the finite element method, this usually corresponds to proving, theoretically or imperically, that the error <span class="math notranslate nohighlight">\(e=u_e-u_h\)</span> is bounded by the mesh size <span class="math notranslate nohighlight">\(h\)</span> to some power <span class="math notranslate nohighlight">\(r\)</span>, that is <span class="math notranslate nohighlight">\(\vert\vert e \vert\vert\leq Ch^r\)</span> for some mesh independent constant <span class="math notranslate nohighlight">\(C\)</span>. The number <span class="math notranslate nohighlight">\(r\)</span> is called the <em>convergence rate</em> of the method. Note that the different norms like the <span class="math notranslate nohighlight">\(L^2\)</span>-norm <span class="math notranslate nohighlight">\(\vert\vert e\vert\vert\)</span> or the <span class="math notranslate nohighlight">\(H_0^1\)</span>-norm have different convergence rates.</p>
-<div class="section" id="computing-error-norms">
+<section id="computing-error-norms">
 <h2>Computing error norms<a class="headerlink" href="#computing-error-norms" title="Permalink to this headline">#</a></h2>
 <p>We start by creating a manufactured problem, using the same problem as in <a class="reference internal" href="solvers.html"><span class="doc std std-doc">the solver configuration</span></a>.</p>
 <div class="cell docutils container">
@@ -723,7 +729,7 @@ title="Print to PDF"
 </div>
 </div>
 </div>
-<div class="section" id="reliable-error-norm-computation">
+<section id="reliable-error-norm-computation">
 <h3>Reliable error norm computation<a class="headerlink" href="#reliable-error-norm-computation" title="Permalink to this headline">#</a></h3>
 <p>However, as this gets expanded to <code class="docutils literal notranslate"><span class="pre">u_ex**2</span> <span class="pre">+</span> <span class="pre">uh**2</span> <span class="pre">-</span> <span class="pre">2*u_ex*uh</span></code>. If the error is small, (and the solution itself is of moderate size), this calculation will correspond to subtract two positive numbers <code class="docutils literal notranslate"><span class="pre">u_ex**2</span> <span class="pre">+</span> <span class="pre">uh**2</span></code><span class="math notranslate nohighlight">\(\sim 1\)</span> and <code class="docutils literal notranslate"><span class="pre">2*u_ex*u</span></code><span class="math notranslate nohighlight">\(\sim 1\)</span> yielding a small number, prone to round-off errors.</p>
 <p>To avoid this issue, we interpolate the approximate and exact solution into a higher order function space. Then we subtract the degrees of freedom from the interpolated functions to create a new error function. Then, finally, we assemble/integrate the square difference and take the square root to get the L2 norm.</p>
@@ -761,9 +767,9 @@ title="Print to PDF"
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="section" id="computing-convergence-rates">
+</section>
+</section>
+<section id="computing-convergence-rates">
 <h2>Computing convergence rates<a class="headerlink" href="#computing-convergence-rates" title="Permalink to this headline">#</a></h2>
 <p>Let us consider a sequence of mesh resolutions <span class="math notranslate nohighlight">\(h_0&gt;h_1&gt;h_2\)</span>, where <span class="math notranslate nohighlight">\(h_i=\frac{1}{N_i}\)</span> we compute the errors for a range of <span class="math notranslate nohighlight">\(N_i\)</span>s</p>
 <div class="cell docutils container">
@@ -834,30 +840,26 @@ h: 1.56e-02 Error: 1.37e-03
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 2.50e-01 Error: 2.43e-01
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 1.25e-01 Error: 7.96e-02
+h: 1.25e-01 Error: 7.96e-02
 h: 6.25e-02 Error: 2.15e-02
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 3.12e-02 Error: 5.47e-03
-h: 1.56e-02 Error: 1.37e-03
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 1.56e-02 Error: 1.37e-03
 Polynomial degree 1, Rates [1.61228695 1.89147568 1.97191247 1.99290382]
 h: 2.50e-01 Error: 3.52e-02
 h: 1.25e-01 Error: 4.39e-03
 h: 6.25e-02 Error: 5.50e-04
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 3.12e-02 Error: 6.88e-05
+h: 3.12e-02 Error: 6.88e-05
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 1.56e-02 Error: 8.60e-06
 Polynomial degree 2, Rates [3.00109101 2.99828073 2.99822291 2.99930786]
 h: 2.50e-01 Error: 5.54e-03
 h: 1.25e-01 Error: 3.35e-04
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 6.25e-02 Error: 1.99e-05
+h: 6.25e-02 Error: 1.99e-05
 h: 3.12e-02 Error: 1.21e-06
 </pre></div>
 </div>
@@ -866,18 +868,16 @@ Polynomial degree 3, Rates [4.04795047 4.07357659 4.03728992 4.01645269]
 h: 2.50e-01 Error: 7.20e-04
 h: 1.25e-01 Error: 2.42e-05
 h: 6.25e-02 Error: 7.75e-07
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 3.12e-02 Error: 2.44e-08
+h: 3.12e-02 Error: 2.44e-08
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 1.56e-02 Error: 7.64e-10
-Polynomial degree 4, Rates [4.896908   4.96084158 4.98926012 4.99766464]
+Polynomial degree 4, Rates [4.896908   4.96084158 4.98926012 4.99766473]
 </pre></div>
 </div>
 </div>
 </div>
-<div class="section" id="infinity-norm-estimates">
+<section id="infinity-norm-estimates">
 <h3>Infinity norm estimates<a class="headerlink" href="#infinity-norm-estimates" title="Permalink to this headline">#</a></h3>
 <p>We start by creating a function to compute the infinity norm, the max difference between the approximate and exact solution.</p>
 <div class="cell docutils container">
@@ -942,7 +942,7 @@ h: 3.12e-02 Error: 3.80e-06
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 1.56e-02 Error: 2.41e-07
-Polynomial degree 3, Rates [3.72903577 3.79406598 3.94800701 3.97888406]
+Polynomial degree 3, Rates [3.72903577 3.79406598 3.94800701 3.97888407]
 h: 2.50e-01 Error: 1.63e-03
 h: 1.25e-01 Error: 5.23e-05
 h: 6.25e-02 Error: 1.67e-06
@@ -950,15 +950,15 @@ h: 3.12e-02 Error: 5.25e-08
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>h: 1.56e-02 Error: 1.64e-09
-Polynomial degree 4, Rates [4.96133103 4.96807694 4.99161591 4.9978773 ]
+Polynomial degree 4, Rates [4.96133103 4.96807694 4.99161593 4.99787726]
 </pre></div>
 </div>
 </div>
 </div>
 <p>We observe super convergence for second order polynomials, yielding a fourth order convergence.</p>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
     <script type="text/x-thebe-config">
     {

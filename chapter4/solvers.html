@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Solver configuration &#8212; FEniCSx tutorial</title>
     
   <!-- Loaded before other Sphinx assets -->
@@ -152,6 +153,11 @@ const thebe_selector_output = ".output, .cell_output"
    <li class="toctree-l2">
     <a class="reference internal" href="../chapter1/fundamentals_code.html">
      Implementation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter1/complex_mode.html">
+     Running DOLFINx in complex mode
     </a>
    </li>
   </ul>
@@ -604,7 +610,7 @@ title="Print to PDF"
                 
               <div>
                 
-  <div class="tex2jax_ignore mathjax_ignore section" id="solver-configuration">
+  <section class="tex2jax_ignore mathjax_ignore" id="solver-configuration">
 <h1>Solver configuration<a class="headerlink" href="#solver-configuration" title="Permalink to this headline">#</a></h1>
 <p>Author: Jørgen S. Dokken</p>
 <p>In this section, we will go through how to specify what linear algebra solver we would like to use to solve our PDEs, as well as how to verify the implemenation by considering convergence rates.</p>
@@ -695,7 +701,7 @@ We start by creating a generic module for evaluating the analytical solution  at
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_140253518579360) 1 MPI processes
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_140619647282832) 1 MPI processes
 
   type: preonly
 
@@ -707,7 +713,7 @@ We start by creating a generic module for evaluating the analytical solution  at
 
   using NONE norm type for convergence test
 
-PC Object: (dolfinx_solve_140253518579360) 1 MPI processes
+PC Object: (dolfinx_solve_140619647282832) 1 MPI processes
 
   type: lu
 
@@ -735,7 +741,7 @@ PC Object: (dolfinx_solve_140253518579360) 1 MPI processes
 
   linear system matrix = precond matrix:
 
-  Mat Object: (dolfinx_solve_140253518579360) 1 MPI processes
+  Mat Object: (dolfinx_solve_140619647282832) 1 MPI processes
 
     type: seqaij
 
@@ -752,7 +758,7 @@ PC Object: (dolfinx_solve_140253518579360) 1 MPI processes
 </div>
 <p>This is a very robust and simple method, and is the recommended method up to a few thousand unknowns and can be efficiently used for many 2D and smaller 3D problems. However, sparse LU decomposition quickly becomes slow, as for a <span class="math notranslate nohighlight">\(N\times N\)</span>-matrix the number of floating point operations scales as <span class="math notranslate nohighlight">\(\sim (2/3)N^3\)</span>.</p>
 <p>For large problems, we instead need to use an iterative method which are faster and require less memory.</p>
-<div class="section" id="choosing-a-linear-solver-and-preconditioner">
+<section id="choosing-a-linear-solver-and-preconditioner">
 <h2>Choosing a linear solver and preconditioner<a class="headerlink" href="#choosing-a-linear-solver-and-preconditioner" title="Permalink to this headline">#</a></h2>
 <p>As the Poisson equation results in a symmetric, positive definite system matrix, the optimal Krylov solver is the conjugate gradient (CG) method. The default preconditioner is the incomplete LU factorization (ILU), which is a popular and robous overall preconditioner. We can change the preconditioner by setting <code class="docutils literal notranslate"><span class="pre">&quot;pc_type&quot;</span></code> to some of the other preconditioners in petsc, which you can find in the <a class="reference external" href="https://www.mcs.anl.gov/petsc/documentation/linearsolvertable.html">PETSc documentation</a>.
 You can set any opition in <code class="docutils literal notranslate"><span class="pre">PETSc</span></code> through the <code class="docutils literal notranslate"><span class="pre">petsc_options</span></code> input, such as the absolute tolerance (<code class="docutils literal notranslate"><span class="pre">&quot;ksp_atol&quot;</span></code>), relative tolerance (<code class="docutils literal notranslate"><span class="pre">&quot;ksp_rtol&quot;</span></code>) and maximum number of iterations (<code class="docutils literal notranslate"><span class="pre">&quot;ksp_max_it&quot;</span></code>).</p>
@@ -771,7 +777,7 @@ You can set any opition in <code class="docutils literal notranslate"><span clas
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_140253512806944) 1 MPI processes
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_140618662864560) 1 MPI processes
 
   type: cg
 
@@ -783,7 +789,7 @@ You can set any opition in <code class="docutils literal notranslate"><span clas
 
   using PRECONDITIONED norm type for convergence test
 
-PC Object: (dolfinx_solve_140253512806944) 1 MPI processes
+PC Object: (dolfinx_solve_140618662864560) 1 MPI processes
 
   type: ilu
 
@@ -813,7 +819,7 @@ PC Object: (dolfinx_solve_140253512806944) 1 MPI processes
 
   linear system matrix = precond matrix:
 
-  Mat Object: (dolfinx_solve_140253512806944) 1 MPI processes
+  Mat Object: (dolfinx_solve_140618662864560) 1 MPI processes
 
     type: seqaij
 
@@ -844,7 +850,7 @@ PC Object: (dolfinx_solve_140253512806944) 1 MPI processes
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_140253513235808) 1 MPI processes
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KSP Object: (dolfinx_solve_140618662864080) 1 MPI processes
 
   type: gmres
 
@@ -860,13 +866,13 @@ PC Object: (dolfinx_solve_140253512806944) 1 MPI processes
 
   using PRECONDITIONED norm type for convergence test
 
-PC Object: (dolfinx_solve_140253513235808) 1 MPI processes
+PC Object: (dolfinx_solve_140618662864080) 1 MPI processes
 
   type: none
 
   linear system matrix = precond matrix:
 
-  Mat Object: (dolfinx_solve_140253513235808) 1 MPI processes
+  Mat Object: (dolfinx_solve_140618662864080) 1 MPI processes
 
     type: seqaij
 
@@ -885,8 +891,8 @@ PC Object: (dolfinx_solve_140253513235808) 1 MPI processes
 <p class="admonition-title">A remark regarding verification using iterative solvers</p>
 <p>When we consider manufactured solutions where we expect the resulting error to be of machine precision, it gets complicated when we use iterative methods. The problem is to keep the error due to the iterative solution smaller than the tolerance used in the iterative test. For linear elements and small meshes, a tolerance of between <span class="math notranslate nohighlight">\(10^{-11}\)</span> and <span class="math notranslate nohighlight">\(10^{-12}\)</span> works well in the case of Krylov solvers too.</p>
 </div>
-</div>
-</div>
+</section>
+</section>
 
     <script type="text/x-thebe-config">
     {

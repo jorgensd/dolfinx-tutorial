@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Using Paraview for visualization &#8212; FEniCSx tutorial</title>
     
   <!-- Loaded before other Sphinx assets -->
@@ -150,6 +151,11 @@ const thebe_selector_output = ".output, .cell_output"
    <li class="toctree-l2">
     <a class="reference internal" href="fundamentals_code.html">
      Implementation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="complex_mode.html">
+     Running DOLFINx in complex mode
     </a>
    </li>
   </ul>
@@ -536,7 +542,7 @@ title="Print to PDF"
                 
               <div>
                 
-  <div class="tex2jax_ignore mathjax_ignore section" id="using-paraview-for-visualization">
+  <section class="tex2jax_ignore mathjax_ignore" id="using-paraview-for-visualization">
 <h1>Using Paraview for visualization<a class="headerlink" href="#using-paraview-for-visualization" title="Permalink to this headline">#</a></h1>
 <p>We start by opening <a class="reference external" href="https://www.paraview.org/">Paraview</a>. We start by opening the file by pressing <code class="docutils literal notranslate"><span class="pre">File-&gt;Open</span></code>. Next you should choose the <code class="docutils literal notranslate"><span class="pre">Xdmf3ReaderT</span></code> to open the data with.</p>
 <p>The next step is to visualize each of the functions. To do this, we choose <code class="docutils literal notranslate"><span class="pre">Filters-&gt;Alphabetic-&gt;ExtractBlock</span></code>. The next step is to select the first Unstructured Grid and press <code class="docutils literal notranslate"><span class="pre">Apply</span></code> as shown below:</p>
@@ -547,7 +553,7 @@ title="Print to PDF"
 <p><img alt="Set view direction" src="../_images/axis.png" /></p>
 <p>With these instructions, you can obtain the following figures</p>
 <p><img alt="Results for membrane" src="../_images/result_membrane.png" /></p>
-</div>
+</section>
 
     <script type="text/x-thebe-config">
     {

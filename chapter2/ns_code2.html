@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Test problem 2: Flow past a cylinder (DFG 2D-3 benchmark) &#8212; FEniCSx tutorial</title>
     
   <!-- Loaded before other Sphinx assets -->
@@ -152,6 +153,11 @@ const thebe_selector_output = ".output, .cell_output"
    <li class="toctree-l2">
     <a class="reference internal" href="../chapter1/fundamentals_code.html">
      Implementation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter1/complex_mode.html">
+     Running DOLFINx in complex mode
     </a>
    </li>
   </ul>
@@ -684,7 +690,7 @@ title="Print to PDF"
                 
               <div>
                 
-  <div class="tex2jax_ignore mathjax_ignore section" id="test-problem-2-flow-past-a-cylinder-dfg-2d-3-benchmark">
+  <section class="tex2jax_ignore mathjax_ignore" id="test-problem-2-flow-past-a-cylinder-dfg-2d-3-benchmark">
 <h1>Test problem 2: Flow past a cylinder (DFG 2D-3 benchmark)<a class="headerlink" href="#test-problem-2-flow-past-a-cylinder-dfg-2d-3-benchmark" title="Permalink to this headline">#</a></h1>
 <p>Author: Jørgen S. Dokken</p>
 <p>In this section, we will turn our attention to a slightly more challenging problem: flow past a cylinder. The geometry and parameters are taken from the <a class="reference external" href="http://www.featflow.de/en/benchmarks/cfdbenchmarking/flow/dfg_benchmark3_re100.html">DFG 2D-3 benchmark</a> in FeatFlow.</p>
@@ -705,7 +711,7 @@ title="Print to PDF"
     U=U(t) = 1.5\sin(\pi t/8)
 \]</div>
 <p>which has a maximum magnitude of <span class="math notranslate nohighlight">\(1.5\)</span> at <span class="math notranslate nohighlight">\(y=0.41/2\)</span>. We do not use any scaling for this problem since all exact parameters are known.</p>
-<div class="section" id="mesh-generation">
+<section id="mesh-generation">
 <h2>Mesh generation<a class="headerlink" href="#mesh-generation" title="Permalink to this headline">#</a></h2>
 <p>As in the <a class="reference internal" href="../chapter1/membrane_code.html"><span class="doc std std-doc">Deflection of a membrane</span></a> we use GMSH to generate the mesh. We fist create the rectangle and obstacle.</p>
 <div class="cell docutils container">
@@ -826,8 +832,8 @@ title="Print to PDF"
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="generating-the-mesh">
+</section>
+<section id="generating-the-mesh">
 <h2>Generating the mesh<a class="headerlink" href="#generating-the-mesh" title="Permalink to this headline">#</a></h2>
 <p>We are now ready to generate the mesh. However, we have to decide if our mesh should consist of triangles or quadrilaterals. In this demo, to match the DFG 2D-3 benchmark, we use quadrilateral elements. This is done by recombining the mesh, setting three gmsh options.</p>
 <div class="cell docutils container">
@@ -843,36 +849,36 @@ title="Print to PDF"
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : Meshing 1D...
-Info    : [  0%] Meshing curve 5 (Ellipse)
-Info    : [ 20%] Meshing curve 6 (Line)
-Info    : [ 40%] Meshing curve 7 (Line)
-Info    : [ 60%] Meshing curve 8 (Line)
-Info    : [ 80%] Meshing curve 9 (Line)
-Info    : Done meshing 1D (Wall 0.0102851s, CPU 0.010341s)
+Info    : [  0%] Meshing curve 1 (Line)
+Info    : [ 20%] Meshing curve 2 (Line)
+Info    : [ 40%] Meshing curve 3 (Line)
+Info    : [ 60%] Meshing curve 4 (Line)
+Info    : [ 80%] Meshing curve 5 (Ellipse)
+Info    : Done meshing 1D (Wall 0.00833506s, CPU 0.005374s)
 Info    : Meshing 2D...
 Info    : Meshing surface 1 (Plane, Frontal-Delaunay)
-Info    : Simple recombination completed (Wall 0.0350064s, CPU 0.030921s): 1180 quads, 354 triangles, 0 invalid quads, 0 quads with Q &lt; 0.1, avg Q = 0.773076, min Q = 0.435836
-Info    : Done meshing 2D (Wall 0.0890713s, CPU 0.085222s)
+Info    : Simple recombination completed (Wall 0.0259073s, CPU 0.025908s): 1180 quads, 354 triangles, 0 invalid quads, 0 quads with Q &lt; 0.1, avg Q = 0.773076, min Q = 0.435836
+Info    : Done meshing 2D (Wall 0.0663528s, CPU 0.066159s)
 Info    : Refining mesh...
 Info    : Meshing order 2 (curvilinear on)...
-Info    : [  0%] Meshing curve 5 order 2
-Info    : [ 20%] Meshing curve 6 order 2
-Info    : [ 40%] Meshing curve 7 order 2
-Info    : [ 50%] Meshing curve 8 order 2
-Info    : [ 70%] Meshing curve 9 order 2
+Info    : [  0%] Meshing curve 1 order 2
+Info    : [ 20%] Meshing curve 2 order 2
+Info    : [ 40%] Meshing curve 3 order 2
+Info    : [ 50%] Meshing curve 4 order 2
+Info    : [ 70%] Meshing curve 5 order 2
 Info    : [ 90%] Meshing surface 1 order 2
 Info    : Surface mesh: worst distortion = 0.845684 (0 elements in ]0, 0.2]); worst gamma = 0.667609
-Info    : Done meshing order 2 (Wall 0.0138484s, CPU 0.013953s)
-Info    : Done refining mesh (Wall 0.0160844s, CPU 0.016307s)
+Info    : Done meshing order 2 (Wall 0.0101885s, CPU 0.010355s)
+Info    : Done refining mesh (Wall 0.011876s, CPU 0.01216s)
 Info    : 5948 nodes 6119 elements
 Info    : Optimizing mesh (Netgen)...
-Info    : Done optimizing mesh (Wall 1.501e-06s, CPU 3e-06s)
+Info    : Done optimizing mesh (Wall 1.2e-06s, CPU 3e-06s)
 </pre></div>
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="loading-mesh-and-boundary-markers">
+</section>
+<section id="loading-mesh-and-boundary-markers">
 <h2>Loading mesh and boundary markers<a class="headerlink" href="#loading-mesh-and-boundary-markers" title="Permalink to this headline">#</a></h2>
 <p>As we have generated the mesh, we now need to load the mesh and corresponding facet markers into DOLFINx.
 To load the mesh, we follow the same structure as in  <a class="reference internal" href="../chapter1/membrane_code.html"><span class="doc std std-doc">Deflection of a membrane</span></a>, with slight modifications to include the facet markers. To learn more about the specifics of the function below, see <a class="reference external" href="http://jsdokken.com/converted_files/tutorial_gmsh.html">A GMSH tutorial for DOLFINx</a>.</p>
@@ -943,8 +949,8 @@ To load the mesh, we follow the same structure as in  <a class="reference intern
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="physical-and-discretization-parameters">
+</section>
+<section id="physical-and-discretization-parameters">
 <h2>Physical and discretization parameters<a class="headerlink" href="#physical-and-discretization-parameters" title="Permalink to this headline">#</a></h2>
 <p>Following the DGF-2 benchmark, we define our problem specific parameters</p>
 <div class="cell docutils container">
@@ -964,8 +970,8 @@ To load the mesh, we follow the same structure as in  <a class="reference intern
 <p class="admonition-title">Reduced end-time of problem</p>
 <p>In the current demo, we have reduced the run time to one second to make it easier to illustrate the concepts of the benchmark. By increasing the end-time <code class="docutils literal notranslate"><span class="pre">T</span></code> to 8, the runtime in a notebook is approximately 25 minutes. If you convert the notebook to a python file and use <code class="docutils literal notranslate"><span class="pre">mpirun</span></code>, you can reduce the runtime of the problem.</p>
 </div>
-</div>
-<div class="section" id="boundary-conditions">
+</section>
+<section id="boundary-conditions">
 <h2>Boundary conditions<a class="headerlink" href="#boundary-conditions" title="Permalink to this headline">#</a></h2>
 <p>As we have created the mesh and relevant mesh tags, we can now specify the function spaces <code class="docutils literal notranslate"><span class="pre">V</span></code> and <code class="docutils literal notranslate"><span class="pre">Q</span></code> along with the boundary conditions. As the <code class="docutils literal notranslate"><span class="pre">ft</span></code> contains markers for facets, we use this class to find the facets for the inlet and walls.</p>
 <div class="cell docutils container">
@@ -991,27 +997,22 @@ To load the mesh, we follow the same structure as in  <a class="reference intern
 <span class="n">u_inlet</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">inlet_velocity</span> <span class="o">=</span> <span class="n">InletVelocity</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 <span class="n">u_inlet</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">inlet_velocity</span><span class="p">)</span>
-<span class="n">inlet_facets</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">ft</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">inlet_marker</span><span class="p">]</span>
-
-<span class="n">bcu_inflow</span> <span class="o">=</span> <span class="n">dirichletbc</span><span class="p">(</span><span class="n">u_inlet</span><span class="p">,</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">inlet_facets</span><span class="p">))</span>
+<span class="n">bcu_inflow</span> <span class="o">=</span> <span class="n">dirichletbc</span><span class="p">(</span><span class="n">u_inlet</span><span class="p">,</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">ft</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">inlet_marker</span><span class="p">)))</span>
 <span class="c1"># Walls</span>
-<span class="n">u_nonslip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mi">0</span><span class="p">,)</span> <span class="o">*</span><span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScalarType</span><span class="p">)</span>
-<span class="n">wall_facets</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">ft</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">wall_marker</span><span class="p">]</span>
-<span class="n">bcu_walls</span> <span class="o">=</span> <span class="n">dirichletbc</span><span class="p">(</span><span class="n">u_nonslip</span><span class="p">,</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">wall_facets</span><span class="p">),</span> <span class="n">V</span><span class="p">)</span>
+<span class="n">u_nonslip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mi">0</span><span class="p">,)</span> <span class="o">*</span> <span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScalarType</span><span class="p">)</span>
+<span class="n">bcu_walls</span> <span class="o">=</span> <span class="n">dirichletbc</span><span class="p">(</span><span class="n">u_nonslip</span><span class="p">,</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">ft</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">wall_marker</span><span class="p">)),</span> <span class="n">V</span><span class="p">)</span>
 <span class="c1"># Obstacle</span>
-<span class="n">obstacle_facets</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">ft</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">obstacle_marker</span><span class="p">]</span>
-<span class="n">bcu_obstacle</span> <span class="o">=</span> <span class="n">dirichletbc</span><span class="p">(</span><span class="n">u_nonslip</span><span class="p">,</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">obstacle_facets</span><span class="p">),</span> <span class="n">V</span><span class="p">)</span>
+<span class="n">bcu_obstacle</span> <span class="o">=</span> <span class="n">dirichletbc</span><span class="p">(</span><span class="n">u_nonslip</span><span class="p">,</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">ft</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">obstacle_marker</span><span class="p">)),</span> <span class="n">V</span><span class="p">)</span>
 <span class="n">bcu</span> <span class="o">=</span> <span class="p">[</span><span class="n">bcu_inflow</span><span class="p">,</span> <span class="n">bcu_obstacle</span><span class="p">,</span> <span class="n">bcu_walls</span><span class="p">]</span>
 <span class="c1"># Outlet</span>
-<span class="n">outlet_facets</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">ft</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">outlet_marker</span><span class="p">]</span>
-<span class="n">bcp_outlet</span> <span class="o">=</span> <span class="n">dirichletbc</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScalarType</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">outlet_facets</span><span class="p">),</span> <span class="n">Q</span><span class="p">)</span>
+<span class="n">bcp_outlet</span> <span class="o">=</span> <span class="n">dirichletbc</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScalarType</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">ft</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">outlet_marker</span><span class="p">)),</span> <span class="n">Q</span><span class="p">)</span>
 <span class="n">bcp</span> <span class="o">=</span> <span class="p">[</span><span class="n">bcp_outlet</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="variational-form">
+</section>
+<section id="variational-form">
 <h2>Variational form<a class="headerlink" href="#variational-form" title="Permalink to this headline">#</a></h2>
 <p>As opposed to <a class="reference internal" href="ns_code1.html"><span class="doc std std-doc">Pouseille flow</span></a>, we will use a Crank-Nicolson discretization, and an explicit Adams-Bashforth approximation.
 The first step can be written as</p>
@@ -1133,8 +1134,8 @@ u^{n+1} = u^{*}-\delta t \phi.
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="verification-of-the-implementation-compute-known-physical-quantities">
+</section>
+<section id="verification-of-the-implementation-compute-known-physical-quantities">
 <h2>Verification of the implementation compute known physical quantities<a class="headerlink" href="#verification-of-the-implementation-compute-known-physical-quantities" title="Permalink to this headline">#</a></h2>
 <p>As a further verification of our implementation, we compute the drag and lift coefficients over the obstacle, defined as</p>
 <div class="math notranslate nohighlight">
@@ -1177,8 +1178,8 @@ u^{n+1} = u^{*}-\delta t \phi.
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="solving-the-time-dependent-problem">
+</section>
+<section id="solving-the-time-dependent-problem">
 <h2>Solving the time-dependent problem<a class="headerlink" href="#solving-the-time-dependent-problem" title="Permalink to this headline">#</a></h2>
 <div class="admonition-stability-of-the-navier-stokes-equation admonition">
 <p class="admonition-title">Stability of the Navier-Stokes equation</p>
@@ -1278,11 +1279,11 @@ As in the previous example, we create output files for the velocity and pressure
 </div>
 <div class="cell_output docutils container">
 <script type="application/vnd.jupyter.widget-view+json">
-{"version_major": 2, "version_minor": 0, "model_id": "9e453f6725fd41d0af4512a530430139"}
+{"version_major": 2, "version_minor": 0, "model_id": "d876a8abdb7d47df95342cae2fa5bccd"}
 </script></div>
 </div>
-</div>
-<div class="section" id="verification-using-data-from-featflow">
+</section>
+<section id="verification-using-data-from-featflow">
 <h2>Verification using data from FEATFLOW<a class="headerlink" href="#verification-using-data-from-featflow" title="Permalink to this headline">#</a></h2>
 <p>As FEATFLOW has provided data for different  discretization levels, we compare our numerical data with the data provided using <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code>.</p>
 <div class="cell docutils container">
@@ -1330,12 +1331,12 @@ As in the previous example, we create output files for the velocity and pressure
 </div>
 </div>
 <p>We observe an offset in amplitude. This is due to the reduced number of degrees of freedom compared to FEATFLOW. If we change the parameters <code class="docutils literal notranslate"><span class="pre">res_min</span></code> to <code class="docutils literal notranslate"><span class="pre">r/5</span></code>, and <code class="docutils literal notranslate"><span class="pre">res_max</span></code> to <code class="docutils literal notranslate"><span class="pre">r</span></code>, we can obtain a result closer to the FEATFLOW benchmark. It is recommended to convert the notebook to a python-script using <a class="reference external" href="https://nbconvert.readthedocs.io/en/latest/">nbconvert</a> and using <code class="docutils literal notranslate"><span class="pre">mpirun</span> <span class="pre">-n</span> <span class="pre">4</span> <span class="pre">python3</span> <span class="pre">ns_code2.py</span></code> to run the python program distributed over 4 processors.</p>
-</div>
-</div>
+</section>
+</section>
 
 
 <script type="application/vnd.jupyter.widget-state+json">
-{"state": {"b9dc007cac0843588709009e9e41882d": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "873c927c550e47bfa9261bfbabe567ab": {"model_name": "ProgressStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "bar_color": null, "description_width": ""}}, "9da48cd787d64cadb59e94f04a7c54f9": {"model_name": "FloatProgressModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "ProgressView", "bar_style": "", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_b9dc007cac0843588709009e9e41882d", "max": 1600.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_873c927c550e47bfa9261bfbabe567ab", "value": 1600.0}}, "de76b8e7ddbf459fae1fa03cefeb9d97": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "04b2d0a8f7d84bbdad4da2625c249096": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "446ffb39fe1a4946b6c779ff293555fe": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_de76b8e7ddbf459fae1fa03cefeb9d97", "placeholder": "\u200b", "style": "IPY_MODEL_04b2d0a8f7d84bbdad4da2625c249096", "value": "Solving PDE: 100%"}}, "0124207b724d4e1ba119549a8dde84cf": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "72c51d19d8be4744bcbbc2cfecada7b2": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "776cd8d7d8194a5b969e9e3fc2c2b86d": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_0124207b724d4e1ba119549a8dde84cf", "placeholder": "\u200b", "style": "IPY_MODEL_72c51d19d8be4744bcbbc2cfecada7b2", "value": " 1600/1600 [06:56&lt;00:00,  3.79it/s]"}}, "b2513b5f7e574d25b3f4538334754bf9": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "9e453f6725fd41d0af4512a530430139": {"model_name": "HBoxModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_446ffb39fe1a4946b6c779ff293555fe", "IPY_MODEL_9da48cd787d64cadb59e94f04a7c54f9", "IPY_MODEL_776cd8d7d8194a5b969e9e3fc2c2b86d"], "layout": "IPY_MODEL_b2513b5f7e574d25b3f4538334754bf9"}}}, "version_major": 2, "version_minor": 0}
+{"state": {"96656a2e4f154726b9b844f38784ce0e": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "10a2b8f22c7846d182e6ed09de915082": {"model_name": "ProgressStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "bar_color": null, "description_width": ""}}, "f8998997a76a468aba294517b056ebb4": {"model_name": "FloatProgressModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "ProgressView", "bar_style": "", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_96656a2e4f154726b9b844f38784ce0e", "max": 1600.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_10a2b8f22c7846d182e6ed09de915082", "value": 1600.0}}, "6011b410f2064537a55d6fb18404059b": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "bebdaab9088f4e38b0b88af1baa24585": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "36e4aab9638d464c8250cb329d0ace40": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_6011b410f2064537a55d6fb18404059b", "placeholder": "\u200b", "style": "IPY_MODEL_bebdaab9088f4e38b0b88af1baa24585", "value": "Solving PDE: 100%"}}, "b29ce96bfe154aa2820bdfa5523c8e4a": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "63d6e5a76f744b9db54aaa20c2c23a7a": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "e9cfc6cfa51a445a82aa2457cf0ae029": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_b29ce96bfe154aa2820bdfa5523c8e4a", "placeholder": "\u200b", "style": "IPY_MODEL_63d6e5a76f744b9db54aaa20c2c23a7a", "value": " 1600/1600 [04:29&lt;00:00,  5.98it/s]"}}, "719d845291c54e8da1a6b816ec17dcc5": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "d876a8abdb7d47df95342cae2fa5bccd": {"model_name": "HBoxModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_36e4aab9638d464c8250cb329d0ace40", "IPY_MODEL_f8998997a76a468aba294517b056ebb4", "IPY_MODEL_e9cfc6cfa51a445a82aa2457cf0ae029"], "layout": "IPY_MODEL_719d845291c54e8da1a6b816ec17dcc5"}}}, "version_major": 2, "version_minor": 0}
 </script>
 
 

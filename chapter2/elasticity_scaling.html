@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Scaling &#8212; FEniCSx tutorial</title>
     
   <!-- Loaded before other Sphinx assets -->
@@ -152,6 +153,11 @@ const thebe_selector_output = ".output, .cell_output"
    <li class="toctree-l2">
     <a class="reference internal" href="../chapter1/fundamentals_code.html">
      Implementation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter1/complex_mode.html">
+     Running DOLFINx in complex mode
     </a>
    </li>
   </ul>
@@ -538,7 +544,7 @@ title="Print to PDF"
                 
               <div>
                 
-  <div class="tex2jax_ignore mathjax_ignore section" id="scaling">
+  <section class="tex2jax_ignore mathjax_ignore" id="scaling">
 <h1>Scaling<a class="headerlink" href="#scaling" title="Permalink to this headline">#</a></h1>
 <p>Authors: Anders Logg and Hans Petter Langtangen</p>
 <p>It is often advantageous to scale a problem as it reduces the need for setting physical parameters, and one obtains dimensionless numbers that reflect the competition of parameters and physical effects. We develop the code for the original model with dimensions, and run the scaled problem by tweaking parameters appropriately. Scaling reduces the number of active parameters from <span class="math notranslate nohighlight">\(6\)</span> to <span class="math notranslate nohighlight">\(2\)</span> for the present application.</p>
@@ -554,7 +560,7 @@ title="Print to PDF"
 <p>is a dimensionless variable reflecting the ratio of the load <span class="math notranslate nohighlight">\(\rho g\)</span> and the shear stress term <span class="math notranslate nohighlight">\(\mu \nabla^2u \sim \mu \frac{U}{L^2}\)</span> in the PDE.</p>
 <p>One option for the scaling is to chose <span class="math notranslate nohighlight">\(U\)</span> such that <span class="math notranslate nohighlight">\(\gamma\)</span> is of unit size (<span class="math notranslate nohighlight">\(U=\frac{\rho g L^2}{\mu}\)</span>). However, in elasticity, this leads to displacements of the size of the geometry. This can be achieved by choosing <span class="math notranslate nohighlight">\(U\)</span> equal to the maximum deflection of a clamped beam, for which there actually exists a formula: <span class="math notranslate nohighlight">\(U=\frac{3}{2} \rho g L^2\frac{\delta^2}{E}\)</span> where <span class="math notranslate nohighlight">\(\delta=\frac{L}{W}\)</span> is a parameter reflecting how slender the beam is, and <span class="math notranslate nohighlight">\(E\)</span> is the modulus of elasticity. Thus the dimensionless parameter <span class="math notranslate nohighlight">\(\delta\)</span> is very important in the problem (as expected <span class="math notranslate nohighlight">\(\delta\gg 1\)</span> is what gives beam theory!). Taking <span class="math notranslate nohighlight">\(E\)</span> to be of the same order as <span class="math notranslate nohighlight">\(\mu\)</span>, which in this case and for many materials, we realize that <span class="math notranslate nohighlight">\(\gamma \sim \delta^{-2}\)</span> is an appropriate choice. Experimenting with the code to find a displacement that “looks right” in the plots of the deformed geometry, points to <span class="math notranslate nohighlight">\(\gamma=0.4\delta^{-2}\)</span> as our final choice of <span class="math notranslate nohighlight">\(\gamma\)</span>.</p>
 <p>The simulation code implements the problem with dimensions and physical parameters <span class="math notranslate nohighlight">\(\lambda, \mu, \rho, g, L\)</span> and <span class="math notranslate nohighlight">\(W\)</span>. However, we can easily reuse this code for a scaled problem: Just set <span class="math notranslate nohighlight">\(\mu=\rho=L=1\)</span>, <span class="math notranslate nohighlight">\(W\)</span> as <span class="math notranslate nohighlight">\(W/L(\delta^{-1})\)</span>, <span class="math notranslate nohighlight">\(g=\gamma\)</span> and <span class="math notranslate nohighlight">\(\lambda=\beta\)</span>.</p>
-</div>
+</section>
 
     <script type="text/x-thebe-config">
     {

@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>JIT Parameters and visualization using Pandas &#8212; FEniCSx tutorial</title>
     
   <!-- Loaded before other Sphinx assets -->
@@ -150,6 +151,11 @@ const thebe_selector_output = ".output, .cell_output"
    <li class="toctree-l2">
     <a class="reference internal" href="../chapter1/fundamentals_code.html">
      Implementation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter1/complex_mode.html">
+     Running DOLFINx in complex mode
     </a>
    </li>
   </ul>
@@ -565,7 +571,7 @@ title="Print to PDF"
                 
               <div>
                 
-  <div class="tex2jax_ignore mathjax_ignore section" id="jit-parameters-and-visualization-using-pandas">
+  <section class="tex2jax_ignore mathjax_ignore" id="jit-parameters-and-visualization-using-pandas">
 <h1>JIT Parameters and visualization using Pandas<a class="headerlink" href="#jit-parameters-and-visualization-using-pandas" title="Permalink to this headline">#</a></h1>
 <p>Author: Jørgen S. Dokken</p>
 <p>In this chapter, we will explore how to optimize and inspect the integration kernels used in DOLFINx.
@@ -695,35 +701,35 @@ This C code is in turned compiled using <a class="reference external" href="http
       <td>N1curl</td>
       <td>1</td>
       <td>-O1\n-march=native</td>
-      <td>0.020409</td>
+      <td>0.017585</td>
     </tr>
     <tr>
       <th>1</th>
       <td>N1curl</td>
       <td>1</td>
       <td>-O2\n-march=native</td>
-      <td>0.019115</td>
+      <td>0.016407</td>
     </tr>
     <tr>
       <th>2</th>
       <td>N1curl</td>
       <td>1</td>
       <td>-O3\n-march=native</td>
-      <td>0.019347</td>
+      <td>0.016194</td>
     </tr>
     <tr>
       <th>3</th>
       <td>N1curl</td>
       <td>1</td>
       <td>-Ofast\n-march=native</td>
-      <td>0.018318</td>
+      <td>0.015128</td>
     </tr>
     <tr>
       <th>4</th>
       <td>N1curl</td>
       <td>1</td>
       <td>-O1</td>
-      <td>0.020488</td>
+      <td>0.015997</td>
     </tr>
     <tr>
       <th>...</th>
@@ -737,35 +743,35 @@ This C code is in turned compiled using <a class="reference external" href="http
       <td>RT</td>
       <td>3</td>
       <td>-Ofast\n-march=native</td>
-      <td>0.482818</td>
+      <td>0.420875</td>
     </tr>
     <tr>
       <th>68</th>
       <td>RT</td>
       <td>3</td>
       <td>-O1</td>
-      <td>0.792784</td>
+      <td>0.688501</td>
     </tr>
     <tr>
       <th>69</th>
       <td>RT</td>
       <td>3</td>
       <td>-O2</td>
-      <td>0.694813</td>
+      <td>0.605392</td>
     </tr>
     <tr>
       <th>70</th>
       <td>RT</td>
       <td>3</td>
       <td>-O3</td>
-      <td>0.578629</td>
+      <td>0.507152</td>
     </tr>
     <tr>
       <th>71</th>
       <td>RT</td>
       <td>3</td>
       <td>-Ofast</td>
-      <td>0.580399</td>
+      <td>0.502916</td>
     </tr>
   </tbody>
 </table>
@@ -802,7 +808,7 @@ This C code is in turned compiled using <a class="reference external" href="http
 </div>
 </div>
 <p>We observe that the compile time increases when increasing the degree of the function space, and that we get most speedup by using “-O3” or “-Ofast” combined with “-march=native”.</p>
-</div>
+</section>
 
     <script type="text/x-thebe-config">
     {

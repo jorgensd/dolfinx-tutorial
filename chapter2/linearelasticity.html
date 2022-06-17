@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>The equations of linear elasticity &#8212; FEniCSx tutorial</title>
     
   <!-- Loaded before other Sphinx assets -->
@@ -152,6 +153,11 @@ const thebe_selector_output = ".output, .cell_output"
    <li class="toctree-l2">
     <a class="reference internal" href="../chapter1/fundamentals_code.html">
      Implementation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter1/complex_mode.html">
+     Running DOLFINx in complex mode
     </a>
    </li>
   </ul>
@@ -585,11 +591,11 @@ title="Print to PDF"
                 
               <div>
                 
-  <div class="tex2jax_ignore mathjax_ignore section" id="the-equations-of-linear-elasticity">
+  <section class="tex2jax_ignore mathjax_ignore" id="the-equations-of-linear-elasticity">
 <h1>The equations of linear elasticity<a class="headerlink" href="#the-equations-of-linear-elasticity" title="Permalink to this headline">#</a></h1>
 <p>Authors: Anders Logg and Hans Petter Langtangen</p>
 <p>Analysis of structures is one of  the major activities of modern engineering, which likely makes the PDE modelling the deformation of elastic bodies the most popular PDE in the world. It takes just one page of code to solve the equations of 2D or 3D elasticity in DOLFINx, and shown in this section.</p>
-<div class="section" id="the-pde-problem">
+<section id="the-pde-problem">
 <h2>The PDE problem<a class="headerlink" href="#the-pde-problem" title="Permalink to this headline">#</a></h2>
 <p>The equations governing small elastic deformations of a body <span class="math notranslate nohighlight">\(\Omega\)</span> can be written as</p>
 <div class="math notranslate nohighlight" id="equation-elasticity-pde">
@@ -598,13 +604,13 @@ title="Print to PDF"
     \epsilon(u) &amp;= \frac{1}{2}\left(\nabla u + (\nabla u )^T\right)\end{split}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\sigma\)</span> is the stress tensor, <span class="math notranslate nohighlight">\(f\)</span> is the body force per unit volume, <span class="math notranslate nohighlight">\(\lambda\)</span> and <span class="math notranslate nohighlight">\(\mu\)</span> are Lamé’s elasticity parameters for the material in <span class="math notranslate nohighlight">\(\Omega\)</span>, <span class="math notranslate nohighlight">\(I\)</span> is the identity tensor, <span class="math notranslate nohighlight">\(\mathrm{tr}\)</span> is the trace operator on a tensor, <span class="math notranslate nohighlight">\(\epsilon\)</span> is the symmetric strain-rate tensor (symmetric gradient), and <span class="math notranslate nohighlight">\(u\)</span> is the displacement vector filed. Above we have assumed isotropic elastic conditions.
 By insertion of <span class="math notranslate nohighlight">\(\epsilon(u)\)</span> into <span class="math notranslate nohighlight">\(\sigma\)</span> we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-991068aa-54ee-4477-b7d0-ea74d19a2604">
-<span class="eqno">(34)<a class="headerlink" href="#equation-991068aa-54ee-4477-b7d0-ea74d19a2604" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-0939e046-9370-44ca-9968-73809f46ea65">
+<span class="eqno">(34)<a class="headerlink" href="#equation-0939e046-9370-44ca-9968-73809f46ea65" title="Permalink to this equation">#</a></span>\[\begin{align}
     \sigma(u)&amp;=\lambda(\nabla \cdot u)I + \mu(\nabla u + (\nabla u)^T)
 \end{align}\]</div>
 <p>Note that we could have written the PDE above as a single vector PDE for <span class="math notranslate nohighlight">\(u\)</span>, which is the governing PDe for the unknown <span class="math notranslate nohighlight">\(u\)</span> (Navier’s) equation. However, it is convenient to keep the current representation of the PDE for the derivation of the variational formulation.</p>
-</div>
-<div class="section" id="the-variational-formulation">
+</section>
+<section id="the-variational-formulation">
 <h2>The variational formulation<a class="headerlink" href="#the-variational-formulation" title="Permalink to this headline">#</a></h2>
 <p>The variational formulation of the PDE consists of forming the inner product of the PDE <a class="reference internal" href="#equation-elasticity-pde">(33)</a> with a <em>vector</em> test function <span class="math notranslate nohighlight">\(v\in\hat{V}\)</span>, where <span class="math notranslate nohighlight">\(\hat{V}\)</span> is a vector-valued test function space, and integrating over the domain <span class="math notranslate nohighlight">\(\Omega\)</span>:</p>
 <div class="math notranslate nohighlight">
@@ -631,10 +637,10 @@ Find <span class="math notranslate nohighlight">\(u\in V\)</span> such that</p>
 <div class="math notranslate nohighlight">
 \[    \epsilon(v)=\frac{1}{2}\left(\nabla v + (\nabla v)^T\right)\]</div>
 <p>The formulation <a class="reference internal" href="#equation-elasticity-alternative">(36)</a> is what naturally arises from minimization of elastic potential energy and is a more popular formulation than <a class="reference internal" href="#equation-elasticity">(35)</a>.</p>
-</div>
+</section>
 <div class="toctree-wrapper compound">
 </div>
-</div>
+</section>
 
     <script type="text/x-thebe-config">
     {
