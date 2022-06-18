@@ -151,7 +151,7 @@ if rank == 0:
 
 # ## Loading mesh and boundary markers
 # As we have generated the mesh, we now need to load the mesh and corresponding facet markers into DOLFINx.
-# To load the mesh, we follow the same structure as in  [Deflection of a membrane](./../chapter1/membrane_code.ipynb), with slight modifications to include the facet markers. To learn more about the specifics of the function below, see [A GMSH tutorial for DOLFINx](http://jsdokken.com/converted_files/tutorial_gmsh.html).
+# To load the mesh, we follow the same structure as in  [Deflection of a membrane](./../chapter1/membrane_code.ipynb), with slight modifications to include the facet markers. To learn more about the specifics of the function below, see [A GMSH tutorial for DOLFINx](https://jsdokken.com/src/tutorial_gmsh.html).
 
 # +
 

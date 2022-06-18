@@ -48,7 +48,7 @@ gmsh.option.setNumber("Mesh.CharacteristicLengthMin",0.05)
 gmsh.option.setNumber("Mesh.CharacteristicLengthMax",0.05)
 gmsh.model.mesh.generate(gdim)
 
-# We will import the GMSH-mesh directly from GMSH, using the approach in Section 2 of [A GMSH tutorial for DOLFINx](http://jsdokken.com/converted_files/tutorial_gmsh.html). To make sure this runs in parallel and  serial, we will read in the mesh on one processor, and let DOLFINx distribute the mesh data among the processros.
+# We will import the GMSH-mesh directly from GMSH, using the approach in Section 2 of [A GMSH tutorial for DOLFINx](https://jsdokken.com/src/tutorial_gmsh.html). To make sure this runs in parallel and  serial, we will read in the mesh on one processor, and let DOLFINx distribute the mesh data among the processros.
 
 from dolfinx import io
 from mpi4py import MPI
