@@ -59,7 +59,9 @@ uh = fem.Function(V)
 v = ufl.TestFunction(V)
 F = q(uh)*ufl.dot(ufl.grad(uh), ufl.grad(v))*ufl.dx - f*v*ufl.dx
 
+# ## Newton's method
 # The next step is to define the non-linear problem. As it is non-linear we will use [Newtons method](https://en.wikipedia.org/wiki/Newton%27s_method).
+# For details about how to implement a Newton solver, see [Custom Newton solvers](../chapter4/newton-solver.ipynb).
 # Newton's method requires methods for evaluating the residual `F` (including application of boundary conditions), as well as a method for computing the Jacobian matrix. DOLFINx provides the function `NonlinearProblem` that implements these methods. In addition to the boundary conditions, you can supply the variational form for the Jacobian (computed if not supplied), and form and jit parameters, see the [JIT parameters section](../chapter4/compiler_parameters.ipynb).
 
 problem = fem.petsc.NonlinearProblem(F, uh, bcs=[bc])
@@ -106,5 +108,4 @@ error_max = domain.comm.allreduce(numpy.max(numpy.abs(uh.x.array -u_D.x.array)),
 if domain.comm.rank == 0:
     print(f"Error_max: {error_max:.2e}")
 # -
-
 
