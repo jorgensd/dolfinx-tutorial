@@ -18,11 +18,7 @@ pandas
 
 # Visualization with Pyvista 
 matplotlib
-
-# Until VTK is released with wheels for python 3.10
---find-links https://wheels.pyvista.org/
 pyvista
-
 pythreejs
 ipygany
 
