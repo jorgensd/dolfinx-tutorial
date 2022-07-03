@@ -48,3 +48,4 @@ parts:
       - file: chapter4/solvers
       - file: chapter4/compiler_parameters
       - file: chapter4/convergence
+      - file: chapter4/newton-solver

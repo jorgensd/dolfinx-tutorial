@@ -80,6 +80,7 @@ jobs:
           mpirun -n 3 python3 solvers.py
           mpirun -n 3 python3 convergence.py
           mpirun -n 3 python3 compiler_parameters.py
+          mpirun -n 4 python3 newton-solver.py
 
       - name: Test building the book
         run: 
