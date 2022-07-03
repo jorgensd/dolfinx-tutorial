@@ -346,6 +346,11 @@ const thebe_selector_output = ".output, .cell_output"
    Error control: Computing convergence rates
   </a>
  </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="chapter4/newton-solver.html">
+   Custom Newton solvers
+  </a>
+ </li>
 </ul>
 
     </div>
@@ -624,6 +629,7 @@ title="Print to PDF"
 <section id="dev">
 <h2>Dev<a class="headerlink" href="#dev" title="Permalink to this headline">#</a></h2>
 <ul class="simple">
+<li><p>Added a section on custom Newton-solvers, see [chapter4/newton-solver].</p></li>
 <li><p>Various minor DOLFINx API updates. <code class="docutils literal notranslate"><span class="pre">dolfinx.mesh.compute_boundary_facets</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">dolfinx.mesh.exterior_facet_indices</span></code> with slightly different functionality. Use <code class="docutils literal notranslate"><span class="pre">dolfinx.mesh.MeshTagsMetaClass.find</span></code> instead of <code class="docutils literal notranslate"><span class="pre">mt.indices[mt.values==value]</span></code>.</p></li>
 <li><p>Various numpy updates, use <code class="docutils literal notranslate"><span class="pre">np.full_like</span></code>.</p></li>
 <li><p>Change all notebooks to use <a class="reference external" href="https://jupytext.readthedocs.io/en/latest/install.html">jupytext</a> to automatically sync <code class="docutils literal notranslate"><span class="pre">.ipynb</span></code> with <code class="docutils literal notranslate"><span class="pre">.py</span></code> files.</p></li>

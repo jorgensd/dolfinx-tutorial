@@ -1,0 +1,1171 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Custom Newton solvers &#8212; FEniCSx tutorial</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Error control: Computing convergence rates" href="convergence.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/logo.jpeg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">FEniCSx tutorial</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    The FEniCSx tutorial
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Introduction
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../fem.html">
+   An overview of the FEniCS Project
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Changelog.html">
+   Changelog
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fundamentals
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../chapter1/fundamentals.html">
+   Solving the Poisson equation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter1/fundamentals_code.html">
+     Implementation
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter1/complex_mode.html">
+   The Poisson problem with complex numbers
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter1/nitsche.html">
+   Weak imposition of Dirichlet conditions for the Poisson problem
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../chapter1/membrane.html">
+   Deflection of a membrane
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter1/membrane_code.html">
+     Implementation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter1/membrane_paraview.html">
+     Using Paraview for visualization
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  A Gallery of finite element solvers
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter2/intro.html">
+   A Gallery of finite element solvers
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../chapter2/heat_equation.html">
+   The heat equation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter2/diffusion_code.html">
+     Diffusion of a Gaussian function
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter2/heat_code.html">
+     A known analytical solution
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../chapter2/nonlinpoisson.html">
+   A nonlinear Poisson equation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter2/nonlinpoisson_code.html">
+     Implementation
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../chapter2/linearelasticity.html">
+   The equations of linear elasticity
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter2/linearelasticity_code.html">
+     Implementation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter2/elasticity_scaling.html">
+     Scaling
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../chapter2/navierstokes.html">
+   The Navier-Stokes equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter2/ns_code1.html">
+     Test problem 1: Channel flow (Poiseuille flow)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../chapter2/ns_code2.html">
+     Test problem 2: Flow past a cylinder (DFG 2D-3 benchmark)
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter2/hyperelasticity.html">
+   Hyperelasticity
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Subdomains and boundary conditions
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter3/neumann_dirichlet_code.html">
+   Combining Dirichlet and Neumann conditions
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter3/multiple_dirichlet.html">
+   Setting multiple Dirichlet condition
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter3/subdomains.html">
+   Defining subdomains for different materials
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter3/robin_neumann_dirichlet.html">
+   Setting multiple Dirichlet, Neumann, and Robin conditions
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter3/component_bc.html">
+   Component-wise Dirichlet BC
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter3/em.html">
+   Electromagnetics example
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Improving your FEniCSx code
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="solvers.html">
+   Solver configuration
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="compiler_parameters.html">
+   JIT Parameters and visualization using Pandas
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="convergence.html">
+   Error control: Computing convergence rates
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Custom Newton solvers
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/jorgensd/dolfinx-tutorial/dokken/jupyterbook?urlpath=tree/./chapter4/newton-solver.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/jorgensd/dolfinx-tutorial"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/jorgensd/dolfinx-tutorial/issues/new?title=Issue%20on%20page%20%2Fchapter4/newton-solver.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/jorgensd/dolfinx-tutorial/edit/dokken/jupyterbook/./chapter4/newton-solver.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Edit this page"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="headerbtn__text-container">suggest edit</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/chapter4/newton-solver.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   Custom Newton solvers
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#problem-specification">
+     Problem specification
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#definition-of-residual-and-jacobian">
+     Definition of residual and Jacobian
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#setup-of-iteration-independent-structures">
+     Setup of iteration-independent structures
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-newton-iterations">
+     The Newton iterations
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#visualization-of-newton-iterations">
+     Visualization of Newton iterations
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#newtons-method-with-dirichletbc">
+   Newton’s method with DirichletBC
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Custom Newton solvers</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   Custom Newton solvers
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#problem-specification">
+     Problem specification
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#definition-of-residual-and-jacobian">
+     Definition of residual and Jacobian
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#setup-of-iteration-independent-structures">
+     Setup of iteration-independent structures
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-newton-iterations">
+     The Newton iterations
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#visualization-of-newton-iterations">
+     Visualization of Newton iterations
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#newtons-method-with-dirichletbc">
+   Newton’s method with DirichletBC
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="custom-newton-solvers">
+<h1>Custom Newton solvers<a class="headerlink" href="#custom-newton-solvers" title="Permalink to this headline">#</a></h1>
+<p>Author: Jørgen S. Dokken</p>
+<p>Newtons method, as used in the <a class="reference internal" href="../chapter2/nonlinpoisson_code.html"><span class="doc std std-doc">non-linear Poisson</span></a> problem, is a way of solving a non-linear equation as a sequence of linear equations.</p>
+<p>Given a function <span class="math notranslate nohighlight">\(F:\mathbb{R}^M\mapsto \mathbb{R}^M\)</span>, we have that <span class="math notranslate nohighlight">\(u_k, u_{k+1}\in \mathbb{R}^M\)</span> is related as:
+$<span class="math notranslate nohighlight">\(x_{k+1} = x_{k} - J_F(x_k)^{-1} F(x_k)\)</span><span class="math notranslate nohighlight">\(
+where \)</span>J_F<span class="math notranslate nohighlight">\( is the Jacobian matrix of \)</span>F$.</p>
+<p>We can rewrite this equation as <span class="math notranslate nohighlight">\(\delta x_k = x_{k+1} - x_{k}\)</span>,
+$<span class="math notranslate nohighlight">\(J_F(x_k)\delta x_k = - F(x_k)\)</span><span class="math notranslate nohighlight">\(
+and
+\)</span><span class="math notranslate nohighlight">\(x_{k+1} = x_k + \delta x_k.\)</span>$</p>
+<section id="problem-specification">
+<h2>Problem specification<a class="headerlink" href="#problem-specification" title="Permalink to this headline">#</a></h2>
+<p>We start by importing all packages needed to solve the problem.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dolfinx</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pyvista</span>
+<span class="kn">import</span> <span class="nn">ufl</span>
+<span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+<span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We will consider the following non-linear problem:</p>
+<div class="math notranslate nohighlight">
+\[ u^2 - 2 u = x^2 + 4x + 3 \text{ in } [0,1] \]</div>
+<p>For this problem, we have two solutions, <span class="math notranslate nohighlight">\(u=-x-1\)</span>, <span class="math notranslate nohighlight">\(u=x+3\)</span>.
+We define these roots as python functions, and create an appropriate spacing for plotting these soultions.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">root_0</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">root_1</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+
+<span class="n">N</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">roots</span> <span class="o">=</span> <span class="p">[</span><span class="n">root_0</span><span class="p">,</span> <span class="n">root_1</span><span class="p">]</span>
+<span class="n">x_spacing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We will start with an initial guess for this problem, <span class="math notranslate nohighlight">\(u_0 = 0\)</span>.
+Next, we define the mesh, and the appropriate function space and function <code class="docutils literal notranslate"><span class="pre">uh</span></code> to hold the approximate solution.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">create_unit_interval</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">uh</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="definition-of-residual-and-jacobian">
+<h2>Definition of residual and Jacobian<a class="headerlink" href="#definition-of-residual-and-jacobian" title="Permalink to this headline">#</a></h2>
+<p>Next, we define the variational form, by multiplying by a test function and integrating over the domain <span class="math notranslate nohighlight">\([0,1]\)</span></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<span class="n">F</span> <span class="o">=</span> <span class="n">uh</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">uh</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span> <span class="o">-</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
+<span class="n">residual</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next, we can define the jacobian <span class="math notranslate nohighlight">\(J_F\)</span>, by using <code class="docutils literal notranslate"><span class="pre">ufl.derivative</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">J</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">uh</span><span class="p">)</span>
+<span class="n">jacobian</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">J</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>As we will solve this problem in an iterative fashion, we would like to create the sparse matrix and vector containing the residual only once.</p>
+</section>
+<section id="setup-of-iteration-independent-structures">
+<h2>Setup of iteration-independent structures<a class="headerlink" href="#setup-of-iteration-independent-structures" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">create_matrix</span><span class="p">(</span><span class="n">jacobian</span><span class="p">)</span>
+<span class="n">L</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">create_vector</span><span class="p">(</span><span class="n">residual</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next, we create the linear solver and the vector to hold <code class="docutils literal notranslate"><span class="pre">dx</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">solver</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">KSP</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">comm</span><span class="p">)</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">setOperators</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">dx</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We would like to monitor the evolution of <code class="docutils literal notranslate"><span class="pre">uh</span></code> for each iteration. Therefore, we get the dof coordinates, and sort them in increasing order.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">coords</span> <span class="o">=</span> <span class="n">V</span><span class="o">.</span><span class="n">tabulate_dof_coordinates</span><span class="p">()[:,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">sort_order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+<span class="n">max_iterations</span> <span class="o">=</span> <span class="mi">25</span>
+<span class="n">solutions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">max_iterations</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)))</span>
+<span class="n">solutions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="n">sort_order</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We are now ready to solve the linear problem. At each iteration, we reassemble the Jacobian and residual, and use the norm of the magnitude of the update (<code class="docutils literal notranslate"><span class="pre">dx</span></code>) as a termination criteria.</p>
+</section>
+<section id="the-newton-iterations">
+<h2>The Newton iterations<a class="headerlink" href="#the-newton-iterations" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">max_iterations</span><span class="p">:</span>
+    <span class="c1"># Assemble Jacobian and residual</span>
+    <span class="k">with</span> <span class="n">L</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc_L</span><span class="p">:</span>
+        <span class="n">loc_L</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">A</span><span class="o">.</span><span class="n">zeroEntries</span><span class="p">()</span>
+    <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">jacobian</span><span class="p">)</span>
+    <span class="n">A</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
+    <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">residual</span><span class="p">)</span>
+    <span class="n">L</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">ADD_VALUES</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">)</span>
+    
+    <span class="c1"># Scale residual by -1</span>
+    <span class="n">L</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">L</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT_VALUES</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
+
+    <span class="c1"># Solve linear problem</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">dx</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+    <span class="n">dx</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">scatter_forward</span><span class="p">()</span>
+    <span class="c1"># Update u_{i+1} = u_i + delta x_i</span>
+    <span class="n">uh</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">+=</span> <span class="n">dx</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span>
+    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># Compute norm of update</span>
+    <span class="n">correction_norm</span> <span class="o">=</span> <span class="n">dx</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: Correction norm </span><span class="si">{</span><span class="n">correction_norm</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">correction_norm</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+        <span class="k">break</span>
+    <span class="n">solutions</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="n">sort_order</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Iteration 1: Correction norm 29.41583333333334
+Iteration 2: Correction norm 10.776793575710078
+Iteration 3: Correction norm 2.0488925318207585
+Iteration 4: Correction norm 0.08991946662079689
+Iteration 5: Correction norm 0.0002277569702092141
+Iteration 6: Correction norm 2.2114973253663997e-09
+Iteration 7: Correction norm 1.6092184984485335e-15
+</pre></div>
+</div>
+</div>
+</div>
+<p>We now compute the magnitude of the residual.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">residual</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Final residual </span><span class="si">{</span><span class="n">L</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Final residual 5.824685357939978e-16
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="visualization-of-newton-iterations">
+<h2>Visualization of Newton iterations<a class="headerlink" href="#visualization-of-newton-iterations" title="Permalink to this headline">#</a></h2>
+<p>We next look at the evolution of the solutions and the error of the solution when compared to the two exact roots of the problem.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot solution for each of the iterations</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">solution</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">solutions</span><span class="p">[:</span><span class="n">i</span><span class="p">]):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="n">sort_order</span><span class="p">],</span> <span class="n">solution</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Plot each of the roots of the problem, and compare the approximate solution with each of them</span>
+<span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;--go&quot;</span><span class="p">,)</span>
+<span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">root</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">roots</span><span class="p">):</span>
+    <span class="n">u_ex</span> <span class="o">=</span> <span class="n">root</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">L2_error</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">uh</span> <span class="o">-</span> <span class="n">u_ex</span><span class="p">,</span> <span class="n">uh</span> <span class="o">-</span> <span class="n">u_ex</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span><span class="p">)</span>
+    <span class="n">global_L2</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span><span class="n">L2_error</span><span class="p">),</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;L2-error (root </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">) </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">global_L2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;u_exact&quot;</span><span class="p">}</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_spacing</span><span class="p">,</span> <span class="n">root</span><span class="p">(</span><span class="n">x_spacing</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>L2-error (root 0) 5.033222956847167
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>L2-error (root 1) 1.3136335981433191e-16
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fcec81276d0&gt;
+</pre></div>
+</div>
+<img alt="../_images/newton-solver_22_3.png" src="../_images/newton-solver_22_3.png" />
+</div>
+</div>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="newtons-method-with-dirichletbc">
+<h1>Newton’s method with DirichletBC<a class="headerlink" href="#newtons-method-with-dirichletbc" title="Permalink to this headline">#</a></h1>
+<p>In the previous example, we did not consider handling of Dirichlet boundary conditions.
+For this example, we will consider the <a class="reference internal" href="../chapter2/nonlinpoisson.html"><span class="doc std std-doc">non-linear Poisson</span></a>-problem.
+We start by defining the mesh, the analytical solution and the forcing term <span class="math notranslate nohighlight">\(f\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">q</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">u</span><span class="o">**</span><span class="mi">2</span>
+
+
+<span class="n">domain</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">create_unit_square</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
+<span class="n">u_ufl</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">f</span> <span class="o">=</span> <span class="o">-</span> <span class="n">ufl</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">q</span><span class="p">(</span><span class="n">u_ufl</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u_ufl</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">u_exact</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">u_ufl</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next, we define the boundary condition <code class="docutils literal notranslate"><span class="pre">bc</span></code>, the residual <code class="docutils literal notranslate"><span class="pre">F</span></code> and the Jacobian <code class="docutils literal notranslate"><span class="pre">J</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">V</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">u_D</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">u_D</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">u_exact</span><span class="p">)</span>
+<span class="n">fdim</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">create_connectivity</span><span class="p">(</span><span class="n">fdim</span><span class="p">,</span> <span class="n">fdim</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">boundary_facets</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">exterior_facet_indices</span><span class="p">(</span><span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="p">)</span>
+<span class="n">bc</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">dirichletbc</span><span class="p">(</span><span class="n">u_D</span><span class="p">,</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fdim</span><span class="p">,</span> <span class="n">boundary_facets</span><span class="p">))</span>
+
+<span class="n">uh</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">F</span> <span class="o">=</span> <span class="n">q</span><span class="p">(</span><span class="n">uh</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">uh</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span> <span class="o">-</span> <span class="n">f</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span>
+<span class="n">J</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">uh</span><span class="p">)</span>
+<span class="n">residual</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
+<span class="n">jacobian</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">J</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next, we define the matrix <code class="docutils literal notranslate"><span class="pre">A</span></code>, right hand side vector <code class="docutils literal notranslate"><span class="pre">L</span></code> and the correction function <code class="docutils literal notranslate"><span class="pre">dx</span></code></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dx</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">create_matrix</span><span class="p">(</span><span class="n">jacobian</span><span class="p">)</span>
+<span class="n">L</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">create_vector</span><span class="p">(</span><span class="n">residual</span><span class="p">)</span>
+<span class="n">solver</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">KSP</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">comm</span><span class="p">)</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">setOperators</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>As we for this problem has strong Dirichlet conditions, we need to apply lifting to the right hand side of our Newton problem.
+We previously had that we wanted to solve the system:
+$<span class="math notranslate nohighlight">\(\begin{align}
+J_F(x_k)\delta x_k &amp;= - F(x_k)\\
+x_{k+1} &amp;= x_k + \delta x_k
+\end{align}\)</span><span class="math notranslate nohighlight">\(
+we want \)</span>x_{k+1}\vert_{bc}= u_D<span class="math notranslate nohighlight">\(. However, we do not know if \)</span>x_k\vert_{bc}=u_D<span class="math notranslate nohighlight">\(.
+Therefore, we want to apply the following boundary condition for our correction \)</span>\delta x_k<span class="math notranslate nohighlight">\(
+\)</span><span class="math notranslate nohighlight">\(\begin{align}
+\delta x_k\vert_{bc} = u_D-x_k\vert_{bc}
+\end{align}\)</span>$
+We therefore arrive at the following Newton scheme</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">error</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">uh</span> <span class="o">-</span> <span class="n">u_ufl</span><span class="p">,</span> <span class="n">uh</span> <span class="o">-</span> <span class="n">u_ufl</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span><span class="p">(</span><span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;quadrature_degree&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}))</span>
+<span class="n">L2_error</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">dx_norm</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">max_iterations</span><span class="p">:</span>
+    <span class="c1"># Assemble Jacobian and residual</span>
+    <span class="k">with</span> <span class="n">L</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc_L</span><span class="p">:</span>
+        <span class="n">loc_L</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">A</span><span class="o">.</span><span class="n">zeroEntries</span><span class="p">()</span>
+    <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">jacobian</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="p">[</span><span class="n">bc</span><span class="p">])</span>
+    <span class="n">A</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
+    <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">residual</span><span class="p">)</span>
+    <span class="n">L</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">ADD</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">)</span>
+    <span class="n">L</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Compute b - J(u_D-u_(i-1))</span>
+    <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">apply_lifting</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="p">[</span><span class="n">jacobian</span><span class="p">],</span> <span class="p">[[</span><span class="n">bc</span><span class="p">]],</span> <span class="n">x0</span><span class="o">=</span><span class="p">[</span><span class="n">uh</span><span class="o">.</span><span class="n">vector</span><span class="p">],</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> 
+    <span class="c1"># Set dx|_bc = u_{i-1}-u_D</span>
+    <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">set_bc</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="p">[</span><span class="n">bc</span><span class="p">],</span> <span class="n">uh</span><span class="o">.</span><span class="n">vector</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">L</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">INSERT_VALUES</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">)</span>
+
+    <span class="c1"># Solve linear problem</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">dx</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+    <span class="n">dx</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">scatter_forward</span><span class="p">()</span>
+
+    <span class="c1"># Update u_{i+1} = u_i + delta x_i</span>
+    <span class="n">uh</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">+=</span> <span class="n">dx</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span>
+    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># Compute norm of update</span>
+    <span class="n">correction_norm</span> <span class="o">=</span> <span class="n">dx</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Compute L2 error comparing to the analytical solution</span>
+    <span class="n">L2_error</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span><span class="n">error</span><span class="p">),</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">)))</span>
+    <span class="n">dx_norm</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">correction_norm</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: Correction norm </span><span class="si">{</span><span class="n">correction_norm</span><span class="si">}</span><span class="s2">, L2 error: </span><span class="si">{</span><span class="n">L2_error</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">correction_norm</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+        <span class="k">break</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Iteration 1: Correction norm 217.42584709370274, L2 error: 1.0094486886121277
+Iteration 2: Correction norm 154.60849040249565, L2 error: 1.02588563725238
+Iteration 3: Correction norm 49.27246829373008, L2 error: 0.35418859182768125
+Iteration 4: Correction norm 16.956120024679944, L2 error: 0.0712937382503968
+Iteration 5: Correction norm 3.166797879449408, L2 error: 0.0045650470120915145
+Iteration 6: Correction norm 0.1713648411561316, L2 error: 2.626998022775436e-05
+Iteration 7: Correction norm 0.0008143265267735323, L2 error: 1.2302021544607257e-09
+Iteration 8: Correction norm 3.734667253358911e-08, L2 error: 7.051558409087966e-15
+Iteration 9: Correction norm 5.462777547226226e-13, L2 error: 2.7353903087292166e-16
+</pre></div>
+</div>
+</div>
+</div>
+<p>We plot the <span class="math notranslate nohighlight">\(L^2\)</span>-error and the residual norm (<span class="math notranslate nohighlight">\(\delta x\)</span>) per iteration</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">L2_error</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$L^2(\Omega)$-error of $u_h$&quot;</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Iterations&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$L^2$-error&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Residual of $\vert\vert\delta x_i\vert\vert$&quot;</span><span class="p">)</span> 
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">dx_norm</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Iterations&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\vert\vert \delta x\vert\vert$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/newton-solver_32_0.png" src="../_images/newton-solver_32_0.png" />
+</div>
+</div>
+<p>We compute the max error and plot the solution</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">error_max</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">uh</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span> <span class="o">-</span> <span class="n">u_D</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">)),</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">MAX</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error_max: </span><span class="si">{</span><span class="n">error_max</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Error_max: 8.88e-16
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pyvista</span><span class="o">.</span><span class="n">set_jupyter_backend</span><span class="p">(</span><span class="s2">&quot;pythreejs&quot;</span><span class="p">)</span>
+<span class="n">u_topology</span><span class="p">,</span> <span class="n">u_cell_types</span><span class="p">,</span> <span class="n">u_geometry</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">create_vtk_mesh</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">u_grid</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">(</span><span class="n">u_topology</span><span class="p">,</span> <span class="n">u_cell_types</span><span class="p">,</span> <span class="n">u_geometry</span><span class="p">)</span>
+<span class="n">u_grid</span><span class="o">.</span><span class="n">point_data</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">real</span>
+<span class="n">u_grid</span><span class="o">.</span><span class="n">set_active_scalars</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">)</span>
+<span class="n">u_plotter</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">()</span>
+<span class="n">u_plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">u_grid</span><span class="p">,</span> <span class="n">show_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">u_plotter</span><span class="o">.</span><span class="n">view_xy</span><span class="p">()</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">OFF_SCREEN</span><span class="p">:</span>
+    <span class="n">u_plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Faint">2022-07-03 14:16:44.954 (   5.234s) [        157CA480]    vtkExtractEdges.cxx:435   INFO| </span>Executing edge extractor: points are renumbered
+<span class=" -Color -Color-Faint">2022-07-03 14:16:44.955 (   5.234s) [        157CA480]    vtkExtractEdges.cxx:551   INFO| </span>Created 320 edges
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">
+{"version_major": 2, "version_minor": 0, "model_id": "760b8b96c450425fa1dcd2d78fc04c3e"}
+</script></div>
+</div>
+</section>
+
+
+<script type="application/vnd.jupyter.widget-state+json">
+{"state": {"58e7d670d1e84d1b94b925b91084bfbb": {"model_name": "BufferAttributeModel", "model_module": "jupyter-threejs", "model_module_version": "^2.1.0", "state": {"_model_module": "jupyter-threejs", "_model_module_version": "^2.1.0", "_model_name": "BufferAttributeModel", "_view_count": null, "_view_module": null, "_view_module_version": "", "_view_name": null, "array": {"shape": [121, 3], "dtype": "float32"}, "dynamic": false, "needsUpdate": false, "normalized": false, "version": -1}, "buffers": [{"data": "ZmZmPzj0HqIAAAAAAACAPzj0HqIAAAAAAACAP83MzD0AAAAAZmZmP83MzD0AAAAAzcxMPzj0HqIAAAAAAACAP83MTD4AAAAAzcxMP83MzD0AAAAAZmZmP83MTD4AAAAAMzMzPzj0HqIAAAAAAACAP5qZmT4AAAAAMzMzP83MzD0AAAAAzcxMP83MTD4AAAAAZmZmP5qZmT4AAAAAmpkZPzj0HqIAAAAAAACAP83MzD4AAAAAmpkZP83MzD0AAAAAMzMzP83MTD4AAAAAzcxMP5qZmT4AAAAAZmZmP83MzD4AAAAAAAAAPzj0HqIAAAAAAACAPwAAAD8AAAAAAAAAP83MzD0AAAAAmpkZP83MTD4AAAAAMzMzP5qZmT4AAAAAzcxMP83MzD4AAAAAZmZmPwAAAD8AAAAAzczMPjj0HqIAAAAAAACAP5qZGT8AAAAAzczMPs3MzD0AAAAAAAAAP83MTD4AAAAAmpkZP5qZmT4AAAAAMzMzP83MzD4AAAAAzcxMPwAAAD8AAAAAZmZmP5qZGT8AAAAAmpmZPjj0HqIAAAAAAACAPzMzMz8AAAAAmpmZPs3MzD0AAAAAzczMPs3MTD4AAAAAAAAAP5qZmT4AAAAAmpkZP83MzD4AAAAAMzMzPwAAAD8AAAAAzcxMP5qZGT8AAAAAZmZmPzMzMz8AAAAAzcxMPjj0HqIAAAAAAACAP83MTD8AAAAAzcxMPs3MzD0AAAAAmpmZPs3MTD4AAAAAzczMPpqZmT4AAAAAAAAAP83MzD4AAAAAmpkZPwAAAD8AAAAAMzMzP5qZGT8AAAAAzcxMPzMzMz8AAAAAZmZmP83MTD8AAAAAzczMPTj0HqIAAAAAAACAP2ZmZj8AAAAAzczMPc3MzD0AAAAAzcxMPs3MTD4AAAAAmpmZPpqZmT4AAAAAzczMPs3MzD4AAAAAAAAAPwAAAD8AAAAAmpkZP5qZGT8AAAAAMzMzPzMzMz8AAAAAzcxMP83MTD8AAAAAZmZmP2ZmZj8AAAAAOPQeIjj0HiIAAAAAAACAPwAAgD8AAAAAOPQeIs3MzD0AAAAAzczMPc3MTD4AAAAAzcxMPpqZmT4AAAAAmpmZPs3MzD4AAAAAzczMPgAAAD8AAAAAAAAAP5qZGT8AAAAAmpkZPzMzMz8AAAAAMzMzP83MTD8AAAAAzcxMP2ZmZj8AAAAAZmZmPwAAgD8AAAAAOPQeIs3MTD4AAAAAzczMPZqZmT4AAAAAzcxMPs3MzD4AAAAAmpmZPgAAAD8AAAAAzczMPpqZGT8AAAAAAAAAPzMzMz8AAAAAmpkZP83MTD8AAAAAMzMzP2ZmZj8AAAAAzcxMPwAAgD8AAAAAOPQeIpqZmT4AAAAAzczMPc3MzD4AAAAAzcxMPgAAAD8AAAAAmpmZPpqZGT8AAAAAzczMPjMzMz8AAAAAAAAAP83MTD8AAAAAmpkZP2ZmZj8AAAAAMzMzPwAAgD8AAAAAOPQeIs3MzD4AAAAAzczMPQAAAD8AAAAAzcxMPpqZGT8AAAAAmpmZPjMzMz8AAAAAzczMPs3MTD8AAAAAAAAAP2ZmZj8AAAAAmpkZPwAAgD8AAAAAOPQeIgAAAD8AAAAAzczMPZqZGT8AAAAAzcxMPjMzMz8AAAAAmpmZPs3MTD8AAAAAzczMPmZmZj8AAAAAAAAAPwAAgD8AAAAAOPQeIpqZGT8AAAAAzczMPTMzMz8AAAAAzcxMPs3MTD8AAAAAmpmZPmZmZj8AAAAAzczMPgAAgD8AAAAAOPQeIjMzMz8AAAAAzczMPc3MTD8AAAAAzcxMPmZmZj8AAAAAmpmZPgAAgD8AAAAAOPQeIs3MTD8AAAAAzczMPWZmZj8AAAAAzcxMPgAAgD8AAAAAOPQeImZmZj8AAAAAzczMPQAAgD8AAAAAOPQeogAAgD8AAAAA", "encoding": "base64", "path": ["array", "buffer"]}]}, "4840c3c2e82a450ea9ca656b05e1f588": {"model_name": "BufferAttributeModel", "model_module": "jupyter-threejs", "model_module_version": "^2.1.0", "state": {"_model_module": "jupyter-threejs", "_model_module_version": "^2.1.0", "_model_name": "BufferAttributeModel", "_view_count": null, "_view_module": null, "_view_module_version": "", "_view_name": null, "array": {"shape": [640], "dtype": "uint16"}, "dynamic": false, "needsUpdate": false, "normalized": false, "version": -1}, "buffers": [{"data": "AAABAAEAAgACAAAAAAADAAMAAgAEAAAAAwAEAAIABQAFAAMABAAGAAYAAwADAAcABwAFAAgABAAGAAgABwAGAAUACQAJAAcACAAKAAoABgAGAAsACwAHAAcADAAMAAkADQAIAAoADQALAAoADAALAAkADgAOAAwADQAPAA8ACgAKABAAEAALAAsAEQARAAwADAASABIADgATAA0ADwATABAADwARABAAEgARAA4AFAAUABIAEwAVABUADwAPABYAFgAQABAAFwAXABEAEQAYABgAEgASABkAGQAUABoAEwAVABoAFgAVABcAFgAYABcAGQAYABQAGwAbABkAGgAcABwAFQAVAB0AHQAWABYAHgAeABcAFwAfAB8AGAAYACAAIAAZABkAIQAhABsAIgAaABwAIgAdABwAHgAdAB8AHgAgAB8AIQAgABsAIwAjACEAIgAkACQAHAAcACUAJQAdAB0AJgAmAB4AHgAnACcAHwAfACgAKAAgACAAKQApACEAIQAqACoAIwArACIAJAArACUAJAAmACUAJwAmACgAJwApACgAKgApACMALAAsACoAKwAtAC0AJAAkAC4ALgAlACUALwAvACYAJgAwADAAJwAnADEAMQAoACgAMgAyACkAKQAzADMAKgAqADQANAAsADUAKwAtADUALgAtAC8ALgAwAC8AMQAwADIAMQAzADIANAAzACwANgA2ADQANQA3ADcALQAtADgAOAAuAC4AOQA5AC8ALwA6ADoAMAAwADsAOwAxADEAPAA8ADIAMgA9AD0AMwAzAD4APgA0ADQAPwA/ADYAQAA1ADcAQAA4ADcAOQA4ADoAOQA7ADoAPAA7AD0APAA+AD0APwA+ADYAQQBBAD8AQABCAEIANwA3AEMAQwA4ADgARABEADkAOQBFAEUAOgA6AEYARgA7ADsARwBHADwAPABIAEgAPQA9AEkASQA+AD4ASgBKAD8APwBLAEsAQQBDAEIARABDAEUARABGAEUARwBGAEgARwBJAEgASgBJAEsASgBCAEwATABDAEMATQBNAEQARABOAE4ARQBFAE8ATwBGAEYAUABQAEcARwBRAFEASABIAFIAUgBJAEkAUwBTAEoASgBUAFQASwBNAEwATgBNAE8ATgBQAE8AUQBQAFIAUQBTAFIAVABTAEwAVQBVAE0ATQBWAFYATgBOAFcAVwBPAE8AWABYAFAAUABZAFkAUQBRAFoAWgBSAFIAWwBbAFMAUwBcAFwAVABWAFUAVwBWAFgAVwBZAFgAWgBZAFsAWgBcAFsAVQBdAF0AVgBWAF4AXgBXAFcAXwBfAFgAWABgAGAAWQBZAGEAYQBaAFoAYgBiAFsAWwBjAGMAXABeAF0AXwBeAGAAXwBhAGAAYgBhAGMAYgBdAGQAZABeAF4AZQBlAF8AXwBmAGYAYABgAGcAZwBhAGEAaABoAGIAYgBpAGkAYwBlAGQAZgBlAGcAZgBoAGcAaQBoAGQAagBqAGUAZQBrAGsAZgBmAGwAbABnAGcAbQBtAGgAaABuAG4AaQBrAGoAbABrAG0AbABuAG0AagBvAG8AawBrAHAAcABsAGwAcQBxAG0AbQByAHIAbgBwAG8AcQBwAHIAcQBvAHMAcwBwAHAAdAB0AHEAcQB1AHUAcgB0AHMAdQB0AHMAdgB2AHQAdAB3AHcAdQB3AHYAdgB4AHgAdwA=", "encoding": "base64", "path": ["array", "buffer"]}]}, "870ef28df0694128add8dfa84caed1c2": {"model_name": "BufferGeometryModel", "model_module": "jupyter-threejs", "model_module_version": "^2.1.0", "state": {"MaxIndex": 65535, "_model_module": "jupyter-threejs", "_model_module_version": "^2.1.0", "_model_name": "BufferGeometryModel", "_ref_geometry": null, "_store_ref": false, "_view_count": null, "_view_module": null, "_view_module_version": "", "_view_name": null, "attributes": {"position": "IPY_MODEL_58e7d670d1e84d1b94b925b91084bfbb", "index": "IPY_MODEL_4840c3c2e82a450ea9ca656b05e1f588"}, "index": null, "morphAttributes": {}, "name": "", "type": "BufferGeometry", "userData": {}}}, "d4b848f971e54ae7af4516265da865c4": {"model_name": "LineBasicMaterialModel", "model_module": "jupyter-threejs", "model_module_version": "^2.1.0", "state": {"_model_module": "jupyter-threejs", "_model_module_version": "^2.1.0", "_model_name": "LineBasicMaterialModel", "_view_count": null, "_view_module": null, "_view_module_version": "", "_view_name": null, "alphaTest": 0.0, "blendDst": "OneMinusSrcAlphaFactor", "blendDstAlpha": 0.0, "blendEquation": "AddEquation", "blendEquationAlpha": 0.0, "blendSrc": "SrcAlphaFactor", "blendSrcAlpha": 0.0, "blending": "NormalBlending", "clipIntersection": false, "clipShadows": false, "clippingPlanes": [], "color": "#000000", "colorWrite": true, "defines": null, "depthFunc": "LessEqualDepth", "depthTest": true, "depthWrite": true, "dithering": false, "flatShading": false, "fog": true, "lights": false, "linecap": "round", "linejoin": "round", "linewidth": 1.0, "name": "", "opacity": 1.0, "overdraw": 0.0, "polygonOffset": false, "polygonOffsetFactor": 0.0, "polygonOffsetUnits": 0.0, "precision": null, "premultipliedAlpha": false, "shadowSide": null, "side": "FrontSide", "transparent": false, "type": "LineBasicMaterial", "vertexColors": "VertexColors", "visible": true}}, "914e95428c314a62b2e8810e3b781ab3": {"model_name": "LineSegmentsModel", "model_module": "jupyter-threejs", "model_module_version": "^2.1.0", "state": {"_model_module": "jupyter-threejs", "_model_module_version": "^2.1.0", "_model_name": "LineSegmentsModel", "_view_count": null, "_view_module": null, "_view_module_version": "", "_view_name": null, "castShadow": false, "children": [], "frustumCulled": true, "geometry": "IPY_MODEL_870ef28df0694128add8dfa84caed1c2", "material": "IPY_MODEL_d4b848f971e54ae7af4516265da865c4", "matrix": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "matrixAutoUpdate": true, "matrixWorld": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "matrixWorldNeedsUpdate": false, "modelViewMatrix": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "name": "", "normalMatrix": [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0], "position": [-0.5000000000000001, -0.5000000000000001, -0.0], "quaternion": [0.0, 0.0, 0.0, 1.0], "receiveShadow": false, "renderOrder": 0, "rotation": [0.0, 0.0, 0.0, "XYZ"], "scale": [1.0, 1.0, 1.0], "type": "LineSegments", "up": [0.0, 1.0, 0.0], "visible": true}}, "f20211f43d524029a4f654477ea81931": {"model_name": "BufferAttributeModel", "model_module": "jupyter-threejs", "model_module_version": "^2.1.0", "state": {"_model_module": "jupyter-threejs", "_model_module_version": "^2.1.0", "_model_name": "BufferAttributeModel", "_view_count": null, "_view_module": null, "_view_module_version": "", "_view_name": null, "array": {"shape": [121, 3], "dtype": "float32"}, "dynamic": false, "needsUpdate": false, "normalized": false, "version": -1}, "buffers": [{"data": "ZmZmPzj0HqIAAAAAAACAPzj0HqIAAAAAAACAP83MzD0AAAAAZmZmP83MzD0AAAAAzcxMPzj0HqIAAAAAAACAP83MTD4AAAAAzcxMP83MzD0AAAAAZmZmP83MTD4AAAAAMzMzPzj0HqIAAAAAAACAP5qZmT4AAAAAMzMzP83MzD0AAAAAzcxMP83MTD4AAAAAZmZmP5qZmT4AAAAAmpkZPzj0HqIAAAAAAACAP83MzD4AAAAAmpkZP83MzD0AAAAAMzMzP83MTD4AAAAAzcxMP5qZmT4AAAAAZmZmP83MzD4AAAAAAAAAPzj0HqIAAAAAAACAPwAAAD8AAAAAAAAAP83MzD0AAAAAmpkZP83MTD4AAAAAMzMzP5qZmT4AAAAAzcxMP83MzD4AAAAAZmZmPwAAAD8AAAAAzczMPjj0HqIAAAAAAACAP5qZGT8AAAAAzczMPs3MzD0AAAAAAAAAP83MTD4AAAAAmpkZP5qZmT4AAAAAMzMzP83MzD4AAAAAzcxMPwAAAD8AAAAAZmZmP5qZGT8AAAAAmpmZPjj0HqIAAAAAAACAPzMzMz8AAAAAmpmZPs3MzD0AAAAAzczMPs3MTD4AAAAAAAAAP5qZmT4AAAAAmpkZP83MzD4AAAAAMzMzPwAAAD8AAAAAzcxMP5qZGT8AAAAAZmZmPzMzMz8AAAAAzcxMPjj0HqIAAAAAAACAP83MTD8AAAAAzcxMPs3MzD0AAAAAmpmZPs3MTD4AAAAAzczMPpqZmT4AAAAAAAAAP83MzD4AAAAAmpkZPwAAAD8AAAAAMzMzP5qZGT8AAAAAzcxMPzMzMz8AAAAAZmZmP83MTD8AAAAAzczMPTj0HqIAAAAAAACAP2ZmZj8AAAAAzczMPc3MzD0AAAAAzcxMPs3MTD4AAAAAmpmZPpqZmT4AAAAAzczMPs3MzD4AAAAAAAAAPwAAAD8AAAAAmpkZP5qZGT8AAAAAMzMzPzMzMz8AAAAAzcxMP83MTD8AAAAAZmZmP2ZmZj8AAAAAOPQeIjj0HiIAAAAAAACAPwAAgD8AAAAAOPQeIs3MzD0AAAAAzczMPc3MTD4AAAAAzcxMPpqZmT4AAAAAmpmZPs3MzD4AAAAAzczMPgAAAD8AAAAAAAAAP5qZGT8AAAAAmpkZPzMzMz8AAAAAMzMzP83MTD8AAAAAzcxMP2ZmZj8AAAAAZmZmPwAAgD8AAAAAOPQeIs3MTD4AAAAAzczMPZqZmT4AAAAAzcxMPs3MzD4AAAAAmpmZPgAAAD8AAAAAzczMPpqZGT8AAAAAAAAAPzMzMz8AAAAAmpkZP83MTD8AAAAAMzMzP2ZmZj8AAAAAzcxMPwAAgD8AAAAAOPQeIpqZmT4AAAAAzczMPc3MzD4AAAAAzcxMPgAAAD8AAAAAmpmZPpqZGT8AAAAAzczMPjMzMz8AAAAAAAAAP83MTD8AAAAAmpkZP2ZmZj8AAAAAMzMzPwAAgD8AAAAAOPQeIs3MzD4AAAAAzczMPQAAAD8AAAAAzcxMPpqZGT8AAAAAmpmZPjMzMz8AAAAAzczMPs3MTD8AAAAAAAAAP2ZmZj8AAAAAmpkZPwAAgD8AAAAAOPQeIgAAAD8AAAAAzczMPZqZGT8AAAAAzcxMPjMzMz8AAAAAmpmZPs3MTD8AAAAAzczMPmZmZj8AAAAAAAAAPwAAgD8AAAAAOPQeIpqZGT8AAAAAzczMPTMzMz8AAAAAzcxMPs3MTD8AAAAAmpmZPmZmZj8AAAAAzczMPgAAgD8AAAAAOPQeIjMzMz8AAAAAzczMPc3MTD8AAAAAzcxMPmZmZj8AAAAAmpmZPgAAgD8AAAAAOPQeIs3MTD8AAAAAzczMPWZmZj8AAAAAzcxMPgAAgD8AAAAAOPQeImZmZj8AAAAAzczMPQAAgD8AAAAAOPQeogAAgD8AAAAA", "encoding": "base64", "path": ["array", "buffer"]}]}, "d925df2845914a329db4945a4625bfb1": {"model_name": "BufferAttributeModel", "model_module": "jupyter-threejs", "model_module_version": "^2.1.0", "state": {"_model_module": "jupyter-threejs", "_model_module_version": "^2.1.0", "_model_name": "BufferAttributeModel", "_view_count": null, "_view_module": null, "_view_module_version": "", "_view_name": null, "array": {"shape": [600], "dtype": "uint16"}, "dynamic": false, "needsUpdate": false, "normalized": false, "version": -1}, "buffers": [{"data": "AAABAAIAAAADAAIABAAAAAMAAwACAAUABAAGAAMAAwAHAAUACAAEAAYABgADAAcABwAFAAkACAAKAAYABgALAAcABwAMAAkADQAIAAoACgAGAAsACwAHAAwADAAJAA4ADQAPAAoACgAQAAsACwARAAwADAASAA4AEwANAA8ADwAKABAAEAALABEAEQAMABIAEgAOABQAEwAVAA8ADwAWABAAEAAXABEAEQAYABIAEgAZABQAGgATABUAFQAPABYAFgAQABcAFwARABgAGAASABkAGQAUABsAGgAcABUAFQAdABYAFgAeABcAFwAfABgAGAAgABkAGQAhABsAIgAaABwAHAAVAB0AHQAWAB4AHgAXAB8AHwAYACAAIAAZACEAIQAbACMAIgAkABwAHAAlAB0AHQAmAB4AHgAnAB8AHwAoACAAIAApACEAIQAqACMAKwAiACQAJAAcACUAJQAdACYAJgAeACcAJwAfACgAKAAgACkAKQAhACoAKgAjACwAKwAtACQAJAAuACUAJQAvACYAJgAwACcAJwAxACgAKAAyACkAKQAzACoAKgA0ACwANQArAC0ALQAkAC4ALgAlAC8ALwAmADAAMAAnADEAMQAoADIAMgApADMAMwAqADQANAAsADYANQA3AC0ALQA4AC4ALgA5AC8ALwA6ADAAMAA7ADEAMQA8ADIAMgA9ADMAMwA+ADQANAA/ADYAQAA1ADcANwAtADgAOAAuADkAOQAvADoAOgAwADsAOwAxADwAPAAyAD0APQAzAD4APgA0AD8APwA2AEEAQABCADcANwBDADgAOABEADkAOQBFADoAOgBGADsAOwBHADwAPABIAD0APQBJAD4APgBKAD8APwBLAEEAQgA3AEMAQwA4AEQARAA5AEUARQA6AEYARgA7AEcARwA8AEgASAA9AEkASQA+AEoASgA/AEsAQgBMAEMAQwBNAEQARABOAEUARQBPAEYARgBQAEcARwBRAEgASABSAEkASQBTAEoASgBUAEsATABDAE0ATQBEAE4ATgBFAE8ATwBGAFAAUABHAFEAUQBIAFIAUgBJAFMAUwBKAFQATABVAE0ATQBWAE4ATgBXAE8ATwBYAFAAUABZAFEAUQBaAFIAUgBbAFMAUwBcAFQAVQBNAFYAVgBOAFcAVwBPAFgAWABQAFkAWQBRAFoAWgBSAFsAWwBTAFwAVQBdAFYAVgBeAFcAVwBfAFgAWABgAFkAWQBhAFoAWgBiAFsAWwBjAFwAXQBWAF4AXgBXAF8AXwBYAGAAYABZAGEAYQBaAGIAYgBbAGMAXQBkAF4AXgBlAF8AXwBmAGAAYABnAGEAYQBoAGIAYgBpAGMAZABeAGUAZQBfAGYAZgBgAGcAZwBhAGgAaABiAGkAZABqAGUAZQBrAGYAZgBsAGcAZwBtAGgAaABuAGkAagBlAGsAawBmAGwAbABnAG0AbQBoAG4AagBvAGsAawBwAGwAbABxAG0AbQByAG4AbwBrAHAAcABsAHEAcQBtAHIAbwBzAHAAcAB0AHEAcQB1AHIAcwBwAHQAdABxAHUAcwB2AHQAdAB3AHUAdgB0AHcAdgB4AHcA", "encoding": "base64", "path": ["array", "buffer"]}]}, "40f82f6c4ed644d48fd65bb72b896506": {"model_name": "BufferAttributeModel", "model_module": "jupyter-threejs", "model_module_version": "^2.1.0", "state": {"_model_module": "jupyter-threejs", "_model_module_version": "^2.1.0", "_model_name": "BufferAttributeModel", "_view_count": null, "_view_module": null, "_view_module_version": "", "_view_name": null, "array": {"shape": [121, 3], "dtype": "float32"}, "dynamic": false, "needsUpdate": false, "normalized": false, "version": -1}, "buffers": [{"data": "0dBQPr28vD6OjQ0/wcBAPs/Ozj6OjQ0/paQkPvHw8D6Pjg4/tbQ0Pt/e3j6Pjg4/4eBgPq2srD6Miws/jYwMPomICD+OjQ0/wcBAPs/Ozj6OjQ0/mZgYPv/+/j6Pjg4/9fR0PpmYmD6KiQk/8fDwPZmYGD+Ligo/0dBQPr28vD6OjQ0/paQkPvHw8D6Pjg4/gYAAPpGQED+NjAw/gYCAPoeGhj6Ihwc/iYgIPqinJz+FhAQ/4eBgPq2srD6Miws/tbQ0Pt/e3j6Pjg4/jYwMPomICD+OjQ0/8fDwPaGgID+Ihwc/iYiIPuXkZD6DggI/1dRUPri3Nz/x8PA+9fR0PpmYmD6KiQk/wcBAPs/Ozj6OjQ0/mZgYPv/+/j6Pjg4/8fDwPZmYGD+Ligo/qagoPrGwMD/9/Pw+jYyMPr28PD75+Pg+p6amPsbFRT/Pzs4+gYCAPoeGhj6Ihwc/0dBQPr28vD6OjQ0/paQkPvHw8D6Pjg4/gYAAPpGQED+NjAw/iYgIPqinJz+FhAQ/iYiIPr++Pj/h4OA+kZCQPo2MDD7p6Og+8/LyPtLRUT+joqI+iYiIPuXkZD6DggI/4eBgPq2srD6Miws/tbQ0Pt/e3j6Pjg4/jYwMPomICD+OjQ0/8fDwPaGgID+Ihwc/1dRUPri3Nz/x8PA+z87OPs3MTD+5uLg+kZCQPsnIyD3X1tY+pqUlP9vaWj/V1FQ+jYyMPr28PD75+Pg+9fR0PpmYmD6KiQk/wcBAPs/Ozj6OjQ0/mZgYPv/+/j6Pjg4/8fDwPZmYGD+Ligo/qagoPrGwMD/9/Pw+p6amPsbFRT/Pzs4+kZAQP9fWVj+HhoY+jYyMPsHAQD2/vr4+09JSP+LhYT/Z2Ng9kZCQPo2MDD7p6Og+gYCAPoeGhj6Ihwc/0dBQPr28vD6OjQ0/paQkPvHw8D6Pjg4/gYAAPpGQED+NjAw/iYgIPqinJz+FhAQ/iYiIPr++Pj/h4OA+8/LyPtLRUT+joqI+vr09P9/eXj+ZmBg+iYiIPoGAgDupqKg+/v19P+jnZz+RkBA+kZCQPsnIyD3X1tY+iYiIPuXkZD6DggI/4eBgPq2srD6Miws/tbQ0Pt/e3j6Pjg4/jYwMPomICD+OjQ0/8fDwPaGgID+Ihwc/1dRUPri3Nz/x8PA+z87OPs3MTD+5uLg+pqUlP9vaWj/V1FQ+6ulpP+XkZD/JyMg9jYyMPr28PD75+Pg+9fR0PpmYmD6KiQk/wcBAPs/Ozj6OjQ0/mZgYPv/+/j6Pjg4/8fDwPZmYGD+Ligo/qagoPrGwMD/9/Pw+p6amPsbFRT/Pzs4+kZAQP9fWVj+HhoY+09JSP+LhYT/Z2Ng9gYCAPoeGhj6Ihwc/0dBQPr28vD6OjQ0/paQkPvHw8D6Pjg4/gYAAPpGQED+NjAw/iYgIPqinJz+FhAQ/iYiIPr++Pj/h4OA+8/LyPtLRUT+joqI+vr09P9/eXj+ZmBg+4eBgPq2srD6Miws/tbQ0Pt/e3j6Pjg4/jYwMPomICD+OjQ0/8fDwPaGgID+Ihwc/1dRUPri3Nz/x8PA+z87OPs3MTD+5uLg+pqUlP9vaWj/V1FQ+wcBAPs/Ozj6OjQ0/mZgYPv/+/j6Pjg4/8fDwPZmYGD+Ligo/qagoPrGwMD/9/Pw+p6amPsbFRT/Pzs4+kZAQP9fWVj+HhoY+paQkPvHw8D6Pjg4/gYAAPpGQED+NjAw/iYgIPqinJz+FhAQ/iYiIPr++Pj/h4OA+8/LyPtLRUT+joqI+jYwMPomICD+OjQ0/8fDwPaGgID+Ihwc/1dRUPri3Nz/x8PA+z87OPs3MTD+5uLg+8fDwPZmYGD+Ligo/qagoPrGwMD/9/Pw+p6amPsbFRT/Pzs4+iYgIPqinJz+FhAQ/iYiIPr++Pj/h4OA+1dRUPri3Nz/x8PA+", "encoding": "base64", "path": ["array", "buffer"]}]}, "b87b3771d1c24109b255c88b19d456f2": {"model_name": "BufferGeometryModel", "model_module": "jupyter-threejs", "model_module_version": "^2.1.0", "state": {"MaxIndex": 65535, "_model_module": "jupyter-threejs", "_model_module_version": "^2.1.0", "_model_name": "BufferGeometryModel", "_ref_geometry": null, "_store_ref": false, "_view_count": null, "_view_module": null, "_view_module_version": "", "_view_name": null, "attributes": {"position": "IPY_MODEL_f20211f43d524029a4f654477ea81931", "index": "IPY_MODEL_d925df2845914a329db4945a4625bfb1", "color": "IPY_MODEL_40f82f6c4ed644d48fd65bb72b896506"}, "index": null, "morphAttributes": {}, "name": "", "type": "BufferGeometry", "userData": {}}}, "1abea587f43c47dc99f448b5ef0a0581": {"model_name": "MeshPhongMaterialModel", "model_module": "jupyter-threejs", "model_module_version": "^2.1.0", "state": {"_model_module": "jupyter-threejs", "_model_module_version": "^2.1.0", "_model_name": "MeshPhongMaterialModel", "_view_count": null, "_view_module": null, "_view_module_version": "", "_view_name": null, "alphaMap": null, "alphaTest": 0.0, "aoMap": null, "aoMapIntensity": 1.0, "blendDst": "OneMinusSrcAlphaFactor", "blendDstAlpha": 0.0, "blendEquation": "AddEquation", "blendEquationAlpha": 0.0, "blendSrc": "SrcAlphaFactor", "blendSrcAlpha": 0.0, "blending": "NormalBlending", "bumpMap": null, "bumpScale": 1.0, "clipIntersection": false, "clipShadows": false, "clippingPlanes": [], "color": "#ffffff", "colorWrite": true, "combine": "MultiplyOperation", "defines": null, "depthFunc": "LessEqualDepth", "depthTest": true, "depthWrite": true, "displacementBias": 0.0, "displacementMap": null, "displacementScale": 1.0, "dithering": false, "emissive": "#000000", "emissiveIntensity": 1.0, "emissiveMap": null, "envMap": null, "flatShading": true, "fog": true, "lightMap": null, "lightMapIntensity": 1.0, "lights": true, "map": null, "morphNormals": false, "morphTargets": false, "name": "", "normalMap": null, "normalScale": [1.0, 1.0], "opacity": 1.0, "overdraw": 0.0, "polygonOffset": true, "polygonOffsetFactor": 1.0, "polygonOffsetUnits": 1.0, "precision": null, "premultipliedAlpha": false, "reflectivity": 0.0, "refractionRatio": 0.98, "shadowSide": null, "shininess": 0.0, "side": "DoubleSide", "skinning": false, "specular": "#000000", "specularMap": null, "transparent": false, "type": "MeshPhongMaterial", "vertexColors": "VertexColors", "visible": true, "wireframe": false, "wireframeLinecap": "round", "wireframeLinejoin": "round", "wireframeLinewidth": 1.0}}, "c8d3573c844b4dbabdd785608a47fbda": {"model_name": "MeshModel", "model_module": "jupyter-threejs", "model_module_version": "^2.1.0", "state": {"_model_module": "jupyter-threejs", "_model_module_version": "^2.1.0", "_model_name": "MeshModel", "_view_count": null, "_view_module": null, "_view_module_version": "", "_view_name": null, "castShadow": false, "children": [], "drawMode": "TrianglesDrawMode", "frustumCulled": true, "geometry": "IPY_MODEL_b87b3771d1c24109b255c88b19d456f2", "material": "IPY_MODEL_1abea587f43c47dc99f448b5ef0a0581", "matrix": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "matrixAutoUpdate": true, "matrixWorld": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "matrixWorldNeedsUpdate": false, "modelViewMatrix": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "morphTargetInfluences": [], "name": "", "normalMatrix": [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0], "position": [-0.5000000000000001, -0.5000000000000001, -0.0], "quaternion": [0.0, 0.0, 0.0, 1.0], "receiveShadow": false, "renderOrder": 0, "rotation": [0.0, 0.0, 0.0, "XYZ"], "scale": [1.0, 1.0, 1.0], "type": "Mesh", "up": [0.0, 1.0, 0.0], "visible": true}}, "b0cd0ba7532f4f6dbce132db054163b9": {"model_name": "DirectionalLightModel", "model_module": "jupyter-threejs", "model_module_version": "^2.1.0", "state": {"_model_module": "jupyter-threejs", "_model_module_version": "^2.1.0", "_model_name": "DirectionalLightModel", "_view_count": null, "_view_module": null, "_view_module_version": "", "_view_name": null, "castShadow": false, "children": [], "color": "#ffffff", "frustumCulled": true, "intensity": 0.25, "matrix": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "matrixAutoUpdate": true, "matrixWorld": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "matrixWorldNeedsUpdate": false, "modelViewMatrix": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "name": "", "normalMatrix": [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0], "position": [0.0, 0.0, 100000.0], "quaternion": [0.0, 0.0, 0.0, 1.0], "receiveShadow": false, "renderOrder": 0, "rotation": [0.0, 0.0, 0.0, "XYZ"], "scale": [1.0, 1.0, 1.0], "shadow": "uninitialized", "target": "uninitialized", "type": "DirectionalLight", "up": [0.0, 1.0, 0.0], "visible": true}}, "476c4fc18aa04c9790b8e77707090948": {"model_name": "DirectionalLightModel", "model_module": "jupyter-threejs", "model_module_version": "^2.1.0", "state": {"_model_module": "jupyter-threejs", "_model_module_version": "^2.1.0", "_model_name": "DirectionalLightModel", "_view_count": null, "_view_module": null, "_view_module_version": "", "_view_name": null, "castShadow": false, "children": [], "color": "#fffcf4", "frustumCulled": true, "intensity": 0.75, "matrix": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "matrixAutoUpdate": true, "matrixWorld": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "matrixWorldNeedsUpdate": false, "modelViewMatrix": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "name": "", "normalMatrix": [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0], "position": [11161.889704894966, 76604.4443118978, 63302.222155948904], "quaternion": [0.0, 0.0, 0.0, 1.0], "receiveShadow": false, "renderOrder": 0, "rotation": [0.0, 0.0, 0.0, "XYZ"], "scale": [1.0, 1.0, 1.0], "shadow": "uninitialized", "target": "uninitialized", "type": "DirectionalLight", "up": [0.0, 1.0, 0.0], "visible": true}}, "ad8dee6e113842ceaeecf138b800b795": {"model_name": "DirectionalLightModel", "model_module": "jupyter-threejs", "model_module_version": "^2.1.0", "state": {"_model_module": "jupyter-threejs", "_model_module_version": "^2.1.0", "_model_name": "DirectionalLightModel", "_view_count": null, "_view_module": null, "_view_module_version": "", "_view_name": null, "castShadow": false, "children": [], "color": "#f5f7ff", "frustumCulled": true, "intensity": 0.25, "matrix": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "matrixAutoUpdate": true, "matrixWorld": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "matrixWorldNeedsUpdate": false, "modelViewMatrix": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "name": "", "normalMatrix": [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0], "position": [-4494.345552754778, -96592.58262890684, 25488.700224417877], "quaternion": [0.0, 0.0, 0.0, 1.0], "receiveShadow": false, "renderOrder": 0, "rotation": [0.0, 0.0, 0.0, "XYZ"], "scale": [1.0, 1.0, 1.0], "shadow": "uninitialized", "target": "uninitialized", "type": "DirectionalLight", "up": [0.0, 1.0, 0.0], "visible": true}}, "f913f4bbdb814311a476e51e8505441b": {"model_name": "DirectionalLightModel", "model_module": "jupyter-threejs", "model_module_version": "^2.1.0", "state": {"_model_module": "jupyter-threejs", "_model_module_version": "^2.1.0", "_model_name": "DirectionalLightModel", "_view_count": null, "_view_module": null, "_view_module_version": "", "_view_name": null, "castShadow": false, "children": [], "color": "#ffffff", "frustumCulled": true, "intensity": 0.21428571428571427, "matrix": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "matrixAutoUpdate": true, "matrixWorld": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "matrixWorldNeedsUpdate": false, "modelViewMatrix": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "name": "", "normalMatrix": [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0], "position": [93969.26207859084, 0.0, -34202.01433256687], "quaternion": [0.0, 0.0, 0.0, 1.0], "receiveShadow": false, "renderOrder": 0, "rotation": [0.0, 0.0, 0.0, "XYZ"], "scale": [1.0, 1.0, 1.0], "shadow": "uninitialized", "target": "uninitialized", "type": "DirectionalLight", "up": [0.0, 1.0, 0.0], "visible": true}}, "68ee56a3eb28423a9af814c982b8474b": {"model_name": "DirectionalLightModel", "model_module": "jupyter-threejs", "model_module_version": "^2.1.0", "state": {"_model_module": "jupyter-threejs", "_model_module_version": "^2.1.0", "_model_name": "DirectionalLightModel", "_view_count": null, "_view_module": null, "_view_module_version": "", "_view_name": null, "castShadow": false, "children": [], "color": "#ffffff", "frustumCulled": true, "intensity": 0.21428571428571427, "matrix": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "matrixAutoUpdate": true, "matrixWorld": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "matrixWorldNeedsUpdate": false, "modelViewMatrix": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "name": "", "normalMatrix": [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0], "position": [-93969.26207859084, 0.0, -34202.01433256687], "quaternion": [0.0, 0.0, 0.0, 1.0], "receiveShadow": false, "renderOrder": 0, "rotation": [0.0, 0.0, 0.0, "XYZ"], "scale": [1.0, 1.0, 1.0], "shadow": "uninitialized", "target": "uninitialized", "type": "DirectionalLight", "up": [0.0, 1.0, 0.0], "visible": true}}, "7e856cdcbe3842d1b050ff794469dd5b": {"model_name": "PerspectiveCameraModel", "model_module": "jupyter-threejs", "model_module_version": "^2.1.0", "state": {"_model_module": "jupyter-threejs", "_model_module_version": "^2.1.0", "_model_name": "PerspectiveCameraModel", "_view_count": null, "_view_module": null, "_view_module_version": "", "_view_name": null, "aspect": 1.3333333333333333, "castShadow": false, "children": ["IPY_MODEL_b0cd0ba7532f4f6dbce132db054163b9", "IPY_MODEL_476c4fc18aa04c9790b8e77707090948", "IPY_MODEL_ad8dee6e113842ceaeecf138b800b795", "IPY_MODEL_f913f4bbdb814311a476e51e8505441b", "IPY_MODEL_68ee56a3eb28423a9af814c982b8474b"], "far": 273205.0807568878, "focus": 10.0, "fov": 30.0, "frustumCulled": true, "matrix": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "matrixAutoUpdate": true, "matrixWorld": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "matrixWorldInverse": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "matrixWorldNeedsUpdate": false, "modelViewMatrix": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "name": "", "near": 0.01, "normalMatrix": [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0], "position": [0.0, 0.0, 2.732050807568878], "projectionMatrix": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "quaternion": [0.0, 0.0, 0.0, 1.0], "receiveShadow": false, "renderOrder": 0, "rotation": [0.0, 0.0, 0.0, "XYZ"], "scale": [1.0, 1.0, 1.0], "type": "PerspectiveCamera", "up": [0.0, 1.0, 0.0], "visible": true, "zoom": 1.0}}, "cad4fab3477d448c992ef1f23d324829": {"model_name": "SceneModel", "model_module": "jupyter-threejs", "model_module_version": "^2.1.0", "state": {"_model_module": "jupyter-threejs", "_model_module_version": "^2.1.0", "_model_name": "SceneModel", "_view_count": null, "_view_module": null, "_view_module_version": "", "_view_name": null, "autoUpdate": true, "background": "#4c4c4c", "castShadow": false, "children": ["IPY_MODEL_914e95428c314a62b2e8810e3b781ab3", "IPY_MODEL_c8d3573c844b4dbabdd785608a47fbda", "IPY_MODEL_7e856cdcbe3842d1b050ff794469dd5b"], "fog": null, "frustumCulled": true, "matrix": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "matrixAutoUpdate": true, "matrixWorld": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "matrixWorldNeedsUpdate": false, "modelViewMatrix": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0], "name": "", "normalMatrix": [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0], "overrideMaterial": null, "position": [0.0, 0.0, 0.0], "quaternion": [0.0, 0.0, 0.0, 1.0], "receiveShadow": false, "renderOrder": 0, "rotation": [0.0, 0.0, 0.0, "XYZ"], "scale": [1.0, 1.0, 1.0], "type": "Scene", "up": [0.0, 1.0, 0.0], "visible": true}}, "8dd5f3eac1f14947a6ffec0bf1fa11b5": {"model_name": "OrbitControlsModel", "model_module": "jupyter-threejs", "model_module_version": "^2.1.0", "state": {"_model_module": "jupyter-threejs", "_model_module_version": "^2.1.0", "_model_name": "OrbitControlsModel", "_view_count": null, "_view_module": null, "_view_module_version": "", "_view_name": null, "autoRotate": false, "autoRotateSpeed": 2.0, "controlling": "IPY_MODEL_7e856cdcbe3842d1b050ff794469dd5b", "dampingFactor": 0.25, "enableDamping": false, "enableKeys": true, "enablePan": true, "enableRotate": true, "enableZoom": true, "enabled": true, "keyPanSpeed": 7.0, "maxAzimuthAngle": 1e+20, "maxDistance": 1e+20, "maxPolarAngle": 3.141592653589793, "maxZoom": 1e+20, "minAzimuthAngle": -1e+20, "minDistance": 0.0, "minPolarAngle": 0.0, "minZoom": 0.0, "panSpeed": 1.0, "rotateSpeed": 1.0, "screenSpacePanning": true, "target": [0.0, 0.0, 0.0], "zoomSpeed": 1.0}}, "0680a41b20a24b0ba827a59e945cb8a1": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "e71f11aa60984473af14fd61d3e159fc": {"model_name": "WebGLShadowMapModel", "model_module": "jupyter-threejs", "model_module_version": "^2.1.0", "state": {"_model_module": "jupyter-threejs", "_model_module_version": "^2.1.0", "_model_name": "WebGLShadowMapModel", "_view_count": null, "_view_module": null, "_view_module_version": "", "_view_name": null, "enabled": false, "type": "PCFShadowMap"}}, "760b8b96c450425fa1dcd2d78fc04c3e": {"model_name": "RendererModel", "model_module": "jupyter-threejs", "model_module_version": "^2.1.0", "state": {"_alpha": true, "_antialias": false, "_dom_classes": [], "_height": 768, "_model_module": "jupyter-threejs", "_model_module_version": "^2.1.0", "_model_name": "RendererModel", "_pause_autorender": false, "_view_count": null, "_view_module": "jupyter-threejs", "_view_module_version": "^2.1.0", "_view_name": "RendererView", "_webgl_version": 2, "_width": 1024, "autoClear": true, "autoClearColor": true, "autoClearDepth": true, "autoClearStencil": true, "background": "black", "background_opacity": 1.0, "camera": "IPY_MODEL_7e856cdcbe3842d1b050ff794469dd5b", "clearColor": "#000000", "clearOpacity": 0.0, "clippingPlanes": [], "controls": ["IPY_MODEL_8dd5f3eac1f14947a6ffec0bf1fa11b5"], "gammaFactor": 2.0, "gammaInput": false, "gammaOutput": false, "layout": "IPY_MODEL_0680a41b20a24b0ba827a59e945cb8a1", "localClippingEnabled": false, "maxMorphNormals": 4, "maxMorphTargets": 8, "physicallyCorrectLights": false, "scene": "IPY_MODEL_cad4fab3477d448c992ef1f23d324829", "shadowMap": "IPY_MODEL_e71f11aa60984473af14fd61d3e159fc", "sortObject": true, "toneMapping": "LinearToneMapping", "toneMappingExposure": 1.0, "toneMappingWhitePoint": 1.0}}}, "version_major": 2, "version_minor": 0}
+</script>
+
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./chapter4"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="convergence.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Error control: Computing convergence rates</p>
+        </div>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Jørgen S. Dokken<br/>
+  
+      &copy; Copyright 2022.<br/>
+    <div class="extra_footer">
+      <div>
+    This webpage is an adaptation of <a href=https://www.springer.com/gp/book/9783319524610>The FEniCS tutorial</a> and
+    is distributed under the terms of the      <a href=http://creativecommons.org/licenses/by/4.0/>Creative Commons Attribution 4.0 International License  </a>
+    which permits use, duplication, adaptation, distribution and reproduction in any medium or format, as long as you give appropriate credit to the original author(s) and the source,
+    provide a link to the Creative Commons license and indicate if changes were made.
+</div>
+
+    </div>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

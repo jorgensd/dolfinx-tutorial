@@ -346,6 +346,11 @@ const thebe_selector_output = ".output, .cell_output"
    Error control: Computing convergence rates
   </a>
  </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="chapter4/newton-solver.html">
+   Custom Newton solvers
+  </a>
+ </li>
 </ul>
 
     </div>
@@ -720,9 +725,9 @@ Docker is a software that uses <em>containers</em> to supply software across dif
 <p>All notebooks can be converted to python files using <a class="reference external" href="https://nbconvert.readthedocs.io/en/latest/">nbconvert</a>.</p>
 <section id="tutorial-compatible-docker-images">
 <h3>Tutorial compatible docker images<a class="headerlink" href="#tutorial-compatible-docker-images" title="Permalink to this headline">#</a></h3>
-<p>The tutorial uses several dependencies for meshing, plotting and timings. A compatible <code class="docutils literal notranslate"><span class="pre">JupyterLab</span></code> image is available at <a class="reference external" href="https://hub.docker.com/r/dokken92/dolfinx_custom/tags">DockerHub/dokken92/dolfinx_custom:16062022</a></p>
+<p>The tutorial uses several dependencies for meshing, plotting and timings. A compatible <code class="docutils literal notranslate"><span class="pre">JupyterLab</span></code> image is available at <a class="reference external" href="https://hub.docker.com/r/dokken92/dolfinx_custom/tags">DockerHub/dokken92/dolfinx_custom:02072022</a></p>
 <p>To use the notebookes in this tutorial with DOLFINx on your own computer, you should use the docker image using the following command</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="n">docker</span> <span class="n">run</span> <span class="o">--</span><span class="n">init</span> <span class="o">-</span><span class="n">p</span> <span class="mi">8888</span><span class="p">:</span><span class="mi">8888</span> <span class="o">-</span><span class="n">v</span> <span class="s2">&quot;$(pwd)&quot;</span><span class="p">:</span><span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="n">shared</span> <span class="n">dokken92</span><span class="o">/</span><span class="n">dolfinx_custom</span><span class="p">:</span><span class="mi">16062022</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="n">docker</span> <span class="n">run</span> <span class="o">--</span><span class="n">init</span> <span class="o">-</span><span class="n">p</span> <span class="mi">8888</span><span class="p">:</span><span class="mi">8888</span> <span class="o">-</span><span class="n">v</span> <span class="s2">&quot;$(pwd)&quot;</span><span class="p">:</span><span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="n">shared</span> <span class="n">dokken92</span><span class="o">/</span><span class="n">dolfinx_custom</span><span class="p">:</span><span class="mi">02072022</span>
 </pre></div>
 </div>
 <p>The tutorials can also be exported as a notebook or PDF by clicking the <img alt="Download" src="_images/save.png" />-symbol in the top right corner of the relevant tutorialThe notebook can in turn be used with a Python kernel which has DOLFINx.</p>
