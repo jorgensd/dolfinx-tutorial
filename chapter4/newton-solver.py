@@ -19,13 +19,22 @@
 # Newtons method, as used in the [non-linear Poisson](./../chapter2/nonlinpoisson_code) problem, is a way of solving a non-linear equation as a sequence of linear equations.
 #
 # Given a function $F:\mathbb{R}^M\mapsto \mathbb{R}^M$, we have that $u_k, u_{k+1}\in \mathbb{R}^M$ is related as:
+#
 # $$x_{k+1} = x_{k} - J_F(x_k)^{-1} F(x_k)$$
+#
 # where $J_F$ is the Jacobian matrix of $F$.
 #
 # We can rewrite this equation as $\delta x_k = x_{k+1} - x_{k}$,
-# $$J_F(x_k)\delta x_k = - F(x_k)$$
+#
+# $$
+# J_F(x_k)\delta x_k = - F(x_k)
+# $$
+#
 # and
-# $$x_{k+1} = x_k + \delta x_k.$$
+#
+# $$
+# x_{k+1} = x_k + \delta x_k.
+# $$
 
 # ## Problem specification
 # We start by importing all packages needed to solve the problem.
@@ -213,15 +222,21 @@ solver.setOperators(A)
 
 # As we for this problem has strong Dirichlet conditions, we need to apply lifting to the right hand side of our Newton problem.
 # We previously had that we wanted to solve the system:
-# $$\begin{align}
+#
+# $$
+# \begin{align}
 # J_F(x_k)\delta x_k &= - F(x_k)\\
 # x_{k+1} &= x_k + \delta x_k
-# \end{align}$$
+# \end{align}
+# $$
+#
 # we want $x_{k+1}\vert_{bc}= u_D$. However, we do not know if $x_k\vert_{bc}=u_D$.
 # Therefore, we want to apply the following boundary condition for our correction $\delta x_k$
-# $$\begin{align}
+#
+# $$
 # \delta x_k\vert_{bc} = u_D-x_k\vert_{bc}
-# \end{align}$$
+# $$
+#
 # We therefore arrive at the following Newton scheme
 
 
