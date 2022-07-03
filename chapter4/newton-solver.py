@@ -97,7 +97,7 @@ i = 0
 coords = V.tabulate_dof_coordinates()[:, 0]
 sort_order = np.argsort(coords)
 max_iterations = 25
-solutions = np.zeros((max_iterations, len(coords)))
+solutions = np.zeros((max_iterations + 1, len(coords)))
 solutions[0] = uh.x.array[sort_order]
 
 # We are now ready to solve the linear problem. At each iteration, we reassemble the Jacobian and residual, and use the norm of the magnitude of the update (`dx`) as a termination criteria. 
@@ -106,11 +106,14 @@ solutions[0] = uh.x.array[sort_order]
 i = 0
 while i < max_iterations:
     # Assemble Jacobian and residual
-    L.zeroEntries()
+    with L.localForm() as loc_L:
+        loc_L.set(0)
     A.zeroEntries()
     dolfinx.fem.petsc.assemble_matrix(A, jacobian)
     A.assemble()
     dolfinx.fem.petsc.assemble_vector(L, residual)
+    L.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
+    
     # Scale residual by -1
     L.scale(-1)
     L.ghostUpdate(addv=PETSc.InsertMode.INSERT_VALUES, mode=PETSc.ScatterMode.FORWARD)
@@ -127,7 +130,7 @@ while i < max_iterations:
     print(f"Iteration {i}: Correction norm {correction_norm}")
     if correction_norm < 1e-10:
         break
-    solutions[i] = uh.x.array[sort_order]
+    solutions[i,:] = uh.x.array[sort_order]
 
 # We now compute the magnitude of the residual.
 
@@ -141,7 +144,7 @@ print(f"Final residual {L.norm(0)}")
 # Plot solution for each of the iterations
 fig = plt.figure(figsize=(15, 8))
 for j, solution in enumerate(solutions[:i]):
-    plt.plot(coords[sort_order], solution[sort_order], label=f"Iteration {j}")
+    plt.plot(coords[sort_order], solution, label=f"Iteration {j}")
 
 # Plot each of the roots of the problem, and compare the approximate solution with each of them
 args = ("--go",)
@@ -155,7 +158,7 @@ for j, root in enumerate(roots):
     plt.plot(x_spacing, root(x_spacing.reshape(1, -1)), *args, **kwargs)
 plt.grid()
 plt.legend()
-plt.show()
+
 
 # -
 
@@ -228,15 +231,17 @@ L2_error = []
 dx_norm = []
 while i < max_iterations:
     # Assemble Jacobian and residual
-    L.zeroEntries()
+    with L.localForm() as loc_L:
+        loc_L.set(0)
     A.zeroEntries()
     dolfinx.fem.petsc.assemble_matrix(A, jacobian, bcs=[bc])
     A.assemble()
     dolfinx.fem.petsc.assemble_vector(L, residual)
+    L.ghostUpdate(addv=PETSc.InsertMode.ADD, mode=PETSc.ScatterMode.REVERSE)
     L.scale(-1)
+
     # Compute b - J(u_D-u_(i-1))
     dolfinx.fem.petsc.apply_lifting(L, [jacobian], [[bc]], x0=[uh.vector], scale=1) 
-    L.ghostUpdate(addv=PETSc.InsertMode.ADD, mode=PETSc.ScatterMode.REVERSE)
     # Set dx|_bc = u_{i-1}-u_D
     dolfinx.fem.petsc.set_bc(L, [bc], uh.vector, 1.0)
     L.ghostUpdate(addv=PETSc.InsertMode.INSERT_VALUES, mode=PETSc.ScatterMode.FORWARD)
