@@ -103,7 +103,9 @@ N = 8     # Number of windings
 c_1 = 0.8 # Radius of inner copper wires
 c_2 = 1.4 # Radius of outer copper wires
 gdim = 2  # Geometric dimension of the mesh
-if rank == 0:
+model_rank = 0
+mesh_comm = MPI.COMM_WORLD
+if mesh_comm.rank == model_rank:
 
     # Define geometry for iron cylinder
     outer_iron = gmsh.model.occ.addCircle(0, 0, 0, b)
@@ -181,61 +183,11 @@ if rank == 0:
     gmsh.model.mesh.generate(gdim)    
 # -
 
-# As in [the Navier-Stokes tutorial](../chapter2/ns_code2) we load the mesh directly into DOLFINx, without writing it to file. This time, we create `MeshTags` for the physical cell data.
+# As in [the Navier-Stokes tutorial](../chapter2/ns_code2) we load the mesh directly into DOLFINx, without writing it to file.
 
-from dolfinx.io import (cell_perm_gmsh, distribute_entity_data, extract_gmsh_geometry, 
-                        extract_gmsh_topology_and_markers, ufl_mesh_from_gmsh)
-from dolfinx.cpp.mesh import to_type
-from dolfinx.graph import create_adjacencylist
-from dolfinx.mesh import create_mesh, meshtags_from_entities
-if rank == 0:
-    # Get mesh geometry
-    x = extract_gmsh_geometry(gmsh.model)
-
-    # Get mesh topology for each element
-    topologies = extract_gmsh_topology_and_markers(gmsh.model)
-    # Get information about each cell type from the msh files
-    num_cell_types = len(topologies.keys())
-    cell_information = {}
-    cell_dimensions = np.zeros(num_cell_types, dtype=np.int32)
-    for i, element in enumerate(topologies.keys()):
-        properties = gmsh.model.mesh.getElementProperties(element)
-        name, dim, order, num_nodes, local_coords, _ = properties
-        cell_information[i] = {"id": element, "dim": dim, "num_nodes": num_nodes}
-        cell_dimensions[i] = dim
-
-    # Sort elements by ascending dimension
-    perm_sort = np.argsort(cell_dimensions)
-
-    # Broadcast cell type data and geometric dimension
-    cell_id = cell_information[perm_sort[-1]]["id"]
-    tdim = cell_information[perm_sort[-1]]["dim"]
-    num_nodes = cell_information[perm_sort[-1]]["num_nodes"]
-    cell_id, num_nodes = MPI.COMM_WORLD.bcast([cell_id, num_nodes], root=0)
-
-    cells = np.asarray(topologies[cell_id]["topology"], dtype=np.int64)
-    cell_values = np.asarray(topologies[cell_id]["cell_data"], dtype=np.int32)
-else:
-    cell_id, num_nodes = MPI.COMM_WORLD.bcast([None, None], root=0)
-    cells, x = np.empty([0, num_nodes], dtype=np.int64), np.empty([0, gdim])
-    cell_values = np.empty((0,), dtype=np.int32)
+from dolfinx.io.gmshio import model_to_mesh
+mesh, ct, _ = model_to_mesh(gmsh.model, mesh_comm, model_rank, gdim=2)
 gmsh.finalize()
-
-# We now distribute the mesh over multiple processors
-
-# +
-# Create distributed mesh
-ufl_domain = ufl_mesh_from_gmsh(cell_id, gdim)
-gmsh_cell_perm = cell_perm_gmsh(to_type(str(ufl_domain.ufl_cell())), num_nodes)
-cells = cells[:, gmsh_cell_perm]
-mesh = create_mesh(MPI.COMM_WORLD, cells, x[:, :gdim], ufl_domain)
-tdim = mesh.topology.dim
-
-local_entities, local_values = distribute_entity_data(mesh, tdim, cells, cell_values)
-mesh.topology.create_connectivity(tdim, 0)
-adj = create_adjacencylist(local_entities)
-ct = meshtags_from_entities(mesh, tdim, adj, np.int32(local_values))
-# -
 
 # To inspect the mesh, we use Paraview, and obtain the following mesh
 
@@ -303,6 +255,7 @@ for tag in material_tags:
 
 # +
 V = FunctionSpace(mesh, ("CG", 1))
+tdim = mesh.topology.dim
 facets = locate_entities_boundary(mesh, tdim-1, lambda x: np.full(x.shape[1], True))
 dofs = locate_dofs_topological(V, tdim-1, facets)
 bc = dirichletbc(ScalarType(0), dofs, V)

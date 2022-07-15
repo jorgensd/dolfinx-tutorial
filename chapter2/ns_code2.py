@@ -54,8 +54,7 @@ from dolfinx.fem import Constant, Function, FunctionSpace, assemble_scalar, diri
 from dolfinx.fem.petsc import apply_lifting, assemble_matrix, assemble_vector, create_vector, set_bc
 from dolfinx.graph import create_adjacencylist
 from dolfinx.geometry import BoundingBoxTree, compute_collisions, compute_colliding_cells
-from dolfinx.io import (XDMFFile, cell_perm_gmsh, distribute_entity_data, extract_gmsh_geometry,
-                        extract_gmsh_topology_and_markers, ufl_mesh_from_gmsh)
+from dolfinx.io import (XDMFFile, distribute_entity_data, gmshio)
 from dolfinx.mesh import create_mesh, meshtags_from_entities
 
 from ufl import (FacetNormal, FiniteElement, Identity, Measure, TestFunction, TrialFunction, VectorElement,
@@ -68,23 +67,25 @@ H = 0.41
 c_x = c_y =0.2
 r = 0.05
 gdim = 2
-rank = MPI.COMM_WORLD.rank
-if rank == 0:
+mesh_comm = MPI.COMM_WORLD
+model_rank = 0
+if mesh_comm.rank == model_rank:
     rectangle = gmsh.model.occ.addRectangle(0,0,0, L, H, tag=1)
     obstacle = gmsh.model.occ.addDisk(c_x, c_y, 0, r, r)
 # -
 
 # The next step is to subtract the obstacle from the channel, such that we do not mesh the interior of the circle.
 
-if rank == 0:
+if mesh_comm.rank == model_rank:
     fluid = gmsh.model.occ.cut([(gdim, rectangle)], [(gdim, obstacle)])
     gmsh.model.occ.synchronize()
 
 # To get GMSH to mesh the fluid, we add a physical volume marker
 
 fluid_marker = 1
-if rank == 0:
+if mesh_comm.rank == model_rank:
     volumes = gmsh.model.getEntities(dim=gdim)
+    assert(len(volumes) == 1)
     gmsh.model.addPhysicalGroup(volumes[0][0], [volumes[0][1]], fluid_marker)
     gmsh.model.setPhysicalName(volumes[0][0], fluid_marker, "Fluid")
 
@@ -92,7 +93,7 @@ if rank == 0:
 
 inlet_marker, outlet_marker, wall_marker, obstacle_marker = 2, 3, 4, 5
 inflow, outflow, walls, obstacle = [], [], [], []
-if rank == 0:
+if mesh_comm.rank == model_rank:
     boundaries = gmsh.model.getBoundary(volumes, oriented=False)
     for boundary in boundaries:
         center_of_mass = gmsh.model.occ.getCenterOfMass(boundary[0], boundary[1])
@@ -124,7 +125,7 @@ if rank == 0:
 #       Point    DistMin DistMax
 res_min = r / 3.7
 res_max = 1.5 * r
-if rank == 0:
+if mesh_comm.rank == model_rank:
     gmsh.model.mesh.field.add("Distance", 1)
     gmsh.model.mesh.field.setNumbers(1, "EdgesList", obstacle)
     gmsh.model.mesh.field.add("Threshold", 2)
@@ -142,7 +143,7 @@ if rank == 0:
 # ## Generating the mesh
 # We are now ready to generate the mesh. However, we have to decide if our mesh should consist of triangles or quadrilaterals. In this demo, to match the DFG 2D-3 benchmark, we use quadrilateral elements. This is done by recombining the mesh, setting three gmsh options. 
 
-if rank == 0:
+if mesh_comm.rank == model_rank:
     gmsh.option.setNumber("Mesh.RecombinationAlgorithm", 8)
     gmsh.option.setNumber("Mesh.RecombineAll", 2)
     gmsh.option.setNumber("Mesh.SubdivisionAlgorithm", 1)
@@ -151,72 +152,10 @@ if rank == 0:
 
 # ## Loading mesh and boundary markers
 # As we have generated the mesh, we now need to load the mesh and corresponding facet markers into DOLFINx.
-# To load the mesh, we follow the same structure as in  [Deflection of a membrane](./../chapter1/membrane_code.ipynb), with slight modifications to include the facet markers. To learn more about the specifics of the function below, see [A GMSH tutorial for DOLFINx](https://jsdokken.com/src/tutorial_gmsh.html).
+# To load the mesh, we follow the same structure as in  [Deflection of a membrane](./../chapter1/membrane_code.ipynb), with the difference being that we will load in facet markers as well. To learn more about the specifics of the function below, see [A GMSH tutorial for DOLFINx](https://jsdokken.com/src/tutorial_gmsh.html).
 
-# +
-
-if MPI.COMM_WORLD.rank == 0:
-    # Get mesh geometry
-    
-    x = extract_gmsh_geometry(gmsh.model)
-
-    # Get mesh topology for each element
-    topologies = extract_gmsh_topology_and_markers(gmsh.model)
-    # Get information about each cell type from the msh files
-    num_cell_types = len(topologies.keys())
-    cell_information = {}
-    cell_dimensions = np.zeros(num_cell_types, dtype=np.int32)
-    for i, element in enumerate(topologies.keys()):
-        properties = gmsh.model.mesh.getElementProperties(element)
-        name, dim, order, num_nodes, local_coords, _ = properties
-        cell_information[i] = {"id": element, "dim": dim, "num_nodes": num_nodes}
-        cell_dimensions[i] = dim
-
-    # Sort elements by ascending dimension
-    perm_sort = np.argsort(cell_dimensions)
-
-    # Broadcast cell type data and geometric dimension
-    cell_id = cell_information[perm_sort[-1]]["id"]
-    tdim = cell_information[perm_sort[-1]]["dim"]
-    num_nodes = cell_information[perm_sort[-1]]["num_nodes"]
-    cell_id, num_nodes = MPI.COMM_WORLD.bcast([cell_id, num_nodes], root=0)
-    if tdim - 1 in cell_dimensions:
-        num_facet_nodes = MPI.COMM_WORLD.bcast( cell_information[perm_sort[-2]]["num_nodes"], root=0)
-        gmsh_facet_id = cell_information[perm_sort[-2]]["id"]
-        marked_facets = np.asarray(topologies[gmsh_facet_id]["topology"], dtype=np.int64)
-        facet_values = np.asarray(topologies[gmsh_facet_id]["cell_data"], dtype=np.int32)
-
-    cells = np.asarray(topologies[cell_id]["topology"], dtype=np.int64)
-    cell_values = np.asarray(topologies[cell_id]["cell_data"], dtype=np.int32)
-
-else:
-    cell_id, num_nodes = MPI.COMM_WORLD.bcast([None, None], root=0)
-    cells, x = np.empty([0, num_nodes], np.int64), np.empty([0, gdim])
-    cell_values = np.empty((0,), dtype=np.int32)
-    num_facet_nodes = MPI.COMM_WORLD.bcast(None, root=0)
-    marked_facets = np.empty((0, num_facet_nodes), dtype=np.int64)
-    facet_values = np.empty((0,), dtype=np.int32)
-
-# Create distributed mesh
-ufl_domain = ufl_mesh_from_gmsh(cell_id, gdim)
-gmsh_cell_perm = cell_perm_gmsh(to_type(str(ufl_domain.ufl_cell())), num_nodes)
-cells = cells[:, gmsh_cell_perm]
-mesh = create_mesh(MPI.COMM_WORLD, cells, x[:, :gdim], ufl_domain)
-tdim = mesh.topology.dim
-fdim = tdim - 1
-# Permute facets from MSH to DOLFINx ordering
-# FIXME: Last argument is 0 as all facets are the same for tetrahedra
-facet_type = cell_entity_type(to_type(str(ufl_domain.ufl_cell())), fdim, 0)
-gmsh_facet_perm = cell_perm_gmsh(facet_type, num_facet_nodes)
-marked_facets = np.asarray(marked_facets[:, gmsh_facet_perm], dtype=np.int64)
-
-local_entities, local_values = distribute_entity_data(mesh, fdim, marked_facets, facet_values)
-mesh.topology.create_connectivity(fdim, tdim)
-adj = create_adjacencylist(local_entities)
-# Create DOLFINx MeshTags
-ft = meshtags_from_entities(mesh, fdim, adj, np.int32(local_values))
-ft.name = "Facet tags"
-# -
+mesh, _, ft = gmshio.model_to_mesh(gmsh.model, mesh_comm, model_rank, gdim=gdim)
+ft.name = "Facet markers"
 
 # ## Physical and discretization parameters
 # Following the DGF-2 benchmark, we define our problem specific parameters
@@ -392,7 +331,7 @@ dObs = Measure("ds", domain=mesh, subdomain_data=ft, subdomain_id=obstacle_marke
 u_t = inner(as_vector((n[1], -n[0])), u_)
 drag = form(2 / 0.1 * (mu / rho * inner(grad(u_t), n) * n[1] - p_ * n[0]) * dObs)
 lift = form(-2 / 0.1 * (mu / rho * inner(grad(u_t), n) * n[0] + p_ * n[1]) * dObs)
-if rank == 0:
+if mesh.comm.rank == 0:
     C_D = np.zeros(num_steps, dtype=PETSc.ScalarType)
     C_L = np.zeros(num_steps, dtype=PETSc.ScalarType)
     t_u = np.zeros(num_steps, dtype=np.float64)
@@ -406,7 +345,7 @@ cell_candidates = compute_collisions(tree, points)
 colliding_cells = compute_colliding_cells(mesh, cell_candidates, points)
 front_cells = colliding_cells.links(0)
 back_cells = colliding_cells.links(1)
-if rank == 0:
+if mesh.comm.rank == 0:
     p_diff = np.zeros(num_steps, dtype=PETSc.ScalarType)
 
 # ## Solving the time-dependent problem
@@ -475,17 +414,17 @@ for i in range(num_steps):
     # Compute physical quantities
     # For this to work in paralell, we gather contributions from all processors
     # to processor zero and sum the contributions. 
-    drag_coeff = MPI.COMM_WORLD.gather(assemble_scalar(drag), root=0)
-    lift_coeff = MPI.COMM_WORLD.gather(assemble_scalar(lift), root=0)
+    drag_coeff = mesh.comm.gather(assemble_scalar(drag), root=0)
+    lift_coeff = mesh.comm.gather(assemble_scalar(lift), root=0)
     p_front = None
     if len(front_cells) > 0:
         p_front = p_.eval(points[0], front_cells[:1])
-    p_front = MPI.COMM_WORLD.gather(p_front, root=0)
+    p_front = mesh.comm.gather(p_front, root=0)
     p_back = None
     if len(back_cells) > 0:
         p_back = p_.eval(points[1], back_cells[:1])
-    p_back = MPI.COMM_WORLD.gather(p_back, root=0)
-    if rank == 0:
+    p_back = mesh.comm.gather(p_back, root=0)
+    if mesh.comm.rank == 0:
         t_u[i] = t
         t_p[i] = t-dt/2
         C_D[i] = sum(drag_coeff)
@@ -508,7 +447,7 @@ xdmf.close()
 #
 
 # + tags=[]
-if rank == 0:
+if mesh.comm.rank == 0:
     num_velocity_dofs = V.dofmap.index_map_bs * V.dofmap.index_map.size_global
     num_pressure_dofs = Q.dofmap.index_map_bs * V.dofmap.index_map.size_global
     

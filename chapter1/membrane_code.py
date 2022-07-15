@@ -40,7 +40,7 @@ gmsh.model.occ.synchronize()
 # The next step is to make the membrane a physical surface, such that it is recognized by gmsh when generating the mesh. As a surface is a two-dimensional entity, we add two as the first argument, the entity tag of the membrane as the second argument, and the last argument is the physical tag. In a later demo, we will get into when this tag matters.
 
 gdim = 2
-status = gmsh.model.addPhysicalGroup(gdim, [membrane], 1)
+gmsh.model.addPhysicalGroup(gdim, [membrane], 1)
 
 # Finally, we generate the two-dimensional mesh. We set a uniform mesh size by modifying the GMSH options
 
@@ -48,42 +48,17 @@ gmsh.option.setNumber("Mesh.CharacteristicLengthMin",0.05)
 gmsh.option.setNumber("Mesh.CharacteristicLengthMax",0.05)
 gmsh.model.mesh.generate(gdim)
 
-# We will import the GMSH-mesh directly from GMSH, using the approach in Section 2 of [A GMSH tutorial for DOLFINx](https://jsdokken.com/src/tutorial_gmsh.html). To make sure this runs in parallel and  serial, we will read in the mesh on one processor, and let DOLFINx distribute the mesh data among the processros.
-
-from dolfinx import io
-from mpi4py import MPI
-if MPI.COMM_WORLD.rank == 0:
-    # Get mesh geometry
-    geometry_data = io.extract_gmsh_geometry(gmsh.model)
-    # Get mesh topology for each element
-    topology_data = io.extract_gmsh_topology_and_markers(gmsh.model)
-
-# The topology data is a dictionary, where the key is the gmsh cell type (an integer). Each key accesses a dictionary with the topology data and corresponding topology markers. As this mesh only contains one cell type (triangles), as we did not mark any facets, we do not need to loop over the keys of this dictionary, only extract the first one.
-
-import numpy as np
-if MPI.COMM_WORLD.rank == 0:
-    # Extract the cell type and number of nodes per cell and broadcast
-    # it to the other processors 
-    gmsh_cell_type = list(topology_data.keys())[0]    
-    properties = gmsh.model.mesh.getElementProperties(gmsh_cell_type)
-    name, dim, order, num_nodes, local_coords, _ = properties
-    cells = topology_data[gmsh_cell_type]["topology"]
-    cell_id, num_nodes = MPI.COMM_WORLD.bcast([gmsh_cell_type, num_nodes], root=0)
-else:        
-    cell_id, num_nodes = MPI.COMM_WORLD.bcast([None, None], root=0)
-    cells, geometry_data = np.empty([0, num_nodes]), np.empty([0, gdim])
-
-# As we have now broadcasted all the information required to distribute the mesh in parallel
+# # Interfacing with GMSH in DOLFINx
+# We will import the GMSH-mesh directly from GMSH, using the `dolfinx.io.gmshio` interface in DOLFINx.
+# As we in the example have not specified which process we have created the gmsh model on, a model has been created on each mpi process. However, we would like to be able to use a mesh distributed over all processes. We therefore take the model generated on rank 0 of `MPI.COMM_WORLD`, and distribute it over all available ranks. We will also get two mesh tags, one for cells marked with physical groups in the mesh and one for facets marked with physical groups. As we did not not add any physical groups of dimension `gdim-1`, there will be no entities in the `facet_markers`.
 
 # +
-from dolfinx import mesh, cpp
-# Permute topology data from MSH-ordering to dolfinx-ordering
-ufl_domain = io.ufl_mesh_from_gmsh(cell_id, gdim)
-gmsh_cell_perm = io.cell_perm_gmsh(cpp.mesh.to_type(str(ufl_domain.ufl_cell())), num_nodes)
-cells = cells[:, gmsh_cell_perm]
+from dolfinx.io import gmshio
+from mpi4py import MPI
 
-# Create distributed mesh
-domain = mesh.create_mesh(MPI.COMM_WORLD, cells, geometry_data[:, :gdim], ufl_domain)
+gmsh_model_rank = 0
+mesh_comm = MPI.COMM_WORLD
+domain, cell_markers, facet_markers = gmshio.model_to_mesh(gmsh.model, mesh_comm, gmsh_model_rank, gdim=gdim)
 # -
 
 # We define the function space as in the previous tutorial
@@ -101,10 +76,10 @@ beta = fem.Constant(domain, ScalarType(12))
 R0 = fem.Constant(domain, ScalarType(0.3))
 p = 4 * ufl.exp(-beta**2 * (x[0]**2 + (x[1] - R0)**2))
 
-
 # ## Create a Dirichlet boundary condition using geometrical conditions
 # The next step is to create the homogenous boundary condition. As opposed to the [First tutorial](./fundamentals_code.ipynb) we will use `dolfinx.fem.locate_dofs_geometrical` to locate the degrees of freedom on the boundary. As we know that our domain is a circle with radius 1, we know that any degree of freedom should be located at a coordinate $(x,y)$ such that $\sqrt{x^2+y^2}=1$.
 
+import numpy as np
 def on_boundary(x):
     return np.isclose(np.sqrt(x[0]**2 + x[1]**2), 1)
 boundary_dofs = fem.locate_dofs_geometrical(V, on_boundary)

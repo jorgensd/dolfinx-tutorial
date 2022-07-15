@@ -191,8 +191,14 @@ if proc == 0:
     gmsh.write("mesh.msh")
 gmsh.finalize()
 
+# ## Read in MSH files with DOLFINx
+# You can read in MSH files with DOLFINx, which will read them in on a single process, and then distribute them over the available ranks in the MPI communicator.
+
+from dolfinx.io import gmshio
+mesh, cell_markers, facet_markers = gmshio.read_from_msh("mesh.msh", MPI.COMM_WORLD, gdim=2)
+
 # ## Convert msh-files to XDMF using meshio
-# We will use `meshio` to read in the `msh` file, and convert it to a more suitable IO format. Meshio requires `h54py`, and can be installed on linux with the following commands:
+# We will use `meshio` to read in the `msh` file, and convert it to a more suitable IO format. Meshio requires `h5py`, and can be installed on linux with the following commands:
 # ```{code}
 # export HDF5_MPI="ON"
 # export CC=mpicc
@@ -283,3 +289,6 @@ if not pyvista.OFF_SCREEN:
 else:
     pyvista.start_xvfb()
     figure = p.screenshot("subdomains_unstructured.png")
+# -
+
+
