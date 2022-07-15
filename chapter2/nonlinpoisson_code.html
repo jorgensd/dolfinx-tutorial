@@ -731,17 +731,22 @@ Newton’s method requires methods for evaluating the residual <code class="docu
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of interations: 8
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2022-07-11 08:29:01.852 (   0.118s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
-2022-07-11 08:29:01.853 (   0.120s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
-2022-07-11 08:29:01.855 (   0.121s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 20.3795 (tol = 1e-10) r (rel) = 0.922547(tol = 1e-06)
-2022-07-11 08:29:01.855 (   0.121s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
-2022-07-11 08:29:01.857 (   0.123s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 6.95284 (tol = 1e-10) r (rel) = 0.314744(tol = 1e-06)
-2022-07-11 08:29:01.857 (   0.124s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
-2022-07-11 08:29:01.858 (   0.125s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 2.93579 (tol = 1e-10) r (rel) = 0.132899(tol = 1e-06)
-2022-07-11 08:29:01.858 (   0.125s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
-2022-07-11 08:29:01.860 (   0.126s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 0.700635 (tol = 1e-10) r (rel) = 0.0317166(tol = 1e-06)
-2022-07-11 08:29:01.860 (   0.126s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
-2022-07-11 08:29:01.861 (   0.127s) [main            ]       NewtonS
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2022-07-15 18:30:10.612 (   0.097s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
+2022-07-15 18:30:10.613 (   0.098s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
+2022-07-15 18:30:10.615 (   0.099s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 2: r (abs) = 20.3795 (tol = 1e-10) r (rel) = 0.922547(tol = 1e-06)
+2022-07-15 18:30:10.615 (   0.100s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
+2022-07-15 18:30:10.616 (   0.100s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 3: r (abs) = 6.95284 (tol = 1e-10) r (rel) = 0.314744(tol = 1e-06)
+2022-07-15 18:30:10.616 (   0.101s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
+2022-07-15 18:30:10.617 (   0.102s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 4: r (abs) = 2.93579 (tol = 1e-10) r (rel) = 0.132899(tol = 1e-06)
+2022-07-15 18:30:10.617 (   0.102s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
+2022-07-15 18:30:10.618 (   0.103s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 5: r (abs) = 0.700635 (tol = 1e-10) r (rel) = 0.0317166(tol = 1e-06)
+2022-07-15 18:30:10.618 (   0.103s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
+2022-07-15 18:30:10.619 (   0.104s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 6: r (abs) = 0.0490873 (tol = 1e-10) r (rel) = 0.0022221(tol = 1e-06)
+2022-07-15 18:30:10.619 (   0.104s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
+2022-07-15 18:30:10.620 (   0.105s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 7: r (abs) = 0.00029971 (tol = 1e-10) r (rel) = 1.35674e-05(tol = 1e-06)
+2022-07-15 18:30:10.620 (   0.105s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
+2022-07-15 18:30:10.621 (   0.106s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 8: r (abs) = 1.51622e-08 (tol = 1e-10) r (rel) = 6.86368e-10(tol = 1e-06)
+2022-07-15 18:30:10.621 (   0.106s) [main            ]       NewtonSolver.cpp:255   INFO| Newton solver finished in 8 iterations and 90 linear solver iterations.
 </pre></div>
 </div>
 </div>
@@ -771,22 +776,16 @@ If we think of the problem in terms of finite differences on a uniform mesh, <sp
 Error_max: 8.44e-15
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>olver.cpp:36    INFO| Newton iteration 6: r (abs) = 0.0490873 (tol = 1e-10) r (rel) = 0.0022221(tol = 1e-06)
-2022-07-11 08:29:01.861 (   0.128s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
-2022-07-11 08:29:01.862 (   0.129s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 7: r (abs) = 0.00029971 (tol = 1e-10) r (rel) = 1.35674e-05(tol = 1e-06)
-2022-07-11 08:29:01.862 (   0.129s) [main            ]              petsc.cpp:677   INFO| PETSc Krylov solver starting to solve system.
-2022-07-11 08:29:01.863 (   0.130s) [main            ]       NewtonSolver.cpp:36    INFO| Newton iteration 8: r (abs) = 1.51622e-08 (tol = 1e-10) r (rel) = 6.86368e-10(tol = 1e-06)
-2022-07-11 08:29:01.863 (   0.130s) [main            ]       NewtonSolver.cpp:255   INFO| Newton solver finished in 8 iterations and 90 linear solver iterations.
-2022-07-11 08:29:01.881 (   0.148s) [main            ]topologycomputation.cpp:746   INFO| Computing mesh entities of dimension 0
-2022-07-11 08:29:01.882 (   0.148s) [main            ]topologycomputation.cpp:746   INFO| Computing mesh entities of dimension 1
-2022-07-11 08:29:01.882 (   0.148s) [main            ]                MPI.cpp:154   INFO| Computing communicaton graph edges (using NBX algorithm). Number of input edges: 0
-2022-07-11 08:29:01.882 (   0.148s) [main            ]                MPI.cpp:217   INFO| Finished graph edge discovery using NBX algorithm. Number of discovered edges 0
-2022-07-11 08:29:01.882 (   0.148s) [main            ]                MPI.cpp:154   INFO| Computing communicaton graph edges (using NBX algorithm). Number of input edges: 0
-2022-07-11 08:29:01.882 (   0.148s) [main            ]                MPI.cpp:217   INFO| Finished graph edge discovery using NBX algorithm. Number of discovered edges 0
-2022-07-11 08:29:01.882 (   0.148s) [main            ]                MPI.cpp:154   INFO| Computing communicaton graph edges (using NBX algorithm). Number of input edges: 0
-2022-07-11 08:29:01.882 (   0.148s) [main            ]                MPI.cpp:217   INFO| Finished graph edge discovery using NBX algorithm. Number of discovered edges 0
-2022-07-11 08:29:01.882 (   0.148s) [main            ]                MPI.cpp:154   INFO| Computing communicaton graph edges (using NBX algorithm). Number of input edges: 0
-2022-07-11 08:29:01.882 (   0.148s) [main            ]                MPI.cpp:217   INFO| Finished graph edge discovery using NBX algorithm. Number of discovered edges 0
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2022-07-15 18:30:10.633 (   0.118s) [main            ]topologycomputation.cpp:746   INFO| Computing mesh entities of dimension 0
+2022-07-15 18:30:10.633 (   0.118s) [main            ]topologycomputation.cpp:746   INFO| Computing mesh entities of dimension 1
+2022-07-15 18:30:10.633 (   0.118s) [main            ]                MPI.cpp:154   INFO| Computing communicaton graph edges (using NBX algorithm). Number of input edges: 0
+2022-07-15 18:30:10.633 (   0.118s) [main            ]                MPI.cpp:217   INFO| Finished graph edge discovery using NBX algorithm. Number of discovered edges 0
+2022-07-15 18:30:10.633 (   0.118s) [main            ]                MPI.cpp:154   INFO| Computing communicaton graph edges (using NBX algorithm). Number of input edges: 0
+2022-07-15 18:30:10.633 (   0.118s) [main            ]                MPI.cpp:217   INFO| Finished graph edge discovery using NBX algorithm. Number of discovered edges 0
+2022-07-15 18:30:10.633 (   0.118s) [main            ]                MPI.cpp:154   INFO| Computing communicaton graph edges (using NBX algorithm). Number of input edges: 0
+2022-07-15 18:30:10.633 (   0.118s) [main            ]                MPI.cpp:217   INFO| Finished graph edge discovery using NBX algorithm. Number of discovered edges 0
+2022-07-15 18:30:10.633 (   0.118s) [main            ]                MPI.cpp:154   INFO| Computing communicaton graph edges (using NBX algorithm). Number of input edges: 0
+2022-07-15 18:30:10.633 (   0.118s) [main            ]                MPI.cpp:217   INFO| Finished graph edge discovery using NBX algorithm. Number of discovered edges 0
 </pre></div>
 </div>
 </div>
