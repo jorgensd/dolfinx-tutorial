@@ -33,11 +33,11 @@ Docker is a software that uses *containers* to supply software across different 
 All notebooks can be converted to python files using [nbconvert](https://nbconvert.readthedocs.io/en/latest/).
 
 ### Tutorial compatible docker images
-The tutorial uses several dependencies for meshing, plotting and timings. A compatible `JupyterLab` image is available at [DockerHub/dokken92/dolfinx_custom:15072022](https://hub.docker.com/r/dokken92/dolfinx_custom/tags)
+The tutorial uses several dependencies for meshing, plotting and timings. A compatible `JupyterLab` image is available at [DockerHub/dokken92/dolfinx_custom:02082022](https://hub.docker.com/r/dokken92/dolfinx_custom/tags)
 
 To use the notebookes in this tutorial with DOLFINx on your own computer, you should use the docker image using the following command
 ```
-  docker run --init -p 8888:8888 -v "$(pwd)":/root/shared dokken92/dolfinx_custom:15072022
+  docker run --init -p 8888:8888 -v "$(pwd)":/root/shared dokken92/dolfinx_custom:02082022
 ```
 The tutorials can also be exported as a notebook or PDF by clicking the ![Download](save.png)-symbol in the top right corner of the relevant tutorialThe notebook can in turn be used with a Python kernel which has DOLFINx.
 
