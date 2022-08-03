@@ -1,5 +1,5 @@
 # This is a basic workflow to help you get started with Actions
-name: Test against DOLFINx main
+name: Test against DOLFINx nightly build
 
 # Controls when the action will run.
 on:
@@ -53,7 +53,6 @@ jobs:
           apt-get install -y libgl1-mesa-dev xvfb nodejs
           apt-get clean
           pip3 install pyvista matplotlib pythreejs ipygany
-          pip3 cache purge
           jupyter nbextension enable --py --sys-prefix ipygany
           rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
           rm -rf /usr/local/share/.cache/*
