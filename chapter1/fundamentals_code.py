@@ -170,8 +170,8 @@ f = fem.Constant(domain, ScalarType(-6))
 # As we now have defined all variables used to describe our variational problem, we can create the weak formulation
 
 # + vscode={"languageId": "python"}
-a = ufl.dot(ufl.grad(u), ufl.grad(v)) * ufl.dx
-L = f * v * ufl.dx
+a = ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx
+L = ufl.inner(f, v) * ufl.dx
 # -
 
 # Note that there is a very close correspondence between the Python syntax and the mathematical syntax
