@@ -54,7 +54,8 @@ jobs:
           apt-get clean
           rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
           rm -rf /usr/local/share/.cache/*
-          jupyter-book -h
+          ls /root/shared/.local/share/pyvista/examples/
+          ls /github/home/.local/share/
       - name: Test complex notebooks in parallel
         run: |
           export PKG_CONFIG_PATH=/usr/local/dolfinx-complex/lib/pkgconfig:$PKG_CONFIG_PATH
