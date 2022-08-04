@@ -52,8 +52,6 @@ jobs:
           apt-get -qq update
           apt-get install -y libgl1-mesa-dev xvfb nodejs
           apt-get clean
-          pip3 install pyvista matplotlib pythreejs ipygany
-          jupyter nbextension enable --py --sys-prefix ipygany
           rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
           rm -rf /usr/local/share/.cache/*
           jupyter-book -h
