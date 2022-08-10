@@ -1,4 +1,4 @@
-FROM dolfinx/dev-env:latest
+FROM dolfinx/dev-env:nightly
 
 
 WORKDIR /tmp/
@@ -16,15 +16,29 @@ ARG HDF5_MPI="ON"
 # Can be set to "notebook"
 ARG JUPYTER_TYPE="lab" 
 
+# Reinstall HDF5
+RUN export HDF5_SERIES=1.12 && \
+    export HDF5_PATCH=2 && \
+    wget -nc --quiet https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-${HDF5_SERIES}/hdf5-${HDF5_SERIES}.${HDF5_PATCH}/src/hdf5-${HDF5_SERIES}.${HDF5_PATCH}.tar.gz && \
+    tar xfz hdf5-${HDF5_SERIES}.${HDF5_PATCH}.tar.gz && \
+    cmake -G Ninja -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Release -DHDF5_ENABLE_PARALLEL=on -DHDF5_ENABLE_Z_LIB_SUPPORT=on -B build-dir -S hdf5-${HDF5_SERIES}.${HDF5_PATCH} && \
+    cmake --build build-dir && \
+    cmake --install build-dir
+
+# Install python dependencies
+RUN pip3 install --upgrade pip 
+RUN HDF5_MPI=${HDF5_MPI} CC=mpicc HDF5_DIR=${HDF5_DIR} pip3 install --no-cache-dir -r requirements.txt
+
 # pyvista dependencies from apt
 RUN apt-get -qq update && \
     apt-get -y install libgl1-mesa-dev xvfb && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /var/tmp/*
 
-# Install python dependencies
-RUN pip3 install --upgrade pip 
-RUN HDF5_MPI=${HDF5_MPI} CC=mpicc HDF5_DIR=${HDF5_DIR} pip3 install --no-cache-dir -r requirements.txt
+# Install components from dolfinx/lab
+RUN pip3 install pyvista matplotlib pythreejs ipygany && \
+    pip3 cache purge && \
+    jupyter nbextension enable --py --sys-prefix ipygany
 
 # Install basix, ffcx, ufl
 RUN git clone https://github.com/FEniCS/basix.git && \
@@ -49,10 +63,7 @@ RUN git clone https://github.com/FEniCS/dolfinx.git && \
     . /usr/local/lib/dolfinx/dolfinx.conf && \
     PETSC_ARCH=${PETSC_ARCH}  BUILD_TYPE=${BUILD_TYPE} python3 -m pip -v install ./dolfinx/python/
 
-RUN jupyter nbextension enable --py --sys-prefix ipygany
-
 EXPOSE 8888/tcp
 
 ENV SHELL /bin/bash
-# Second argument should be either "lab" or "notebook"
 ENTRYPOINT ["jupyter", ${JUPYTER_TYPE}, "--ip", "0.0.0.0", "--no-browser", "--allow-root"]

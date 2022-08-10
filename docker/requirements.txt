@@ -16,14 +16,5 @@ h5py
 seaborn
 pandas
 
-# Visualization with Pyvista 
-matplotlib
-pyvista
-pythreejs
-ipygany
-
 # Progress bar
 tqdm
-
-# To resolve black dependency conflict
-click
