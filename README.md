@@ -10,7 +10,7 @@ If you have any comments, corrections or questions, please submit an issue in th
 ## Contributing
 If you want to contribute to this tutorial, please make a fork of the repository, make your changes, and test that the CI passes. You can do this locally by downloading [act](https://github.com/nektos/act) and call
 ```bash
-act -j test-against-master
+act -j test-nightly
 ```
 Any code added to the tutorial should work in parallel.
 
@@ -19,7 +19,7 @@ Alternatively, if you want to add a separate chapter, a Jupyter notebook can be 
 # Docker images
 Docker images for this tutorial can be found at [Docker hub](https://hub.docker.com/repository/docker/dokken92/dolfinx_custom)
 
-Additional requirements on top of the `dolfinx/lab` images can be found at [Dockerfile](docker/Dockerfile) and [requirements.txt](docker/requirements.txt)
+Additional requirements on top of the `dolfinx/lab:nightly` images can be found at [Dockerfile](docker/Dockerfile) and [requirements.txt](docker/requirements.txt)
 
 ##
 An image building DOLFINx, Basix, UFL and FFCx from source can be built using:
