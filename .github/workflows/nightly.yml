@@ -37,7 +37,7 @@ jobs:
         run: |
           pip3 install --upgrade pip setuptools
           CC=mpicc HDF_MPI="ON" HDF5_DIR="/usr/local/" pip3 install --no-cache-dir -r docker/requirements.txt
-          pip3 uninstall pyvista
+          pip3 uninstall pyvista -y
           pip3 install pyvista --upgrade
           apt-get -qq update
           apt-get install -y libgl1-mesa-dev xvfb nodejs

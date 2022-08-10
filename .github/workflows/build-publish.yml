@@ -40,7 +40,7 @@ jobs:
           export PETSC_ARCH=linux-gnu-complex-32
           export PYTHONPATH=/usr/local/dolfinx-complex/lib/python3.10/dist-packages:$PYTHONPATH
           export LD_LIBRARY_PATH=/usr/local/dolfinx-complex/lib:$LD_LIBRARY_PATH
-          pip3 uninstall pyvista
+          pip3 uninstall pyvista -y
           pip3 install pyvista --upgrade
           cd chapter1
           mpirun -n 2 python3 complex_mode.py
