@@ -720,14 +720,18 @@ Occasionally we will consider a more physically relevant example to remind the r
 <section id="obtaining-the-software">
 <h2>Obtaining the software<a class="headerlink" href="#obtaining-the-software" title="Permalink to this headline">#</a></h2>
 <p>If you would like to work with DOLFINx outside of the binder-notebooks, you need to install the FEniCS software.
-The recommended way of installing DOLFINx for new usesers is by using Docker.
+The recommended way of installing DOLFINx for new users is by using Docker.
 Docker is a software that uses <em>containers</em> to supply software across different kinds of operating systems (Linux, Mac, Windows). The first step is to install docker, following the instructions at their <a class="reference external" href="https://docs.docker.com/get-started/">webpage</a>.</p>
 <p>All notebooks can be converted to python files using <a class="reference external" href="https://nbconvert.readthedocs.io/en/latest/">nbconvert</a>.</p>
 <section id="tutorial-compatible-docker-images">
 <h3>Tutorial compatible docker images<a class="headerlink" href="#tutorial-compatible-docker-images" title="Permalink to this headline">#</a></h3>
-<p>The tutorial uses several dependencies for meshing, plotting and timings. A compatible <code class="docutils literal notranslate"><span class="pre">JupyterLab</span></code> image is available at <a class="reference external" href="https://hub.docker.com/r/dokken92/dolfinx_custom/tags">DockerHub/dokken92/dolfinx_custom:10082022</a></p>
-<p>To use the notebookes in this tutorial with DOLFINx on your own computer, you should use the docker image using the following command</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="n">docker</span> <span class="n">run</span> <span class="o">--</span><span class="n">init</span> <span class="o">-</span><span class="n">p</span> <span class="mi">8888</span><span class="p">:</span><span class="mi">8888</span> <span class="o">-</span><span class="n">v</span> <span class="s2">&quot;$(pwd)&quot;</span><span class="p">:</span><span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="n">shared</span> <span class="n">dokken92</span><span class="o">/</span><span class="n">dolfinx_custom</span><span class="p">:</span><span class="mi">10082022</span>
+<p>The tutorial uses several dependencies for meshing, plotting and timings. A compatible <code class="docutils literal notranslate"><span class="pre">JupyterLab</span></code> image is available at <a class="reference external" href="https://hub.docker.com/r/dokken92/dolfinx_custom/tags">DockerHub/dokken92/dolfinx_custom:v0.5.0</a></p>
+<p>To use the notebooks in this tutorial with DOLFINx on your own computer, you should use the docker image using the following command</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>  docker run --init -p <span class="m">8888</span>:8888 -v <span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">&quot;</span>:/root/shared dokken92/dolfinx_custom:v0.5.0
+</pre></div>
+</div>
+<p>This image can also be used as a normal docker container by adding:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>  docker run --ti -v <span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">&quot;</span>:/root/shared  --entrypoint<span class="o">=</span><span class="s2">&quot;/bin/bash&quot;</span> dokken92/dolfinx_custom:v0.5.0
 </pre></div>
 </div>
 <p>The tutorials can also be exported as a notebook or PDF by clicking the <img alt="Download" src="_images/save.png" />-symbol in the top right corner of the relevant tutorialThe notebook can in turn be used with a Python kernel which has DOLFINx.</p>
@@ -737,7 +741,7 @@ Docker is a software that uses <em>containers</em> to supply software across dif
 <p>The FEniCS project supplies pre-built docker images at <a class="reference external" href="https://hub.docker.com/r/dolfinx/dolfinx">https://hub.docker.com/r/dolfinx/dolfinx</a>.
 The <a class="reference external" href="https://github.com/FEniCS/dolfinx/blob/main/docker/Dockerfile">Dockerfile</a>
 provides a definitive build recipe. As the DOLFINx docker images are hosted at Docker-hub, one can directly access the image</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">run</span> <span class="n">dolfinx</span><span class="o">/</span><span class="n">dolfinx</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">run</span> <span class="n">dolfinx</span><span class="o">/</span><span class="n">dolfinx</span><span class="p">:</span><span class="n">v0</span><span class="mf">.5.0</span>
 </pre></div>
 </div>
 <p>There are several ways of customizing a docker container, such as mounting volumes/sharing folder, setting a working directory, sharing graphical interfaces etc. See <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span> <span class="pre">--help</span></code> for an extensive list.</p>
