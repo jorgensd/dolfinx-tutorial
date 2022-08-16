@@ -1,4 +1,4 @@
-FROM dolfinx/lab:nightly
+FROM dolfinx/lab:v0.5.0
 
 WORKDIR /tmp/
 
