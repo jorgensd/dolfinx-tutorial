@@ -19,9 +19,11 @@
 #
 # Let's return to the Poisson problem from the [Fundamentals chapter](./../chapter1/fundamentals.md) and see how to extend the mathematics and the implementation to handle Dirichlet condition in combination with a Neumann condition.
 # The domain is still the unit square, but now we set the Dirichlet condition $u=u_D$ at the left and right sides, while the Neumann condition 
+#
 # $$
 # -\frac{\partial u}{\partial n}=g
 # $$
+#
 # is applied to the  remaining sides $y=0$ and $y=1$.
 #
 # ## The PDE problem
