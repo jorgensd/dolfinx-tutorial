@@ -47,7 +47,7 @@ jobs:
  
 
       - name: Install dependencies
-        run: pip3 install notebook nbconvert jupyter-book --upgrade
+        run: pip3 install notebook nbconvert jupyter-book nbconvert==6.5.3 --upgrade
       - name: Test notebooks in parallel
         run: |
           python3 -c "from pyvista import start_xvfb; start_xvfb(0.1)"
