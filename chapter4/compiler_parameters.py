@@ -13,11 +13,11 @@
 #     name: python3
 # ---
 
-# # JIT Parameters and visualization using Pandas
+# # JIT options and visualization using Pandas
 # Author: Jørgen S. Dokken
 #
 # In this chapter, we will explore how to optimize and inspect the integration kernels used in DOLFINx.
-# As we have seen in the previous demos, dolfinx uses the [Unified form language](https://github.com/FEniCS/ufl/) to describe variational problems.
+# As we have seen in the previous demos, DOLFINx uses the [Unified form language](https://github.com/FEniCS/ufl/) to describe variational problems.
 #
 # These descriptions has to be translated in to code for assembling the right and left hand side of the discrete variational problem. 
 #
@@ -30,7 +30,7 @@ from pathlib import Path
 cache_dir = f"{str(Path.cwd())}/.cache"
 print(f"Directory to put C files in: {cache_dir}")
 
-# Next we generate a general function to assemble the mass matrix for a UnitCube. Note that we use `dolfinx.fem.Form` to compile the variational form. For codes using `dolfinx.LinearProblem`, you can supply `jit_parameters` as a keyword argument.
+# Next we generate a general function to assemble the mass matrix for a unit cube. Note that we use `dolfinx.fem.Form` to compile the variational form. For codes using `dolfinx.LinearProblem`, you can supply `jit_options` as a keyword argument.
 
 # +
 from dolfinx.fem import FunctionSpace, form
@@ -42,14 +42,14 @@ from typing import Dict
 import time
 import ufl
 
-def compile_form(space:str, degree:int, jit_params:Dict):
+def compile_form(space:str, degree:int, jit_options:Dict):
     N = 10
     mesh = create_unit_cube(MPI.COMM_WORLD, N, N, N)
     V = FunctionSpace(mesh, (space, degree))
     u = TrialFunction(V)
     v = TestFunction(V)
     a = inner(u, v) * dx
-    a_compiled = form(a, jit_params=jit_params)
+    a_compiled = form(a, jit_options=jit_options)
     start = time.perf_counter()
     assemble_matrix(a_compiled)
     end = time.perf_counter()
@@ -77,9 +77,9 @@ for space in ["N1curl", "CG", "RT"]:
                     cffi_options = [option, "-march=native"]
                 else:
                     cffi_options = [option]
-                jit_parameters = {"cffi_extra_compile_args": cffi_options, 
+                jit_options = {"cffi_extra_compile_args": cffi_options, 
                     "cache_dir": cache_dir, "cffi_libraries": ["m"]}
-                runtime = compile_form(space, degree, jit_params=jit_parameters)
+                runtime = compile_form(space, degree, jit_options=jit_options)
                 results["Space"].append(space)
                 results["Degree"].append(str(degree))
                 results["Options"].append("\n".join(cffi_options))
