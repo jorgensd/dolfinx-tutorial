@@ -5,7 +5,7 @@ jupyterlab
 jupyter-book
 
 # Notebook conversion
-nbconvert==6.5.3
+nbconvert
 
 # Meshio
 meshio
