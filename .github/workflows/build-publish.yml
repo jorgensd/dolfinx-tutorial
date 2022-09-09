@@ -98,7 +98,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
 
-    if: github.ref == 'refs/heads/dokken/jupyter-book'
+    if: github.ref == 'refs/heads/dokken/jupyterbook'
     needs: [build-book]
     steps:
       # Push book to HTML to github pages
