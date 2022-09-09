@@ -226,7 +226,7 @@ bcp = [bcp_outlet]
 # $$
 # where we have used the two previous time steps in the temporal derivative for the velocity, and compute the pressure staggered in time, at the time between the previous and current solution. The second step becomes
 # $$
-# -\nabla \phi = -\frac{1}{\delta t} \nabla \cdot u^* \qquad\text{in } \Omega,
+# \nabla \phi = -\frac{\rho}{\delta t} \nabla \cdot u^* \qquad\text{in } \Omega,
 # $$
 #
 # $$
@@ -241,7 +241,7 @@ bcp = [bcp_outlet]
 # Finally, the third step is
 #
 # $$
-# u^{n+1} = u^{*}-\delta t \phi. 
+# \rho (u^{n+1} - u^{*}) = -\delta t \phi.  
 # $$
 #
 # We start by defining all the variables used in the variational formulations.
@@ -263,9 +263,9 @@ phi = Function(Q)
 
 f = Constant(mesh, PETSc.ScalarType((0,0)))
 F1 = rho / k * dot(u - u_n, v) * dx 
-F1 += inner(1.5 * dot(u_n, nabla_grad(u_n)) - 0.5 * dot(u_n1, nabla_grad(u_n1)), v) * dx
+F1 += rho * inner(1.5 * dot(u_n, nabla_grad(u_n)) - 0.5 * dot(u_n1, nabla_grad(u_n1)), v) * dx
 F1 += 0.5 * mu * inner(grad(u+u_n), grad(v))*dx - dot(p_, div(v))*dx
-F1 += dot(f, v) * dx
+F1 -= dot(f, v) * dx
 a1 = form(lhs(F1))
 L1 = form(rhs(F1))
 A1 = assemble_matrix(a1, bcs=bcu)
@@ -275,15 +275,15 @@ b1 = create_vector(L1)
 # Next we define the second step
 
 a2 = form(dot(grad(p), grad(q))*dx)
-L2 = form(-1/k * dot(div(u_s), q) * dx)
+L2 = form(-rho/k * dot(div(u_s), q) * dx)
 A2 = assemble_matrix(a2, bcs=bcp)
 A2.assemble()
 b2 = create_vector(L2)
 
 # We finally create the last step
 
-a3 = form(dot(u, v)*dx)
-L3 = form(dot(u_s, v)*dx - k * dot(nabla_grad(phi), v)*dx)
+a3 = form(rho * dot(u, v)*dx)
+L3 = form(rho * dot(u_s, v)*dx - k * dot(nabla_grad(phi), v)*dx)
 A3 = assemble_matrix(a3)
 A3.assemble()
 b3 = create_vector(L3)
