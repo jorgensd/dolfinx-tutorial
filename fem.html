@@ -725,13 +725,13 @@ Docker is a software that uses <em>containers</em> to supply software across dif
 <p>All notebooks can be converted to python files using <a class="reference external" href="https://nbconvert.readthedocs.io/en/latest/">nbconvert</a>.</p>
 <section id="tutorial-compatible-docker-images">
 <h3>Tutorial compatible docker images<a class="headerlink" href="#tutorial-compatible-docker-images" title="Permalink to this headline">#</a></h3>
-<p>The tutorial uses several dependencies for meshing, plotting and timings. A compatible <code class="docutils literal notranslate"><span class="pre">JupyterLab</span></code> image is available at <a class="reference external" href="https://hub.docker.com/r/dokken92/dolfinx_custom/tags">DockerHub/dokken92/dolfinx_custom:v0.5.0</a></p>
+<p>The tutorial uses several dependencies for meshing, plotting and timings. A compatible <code class="docutils literal notranslate"><span class="pre">JupyterLab</span></code> image is available in the <a class="reference external" href="https://github.com/jorgensd/dolfinx-tutorial/pkgs/container/dolfinx-tutorial">Github Packages</a>)</p>
 <p>To use the notebooks in this tutorial with DOLFINx on your own computer, you should use the docker image using the following command</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>  docker run --init -p <span class="m">8888</span>:8888 -v <span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">&quot;</span>:/root/shared dokken92/dolfinx_custom:v0.5.0
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>  docker run --init -p <span class="m">8888</span>:8888 -v <span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">&quot;</span>:/root/shared ghcr.io/jorgensd/dolfinx-tutorial:v0.5.1
 </pre></div>
 </div>
 <p>This image can also be used as a normal docker container by adding:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>  docker run --ti -v <span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">&quot;</span>:/root/shared  --entrypoint<span class="o">=</span><span class="s2">&quot;/bin/bash&quot;</span> dokken92/dolfinx_custom:v0.5.0
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>  docker run --ti -v <span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">&quot;</span>:/root/shared  --entrypoint<span class="o">=</span><span class="s2">&quot;/bin/bash&quot;</span> ghcr.io/jorgensd/dolfinx-tutorial:v0.5.1
 </pre></div>
 </div>
 <p>The tutorials can also be exported as a notebook or PDF by clicking the <img alt="Download" src="_images/save.png" />-symbol in the top right corner of the relevant tutorialThe notebook can in turn be used with a Python kernel which has DOLFINx.</p>
