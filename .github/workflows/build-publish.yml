@@ -41,6 +41,7 @@ jobs:
           export LD_LIBRARY_PATH=/usr/local/dolfinx-complex/lib:$LD_LIBRARY_PATH
           pip3 uninstall pyvista -y
           pip3 install pyvista --upgrade
+          python3 -c "from pyvista import start_xvfb; start_xvfb(0.1)"
           cd chapter1
           mpirun -n 2 python3 complex_mode.py
  
@@ -95,15 +96,29 @@ jobs:
         run: 
           jupyter-book build  -W .
 
+      - name: Upload Jupyter-book artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: book
+          path: _build/html/
+          retention-days: 2
+          if-no-files-found: error
+
   publish:
     runs-on: ubuntu-latest
 
     if: github.ref == 'refs/heads/dokken/jupyterbook'
     needs: [build-book]
     steps:
-      # Push book to HTML to github pages
-        - name: GitHub Pages action
-          uses: peaceiris/actions-gh-pages@v3.5.9
-          with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            publish_dir: ./_build/html
+
+      - name: Download Jupyter-book
+        uses: actions/download-artifact@v3
+        with:
+          name: book
+          path: _html
+      
+      - name: Push book to HTML to github pages
+        uses: peaceiris/actions-gh-pages@v3.8.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: _html
