@@ -1,6 +1,6 @@
 # The DOLFINx tutorial
-![CI status](https://github.com/jorgensd/dolfinx-tutorial/actions/workflows/build-publish.yml/badge.svg)
-![Main status](https://github.com/jorgensd/dolfinx-tutorial/actions/workflows/main-test.yml/badge.svg)
+[![Test, build and publish](https://github.com/jorgensd/dolfinx-tutorial/actions/workflows/build-publish.yml/badge.svg)](https://github.com/jorgensd/dolfinx-tutorial/actions/workflows/build-publish.yml)
+[![Test release branch against DOLFINx nightly build](https://github.com/jorgensd/dolfinx-tutorial/actions/workflows/nightly.yml/badge.svg)](https://github.com/jorgensd/dolfinx-tutorial/actions/workflows/nightly.yml)
 
 Author: Jørgen S. Dokken
 
