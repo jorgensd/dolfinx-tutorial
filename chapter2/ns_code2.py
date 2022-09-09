@@ -54,7 +54,7 @@ from dolfinx.fem import Constant, Function, FunctionSpace, assemble_scalar, diri
 from dolfinx.fem.petsc import apply_lifting, assemble_matrix, assemble_vector, create_vector, set_bc
 from dolfinx.graph import create_adjacencylist
 from dolfinx.geometry import BoundingBoxTree, compute_collisions, compute_colliding_cells
-from dolfinx.io import (XDMFFile, distribute_entity_data, gmshio)
+from dolfinx.io import (VTXWriter, distribute_entity_data, gmshio)
 from dolfinx.mesh import create_mesh, meshtags_from_entities
 
 from ufl import (FacetNormal, FiniteElement, Identity, Measure, TestFunction, TrialFunction, VectorElement,
@@ -123,8 +123,8 @@ if mesh_comm.rank == model_rank:
 # LcMin -o---------/
 #        |         |       |
 #       Point    DistMin DistMax
-res_min = r / 3.7
-res_max = 1.5 * r
+res_min = r / 8
+res_max = 2 * r
 if mesh_comm.rank == model_rank:
     gmsh.model.mesh.field.add("Distance", 1)
     gmsh.model.mesh.field.setNumbers(1, "EdgesList", obstacle)
@@ -132,8 +132,8 @@ if mesh_comm.rank == model_rank:
     gmsh.model.mesh.field.setNumber(2, "IField", 1)
     gmsh.model.mesh.field.setNumber(2, "LcMin", res_min)
     gmsh.model.mesh.field.setNumber(2, "LcMax", res_max)
-    gmsh.model.mesh.field.setNumber(2, "DistMin", 4*r)
-    gmsh.model.mesh.field.setNumber(2, "DistMax", 8*r)
+    gmsh.model.mesh.field.setNumber(2, "DistMin", 3*r)
+    gmsh.model.mesh.field.setNumber(2, "DistMax", 7*r)
 
     # We take the minimum of the two fields as the mesh size
     gmsh.model.mesh.field.add("Min", 5)
@@ -141,14 +141,11 @@ if mesh_comm.rank == model_rank:
     gmsh.model.mesh.field.setAsBackgroundMesh(5)
 
 # ## Generating the mesh
-# We are now ready to generate the mesh. However, we have to decide if our mesh should consist of triangles or quadrilaterals. In this demo, to match the DFG 2D-3 benchmark, we use quadrilateral elements. This is done by recombining the mesh, setting three gmsh options. 
+# We are now ready to generate the mesh. However, we have to decide if our mesh should consist of triangles or quadrilaterals. In this demo, to match the DFG 2D-3 benchmark, we use second order triangular elements.
 
 if mesh_comm.rank == model_rank:
-    gmsh.option.setNumber("Mesh.RecombinationAlgorithm", 8)
-    gmsh.option.setNumber("Mesh.RecombineAll", 2)
-    gmsh.option.setNumber("Mesh.SubdivisionAlgorithm", 1)
     gmsh.model.mesh.generate(gdim)
-    gmsh.model.mesh.optimize("Netgen")
+    gmsh.model.mesh.setOrder(2)
 
 # ## Loading mesh and boundary markers
 # As we have generated the mesh, we now need to load the mesh and corresponding facet markers into DOLFINx.
@@ -161,7 +158,7 @@ ft.name = "Facet markers"
 # Following the DGF-2 benchmark, we define our problem specific parameters
 
 t = 0
-T = 1 #8                    # Final time
+T = 8                       # Final time
 dt = 1/1600                 # Time step size
 num_steps = int(T/dt)
 k = Constant(mesh, PETSc.ScalarType(dt))        
@@ -351,14 +348,16 @@ if mesh.comm.rank == 0:
 # ## Solving the time-dependent problem
 # ```{admonition} Stability of the Navier-Stokes equation
 # Note that the current splitting scheme has to fullfil the a [Courant–Friedrichs–Lewy condition](https://en.wikipedia.org/wiki/Courant%E2%80%93Friedrichs%E2%80%93Lewy_condition). This limits the spatial discretization with respect to the inlet velocity and temporal discretization.
-# Other temporal discretization schemes such as the second order backward difference discretization or Crank-Nicholson discretization with Adams-Bashforth linearization are better behaved than our simple backward differnce scheme.```
+# Other temporal discretization schemes such as the second order backward difference discretization or Crank-Nicholson discretization with Adams-Bashforth linearization are better behaved than our simple backward difference scheme.
+# ```
+#
 # As in the previous example, we create output files for the velocity and pressure and solve the time-dependent problem. As we are solving a time dependent problem with many time steps, we use the `tqdm`-package to visualize the progress. This package can be install with `pip3`.
 
 # + tags=[]
-xdmf = XDMFFile(MPI.COMM_WORLD, "dfg2D-3.xdmf", "w")
-xdmf.write_mesh(mesh)
-xdmf.write_function(u_, t)
-xdmf.write_function(p_, t)
+vtx_u = VTXWriter(mesh.comm, "dfg2D-3-u.bp", [u_])
+vtx_p = VTXWriter(mesh.comm, "dfg2D-3-p.bp", [p_])
+vtx_u.write(t)
+vtx_p.write(t)
 
 progress = tqdm.notebook.tqdm(desc="Solving PDE", total=num_steps)
 # If running this as a python script, you should use the Progressbar command below
@@ -403,8 +402,8 @@ for i in range(num_steps):
     u_.x.scatter_forward()
 
     # Write solutions to file
-    xdmf.write_function(u_, t)
-    xdmf.write_function(p_, t)
+    vtx_u.write(t)
+    vtx_p.write(t)
 
     # Update variable with solution form this time step
     with u_.vector.localForm() as loc_, u_n.vector.localForm() as loc_n, u_n1.vector.localForm() as loc_n1:
@@ -439,7 +438,8 @@ for i in range(num_steps):
                 p_diff[i] -= pressure[0]
                 break
 # Close xmdf file
-xdmf.close()
+vtx_u.close()
+vtx_p.close()
 # -
 
 # ## Verification using data from FEATFLOW
@@ -483,4 +483,6 @@ if mesh.comm.rank == 0:
 
 # -
 
-# We observe an offset in amplitude. This is due to the reduced number of degrees of freedom compared to FEATFLOW. If we change the parameters `res_min` to `r/5`, and `res_max` to `r`, we can obtain a result closer to the FEATFLOW benchmark. It is recommended to convert the notebook to a python-script using [nbconvert](https://nbconvert.readthedocs.io/en/latest/) and using `mpirun -n 4 python3 ns_code2.py` to run the python program distributed over 4 processors. 
+# We observe an offset in amplitude. This is due to the reduced number of degrees of freedom compared to FEATFLOW. If we change the parameters `res_min` to `r/5`, and `res_max` to `r`, we can obtain a result closer to the FEATFLOW benchmark. It is recommended to get the corresponding notebook from [Github](https://github.com/jorgensd/dolfinx-tutorial/blob/dokken/jupyterbook/chapter2/ns_code2.py) and use 2 processes when solving the problem, i.e. `mpirun -n 2 python3 ns_code2.py`.
+
+
