@@ -74,6 +74,15 @@ jobs:
           mpirun -n 3 python3 convergence.py
           mpirun -n 3 python3 compiler_parameters.py
 
+      - name: Upload Navier-Stokes DFG 2D 3 plots
+        uses: actions/upload-artifact@v3
+        with:
+          name: DFG2D-3
+          path: chapter2/figures
+          retention-days: 2
+          if-no-files-found: error
+
+
   build-book:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
