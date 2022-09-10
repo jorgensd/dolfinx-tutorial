@@ -75,24 +75,24 @@ We now move on to the second step in  our splitting scheme for the incompressibl
 We may now use the computed tentative velocity to compute the new pressure $p^n$:
 ```{math}
 :label: ipcs-two
-    \langle \nabla p^{n+1}, \nabla q \rangle = \langle \nabla p^n, \nabla q\rangle - \Delta t^{-1}\langle \nabla \cdot u^*, q\rangle.
+    \langle \nabla p^{n+1}, \nabla q \rangle = \langle \nabla p^n, \nabla q\rangle - \Delta t^{-1}\langle \rho \nabla \cdot u^*, q\rangle.
 ```
 Note here that $q$ is a scalar-valued test function from the pressure space, whereas the test function $v$ in [](ipcs-one) is a vector-valued test function from the velocity space.
 
 One way to think about this step is to subtract the Navier-Stokes momentum equation [](navier-stokes) expressed in terms of the tentative velocity $u^*$ and the pressure $p^n$ from the momentum equation expressed in terms of the velocity $u^{n+1}$ and pressure $p^{n+1}$. This results in the equation
 ```{math}
-\frac{u^{n+1}-u^*}{\Delta t}+\nabla p^{n+1}- \nabla p^n = 0.
+\frac{\rho (u^{n+1}-u^*)}{\Delta t}+\nabla p^{n+1}- \nabla p^n = 0.
 ```
 Taking the divergence and requiring that $\nabla \cdot u^{n+1}=0$ by the Navier-Stokes continuity equation, we obtain the equation
 ```{math}
 :label: ipcs-tmp
- - \frac{\nabla\cdot  u^*}{\Delta t}+ \nabla^2p^{n+1}-\nabla^2p^n=0,
+ - \frac{\rho \nabla\cdot  u^*}{\Delta t}+ \nabla^2p^{n+1}-\nabla^2p^n=0,
 ```
 which is the Poisson problem for the pressure $p^{n+1} resulting in the variational formulation [](ipcs-two).
 
 Finally, we compute the corrected velocity $u^{n+1}$ from the equation [](ipcs-tmp). Multiplying this equation by a test function $v$, we obtain
 ```{math}
-    \langle u^{n+1}, v\rangle=\langle u^*, v\rangle -\Delta t\langle \nabla(p^{n+1}-p^n), v\rangle
+    \langle \rho (u^{n+1} - u^*), v\rangle= -\Delta t\langle \nabla(p^{n+1}-p^n), v\rangle
 ```
 
 In summary, we may thus solve the incompressible Navier-Stokes equations efficiently by solving a sequence of three linear variational problems in each step.
