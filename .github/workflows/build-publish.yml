@@ -13,6 +13,22 @@ on:
   schedule:
     - cron: "0 8 * * 1"
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+env:
+  # Directory that will be published on github pages
+  PUBLISH_DIR: ./_build/html
+
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -31,7 +47,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Test complex notebooks in parallel
         run: |
@@ -99,35 +115,36 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       # Runs a single command using the runners shell
       - name: Build the book
         run: 
           jupyter-book build  -W .
 
-      - name: Upload Jupyter-book artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload book
+        uses: actions/upload-pages-artifact@v1
         with:
-          name: book
-          path: _build/html/
-          retention-days: 2
-          if-no-files-found: error
+          path: ${{ env.PUBLISH_DIR }}
+          retention-days: 7
 
-  publish:
-    runs-on: ubuntu-latest
+  # Single deploy job since we're just deploying
+  deploy:
+      needs: build-book
+      environment:
+        name: github-pages
+        url: ${{ steps.deployment.outputs.page_url }}
 
-    if: github.ref == 'refs/heads/dokken/jupyterbook'
-    needs: [build-book]
-    steps:
+      runs-on: ubuntu-latest
+      if: github.ref == 'refs/heads/dokken/jupyterbook'
 
-      - name: Download Jupyter-book
-        uses: actions/download-artifact@v3
-        with:
-          name: book
-          path: _html
-      
-      - name: Push book to HTML to github pages
-        uses: peaceiris/actions-gh-pages@v3.8.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: _html
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+        
+        - name: Setup Pages
+          uses: actions/configure-pages@v2
+    
+        
+        - name: Deploy to GitHub Pages
+          id: deployment
+          uses: actions/deploy-pages@v1
