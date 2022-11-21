@@ -115,7 +115,7 @@ ds = Measure("ds", domain=mesh)
 def epsilon(u):
     return sym(grad(u)) 
 def sigma(u):
-    return lambda_ * nabla_div(u) * Identity(u.geometric_dimension()) + 2*mu*epsilon(u)
+    return lambda_ * nabla_div(u) * Identity(len(u)) + 2*mu*epsilon(u)
 
 u = TrialFunction(V)
 v = TestFunction(V)

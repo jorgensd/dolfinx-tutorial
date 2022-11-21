@@ -154,7 +154,7 @@ def epsilon(u):
 
 # Define stress tensor
 def sigma(u, p):
-    return 2*mu*epsilon(u) - p*Identity(u.geometric_dimension())
+    return 2*mu*epsilon(u) - p*Identity(len(u))
 
 # Define the variational problem for the first step
 p_n = Function(Q)

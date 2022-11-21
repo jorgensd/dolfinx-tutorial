@@ -141,44 +141,39 @@ solver = nls.petsc.NewtonSolver(domain.comm, problem)
 solver.atol = 1e-8
 solver.rtol = 1e-8
 solver.convergence_criterion = "incremental"
+
 # -
 
 # We create a function to plot the solution at each time step.
 
 # +
 import pyvista
-pyvista.set_jupyter_backend("ipygany")
+import matplotlib.pyplot as plt
+pyvista.start_xvfb(0.1)
+plotter = pyvista.Plotter()
+plotter.open_gif("deformation.gif", fps=3)
 
-grid = pyvista.UnstructuredGrid(*plot.create_vtk_mesh(domain, domain.topology.dim))
+topology, cells, geometry = plot.create_vtk_mesh(u.function_space)
+function_grid = pyvista.UnstructuredGrid(topology, cells, geometry)
 
-def plot_function(t, uh):
-    """
-    Create a figure of the concentration uh warped visualized in 3D at timet step t.
-    """
-    p = pyvista.Plotter()
-    # Create grid defined by the function space for visualization of the function
-    topology, cells, geometry = plot.create_vtk_mesh(uh.function_space)
-    function_grid = pyvista.UnstructuredGrid(topology, cells, geometry)
-    var_name = f"u({t})"
-    values = np.zeros((geometry.shape[0], 3))
-    values[:, :len(uh)] = uh.x.array.reshape(geometry.shape[0], len(uh))
-    function_grid[var_name] = values
-    function_grid.set_active_vectors(var_name)
-    # Warp mesh by deformation
-    warped = function_grid.warp_by_vector(var_name, factor=1)
-    
-    # Add mesh to plotter and visualize
-    actor = p.add_mesh(warped)
-    p.show_axes()
-    if not pyvista.OFF_SCREEN:
-       p.show()
-    else:
-        pyvista.start_xvfb()
-        figure_as_array = p.screenshot(f"diffusion_{t:.2f}.png")
-        # Clear plotter for next plot
-        p.remove_actor(actor)
+values = np.zeros((geometry.shape[0], 3))
+values[:, :len(u)] = u.x.array.reshape(geometry.shape[0], len(u))
+function_grid["u"] = values
+function_grid.set_active_vectors("u")
 
-plot_function(0, u)
+# Warp mesh by deformation
+warped = function_grid.warp_by_vector("u", factor=1)
+warped.set_active_vectors("u")
+
+# Add mesh to plotter and visualize
+actor = plotter.add_mesh(warped, show_edges=True, lighting=False, clim=[0, 10])
+
+# Compute magnitude of displacement to visualize in GIF
+Vs = fem.FunctionSpace(domain, ("Lagrange", 2))
+magnitude = fem.Function(Vs)
+us = fem.Expression(ufl.sqrt(sum([u[i]**2 for i in range(len(u))])), Vs.element.interpolation_points())
+magnitude.interpolate(us)
+warped["mag"] = magnitude.x.array
 # -
 
 # Finally, we solve the problem over several time steps, updating the y-component of the traction
@@ -192,6 +187,16 @@ for n in range(1, 10):
     assert(converged)
     u.x.scatter_forward()
     print(f"Time step {n}, Number of iterations {num_its}, Load {T.value}")
-    plot_function(n, u)
+    function_grid["u"][:, :len(u)] = u.x.array.reshape(geometry.shape[0], len(u))
+    magnitude.interpolate(us)
+    warped.set_active_scalars("mag")
+    warped_n = function_grid.warp_by_vector(factor=1)
+    plotter.update_coordinates(warped_n.points.copy(), render=False)
+    plotter.update_scalar_bar_range([0, 10])
+    plotter.update_scalars(magnitude.x.array)
+    plotter.write_frame()
+plotter.close()
+
+# <img src="./deformation.gif" alt="gif" class="bg-primary mb-1" width="800px">
 
 

@@ -35,8 +35,8 @@ from dolfinx import fem, mesh, io, plot
 
 # Define temporal parameters
 t = 0 # Start time
-T = 2.0 # Final time
-num_steps = 61     
+T = 1.0 # Final time
+num_steps = 50     
 dt = T / num_steps # time step size
 
 # Define mesh
@@ -116,32 +116,26 @@ solver.getPC().setType(PETSc.PC.Type.LU)
 
 # +
 import pyvista
-pyvista.set_jupyter_backend("ipygany")
+import matplotlib.pyplot as plt
 
 grid = pyvista.UnstructuredGrid(*plot.create_vtk_mesh(V))
 
-def plot_function(t, uh):
-    """
-    Create a figure of the concentration uh warped visualized in 3D at timet step t.
-    """
-    p = pyvista.Plotter()
-    # Update point values on pyvista grid
-    grid.point_data[f"u({t})"] = uh.x.array.real
-    # Warp mesh by point values
-    warped = grid.warp_by_scalar(f"u({t})", factor=1.5)
+pyvista.start_xvfb(0.5)  # Start virtual framebuffer for plotting
+plotter = pyvista.Plotter()
+plotter.open_gif("u_time.gif")
 
-    # Add mesh to plotter and visualize in notebook or save as figure
-    actor = p.add_mesh(warped)
-    if not pyvista.OFF_SCREEN:
-       p.show()
-    else:
-        pyvista.start_xvfb()
-        figure_as_array = p.screenshot(f"diffusion_{t:.2f}.png")
-        # Clear plotter for next plot
-        p.remove_actor(actor)
-plot_function(0, uh)
-# -
+grid.point_data["uh"] = uh.x.array
+warped = grid.warp_by_scalar("uh", factor=1)
 
+viridis = plt.cm.get_cmap("viridis", 25)
+sargs = dict(title_font_size=25, label_font_size=20, fmt="%.2e", color="black",
+             position_x=0.1, position_y=0.8, width=0.8, height=0.1)
+
+renderer = plotter.add_mesh(warped, show_edges=True, lighting=False,
+                            cmap=viridis, scalar_bar_args=sargs,
+                            clim=[0, max(uh.x.array)])
+
+# + [markdown] tags=[]
 # ## Updating the solution and right hand side per time step
 # To be able to solve the variation problem at each time step, we have to assemble the right hand side and apply the boundary condition before calling
 # `solver.solve(b, uh.vector)`. We start by resetting the values in `b` as we are reusing the vector at every time step. 
@@ -149,8 +143,8 @@ plot_function(0, uh)
 # This is because we want to use lifting to apply the boundary condition, which preserves symmetry of the matrix $A$ if the bilinear form $a(u,v)=a(v,u)$ without Dirichlet boundary conditions.
 # When we have applied the boundary condition, we can solve the linear system and update values that are potentially shared between processors.
 # Finally, before moving to the next time step, we update the solution at the previous time step to the solution at this time step.
+# -
 
-# +
 for i in range(num_steps):
     t += dt
 
@@ -173,12 +167,15 @@ for i in range(num_steps):
 
     # Write solution to file
     xdmf.write_function(uh, t)
-    # Plot every 15th time step
-    if i % 15 == 0:
-        plot_function(t, uh)
-
+    # Update plot
+    warped = grid.warp_by_scalar("uh", factor=1)
+    plotter.update_coordinates(warped.points.copy(), render=False)
+    plotter.update_scalars(uh.x.array, render=False)
+    plotter.write_frame()
+plotter.close()
 xdmf.close()
-# -
+
+# <img src="./u_time.gif" alt="gif" class="bg-primary mb-1" width="800px">
 
 # ## Animation with Paraview
 # We can also use Paraview to create an animation. We open the file in paraview with `File->Open`, and then press `Apply` in the properties panel.

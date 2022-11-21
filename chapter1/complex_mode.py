@@ -117,7 +117,7 @@ print(global_error, max_error)
 # Finally, we plot the real and imaginary solution
 
 import pyvista
-pyvista.set_jupyter_backend("ipygany")
+pyvista.set_jupyter_backend("pythreejs")
 p_mesh = pyvista.UnstructuredGrid(*dolfinx.plot.create_vtk_mesh(mesh, mesh.topology.dim))
 pyvista_cells, cell_types, geometry = dolfinx.plot.create_vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(pyvista_cells, cell_types, geometry)

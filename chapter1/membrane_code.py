@@ -134,7 +134,6 @@ else:
 
 # We next plot the load on the domain
 
-pyvista.set_jupyter_backend("ipygany")
 load_plotter = pyvista.Plotter()
 p_grid = pyvista.UnstructuredGrid(*create_vtk_mesh(Q))
 p_grid.point_data["p"] = pressure.x.array.real

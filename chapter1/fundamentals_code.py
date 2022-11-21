@@ -247,7 +247,7 @@ topology, cell_types, geometry = plot.create_vtk_mesh(domain, tdim)
 grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
 # -
 
-# There are several backends that can be used with pyvista, and they have different benefits and drawbacks. See the [pyvista documentation](https://docs.pyvista.org/user-guide/jupyter/index.html) for more information and installation details. In this example and the rest of the tutorial we will use [ipygany](https://github.com/QuantStack/ipygany) and [pythreejs](https://github.com/jupyter-widgets/pythreejs).
+# There are several backends that can be used with pyvista, and they have different benefits and drawbacks. See the [pyvista documentation](https://docs.pyvista.org/user-guide/jupyter/index.html) for more information and installation details. In this example and the rest of the tutorial we will use [pythreejs](https://github.com/jupyter-widgets/pythreejs).
 
 # + vscode={"languageId": "python"}
 pyvista.set_jupyter_backend("pythreejs")
@@ -287,24 +287,23 @@ if not pyvista.OFF_SCREEN:
     u_plotter.show()
 # -
 
-# ## ipygany
-# We change plotting from `pythreejs` to `ipygany` by initializing another `Plotter` with `jupyter_backend="ipygany"`. We also warp the mesh by scalar to make use of the 3D plotting.
+# We can also warp the mesh by scalar to make use of the 3D plotting.
 
 # + vscode={"languageId": "python"}
 warped = u_grid.warp_by_scalar()
 plotter2 = pyvista.Plotter()
 plotter2.add_mesh(warped, show_edges=True, show_scalar_bar=True)
 if not pyvista.OFF_SCREEN:
-    plotter2.show(jupyter_backend="ipygany")
+    plotter2.show()
 # -
 
 # ## External post-processing
-# For post-processing outside the python code, it is suggested to save the solution to file using either `dolfinx.io.VTKFile` or `dolfinx.io.XDMFFile` and using [Paraview](https://www.paraview.org/). This is especially suggested for 3D visualization.
+# For post-processing outside the python code, it is suggested to save the solution to file using either `dolfinx.io.VTXWriter` or `dolfinx.io.XDMFFile` and using [Paraview](https://www.paraview.org/). This is especially suggested for 3D visualization.
 
 # + vscode={"languageId": "python"}
 from dolfinx import io
-with io.VTKFile(domain.comm, "output.pvd", "w") as vtk:
-    vtk.write([uh._cpp_object])
+with io.VTXWriter(domain.comm, "output.bp", [uh]) as vtx:
+    vtx.write(0.0)
 with io.XDMFFile(domain.comm, "output.xdmf", "w") as xdmf:
     xdmf.write_mesh(domain)
     xdmf.write_function(uh)

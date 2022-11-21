@@ -24,7 +24,6 @@
 import gmsh
 import numpy as np
 import pyvista
-
 from dolfinx.fem import (Constant, dirichletbc, Function, FunctionSpace, assemble_scalar,
                          form, locate_dofs_geometrical, locate_dofs_topological)
 from dolfinx.fem.petsc import LinearProblem
@@ -37,6 +36,8 @@ from ufl import (SpatialCoordinate, TestFunction, TrialFunction,
 
 from mpi4py import MPI
 from petsc4py.PETSc import ScalarType
+
+pyvista.set_jupyter_backend("pythreejs")
 
 mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
 Q = FunctionSpace(mesh, ("DG", 0))
@@ -97,13 +98,10 @@ bcs = [dirichletbc(ScalarType(1), dofs, V)]
 
 # We can now solve and visualize the solution of the problem
 
-# +
+# + tags=[]
 problem = LinearProblem(a, L, bcs=bcs, petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
 uh = problem.solve()
 
-pyvista.set_jupyter_backend("pythreejs")
-
-p = pyvista.Plotter(window_size=[800, 800], shape=(1,2))
 # Filter out ghosted cells
 num_cells_local = mesh.topology.index_map(mesh.topology.dim).size_local
 marker = np.zeros(num_cells_local, dtype=np.int32)
@@ -112,24 +110,30 @@ cells_1 = cells_1[cells_1<num_cells_local]
 marker[cells_0] = 1
 marker[cells_1] = 2
 topology, cell_types, x = create_vtk_mesh(mesh, mesh.topology.dim, np.arange(num_cells_local, dtype=np.int32))
+
+p = pyvista.Plotter(window_size=[800, 800])
 grid = pyvista.UnstructuredGrid(topology, cell_types, x)
 grid.cell_data["Marker"] = marker
 grid.set_active_scalars("Marker")
-p.subplot(0,0)
-actor0 = p.add_mesh(grid, show_edges=True)
-p.subplot(0,1)
-grid_uh = pyvista.UnstructuredGrid(*create_vtk_mesh(V))
-grid_uh.point_data["u"] = uh.x.array.real
-grid_uh.set_active_scalars("u")
-actor1 = p.add_mesh(grid_uh, show_edges=True)
+p.add_mesh(grid, show_edges=True)
 if not pyvista.OFF_SCREEN:
-    p.show()
+    p.show(jupyter_backend="pythreejs")
 else:
     pyvista.start_xvfb()
     figure = p.screenshot("subdomains_structured.png")
-
-
 # -
+
+p2 = pyvista.Plotter(window_size=[800, 800])
+grid_uh = pyvista.UnstructuredGrid(*create_vtk_mesh(V))
+grid_uh.point_data["u"] = uh.x.array.real
+grid_uh.set_active_scalars("u")
+p2.add_mesh(grid_uh, show_edges=True)
+if not pyvista.OFF_SCREEN:
+    p2.show(jupyter_backend="pythreejs")
+else:
+    pyvista.start_xvfb()
+    figure = p2.screenshot("subdomains_structured2.png")
+
 
 # We clearly observe different behavior in the two regions, whose both has the same Dirichlet boundary condition on the left side, where $x=0$.
 
@@ -276,19 +280,23 @@ num_local_cells = mesh.topology.index_map(mesh.topology.dim).size_local
 grid.cell_data["Marker"] = ct.values[ct.indices<num_local_cells]
 grid.set_active_scalars("Marker")
 
-p = pyvista.Plotter(window_size=[800, 800], shape=(1,2))
-p.subplot(0,0)
+p = pyvista.Plotter(window_size=[800, 800])
 p.add_mesh(grid, show_edges=True)
-p.subplot(0,1)
-grid_uh = pyvista.UnstructuredGrid(*create_vtk_mesh(V))
-grid_uh.point_data["u"] = uh.x.array.real
-grid_uh.set_active_scalars("u")
-actor1 = p.add_mesh(grid_uh, show_edges=True)
 if not pyvista.OFF_SCREEN:
     p.show()
 else:
     pyvista.start_xvfb()
     figure = p.screenshot("subdomains_unstructured.png")
 # -
+grid_uh = pyvista.UnstructuredGrid(*create_vtk_mesh(V))
+grid_uh.point_data["u"] = uh.x.array.real
+grid_uh.set_active_scalars("u")
+p2 = pyvista.Plotter(window_size=[800, 800])
+p2.add_mesh(grid_uh, show_edges=True)
+if not pyvista.OFF_SCREEN:
+    p2.show()
+else:
+    pyvista.start_xvfb()
+
 
 
