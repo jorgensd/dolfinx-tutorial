@@ -6,7 +6,7 @@ git+https://github.com/executablebooks/jupyter-book.git@master
 ipywidgets==7.7.2  # See https://github.com/pyvista/pyvista/issues/3274
 
 # Notebook conversion
-nbconvert
+nbconvert==6.5.3
 
 # Meshio
 meshio

@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.13.8
+#       jupytext_version: 1.14.4
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -18,7 +18,7 @@
 #
 # In this section, we will turn our attention to a slightly more challenging problem: flow past a cylinder. The geometry and parameters are taken from the [DFG 2D-3 benchmark](http://www.featflow.de/en/benchmarks/cfdbenchmarking/flow/dfg_benchmark3_re100.html) in FeatFlow.
 #
-# To be able to solve this problem efficiently and ensure numerical stability, we will subsitute our first order backward difference scheme with a second order backward difference approximation, and use an explicit Adams-Bashforth approximation of the non-linear term.
+# To be able to solve this problem efficiently and ensure numerical stability, we will substitute our first order backward difference scheme with a Crank-Nicholson discretization in time, and a semi-implicit Adams-Bashforth approximation of the non-linear term.
 #
 # ```{admonition} Computationally demanding demo
 # This demo is computationally demanding, with a run-time up to 15 minutes, as it is using parameters from the DFG 2D-3 benchmark, which consists of 12800 time steps. It is adviced to download this demo and  not run it in a browser. This runtime of the demo can be increased by using 2 or 3 mpi processes.
@@ -261,13 +261,13 @@ p_ = Function(Q)
 p_.name = "p"
 phi = Function(Q)
 
-# Next, we define the variational formulation for the first step, where we have integrated the diffusion term, as well as the pressure term by parts. As we have used an explicit approximation of the non-linear term we only have to assemble the matrix once, but we have to save the two previous solutions.
+# Next, we define the variational formulation for the first step, where we have integrated the diffusion term, as well as the pressure term by parts.
 
 f = Constant(mesh, PETSc.ScalarType((0,0)))
 F1 = rho / k * dot(u - u_n, v) * dx 
-F1 += rho * inner(dot(1.5 * u_n - 0.5 * u_n1, 0.5 * nabla_grad(u + u_n)), v) * dx
+F1 += inner(dot(1.5 * u_n - 0.5 * u_n1, 0.5 * nabla_grad(u + u_n)), v) * dx
 F1 += 0.5 * mu * inner(grad(u + u_n), grad(v))*dx - dot(p_, div(v))*dx
-F1 -= dot(f, v) * dx
+F1 += dot(f, v) * dx
 a1 = form(lhs(F1))
 L1 = form(rhs(F1))
 A1 = create_matrix(a1)
