@@ -6,7 +6,7 @@ jupyter-book
 ipywidgets==7.7.2  # See https://github.com/pyvista/pyvista/issues/3274
 
 # Notebook conversion
-nbconvert==6.5.3
+nbconvert
 
 # Meshio
 meshio
