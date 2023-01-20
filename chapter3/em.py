@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.1
+#       jupytext_version: 1.14.4
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -173,14 +173,17 @@ if mesh_comm.rank == model_rank:
     gmsh.model.mesh.field.setNumbers(1, "EdgesList", [e[1] for e in edges])
     gmsh.model.mesh.field.add("Threshold", 2)
     gmsh.model.mesh.field.setNumber(2, "IField", 1)
-    gmsh.model.mesh.field.setNumber(2, "LcMin", r / 2)
-    gmsh.model.mesh.field.setNumber(2, "LcMax", 5 * r)
-    gmsh.model.mesh.field.setNumber(2, "DistMin", 2 * r)
-    gmsh.model.mesh.field.setNumber(2, "DistMax", 4 * r)
-    gmsh.model.mesh.field.setAsBackgroundMesh(2)
+    gmsh.model.mesh.field.setNumber(2, "LcMin", r / 3)
+    gmsh.model.mesh.field.setNumber(2, "LcMax", 6 * r)
+    gmsh.model.mesh.field.setNumber(2, "DistMin", 4 * r)
+    gmsh.model.mesh.field.setNumber(2, "DistMax", 10 * r)
+    gmsh.model.mesh.field.add("Min", 5)
+    gmsh.model.mesh.field.setNumbers(5, "FieldsList", [2])
+    gmsh.model.mesh.field.setAsBackgroundMesh(5)
     # Generate mesh
     gmsh.option.setNumber("Mesh.Algorithm", 7)
-    gmsh.model.mesh.generate(gdim)    
+    gmsh.model.mesh.generate(gdim) 
+    gmsh.model.mesh.optimize("Netgen")
 # -
 
 # As in [the Navier-Stokes tutorial](../chapter2/ns_code2) we load the mesh directly into DOLFINx, without writing it to file.
