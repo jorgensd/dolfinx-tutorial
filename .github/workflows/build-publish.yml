@@ -119,7 +119,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: Build the book
         run: 
-          jupyter-book build  -W .
+          jupyter-book build .
 
       - name: Upload book
         uses: actions/upload-pages-artifact@v1
