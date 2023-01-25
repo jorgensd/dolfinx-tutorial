@@ -180,15 +180,15 @@ b1 = create_vector(L1)
 # Define variational problem for step 2
 u_ = Function(V)
 a2 = form(dot(nabla_grad(p), nabla_grad(q))*dx)
-L2 = form(dot(nabla_grad(p_n), nabla_grad(q))*dx - (1/k)*div(u_)*q*dx)
+L2 = form(dot(nabla_grad(p_n), nabla_grad(q))*dx - (rho/k)*div(u_)*q*dx)
 A2 = assemble_matrix(a2, bcs=bcp)
 A2.assemble()
 b2 = create_vector(L2)
 
 # Define variational problem for step 3
 p_ = Function(Q)
-a3 = form(dot(u, v)*dx)
-L3 = form(dot(u_, v)*dx - k*dot(nabla_grad(p_ - p_n), v)*dx)
+a3 = form(rho*dot(u, v)*dx)
+L3 = form(rho*dot(u_, v)*dx - k*dot(nabla_grad(p_ - p_n), v)*dx)
 A3 = assemble_matrix(a3)
 A3.assemble()
 b3 = create_vector(L3)

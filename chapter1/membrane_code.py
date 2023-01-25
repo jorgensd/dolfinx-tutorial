@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.1
+#       jupytext_version: 1.14.4
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -19,38 +19,38 @@
 # In this section, we will solve the deflection of the membrane problem.
 # After finishing this section, you should be able to:
 # - Create a simple mesh using the GMSH Python API and load it into DOLFINx
-# - How to create a constant boundary conditions using a geometrical identifier
-# - Using s`ufl.SpatialCoordinate` to create a spatially varying function
-# - How to interpolate a `ufl.Expression` into an appropriate function space
-# - How to evaluate a `dolfinx.Function` at any point $x$
+# - Create constant boundary conditions using a geometrical identifier
+# - Use `ufl.SpatialCoordinate` to create a spatially varying function
+# - Interpolate a `ufl.Expression` into an appropriate function space
+# - Evaluate a `dolfinx.Function` at any point $x$
 # - Use Paraview to visualize the solution of a PDE
 #
 # ## Creating the mesh
 #
-# To create the computational geometry, we use the python-API of [GMSH](http://gmsh.info/). We start by import the gmsh-module, and initalizing it.
+# To create the computational geometry, we use the python-API of [GMSH](http://gmsh.info/). We start by importing the gmsh-module and initializing it.
 
 import gmsh
 gmsh.initialize()
 
-# The next step is to create the membrane and starting the computations by the GMSH CAD kernel, to generate the relevant underlying data structures. The arguments into `addDisk` is the x, y and z coordinate of the center of the circle, while the to last argument is the x-radius and y-radius.
+# The next step is to create the membrane and start the computations by the GMSH CAD kernel, to generate the relevant underlying data structures. The first arguments of `addDisk` are the x, y and z coordinate of the center of the circle, while the two last arguments are the x-radius and y-radius.
 
 membrane = gmsh.model.occ.addDisk(0, 0, 0, 1, 1)
 gmsh.model.occ.synchronize()
 
-# The next step is to make the membrane a physical surface, such that it is recognized by gmsh when generating the mesh. As a surface is a two-dimensional entity, we add two as the first argument, the entity tag of the membrane as the second argument, and the last argument is the physical tag. In a later demo, we will get into when this tag matters.
+# After that, we make the membrane a physical surface, such that it is recognized by `gmsh` when generating the mesh. As a surface is a two-dimensional entity, we add `2` as the first argument, the entity tag of the membrane as the second argument, and the physical tag as the last argument. In a later demo, we will get into when this tag matters.
 
 gdim = 2
 gmsh.model.addPhysicalGroup(gdim, [membrane], 1)
 
-# Finally, we generate the two-dimensional mesh. We set a uniform mesh size by modifying the GMSH options
+# Finally, we generate the two-dimensional mesh. We set a uniform mesh size by modifying the GMSH options.
 
 gmsh.option.setNumber("Mesh.CharacteristicLengthMin",0.05)
 gmsh.option.setNumber("Mesh.CharacteristicLengthMax",0.05)
 gmsh.model.mesh.generate(gdim)
 
 # # Interfacing with GMSH in DOLFINx
-# We will import the GMSH-mesh directly from GMSH, using the `dolfinx.io.gmshio` interface in DOLFINx.
-# As we in the example have not specified which process we have created the gmsh model on, a model has been created on each mpi process. However, we would like to be able to use a mesh distributed over all processes. We therefore take the model generated on rank 0 of `MPI.COMM_WORLD`, and distribute it over all available ranks. We will also get two mesh tags, one for cells marked with physical groups in the mesh and one for facets marked with physical groups. As we did not not add any physical groups of dimension `gdim-1`, there will be no entities in the `facet_markers`.
+# We will import the GMSH-mesh directly from GMSH into DOLFINx via the `dolfinx.io.gmshio` interface.
+# As in this example, we have not specified which process we have created the `gmsh` model on, a model has been created on each mpi process. However, we would like to be able to use a mesh distributed over all processes. Therefore, we take the model generated on rank 0 of `MPI.COMM_WORLD`, and distribute it over all available ranks. We will also get two mesh tags, one for cells marked with physical groups in the mesh and one for facets marked with physical groups. As we did not add any physical groups of dimension `gdim-1`, there will be no entities in the `facet_markers`.
 
 # +
 from dolfinx.io import gmshio
@@ -67,7 +67,7 @@ from dolfinx import fem
 V = fem.FunctionSpace(domain, ("CG", 1))
 
 # ## Defining a spatially varying load
-# The right hand side pressure function is represented using `ufl.SpatialCoordinate` and a two constants, one for $\beta$ and one for $R_0$.
+# The right hand side pressure function is represented using `ufl.SpatialCoordinate` and two constants, one for $\beta$ and one for $R_0$.
 
 import ufl
 from petsc4py.PETSc import ScalarType
@@ -77,14 +77,14 @@ R0 = fem.Constant(domain, ScalarType(0.3))
 p = 4 * ufl.exp(-beta**2 * (x[0]**2 + (x[1] - R0)**2))
 
 # ## Create a Dirichlet boundary condition using geometrical conditions
-# The next step is to create the homogenous boundary condition. As opposed to the [First tutorial](./fundamentals_code.ipynb) we will use `dolfinx.fem.locate_dofs_geometrical` to locate the degrees of freedom on the boundary. As we know that our domain is a circle with radius 1, we know that any degree of freedom should be located at a coordinate $(x,y)$ such that $\sqrt{x^2+y^2}=1$.
+# The next step is to create the homogeneous boundary condition. As opposed to the [first tutorial](./fundamentals_code.ipynb) we will use `dolfinx.fem.locate_dofs_geometrical` to locate the degrees of freedom on the boundary. As we know that our domain is a circle with radius 1, we know that any degree of freedom should be located at a coordinate $(x,y)$ such that $\sqrt{x^2+y^2}=1$.
 
 import numpy as np
 def on_boundary(x):
     return np.isclose(np.sqrt(x[0]**2 + x[1]**2), 1)
 boundary_dofs = fem.locate_dofs_geometrical(V, on_boundary)
 
-# As our Dirichlet condition is homogenous (`u=0` on the whole boundary), we can initialize the `dolfinx.fem.dirichletbc` with a constant value, the degrees of freedom and the function space to apply the boundary condition on.
+# As our Dirichlet condition is homogeneous (`u=0` on the whole boundary), we can initialize the `dolfinx.fem.dirichletbc` with a constant value, the degrees of freedom and the function space to apply the boundary condition on.
 
 bc = fem.dirichletbc(ScalarType(0), boundary_dofs, V)
 
@@ -159,7 +159,7 @@ points[1] = y
 u_values = []
 p_values = []
 
-# As a finite element function is the linear combination of all degrees of freedom, $u_h(x)=\sum_{i=1}^N c_i \phi_i(x)$ where $c_i$ are the coefficients of $u_h$, $\phi_i$ the $i$th basis function, we can compute the exact solution at any point in $\Omega$.
+# As a finite element function is the linear combination of all degrees of freedom, $u_h(x)=\sum_{i=1}^N c_i \phi_i(x)$ where $c_i$ are the coefficients of $u_h$ and $\phi_i$ is the $i$-th basis function, we can compute the exact solution at any point in $\Omega$.
 # However, as a mesh consists of a large set of degrees of freedom (i.e. $N$ is large), we want to reduce the number of evaluations of the basis function $\phi_i(x)$. We do this by identifying which cell of the mesh $x$ is in. 
 # This is efficiently done by creating a bounding box tree of the cells of the mesh, allowing a quick recursive search through the mesh entities.
 
@@ -190,7 +190,7 @@ points_on_proc = np.array(points_on_proc, dtype=np.float64)
 u_values = uh.eval(points_on_proc, cells)
 p_values = pressure.eval(points_on_proc, cells)
 
-# As we now have an array of coordinates and two arrays of function values, we use matplotlib to plot them
+# As we now have an array of coordinates and two arrays of function values, we can use `matplotlib` to plot them
 
 import matplotlib.pyplot as plt
 fig = plt.figure()
