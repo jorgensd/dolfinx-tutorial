@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.1
+#       jupytext_version: 1.14.4
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -115,7 +115,9 @@ uh = problem.solve()
 
 # +
 import pyvista
-pyvista.set_jupyter_backend("pythreejs")
+pyvista.start_xvfb()
+
+pyvista.set_jupyter_backend("trame")
 
 # Create plotter and pyvista grid
 p = pyvista.Plotter()
@@ -131,7 +133,6 @@ p.show_axes()
 if not pyvista.OFF_SCREEN:
    p.show()
 else:
-   pyvista.start_xvfb()
    figure_as_array = p.screenshot("deflection.png")
 # -
 
@@ -167,7 +168,6 @@ p.show_axes()
 if not pyvista.OFF_SCREEN:
    p.show()
 else:
-   pyvista.start_xvfb()
    stress_figure = p.screenshot(f"stresses.png")
 
 

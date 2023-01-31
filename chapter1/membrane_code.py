@@ -113,7 +113,8 @@ pressure.interpolate(expr)
 # +
 from dolfinx.plot import create_vtk_mesh
 import pyvista
-pyvista.set_jupyter_backend("pythreejs")
+pyvista.start_xvfb()
+pyvista.set_jupyter_backend("trame")
 
 # Extract topology from mesh and create pyvista mesh
 topology, cell_types, x = create_vtk_mesh(V)
@@ -128,7 +129,6 @@ plotter.add_mesh(warped, show_edges=True, show_scalar_bar=True, scalars="u")
 if not pyvista.OFF_SCREEN:
     plotter.show()
 else:
-    pyvista.start_xvfb()
     plotter.screenshot("deflection.png")
 # -
 
@@ -144,7 +144,6 @@ load_plotter.view_xy()
 if not pyvista.OFF_SCREEN:
     load_plotter.show()
 else:
-    pyvista.start_xvfb()
     load_plotter.screenshot("load.png")
 
 # ## Making curve plots throughout the domain

@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.1
+#       jupytext_version: 1.14.4
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -116,11 +116,11 @@ solver.getPC().setType(PETSc.PC.Type.LU)
 
 # +
 import pyvista
+pyvista.start_xvfb()
 import matplotlib.pyplot as plt
 
 grid = pyvista.UnstructuredGrid(*plot.create_vtk_mesh(V))
 
-pyvista.start_xvfb(0.5)  # Start virtual framebuffer for plotting
 plotter = pyvista.Plotter()
 plotter.open_gif("u_time.gif")
 

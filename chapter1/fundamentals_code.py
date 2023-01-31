@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.1
+#       jupytext_version: 1.14.4
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -239,18 +239,20 @@ if domain.comm.rank == 0:
 # We will visualizing the mesh using [pyvista](https://docs.pyvista.org/), an interface to the VTK toolkit.
 # We start by converting the mesh to a format that can be used with `pyvista`.
 # To do this we use the function `dolfinx.plot.create_vtk_mesh`. The first step is to create an unstructured grid that can be used by `pyvista`.
+# We need to start a virtual framebuffer for plotting through docker containers.
 
 # + vscode={"languageId": "python"}
 from dolfinx import plot
 import pyvista
+pyvista.start_xvfb()
 topology, cell_types, geometry = plot.create_vtk_mesh(domain, tdim)
 grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
 # -
 
-# There are several backends that can be used with pyvista, and they have different benefits and drawbacks. See the [pyvista documentation](https://docs.pyvista.org/user-guide/jupyter/index.html) for more information and installation details. In this example and the rest of the tutorial we will use [pythreejs](https://github.com/jupyter-widgets/pythreejs).
+# There are several backends that can be used with pyvista, and they have different benefits and drawbacks. See the [pyvista documentation](https://docs.pyvista.org/user-guide/jupyter/index.html) for more information and installation details. In this example and the rest of the tutorial we will use [trame](hhttps://kitware.github.io/trame/index.html) as all other backends for jupyter plotting will be [deprecated](https://github.com/pyvista/pyvista/pull/3902).
 
 # + vscode={"languageId": "python"}
-pyvista.set_jupyter_backend("pythreejs")
+pyvista.set_jupyter_backend("trame")
 # -
 
 # We can now use the `pyvista.Plotter` to visualize the mesh. We visualize it by showing it in 2D and warped in 3D.
@@ -263,7 +265,6 @@ plotter.view_xy()
 if not pyvista.OFF_SCREEN:
     plotter.show()
 else:
-    pyvista.start_xvfb()
     figure = plotter.screenshot("fundamentals_mesh.png")
 # -
 

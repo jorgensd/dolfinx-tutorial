@@ -203,7 +203,8 @@ with XDMFFile(MPI.COMM_WORLD, "mt.xdmf", "w") as xdmf:
 
 # +
 import pyvista
-pyvista.set_jupyter_backend("pythreejs")
+pyvista.start_xvfb()
+pyvista.set_jupyter_backend("trame")
 from dolfinx.plot import create_vtk_mesh
 
 plotter = pyvista.Plotter()
@@ -216,7 +217,6 @@ plotter.view_xy()
 if not pyvista.OFF_SCREEN:
     plotter.show()
 else:
-    pyvista.start_xvfb()
     cell_tag_fig = plotter.screenshot("cell_tags.png")
 # -
 
@@ -297,7 +297,6 @@ actor = plotter.add_mesh(warp, show_edges=True)
 if not pyvista.OFF_SCREEN:
     plotter.show()
 else:
-    pyvista.start_xvfb()
     Az_fig = plotter.screenshot("Az.png")
 # -
 
@@ -330,7 +329,6 @@ actor2 = plotter.add_mesh(glyphs)
 if not pyvista.OFF_SCREEN:
     plotter.show()
 else:
-    pyvista.start_xvfb()
     B_fig = plotter.screenshot("B.png")
 # -
 

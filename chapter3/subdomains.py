@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.1
+#       jupytext_version: 1.14.4
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -36,8 +36,8 @@ from ufl import (SpatialCoordinate, TestFunction, TrialFunction,
 
 from mpi4py import MPI
 from petsc4py.PETSc import ScalarType
-
-pyvista.set_jupyter_backend("pythreejs")
+pyvista.start_xvfb()
+pyvista.set_jupyter_backend("trame")
 
 mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
 Q = FunctionSpace(mesh, ("DG", 0))
@@ -116,11 +116,9 @@ grid = pyvista.UnstructuredGrid(topology, cell_types, x)
 grid.cell_data["Marker"] = marker
 grid.set_active_scalars("Marker")
 p.add_mesh(grid, show_edges=True)
-if not pyvista.OFF_SCREEN:
-    p.show(jupyter_backend="pythreejs")
-else:
-    pyvista.start_xvfb()
+if pyvista.OFF_SCREEN:
     figure = p.screenshot("subdomains_structured.png")
+p.show()
 # -
 
 p2 = pyvista.Plotter(window_size=[800, 800])
@@ -129,9 +127,8 @@ grid_uh.point_data["u"] = uh.x.array.real
 grid_uh.set_active_scalars("u")
 p2.add_mesh(grid_uh, show_edges=True)
 if not pyvista.OFF_SCREEN:
-    p2.show(jupyter_backend="pythreejs")
+    p2.show()
 else:
-    pyvista.start_xvfb()
     figure = p2.screenshot("subdomains_structured2.png")
 
 
@@ -285,7 +282,6 @@ p.add_mesh(grid, show_edges=True)
 if not pyvista.OFF_SCREEN:
     p.show()
 else:
-    pyvista.start_xvfb()
     figure = p.screenshot("subdomains_unstructured.png")
 # -
 grid_uh = pyvista.UnstructuredGrid(*create_vtk_mesh(V))
@@ -296,7 +292,7 @@ p2.add_mesh(grid_uh, show_edges=True)
 if not pyvista.OFF_SCREEN:
     p2.show()
 else:
-    pyvista.start_xvfb()
+    p2.savefig("unstructured_u.png")
 
 
 

@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.1
+#       jupytext_version: 1.14.4
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -104,7 +104,8 @@ print(f"Error_max : {error_max:.2e}")
 # To visualize the solution, run the script with in a Jupyter notebook with `off_screen=False` or as a python script with `off_screen=True`.
 
 # +
-pyvista.set_jupyter_backend("pythreejs")
+pyvista.start_xvfb()
+pyvista.set_jupyter_backend("trame")
 from dolfinx.plot import create_vtk_mesh
 pyvista_cells, cell_types, geometry = create_vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(pyvista_cells, cell_types, geometry)
@@ -118,7 +119,6 @@ plotter.view_xy()
 if not pyvista.OFF_SCREEN:
     plotter.show()
 else:
-    pyvista.start_xvfb()
     figure = plotter.screenshot("multiple_dirichlet.png")
 # -
 

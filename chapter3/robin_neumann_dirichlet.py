@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.1
+#       jupytext_version: 1.14.4
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -228,7 +228,8 @@ problem = LinearProblem(a, L, bcs=bcs, petsc_options={"ksp_type": "preonly", "pc
 uh = problem.solve()
 
 # Visualize solution
-pyvista.set_jupyter_backend("pythreejs")
+pyvista.start_xvfb()
+pyvista.set_jupyter_backend("trame")
 pyvista_cells, cell_types, geometry = create_vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(pyvista_cells, cell_types, geometry)
 grid.point_data["u"] = uh.x.array
@@ -241,7 +242,6 @@ plotter.view_xy()
 if not pyvista.OFF_SCREEN:
     plotter.show()
 else:
-    pyvista.start_xvfb()
     figure = plotter.screenshot("robin_neumann_dirichlet.png")
 # -
 

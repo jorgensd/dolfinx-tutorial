@@ -161,7 +161,8 @@ print(f"Error_max : {error_max:.2e}")
 # To look at the actual solution, run the script as a python script with `off_screen=True` or as a Jupyter notebook with `off_screen=False`
 
 # +
-pyvista.set_jupyter_backend("pythreejs")
+pyvista.start_xvfb()
+pyvista.set_jupyter_backend("trame")
 
 from dolfinx.plot import create_vtk_mesh
 pyvista_cells, cell_types, geometry = create_vtk_mesh(V)
@@ -177,7 +178,6 @@ plotter.view_xy()
 if not pyvista.OFF_SCREEN:
     plotter.show()
 else:
-    pyvista.start_xvfb()
     figure = plotter.screenshot("neumann_dirichlet.png")
 # -
 

@@ -486,4 +486,3 @@ if mesh.comm.rank == 0:
     plt.savefig("figures/pressure_comparison.png")
 # -
 
-

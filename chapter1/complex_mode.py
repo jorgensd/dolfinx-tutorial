@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.1
+#       jupytext_version: 1.14.4
 #   kernelspec:
 #     display_name: Python 3 (DOLFINx complex)
 #     language: python
@@ -52,8 +52,8 @@ u_r = dolfinx.fem.Function(V, dtype=np.float64)
 u_r.interpolate(lambda x: x[0])
 u_c = dolfinx.fem.Function(V, dtype=np.complex128)
 u_c.interpolate(lambda x:0.5*x[0]**2 + 1j*x[1]**2)
-print(u_r.x.array)
-print(u_c.x.array)
+print(u_r.x.array.dtype)
+print(u_c.x.array.dtype)
 
 # However, as we would like to solve linear algebra problems on the form $Ax=b$, we need to be able to use matrices and vectors that support real and complex numbers. As [PETSc](https://petsc.org/release/) is one of the most popular interfaces to linear algebra packages, we need to be able to work with their matrix and vector structures. 
 #
@@ -117,13 +117,14 @@ print(global_error, max_error)
 # Finally, we plot the real and imaginary solution
 
 import pyvista
-pyvista.set_jupyter_backend("pythreejs")
+pyvista.start_xvfb()
+pyvista.set_jupyter_backend("trame")
 p_mesh = pyvista.UnstructuredGrid(*dolfinx.plot.create_vtk_mesh(mesh, mesh.topology.dim))
 pyvista_cells, cell_types, geometry = dolfinx.plot.create_vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(pyvista_cells, cell_types, geometry)
 grid.point_data["u_real"] = uh.x.array.real
 grid.point_data["u_imag"] = uh.x.array.imag
-grid.set_active_scalars("u_real")
+_ = grid.set_active_scalars("u_real")
 
 p_real = pyvista.Plotter()
 p_real.add_text("uh real", position="upper_edge", font_size=14, color="black")

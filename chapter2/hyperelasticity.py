@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.1
+#       jupytext_version: 1.14.4
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -149,7 +149,7 @@ solver.convergence_criterion = "incremental"
 # +
 import pyvista
 import matplotlib.pyplot as plt
-pyvista.start_xvfb(0.1)
+pyvista.start_xvfb()
 plotter = pyvista.Plotter()
 plotter.open_gif("deformation.gif", fps=3)
 
