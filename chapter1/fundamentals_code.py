@@ -249,7 +249,7 @@ topology, cell_types, geometry = plot.create_vtk_mesh(domain, tdim)
 grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
 # -
 
-# There are several backends that can be used with pyvista, and they have different benefits and drawbacks. See the [pyvista documentation](https://docs.pyvista.org/user-guide/jupyter/index.html) for more information and installation details. In this example and the rest of the tutorial we will use [trame](hhttps://kitware.github.io/trame/index.html) as all other backends for jupyter plotting will be [deprecated](https://github.com/pyvista/pyvista/pull/3902).
+# There are several backends that can be used with pyvista, and they have different benefits and drawbacks. See the [pyvista documentation](https://docs.pyvista.org/user-guide/jupyter/index.html) for more information and installation details. In this example and the rest of the tutorial we will use [trame](https://kitware.github.io/trame/index.html) as all other backends for jupyter plotting will be [deprecated](https://github.com/pyvista/pyvista/pull/3902).
 
 # + vscode={"languageId": "python"}
 pyvista.set_jupyter_backend("trame")
