@@ -27,7 +27,10 @@ concurrency:
 env:
   # Directory that will be published on github pages
   PUBLISH_DIR: ./_build/html
-
+  HDF5_MPI: "ON"
+  HDF5_DIR: "/usr/local/"
+  DISPLAY: ":99.0"
+  DEB_PYTHON_INSTALL_LAYOUT: deb_system
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -35,19 +38,31 @@ jobs:
   test:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container: ghcr.io/jorgensd/dolfinx-tutorial:v0.5.1
-
+    container: docker pull ghcr.io/fenics/dolfinx/lab:v0.6.0-r1
     env:
-      HDF5_MPI: "ON"
-      CC: mpicc
-      HDF5_DIR: "/usr/local/"
-      DISPLAY: ":99.0"
       PYVISTA_OFF_SCREEN: true
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+
+      # Upgrade setuptools and pip
+      # https://github.com/pypa/setuptools/issues/3269#issuecomment-1254507377
+      - name: Install apt dependencies and upgrade pip
+        run: |
+          apt-get update && apt-get install -y libgl1-mesa-glx libxrender1 xvfb
+          python3 -m pip install -U setuptools pip pkgconfig
+
+      # Install `h5py`
+      # https://github.com/hl5py/h5py/issues/2222
+      - name: Install h5py and pip requirements
+        run: |
+          python3 -m pip install cython
+          python3 -m pip install --no-build-isolation --no-binary=h5py h5py
+          python3 -m pip install --no-cache-dir -r requirements.txt --upgrade
+          python3 -m pip cache purge
+
 
       - name: Test complex notebooks in parallel
         run: |
@@ -61,9 +76,7 @@ jobs:
           cd chapter1
           mpirun -n 2 python3 complex_mode.py
  
-
-      - name: Install dependencies
-        run: pip3 install notebook nbconvert jupyter-book --upgrade
+  
       - name: Test notebooks in parallel
         run: |
           python3 -c "from pyvista import start_xvfb; start_xvfb(0.1)"
@@ -103,20 +116,39 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     container: ghcr.io/jorgensd/dolfinx-tutorial:v0.5.1
-
+   
     env:
-      HDF5_MPI: "ON"
-      CC: mpicc
-      HDF5_DIR: "/usr/local/"
-      DISPLAY: ":99.0"
+      PYVISTA_TRAME_SERVER_PROXY_PREFIX: '/proxy/'
+      PYVISTA_TRAME_SERVER_PROXY_ENABLED: "True"
       PYVISTA_OFF_SCREEN: false
-      PYVISTA_JUPYTER_BACKEND: "static"
+      PYVISTA_JUPYTER_BACKEND: "trame"
+
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+
       - uses: actions/checkout@v3
-      # Runs a single command using the runners shell
+    
+      - name: Install book dependencies dependencies
+        run: python3 -m pip install notebook nbconvert jupyter-book --upgrade
+
+      # Upgrade setuptools and pip
+      # https://github.com/pypa/setuptools/issues/3269#issuecomment-1254507377
+      - name: Install apt dependencies and upgrade pip
+        run: |
+          apt-get update && apt-get install -y libgl1-mesa-glx libxrender1 xvfb
+          python3 -m pip install -U setuptools pip pkgconfig
+
+      # Install `h5py`
+      # https://github.com/hl5py/h5py/issues/2222
+      - name: Install h5py and pip requirements
+        run: |
+          python3 -m pip install cython
+          python3 -m pip install --no-build-isolation --no-binary=h5py h5py
+          python3 -m pip install --no-cache-dir -r requirements.txt --upgrade
+          python3 -m pip cache purge
+
+
       - name: Build the book
         run: 
           jupyter-book build .

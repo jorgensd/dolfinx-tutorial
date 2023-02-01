@@ -1,4 +1,4 @@
-FROM dolfinx/lab:v0.6.0
+FROM docker pull ghcr.io/fenics/dolfinx/lab:v0.6.0-r1
 
 WORKDIR /tmp/
 
@@ -22,6 +22,6 @@ ENV PYVISTA_TRAME_SERVER_PROXY_ENABLED="True"
 
 
 # Install dependencies
-RUN HDF5_MPI="ON" HDF5_DIR="/usr/local/" CC=mpicc pip3 install --no-cache-dir -r requirements.txt --upgrade && pip3 cache purge
+RUN HDF5_MPI="ON" HDF5_DIR="/usr/local/" pip3 install --no-cache-dir -r requirements.txt --upgrade && pip3 cache purge
 
 ENTRYPOINT ["jupyter", "lab", "--ip", "0.0.0.0", "--no-browser", "--allow-root"]
