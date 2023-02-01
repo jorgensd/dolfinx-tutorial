@@ -61,7 +61,6 @@ jobs:
           python3 -m pip install cython
           python3 -m pip install --no-build-isolation --no-binary=h5py h5py
           python3 -m pip install --no-cache-dir -r docker/requirements.txt --upgrade
-          python3 -m pip cache purge
 
 
       - name: Test complex notebooks in parallel
@@ -70,10 +69,9 @@ jobs:
           export PETSC_ARCH=linux-gnu-complex-32
           export PYTHONPATH=/usr/local/dolfinx-complex/lib/python3.10/dist-packages:$PYTHONPATH
           export LD_LIBRARY_PATH=/usr/local/dolfinx-complex/lib:$LD_LIBRARY_PATH
-          pip3 uninstall pyvista -y
-          pip3 install pyvista --upgrade
           python3 -c "from pyvista import start_xvfb; start_xvfb(0.1)"
           cd chapter1
+          python3 complex_mode.py
           mpirun -n 2 python3 complex_mode.py
  
   
@@ -130,7 +128,7 @@ jobs:
       - uses: actions/checkout@v3
     
       - name: Install book dependencies dependencies
-        run: python3 -m pip install notebook nbconvert jupyter-book --upgrade
+        run: python3 -m pip install notebook jupyter-book --upgrade
 
       # Upgrade setuptools and pip
       # https://github.com/pypa/setuptools/issues/3269#issuecomment-1254507377

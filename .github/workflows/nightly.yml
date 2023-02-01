@@ -27,7 +27,8 @@ jobs:
     env:
       HDF5_MPI: "ON"
       PYVISTA_OFF_SCREEN: true
-
+      DISPLAY: ":99.0"
+    
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -58,6 +59,7 @@ jobs:
           export PYTHONPATH=/usr/local/dolfinx-complex/lib/python3.10/dist-packages:$PYTHONPATH
           export LD_LIBRARY_PATH=/usr/local/dolfinx-complex/lib:$LD_LIBRARY_PATH
           cd chapter1
+          python3 complex_mode.py
           mpirun -n 2 python3 complex_mode.py
  
       - name: Test real notebooks in parallel
