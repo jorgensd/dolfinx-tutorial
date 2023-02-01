@@ -49,7 +49,7 @@ jobs:
         run: |
           python3 -m pip install cython
           python3 -m pip install --no-build-isolation --no-binary=h5py h5py
-          python3 -m pip install --no-cache-dir -r requirements.txt --upgrade
+          python3 -m pip install --no-cache-dir -r docker/requirements.txt --upgrade
           python3 -m pip cache purge
 
       - name: Test complex notebooks in parallel
