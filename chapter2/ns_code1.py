@@ -303,7 +303,6 @@ xdmf.close()
 
 # +
 pyvista.start_xvfb()
-pyvista.set_jupyter_backend("trame")
 topology, cell_types, geometry = create_vtk_mesh(V)
 values = np.zeros((geometry.shape[0], 3), dtype=np.float64)
 values[:, :len(u_n)] = u_n.x.array.real.reshape((geometry.shape[0], len(u_n)))

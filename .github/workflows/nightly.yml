@@ -28,6 +28,7 @@ jobs:
       HDF5_MPI: "ON"
       PYVISTA_OFF_SCREEN: true
       DISPLAY: ":99.0"
+      PYVISTA_JUPYTER_BACKEND: panel
     
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -92,4 +93,4 @@ jobs:
 
       - name: Test building the book
         run: 
-          PYVISTA_JUPYTER_BACKEND=static PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
+          PYVISTA_OFF_SCREEN=false jupyter-book build  -W .

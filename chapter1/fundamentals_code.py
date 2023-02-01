@@ -239,21 +239,19 @@ if domain.comm.rank == 0:
 # We will visualizing the mesh using [pyvista](https://docs.pyvista.org/), an interface to the VTK toolkit.
 # We start by converting the mesh to a format that can be used with `pyvista`.
 # To do this we use the function `dolfinx.plot.create_vtk_mesh`. The first step is to create an unstructured grid that can be used by `pyvista`.
-# We need to start a virtual framebuffer for plotting through docker containers.
+# We need to start a virtual framebuffer for plotting through docker containers. You can print the current backend and change it with `pyvista.set_jupyter_backend(backend)`
+
+import pyvista
+print(pyvista.global_theme.jupyter_backend)
 
 # + vscode={"languageId": "python"}
 from dolfinx import plot
-import pyvista
 pyvista.start_xvfb()
 topology, cell_types, geometry = plot.create_vtk_mesh(domain, tdim)
 grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
 # -
 
-# There are several backends that can be used with pyvista, and they have different benefits and drawbacks. See the [pyvista documentation](https://docs.pyvista.org/user-guide/jupyter/index.html) for more information and installation details. In this example and the rest of the tutorial we will use [trame](https://kitware.github.io/trame/index.html) as all other backends for jupyter plotting will be [deprecated](https://github.com/pyvista/pyvista/pull/3902).
-
-# + vscode={"languageId": "python"}
-pyvista.set_jupyter_backend("trame")
-# -
+# There are several backends that can be used with pyvista, and they have different benefits and drawbacks. See the [pyvista documentation](https://docs.pyvista.org/user-guide/jupyter/index.html#state-of-3d-interactive-jupyterlab-plotting) for more information and installation details. In this example and the rest of the tutorial we will use [panel](https://github.com/holoviz/panel).
 
 # We can now use the `pyvista.Plotter` to visualize the mesh. We visualize it by showing it in 2D and warped in 3D.
 # In the jupyter notebook environment, we use the default setting of `pyvista.OFF_SCREEN=False`, which will render plots directly in the notebook.

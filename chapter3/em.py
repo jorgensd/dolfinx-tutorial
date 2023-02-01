@@ -204,7 +204,6 @@ with XDMFFile(MPI.COMM_WORLD, "mt.xdmf", "w") as xdmf:
 # +
 import pyvista
 pyvista.start_xvfb()
-pyvista.set_jupyter_backend("trame")
 from dolfinx.plot import create_vtk_mesh
 
 plotter = pyvista.Plotter()

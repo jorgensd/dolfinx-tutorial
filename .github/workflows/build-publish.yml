@@ -119,7 +119,7 @@ jobs:
       PYVISTA_TRAME_SERVER_PROXY_PREFIX: '/proxy/'
       PYVISTA_TRAME_SERVER_PROXY_ENABLED: "True"
       PYVISTA_OFF_SCREEN: false
-      PYVISTA_JUPYTER_BACKEND: "static"
+      PYVISTA_JUPYTER_BACKEND: "panel"
 
 
     # Steps represent a sequence of tasks that will be executed as part of the job

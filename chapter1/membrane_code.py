@@ -114,7 +114,6 @@ pressure.interpolate(expr)
 from dolfinx.plot import create_vtk_mesh
 import pyvista
 pyvista.start_xvfb()
-pyvista.set_jupyter_backend("trame")
 
 # Extract topology from mesh and create pyvista mesh
 topology, cell_types, x = create_vtk_mesh(V)

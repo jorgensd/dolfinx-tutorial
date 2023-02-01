@@ -229,7 +229,6 @@ uh = problem.solve()
 
 # Visualize solution
 pyvista.start_xvfb()
-pyvista.set_jupyter_backend("trame")
 pyvista_cells, cell_types, geometry = create_vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(pyvista_cells, cell_types, geometry)
 grid.point_data["u"] = uh.x.array

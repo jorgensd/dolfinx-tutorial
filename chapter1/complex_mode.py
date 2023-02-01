@@ -118,7 +118,6 @@ print(global_error, max_error)
 
 import pyvista
 pyvista.start_xvfb()
-pyvista.set_jupyter_backend("trame")
 p_mesh = pyvista.UnstructuredGrid(*dolfinx.plot.create_vtk_mesh(mesh, mesh.topology.dim))
 pyvista_cells, cell_types, geometry = dolfinx.plot.create_vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(pyvista_cells, cell_types, geometry)

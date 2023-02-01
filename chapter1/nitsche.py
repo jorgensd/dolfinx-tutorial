@@ -95,7 +95,6 @@ if domain.comm.rank == 0:
 # +
 import pyvista
 pyvista.start_xvfb()
-pyvista.set_jupyter_backend("trame")
 
 grid = pyvista.UnstructuredGrid(*plot.create_vtk_mesh(V))
 grid.point_data["u"] = uh.x.array.real

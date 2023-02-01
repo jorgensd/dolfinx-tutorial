@@ -117,8 +117,6 @@ uh = problem.solve()
 import pyvista
 pyvista.start_xvfb()
 
-pyvista.set_jupyter_backend("trame")
-
 # Create plotter and pyvista grid
 p = pyvista.Plotter()
 topology, cell_types, geometry = plot.create_vtk_mesh(V)

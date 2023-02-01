@@ -134,7 +134,6 @@ uh = problem.solve()
 
 # +
 pyvista.start_xvfb()
-pyvista.set_jupyter_backend("trame")
 from dolfinx.plot import create_vtk_mesh
 
 # Create plotter and pyvista grid

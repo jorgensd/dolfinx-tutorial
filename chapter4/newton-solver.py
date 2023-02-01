@@ -307,7 +307,6 @@ if domain.comm.rank == 0:
     print(f"Error_max: {error_max:.2e}")
 
 pyvista.start_xvfb()
-pyvista.set_jupyter_backend("trame")
 u_topology, u_cell_types, u_geometry = dolfinx.plot.create_vtk_mesh(V)
 u_grid = pyvista.UnstructuredGrid(u_topology, u_cell_types, u_geometry)
 u_grid.point_data["u"] = uh.x.array.real

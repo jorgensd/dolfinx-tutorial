@@ -162,7 +162,6 @@ print(f"Error_max : {error_max:.2e}")
 
 # +
 pyvista.start_xvfb()
-pyvista.set_jupyter_backend("trame")
 
 from dolfinx.plot import create_vtk_mesh
 pyvista_cells, cell_types, geometry = create_vtk_mesh(V)

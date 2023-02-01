@@ -1,10 +1,8 @@
-# Pyvista/trame
-jupyterlab>=3
-pyvista[all,jupyter,trame] @ git+https://github.com/pyvista/pyvista@main
+# Pyvista
+panel
 
 # Jupyter-book
-# Add sphinx to make sure 
-jupyter-book[sphinx] @ git+https://github.com/executablebooks/jupyter-book@master
+jupyter-book @ git+https://github.com/executablebooks/jupyter-book@master
 
 # Meshio
 meshio

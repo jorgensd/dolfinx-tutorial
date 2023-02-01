@@ -37,7 +37,6 @@ from ufl import (SpatialCoordinate, TestFunction, TrialFunction,
 from mpi4py import MPI
 from petsc4py.PETSc import ScalarType
 pyvista.start_xvfb()
-pyvista.set_jupyter_backend("trame")
 
 mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
 Q = FunctionSpace(mesh, ("DG", 0))
@@ -293,6 +292,8 @@ if not pyvista.OFF_SCREEN:
     p2.show()
 else:
     p2.screenshot("unstructured_u.png")
+
+
 
 
 
