@@ -126,10 +126,7 @@ jobs:
     steps:
 
       - uses: actions/checkout@v3
-    
-      - name: Install book dependencies dependencies
-        run: python3 -m pip install notebook jupyter-book --upgrade
-
+  
       # Upgrade setuptools and pip
       # https://github.com/pypa/setuptools/issues/3269#issuecomment-1254507377
       - name: Install apt dependencies and upgrade pip
@@ -143,7 +140,7 @@ jobs:
         run: |
           python3 -m pip install cython
           python3 -m pip install --no-build-isolation --no-binary=h5py h5py
-          python3 -m pip install --no-cache-dir -r docker/requirements.txt --upgrade
+          python3 -m pip install --no-cache-dir -r docker/requirements.txt jupyter-book --upgrade 
 
 
       - name: Build the book

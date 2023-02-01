@@ -1,12 +1,10 @@
 # Pyvista/trame
-jupyter
-matplotlib
 jupyterlab>=3
-ipywidgets 
 pyvista[all,jupyter,trame] @ git+https://github.com/pyvista/pyvista@main
 
-# Notebook conversion
-nbconvert
+# Jupyter-book
+# Add sphinx to make sure 
+jupyter-book[sphinx] @ git+https://github.com/executablebooks/jupyter-book@master
 
 # Meshio
 meshio
@@ -19,3 +17,4 @@ pandas
 
 # Progress bar
 tqdm
+

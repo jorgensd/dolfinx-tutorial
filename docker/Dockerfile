@@ -1,4 +1,4 @@
-FROM docker pull ghcr.io/fenics/dolfinx/lab:v0.6.0-r1
+FROM ghcr.io/fenics/dolfinx/lab:v0.6.0-r1
 
 WORKDIR /tmp/
 

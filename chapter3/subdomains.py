@@ -292,7 +292,7 @@ p2.add_mesh(grid_uh, show_edges=True)
 if not pyvista.OFF_SCREEN:
     p2.show()
 else:
-    p2.savefig("unstructured_u.png")
+    p2.screenshot("unstructured_u.png")
 
 
 
