@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.1
+#       jupytext_version: 1.14.4
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -306,7 +306,7 @@ error_max = domain.comm.allreduce(np.max(np.abs(uh.x.array - u_D.x.array)), op=M
 if domain.comm.rank == 0:
     print(f"Error_max: {error_max:.2e}")
 
-pyvista.set_jupyter_backend("pythreejs")
+pyvista.start_xvfb()
 u_topology, u_cell_types, u_geometry = dolfinx.plot.create_vtk_mesh(V)
 u_grid = pyvista.UnstructuredGrid(u_topology, u_cell_types, u_geometry)
 u_grid.point_data["u"] = uh.x.array.real

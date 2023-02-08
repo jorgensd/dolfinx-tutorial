@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.1
+#       jupytext_version: 1.14.4
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -56,9 +56,11 @@
 # $$
 #
 # For the ease of programming, we define $g$ as a function over the whole domain $\Omega$ such that $g$ takes on the correct values at $y=0$ and $y=1$. One possible extension is
+#
 # $$
 #  g(x,y)=-4y.
 # $$
+#
 # ## The variational formulation
 # The first task is to derive the variational formulatin. This time we cannot omit the boundary term arising from integration by parts, because $v$ is only zero on $\Lambda_D$. We have
 #
@@ -159,7 +161,7 @@ print(f"Error_max : {error_max:.2e}")
 # To look at the actual solution, run the script as a python script with `off_screen=True` or as a Jupyter notebook with `off_screen=False`
 
 # +
-pyvista.set_jupyter_backend("pythreejs")
+pyvista.start_xvfb()
 
 from dolfinx.plot import create_vtk_mesh
 pyvista_cells, cell_types, geometry = create_vtk_mesh(V)
@@ -175,7 +177,6 @@ plotter.view_xy()
 if not pyvista.OFF_SCREEN:
     plotter.show()
 else:
-    pyvista.start_xvfb()
     figure = plotter.screenshot("neumann_dirichlet.png")
 # -
 

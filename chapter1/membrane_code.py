@@ -113,7 +113,7 @@ pressure.interpolate(expr)
 # +
 from dolfinx.plot import create_vtk_mesh
 import pyvista
-pyvista.set_jupyter_backend("pythreejs")
+pyvista.start_xvfb()
 
 # Extract topology from mesh and create pyvista mesh
 topology, cell_types, x = create_vtk_mesh(V)
@@ -128,13 +128,11 @@ plotter.add_mesh(warped, show_edges=True, show_scalar_bar=True, scalars="u")
 if not pyvista.OFF_SCREEN:
     plotter.show()
 else:
-    pyvista.start_xvfb()
     plotter.screenshot("deflection.png")
 # -
 
 # We next plot the load on the domain
 
-pyvista.set_jupyter_backend("ipygany")
 load_plotter = pyvista.Plotter()
 p_grid = pyvista.UnstructuredGrid(*create_vtk_mesh(Q))
 p_grid.point_data["p"] = pressure.x.array.real
@@ -145,7 +143,6 @@ load_plotter.view_xy()
 if not pyvista.OFF_SCREEN:
     load_plotter.show()
 else:
-    pyvista.start_xvfb()
     load_plotter.screenshot("load.png")
 
 # ## Making curve plots throughout the domain

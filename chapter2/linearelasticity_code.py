@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.1
+#       jupytext_version: 1.14.4
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -85,7 +85,7 @@ ds = ufl.Measure("ds", domain=domain)
 def epsilon(u):
     return ufl.sym(ufl.grad(u)) # Equivalent to 0.5*(ufl.nabla_grad(u) + ufl.nabla_grad(u).T)
 def sigma(u):
-    return lambda_ * ufl.nabla_div(u) * ufl.Identity(u.geometric_dimension()) + 2*mu*epsilon(u)
+    return lambda_ * ufl.nabla_div(u) * ufl.Identity(len(u)) + 2*mu*epsilon(u)
 
 u = ufl.TrialFunction(V)
 v = ufl.TestFunction(V)
@@ -115,7 +115,7 @@ uh = problem.solve()
 
 # +
 import pyvista
-pyvista.set_jupyter_backend("pythreejs")
+pyvista.start_xvfb()
 
 # Create plotter and pyvista grid
 p = pyvista.Plotter()
@@ -131,7 +131,6 @@ p.show_axes()
 if not pyvista.OFF_SCREEN:
    p.show()
 else:
-   pyvista.start_xvfb()
    figure_as_array = p.screenshot("deflection.png")
 # -
 
@@ -147,7 +146,7 @@ with io.XDMFFile(domain.comm, "deformation.xdmf", "w") as xdmf:
 # ## Stress computation
 # As soon as the displacement is computed, we can compute various stress measures. We will compute the von Mises stress defined as $\sigma_m=\sqrt{\frac{3}{2}s:s}$ where $s$ is the deviatoric stress tensor $s(u)=\sigma(u)-\frac{1}{3}\mathrm{tr}(\sigma(u))I$.
 
-s = sigma(uh) -1./3*ufl.tr(sigma(uh))*ufl.Identity(uh.geometric_dimension())
+s = sigma(uh) -1./3*ufl.tr(sigma(uh))*ufl.Identity(len(uh))
 von_Mises = ufl.sqrt(3./2*ufl.inner(s, s))
 
 # The `von_Mises` variable is now an expression that must be projected into an appropriate function space so that we can visualize it. As `uh` is a linear combination of first order piecewise continuous functions, the von Mises stresses will be a cell-wise constant function.
@@ -167,7 +166,6 @@ p.show_axes()
 if not pyvista.OFF_SCREEN:
    p.show()
 else:
-   pyvista.start_xvfb()
    stress_figure = p.screenshot(f"stresses.png")
 
 

@@ -1,11 +1,8 @@
-# Various jupyterlab components
-setuptools
-jupyterhub
-jupyterlab
-jupyter-book
+# Pyvista
+panel
 
-# Notebook conversion
-nbconvert
+# Jupyter-book
+jupyter-book @ git+https://github.com/executablebooks/jupyter-book@master
 
 # Meshio
 meshio
@@ -18,3 +15,4 @@ pandas
 
 # Progress bar
 tqdm
+

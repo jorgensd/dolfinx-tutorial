@@ -27,23 +27,31 @@ jobs:
     env:
       HDF5_MPI: "ON"
       PYVISTA_OFF_SCREEN: true
-
+      DISPLAY: ":99.0"
+      PYVISTA_JUPYTER_BACKEND: panel
+    
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         # Workaround for scheduling to work
         with:
           ref: dokken/release
 
-      - name: Install dependencies
+      # Upgrade setuptools and pip
+      # https://github.com/pypa/setuptools/issues/3269#issuecomment-1254507377
+      - name: Install apt dependencies and upgrade pip
         run: |
-          pip3 install --upgrade pip setuptools
-          CC=mpicc HDF_MPI="ON" HDF5_DIR="/usr/local/" pip3 install --no-cache-dir -r docker/requirements.txt
-          pip3 uninstall pyvista -y
-          pip3 install pyvista --upgrade --user
-          apt-get -qq update
-          apt-get install -y libgl1-mesa-dev xvfb nodejs
+          apt-get update && apt-get install -y libgl1-mesa-glx libxrender1 xvfb
+          python3 -m pip install -U "setuptools<=65.5.1" pip pkgconfig
+
+      # Install `h5py`
+      # https://github.com/hl5py/h5py/issues/2222
+      - name: Install h5py and pip requirements
+        run: |
+          python3 -m pip install cython
+          python3 -m pip install --no-build-isolation --no-binary=h5py h5py
+          python3 -m pip install --no-cache-dir -r docker/requirements.txt --upgrade
 
       - name: Test complex notebooks in parallel
         run: |
@@ -52,6 +60,7 @@ jobs:
           export PYTHONPATH=/usr/local/dolfinx-complex/lib/python3.10/dist-packages:$PYTHONPATH
           export LD_LIBRARY_PATH=/usr/local/dolfinx-complex/lib:$LD_LIBRARY_PATH
           cd chapter1
+          python3 complex_mode.py
           mpirun -n 2 python3 complex_mode.py
  
       - name: Test real notebooks in parallel
@@ -84,4 +93,4 @@ jobs:
 
       - name: Test building the book
         run: 
-          PYVISTA_JUPYTER_BACKEND=static PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
+          PYVISTA_OFF_SCREEN=false jupyter-book build  -W .

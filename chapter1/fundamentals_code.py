@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.1
+#       jupytext_version: 1.14.4
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -239,19 +239,19 @@ if domain.comm.rank == 0:
 # We will visualizing the mesh using [pyvista](https://docs.pyvista.org/), an interface to the VTK toolkit.
 # We start by converting the mesh to a format that can be used with `pyvista`.
 # To do this we use the function `dolfinx.plot.create_vtk_mesh`. The first step is to create an unstructured grid that can be used by `pyvista`.
+# We need to start a virtual framebuffer for plotting through docker containers. You can print the current backend and change it with `pyvista.set_jupyter_backend(backend)`
+
+import pyvista
+print(pyvista.global_theme.jupyter_backend)
 
 # + vscode={"languageId": "python"}
 from dolfinx import plot
-import pyvista
+pyvista.start_xvfb()
 topology, cell_types, geometry = plot.create_vtk_mesh(domain, tdim)
 grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
 # -
 
-# There are several backends that can be used with pyvista, and they have different benefits and drawbacks. See the [pyvista documentation](https://docs.pyvista.org/user-guide/jupyter/index.html) for more information and installation details. In this example and the rest of the tutorial we will use [ipygany](https://github.com/QuantStack/ipygany) and [pythreejs](https://github.com/jupyter-widgets/pythreejs).
-
-# + vscode={"languageId": "python"}
-pyvista.set_jupyter_backend("pythreejs")
-# -
+# There are several backends that can be used with pyvista, and they have different benefits and drawbacks. See the [pyvista documentation](https://docs.pyvista.org/user-guide/jupyter/index.html#state-of-3d-interactive-jupyterlab-plotting) for more information and installation details. In this example and the rest of the tutorial we will use [panel](https://github.com/holoviz/panel).
 
 # We can now use the `pyvista.Plotter` to visualize the mesh. We visualize it by showing it in 2D and warped in 3D.
 # In the jupyter notebook environment, we use the default setting of `pyvista.OFF_SCREEN=False`, which will render plots directly in the notebook.
@@ -263,7 +263,6 @@ plotter.view_xy()
 if not pyvista.OFF_SCREEN:
     plotter.show()
 else:
-    pyvista.start_xvfb()
     figure = plotter.screenshot("fundamentals_mesh.png")
 # -
 
@@ -287,24 +286,23 @@ if not pyvista.OFF_SCREEN:
     u_plotter.show()
 # -
 
-# ## ipygany
-# We change plotting from `pythreejs` to `ipygany` by initializing another `Plotter` with `jupyter_backend="ipygany"`. We also warp the mesh by scalar to make use of the 3D plotting.
+# We can also warp the mesh by scalar to make use of the 3D plotting.
 
 # + vscode={"languageId": "python"}
 warped = u_grid.warp_by_scalar()
 plotter2 = pyvista.Plotter()
 plotter2.add_mesh(warped, show_edges=True, show_scalar_bar=True)
 if not pyvista.OFF_SCREEN:
-    plotter2.show(jupyter_backend="ipygany")
+    plotter2.show()
 # -
 
 # ## External post-processing
-# For post-processing outside the python code, it is suggested to save the solution to file using either `dolfinx.io.VTKFile` or `dolfinx.io.XDMFFile` and using [Paraview](https://www.paraview.org/). This is especially suggested for 3D visualization.
+# For post-processing outside the python code, it is suggested to save the solution to file using either `dolfinx.io.VTXWriter` or `dolfinx.io.XDMFFile` and using [Paraview](https://www.paraview.org/). This is especially suggested for 3D visualization.
 
 # + vscode={"languageId": "python"}
 from dolfinx import io
-with io.VTKFile(domain.comm, "output.pvd", "w") as vtk:
-    vtk.write([uh._cpp_object])
+with io.VTXWriter(domain.comm, "output.bp", [uh]) as vtx:
+    vtx.write(0.0)
 with io.XDMFFile(domain.comm, "output.xdmf", "w") as xdmf:
     xdmf.write_mesh(domain)
     xdmf.write_function(uh)

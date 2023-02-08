@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.1
+#       jupytext_version: 1.14.4
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -154,7 +154,7 @@ def epsilon(u):
 
 # Define stress tensor
 def sigma(u, p):
-    return 2*mu*epsilon(u) - p*Identity(u.geometric_dimension())
+    return 2*mu*epsilon(u) - p*Identity(len(u))
 
 # Define the variational problem for the first step
 p_n = Function(Q)
@@ -302,7 +302,7 @@ xdmf.close()
 # We have already looked at how to plot higher order functions and vector functions. In this section we will look at how to visualize vector functions with glyphs, instead of warping the mesh.
 
 # +
-pyvista.set_jupyter_backend("pythreejs")
+pyvista.start_xvfb()
 topology, cell_types, geometry = create_vtk_mesh(V)
 values = np.zeros((geometry.shape[0], 3), dtype=np.float64)
 values[:, :len(u_n)] = u_n.x.array.real.reshape((geometry.shape[0], len(u_n)))
@@ -323,7 +323,6 @@ plotter.view_xy()
 if not pyvista.OFF_SCREEN:
     plotter.show()
 else:
-    pyvista.start_xvfb()
     fig_as_array = plotter.screenshot("glyphs.png")
 # -
 

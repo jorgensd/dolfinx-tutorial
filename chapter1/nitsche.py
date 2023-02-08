@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.1
+#       jupytext_version: 1.14.4
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -94,7 +94,7 @@ if domain.comm.rank == 0:
 
 # +
 import pyvista
-pyvista.set_jupyter_backend("pythreejs")
+pyvista.start_xvfb()
 
 grid = pyvista.UnstructuredGrid(*plot.create_vtk_mesh(V))
 grid.point_data["u"] = uh.x.array.real
@@ -105,7 +105,6 @@ plotter.view_xy()
 if not pyvista.OFF_SCREEN:
     plotter.show()
 else:
-    pyvista.start_xvfb()
     figure = plotter.screenshot("nitsche.png")
 # -
 
