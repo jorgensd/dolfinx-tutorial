@@ -43,7 +43,7 @@ jobs:
       - name: Install apt dependencies and upgrade pip
         run: |
           apt-get update && apt-get install -y libgl1-mesa-glx libxrender1 xvfb
-          python3 -m pip install -U setuptools<65.5.1 pip pkgconfig
+          python3 -m pip install -U "setuptools<=65.5.1" pip pkgconfig
 
       # Install `h5py`
       # https://github.com/hl5py/h5py/issues/2222
