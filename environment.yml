@@ -1,0 +1,15 @@
+name: tutorial-env
+channels:
+  - conda-forge
+dependencies:
+  - fenics-dolfinx==0.6.0
+  - meshio
+  - h5py
+  - matplotlib
+  - pandas
+  - python=3.10
+  - pyvista
+  - panel
+  - seaborn
+  - tqdm
+  - jupyter-book
