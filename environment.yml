@@ -13,3 +13,5 @@ dependencies:
   - seaborn
   - tqdm
   - jupyter-book
+  - python-gmsh
+  - gmsh
