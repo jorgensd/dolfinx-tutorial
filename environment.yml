@@ -15,3 +15,4 @@ dependencies:
   - jupyter-book
   - python-gmsh
   - gmsh
+  - mesa-libgl-devel-cos7-x86_64
