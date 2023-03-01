@@ -27,6 +27,10 @@ repository:
 bibtex_bibfiles:
   - references.bib
 
+launch_buttons:
+  notebook_interface: "jupyterlab"
+  binderhub_url: "https://mybinder.org"
+
 parse:
   myst_enable_extensions:
     - "amsmath"
