@@ -31,6 +31,10 @@ launch_buttons:
   notebook_interface: "jupyterlab"
   binderhub_url: "https://mybinder.org"
 
+sphinx:
+  config:
+    html_last_updated_fmt: "%b %d, %Y"
+
 parse:
   myst_enable_extensions:
     - "amsmath"
