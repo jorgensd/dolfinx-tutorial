@@ -35,7 +35,7 @@ All notebooks can be converted to python files using [nbconvert](https://nbconve
 ### Tutorial compatible docker images
 The tutorial uses several dependencies for meshing, plotting and timings. A compatible `JupyterLab` image is available in the [Github Packages](https://github.com/jorgensd/dolfinx-tutorial/pkgs/container/dolfinx-tutorial))
 
-To use the notebooks in this tutorial with DOLFINx on your own computer, you should use the docker image using the following command
+To use the notebooks in this tutorial with DOLFINx on your own computer, you should use the docker image using the following command:
 ```bash
   docker run --init -p 8888:8888 -v "$(pwd)":/root/shared ghcr.io/jorgensd/dolfinx-tutorial:v0.6.0
 ```
@@ -44,13 +44,13 @@ This image can also be used as a normal docker container by adding:
   docker run --ti -v "$(pwd)":/root/shared  --entrypoint="/bin/bash" ghcr.io/jorgensd/dolfinx-tutorial:v0.6.0
 ```
 
-The tutorials can also be exported as a notebook or PDF by clicking the ![Download](save.png)-symbol in the top right corner of the relevant tutorialThe notebook can in turn be used with a Python kernel which has DOLFINx.
+The tutorials can also be exported as a notebook or PDF by clicking the ![Download](save.png)-symbol in the top right corner of the relevant tutorial. The notebook can in turn be used with a Python kernel which has DOLFINx.
 
 ### Official images
 
 The FEniCS project supplies pre-built docker images at [https://hub.docker.com/r/dolfinx/dolfinx](https://hub.docker.com/r/dolfinx/dolfinx).
 The [Dockerfile](https://github.com/FEniCS/dolfinx/blob/main/docker/Dockerfile)
-provides a definitive build recipe. As the DOLFINx docker images are hosted at Docker-hub, one can directly access the image
+provides a definitive build recipe. As the DOLFINx docker images are hosted at Docker-hub, one can directly access the image:
 ```
 docker run dolfinx/dolfinx:v0.6.0-r1
 ```
