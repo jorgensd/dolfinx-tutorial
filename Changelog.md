@@ -1,7 +1,16 @@
 # Changelog
 
-## Dev
-- No Changes
+## main
+- No changes
+
+## v0.6.0
+- Remove `ipygany` and `pythreejs` as plotting backends. Using `panel`.
+- Add gif-output to [chapter2/diffusion_code] and [chapter2/hyperelasticity].
+- Replace `dolfinx.fem.Function.geometric_dimension` with `len(dolfinx.fem.Function)`
+- Improve [chapter2/ns_code2] to have better splitting scheme and density.
+- Improve mesh quality in [chapter3/em].
+- `jit_params` and `form_compiler_params` renamed to `*_options`.
+
 
 ## v0.5.0
 - Using new GMSH interface in DOLFINx (`dolfinx.io.gmshio`) in all demos using GMSH
