@@ -3,7 +3,7 @@
 
 title: FEniCSx tutorial
 author: Jørgen S. Dokken
-logo: logo.jpeg
+logo: fenics_logo.png
 
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html
