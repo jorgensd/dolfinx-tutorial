@@ -161,7 +161,7 @@ jobs:
         url: ${{ steps.deployment.outputs.page_url }}
 
       runs-on: ubuntu-latest
-      if: github.ref == 'refs/heads/dokken/jupyterbook'
+      if: github.ref == 'refs/heads/main'
 
       steps:
         - name: Checkout
