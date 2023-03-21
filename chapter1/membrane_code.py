@@ -147,52 +147,31 @@ else:
 
 # ## Making curve plots throughout the domain
 # Another way to compare the deflection and the load is to make a plot along the line $x=0$. 
-# This is just a matter of defining a set of points along the $y$-axis and evaluating the finite element functions $u$ and $p$ at these points. 
+# This is just a matter of defining a set of points along the $y$-axis and evaluating the finite element functions $u$ and $p$ at these points. We only define the points on one process, as we will distribute them by determining their ownership.
 
 tol = 0.001 # Avoid hitting the outside of the domain
 y = np.linspace(-1 + tol, 1 - tol, 101)
-points = np.zeros((3, 101))
-points[1] = y
-u_values = []
-p_values = []
-
-# As a finite element function is the linear combination of all degrees of freedom, $u_h(x)=\sum_{i=1}^N c_i \phi_i(x)$ where $c_i$ are the coefficients of $u_h$ and $\phi_i$ is the $i$-th basis function, we can compute the exact solution at any point in $\Omega$.
-# However, as a mesh consists of a large set of degrees of freedom (i.e. $N$ is large), we want to reduce the number of evaluations of the basis function $\phi_i(x)$. We do this by identifying which cell of the mesh $x$ is in. 
-# This is efficiently done by creating a bounding box tree of the cells of the mesh, allowing a quick recursive search through the mesh entities.
-
-from dolfinx import geometry
-bb_tree = geometry.BoundingBoxTree(domain, domain.topology.dim)
-
-# Now we can compute which cells the bounding box tree collides with using `dolfinx.geometry.compute_collisions_point`. This function returns a list of cells whose bounding box collide for each input point. As different points might have different number of cells, the data is stored in `dolfinx.cpp.graph.AdjacencyList_int32`, where one can access the cells for the `i`th point by calling `links(i)`.
-#  However, as the bounding box of a cell spans more of $\mathbb{R}^n$ than the actual cell, we check that the actual cell collides with cell 
-#  using `dolfinx.geometry.select_colliding_cells`, who measures the exact distance between the point and the cell (approximated as a convex hull for higher order geometries).
-# This function also returns an adjacency-list, as the point might align with a facet, edge or vertex that is shared between multiple cells in the mesh.
-#
-# Finally, we would like the code below to run in parallel, when the mesh is distributed over multiple processors. In that case, it is not guaranteed that every point in `points` is on each processor. Therefore we create a subset `points_on_proc` only containing the points found on the current processor.
-
-cells = []
-points_on_proc = []
-# Find cells whose bounding-box collide with the the points
-cell_candidates = geometry.compute_collisions(bb_tree, points.T)
-# Choose one of the cells that contains the point
-colliding_cells = geometry.compute_colliding_cells(domain, cell_candidates, points.T)
-for i, point in enumerate(points.T):
-    if len(colliding_cells.links(i))>0:
-        points_on_proc.append(point)
-        cells.append(colliding_cells.links(i)[0])
+if domain.comm.rank == 0:
+    points = np.zeros((3, 101))
+    points[1] = y
+else: 
+    # Only add points on one process
+    points = np.zeros((3, 0))
+from dolfinx.cpp.geometry import determine_point_ownership
+_, _, points_on_process, cells = determine_point_ownership(domain, points.T)
+points_on_process = np.array(points_on_process).reshape(len(points_on_process)//3, 3)
 
 # We now got a list of points on the processor, on in which cell each point belongs. We can then call `uh.eval` and `pressure.eval` to obtain the set of values for all the points.
 
-points_on_proc = np.array(points_on_proc, dtype=np.float64)
-u_values = uh.eval(points_on_proc, cells)
-p_values = pressure.eval(points_on_proc, cells)
+u_values = uh.eval(points_on_process, cells)
+p_values = pressure.eval(points_on_process, cells)
 
 # As we now have an array of coordinates and two arrays of function values, we can use `matplotlib` to plot them
 
 import matplotlib.pyplot as plt
 fig = plt.figure()
-plt.plot(points_on_proc[:,1], 50*u_values, "k", linewidth=2, label="Deflection ($\\times 50$)")
-plt.plot(points_on_proc[:, 1], p_values, "b--", linewidth = 2, label="Load")
+plt.plot(points_on_process[:,1], 50*u_values, "k", linewidth=2, label="Deflection ($\\times 50$)")
+plt.plot(points_on_process[:, 1], p_values, "b--", linewidth = 2, label="Load")
 plt.grid(True)
 plt.xlabel("y")
 plt.legend()
