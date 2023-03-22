@@ -1,0 +1,60 @@
+name: Publish book
+
+on:
+  branches: ["main"]
+
+  workflow_dispatch:
+
+  # Weekly build on Mondays at 8 am
+  schedule:
+    - cron: "0 8 * * 1"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+env:
+  HDF5_MPI: "ON"
+  HDF5_DIR: "/usr/local/"
+  DISPLAY: ":99.0"
+  DEB_PYTHON_INSTALL_LAYOUT: deb_system
+
+jobs:
+  run-tests:
+    uses: ./.github/workflows/test_stable.yml
+    
+  build-book:
+    uses: ./.github/workflows/build_stable.yaml
+
+  deploy:
+    needs: [build-book, run-tests]
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+ 
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
+  
+      - name: Download docs artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: webpage
+          path: "./public"
+
+      - name: Upload page artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: "./public"
+
+      - name: Deploy coverage report to GH Pages
+        id: deployment
+        uses: actions/deploy-pages@v1

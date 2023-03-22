@@ -1,0 +1,77 @@
+name: Check that all python files run in parallel
+
+# Controls when the action will run.
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  workflow_call:
+  pull_request:
+    branches: ["main"]
+env:
+  # Directory that will be published on github pages
+  HDF5_MPI: "ON"
+  HDF5_DIR: "/usr/local/"
+  DISPLAY: ":99.0"
+  DEB_PYTHON_INSTALL_LAYOUT: deb_system
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  test:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    container: ghcr.io/fenics/dolfinx/lab:v0.6.0-r1
+    env:
+      PYVISTA_OFF_SCREEN: true
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./.github/actions/install-dependencies
+
+      - name: Test complex notebooks in parallel
+        run: |
+          export PKG_CONFIG_PATH=/usr/local/dolfinx-complex/lib/pkgconfig:$PKG_CONFIG_PATH
+          export PETSC_ARCH=linux-gnu-complex-32
+          export PYTHONPATH=/usr/local/dolfinx-complex/lib/python3.10/dist-packages:$PYTHONPATH
+          export LD_LIBRARY_PATH=/usr/local/dolfinx-complex/lib:$LD_LIBRARY_PATH
+          python3 -c "from pyvista import start_xvfb; start_xvfb(0.1)"
+          cd chapter1
+          python3 complex_mode.py
+          mpirun -n 2 python3 complex_mode.py
+ 
+  
+      - name: Test notebooks in parallel
+        run: |
+          python3 -c "from pyvista import start_xvfb; start_xvfb(0.1)"
+          cd chapter1
+          mpirun -n 2 python3 fundamentals_code.py
+          mpirun -n 2 python3 membrane_code.py
+          cd ../chapter2
+          mpirun -n 2 python3 diffusion_code.py
+          mpirun -n 2 python3 heat_code.py
+          mpirun -n 2 python3 linearelasticity_code.py
+          mpirun -n 2 python3 hyperelasticity.py
+          mpirun -n 2 python3 nonlinpoisson_code.py
+          mpirun -n 2 python3 ns_code1.py
+          mpirun -n 2 python3 ns_code2.py
+          cd ../chapter3
+          mpirun -n 2 python3 neumann_dirichlet_code.py
+          mpirun -n 2 python3 multiple_dirichlet.py
+          mpirun -n 2 python3 subdomains.py
+          mpirun -n 2 python3 robin_neumann_dirichlet.py
+          mpirun -n 2 python3 component_bc.py
+          mpirun -n 2 python3 em.py
+          cd ../chapter4
+          mpirun -n 2 python3 solvers.py
+          mpirun -n 2 python3 convergence.py
+          mpirun -n 2 python3 compiler_parameters.py
+
+      - name: Upload Navier-Stokes DFG 2D 3 plots
+        uses: actions/upload-artifact@v3
+        with:
+          name: DFG2D-3
+          path: chapter2/figures
+          retention-days: 2
+          if-no-files-found: error
