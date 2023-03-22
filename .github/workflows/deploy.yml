@@ -1,8 +1,9 @@
 name: Publish book
 
 on:
-  branches: ["main"]
-
+  push:
+    branches:
+      - "main"
   workflow_dispatch:
 
   # Weekly build on Mondays at 8 am
