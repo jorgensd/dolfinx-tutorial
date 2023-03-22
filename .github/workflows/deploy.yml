@@ -33,7 +33,7 @@ jobs:
     uses: ./.github/workflows/book_stable.yml
 
   deploy:
-    runs-on: ubuntu:22.04
+    runs-on: ubuntu-22.04
     needs: [build-book, run-tests]
     environment:
       name: github-pages
