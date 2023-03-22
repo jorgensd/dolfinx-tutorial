@@ -1,21 +1,16 @@
-# This is a basic workflow to help you get started with Actions
 name: Test release branch against DOLFINx nightly build
 
 # Controls when the action will run.
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
-  push:
-    branches: [dokken/release]
-  # pull_request:
-  #   branches:
-  #     - main
+  pull_request:
+    branches:
+      - release
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-  # Test every day at 9 am
   schedule:
-    - cron: "* 9 * * 1"
+    - cron: "0 9 * * *"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -32,26 +27,24 @@ jobs:
     
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-        # Workaround for scheduling to work
+      # Checkout release branch to work on schedule
+      - name: Checkout release branch
+        uses: actions/checkout@v3
+        if: ${{ github.event_name == 'schedule' }}
         with:
-          ref: dokken/release
+          ref: release
 
-      # Upgrade setuptools and pip
-      # https://github.com/pypa/setuptools/issues/3269#issuecomment-1254507377
-      - name: Install apt dependencies and upgrade pip
-        run: |
-          apt-get update && apt-get install -y libgl1-mesa-glx libxrender1 xvfb
-          python3 -m pip install -U "setuptools<=65.5.1" pip pkgconfig
+      - name: Use current branch 
+        uses: actions/checkout@v3
+        if: ${{ github.event_name != 'schedule' }}
 
-      # Install `h5py`
-      # https://github.com/hl5py/h5py/issues/2222
-      - name: Install h5py and pip requirements
-        run: |
-          python3 -m pip install cython
-          python3 -m pip install --no-build-isolation --no-binary=h5py h5py
+      - name: Special handling of some installation
+        uses: ./.github/actions/install-dependencies
+
+      - name: Install requirements
+        run:
           python3 -m pip install --no-cache-dir -r docker/requirements.txt --upgrade
+
 
       - name: Test complex notebooks in parallel
         run: |
@@ -79,18 +72,26 @@ jobs:
           mpirun -n 2 python3 ns_code1.py
           mpirun -n 2 python3 ns_code2.py
           cd ../chapter3
-          mpirun -n 3 python3 neumann_dirichlet_code.py
-          mpirun -n 3 python3 multiple_dirichlet.py
-          mpirun -n 3 python3 subdomains.py
-          mpirun -n 3 python3 robin_neumann_dirichlet.py
-          mpirun -n 3 python3 component_bc.py
-          mpirun -n 3 python3 em.py
+          mpirun -n 2 python3 neumann_dirichlet_code.py
+          mpirun -n 2 python3 multiple_dirichlet.py
+          mpirun -n 2 python3 subdomains.py
+          mpirun -n 2 python3 robin_neumann_dirichlet.py
+          mpirun -n 2 python3 component_bc.py
+          mpirun -n 2 python3 em.py
           cd ../chapter4
-          mpirun -n 3 python3 solvers.py
-          mpirun -n 3 python3 convergence.py
-          mpirun -n 3 python3 compiler_parameters.py
-          mpirun -n 4 python3 newton-solver.py
+          mpirun -n 2 python3 solvers.py
+          mpirun -n 2 python3 convergence.py
+          mpirun -n 2 python3 compiler_parameters.py
+          mpirun -n 2 python3 newton-solver.py
 
       - name: Test building the book
         run: 
           PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
+
+      
+      - uses: actions/upload-artifact@v3
+        with:
+          name: webpage
+          path: ./_build/html
+          retention-days: 2
+          if-no-files-found: error
