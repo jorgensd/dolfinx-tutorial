@@ -2,7 +2,7 @@
 panel
 
 # Jupyter-book
-jupyter-book @ git+https://github.com/executablebooks/jupyter-book@master
+jupyter-book
 
 # Meshio
 meshio
