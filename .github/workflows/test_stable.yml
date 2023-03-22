@@ -30,6 +30,10 @@ jobs:
 
       - uses: ./.github/actions/install-dependencies
 
+      - name: Install additional deps
+        run: |
+          python3 -m pip install -r docker/requirements.txt
+
       - name: Test complex notebooks in parallel
         run: |
           export PKG_CONFIG_PATH=/usr/local/dolfinx-complex/lib/pkgconfig:$PKG_CONFIG_PATH
