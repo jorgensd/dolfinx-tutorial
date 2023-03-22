@@ -30,7 +30,7 @@ jobs:
     uses: ./.github/workflows/test_stable.yml
     
   build-book:
-    uses: ./.github/workflows/build_stable.yaml
+    uses: ./.github/workflows/book_stable.yml
 
   deploy:
     needs: [build-book, run-tests]
