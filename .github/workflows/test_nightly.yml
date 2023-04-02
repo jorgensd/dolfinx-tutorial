@@ -39,7 +39,7 @@ jobs:
         if: ${{ github.event_name != 'schedule' }}
 
       - name: Install DOLFINx
-        uses: jorgensd/actions/install-dolfinx
+        uses: jorgensd/actions/install-dolfinx@v0.1.0
 
       - name: Special handling of some installation
         uses: ./.github/actions/install-dependencies
