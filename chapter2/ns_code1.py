@@ -225,7 +225,7 @@ pc2.setHYPREType("boomeramg")
 # Solver for step 3
 solver3 = PETSc.KSP().create(mesh.comm)
 solver3.setOperators(A3)
-solver3.setType(PETSc.KSP.Type.Lagrange)
+solver3.setType(PETSc.KSP.Type.CG)
 pc3 = solver3.getPC()
 pc3.setType(PETSc.PC.Type.SOR)
 # -
