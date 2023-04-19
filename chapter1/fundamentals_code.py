@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.4
+#       jupytext_version: 1.14.5
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -33,24 +33,24 @@
 # ```
 #
 # The Poisson problem has so far featured a general domain $\Omega$ and general functions $u_D$ for the boundary conditions and $f$ for the right hand side.
-# Therefore, we need to make specific choices of $\Omega, u_D$ and $f$. A wise choice is to construct a problem  with a known analytical solution, so that we can check that the computed solution is correct. The primary candidates are lower-order polynomials. The continuous Galerkin finite element spaces of degree $r$ will exactly reproduce polynomials of degree $r$.
-# <!-- Particularly, piecewise linear continuous Galerkin finite elements are able to exactly reproduce a quadratic polynomial on
+# Therefore, we need to make specific choices of $\Omega, u_D$ and $f$. A wise choice is to construct a problem  with a known analytical solution, so that we can check that the computed solution is correct. The primary candidates are lower-order polynomials. The continuous Galerkin finite element spaces of degree $r$ will exactly reproduce polynomials of degree $r$. 
+# <!-- Particularly, piecewise linear continuous Galerkin finite elements are able to exactly reproduce a quadratic polynomial on 
 # a uniformly partitioned mesh. -->
 #  We use this fact to construct a quadratic function in $2D$. In particular we choose
 # \begin{align}
 #  u_e(x,y)=1+x^2+2y^2
 #  \end{align}
 #
-# Inserting $u_e$ in the original boundary problem, we find that
+# Inserting $u_e$ in the original boundary problem, we find that  
 # \begin{align}
 #     f(x,y)= -6,\qquad u_d(x,y)=u_e(x,y)=1+x^2+2y^2,
 # \end{align}
-# regardless of the shape of the domain as long as we prescribe
+# regardless of the shape of the domain as long as we prescribe 
 # $u_e$ on the boundary.
 #
 # For simplicity, we choose the domain to be a unit square $\Omega=[0,1]\times [0,1]$
 #
-# This simple but very powerful method for constructing test problems is called _the method of manufactured solutions_.
+# This simple but very powerful method for constructing test problems is called _the method of manufactured solutions_. 
 # First pick a simple expression for the exact solution, plug into
 # the equation to obtain the right-hand side (source term $f$). Then solve the equation with this right hand side, and using the exact solution as boundary condition. Finally, we create a program that tries to reproduce the exact solution.
 #
@@ -66,24 +66,16 @@
 # The next step is to define the discrete domain, _the mesh_. We do this by importing one of the built-in mesh generators. We will build a unit square mesh, i.e. a mesh spanning $[0,1]\times[0,1]$. It can consist of either triangles or quadrilaterals.
 
 # + vscode={"languageId": "python"}
-from dolfinx import io
-from dolfinx import plot
-import pyvista
-from petsc4py.PETSc import ScalarType
-import ufl
-import numpy
-from dolfinx import fem
-from dolfinx.fem import FunctionSpace
 from mpi4py import MPI
 from dolfinx import mesh
 domain = mesh.create_unit_square(MPI.COMM_WORLD, 8, 8, mesh.CellType.quadrilateral)
 # -
 
-# Note that in addition to give how many elements we would like to have in each direction.
-# We also have to supply the _MPI-communicator_.
-# This is to specify how we would like the program to behave in parallel.
-# If we supply `MPI.COMM_WORLD` we create a single mesh, whose data is distributed over the number of processors we
-# would like to use. We can for instance run the program in  parallel on two processors by using `mpirun`, as:
+# Note that in addition to give how many elements we would like to have in each direction. 
+# We also have to supply the _MPI-communicator_. 
+# This is to specify how we would like the program to behave in parallel. 
+# If we supply `MPI.COMM_WORLD` we create a single mesh, whose data is distributed over the number of processors we 
+# would like to use. We can for instance run the program in  parallel on two processors by using `mpirun`, as: 
 # ``` bash
 #  mpirun -n 2 python3 t1.py
 # ```
@@ -95,36 +87,39 @@ domain = mesh.create_unit_square(MPI.COMM_WORLD, 8, 8, mesh.CellType.quadrilater
 #  We import the function space initializer from the `dolfinx.fem` module.
 
 # + vscode={"languageId": "python"}
+from dolfinx.fem import FunctionSpace
 V = FunctionSpace(domain, ("Lagrange", 1))
 # -
 
-# The second argument is the tuple containing the type of finite element, and the element degree. The type of element here is "Lagrange", which implies the standard Lagrange family of elements.
-# DOLFINx supports a large variety on elements on simplices
+# The second argument is the tuple containing the type of finite element, and the element degree. The type of element here is "Lagrange", which implies the standard Lagrange family of elements. 
+# DOLFINx supports a large variety on elements on simplices 
 # (triangles and tetrahedra) and non-simplices (quadrilaterals
 # and hexahedra). For an overview, see:
 # *FIXME: Add link to all the elements we support*
 #
-# The element degree in the code is 1. This means that we are choosing the standard $P_1$ linear Lagrange element, which has degrees of freedom at the vertices.
-# The computed solution will be continuous across elements and linearly varying in $x$ and $y$ inside each element. Higher degree polynomial approximations are obtained by increasing the degree argument.
+# The element degree in the code is 1. This means that we are choosing the standard $P_1$ linear Lagrange element, which has degrees of freedom at the vertices. 
+# The computed solution will be continuous across elements and linearly varying in $x$ and $y$ inside each element. Higher degree polynomial approximations are obtained by increasing the degree argument. 
 #
 # ## Defining the boundary conditions
 #
-# The next step is to specify the boundary condition $u=u_D$ on $\partial\Omega_D$, which is done by over several steps.
+# The next step is to specify the boundary condition $u=u_D$ on $\partial\Omega_D$, which is done by over several steps. 
 # The first step is to define the function $u_D$. Into this function, we would like to interpolate the boundary condition $1 + x^2+2y^2$.
-# We do this by first defining a `dolfinx.fem.Function`, and then using a [lambda-function](https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions) in Python to define the
+# We do this by first defining a `dolfinx.fem.Function`, and then using a [lambda-function](https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions) in Python to define the 
 # spatially varying function.
 #
 
 # + vscode={"languageId": "python"}
+from dolfinx import fem
 uD = fem.Function(V)
 uD.interpolate(lambda x: 1 + x[0]**2 + 2 * x[1]**2)
 # -
 
-# We now have the boundary data (and in this case the solution of
+# We now have the boundary data (and in this case the solution of 
 # the finite element problem) represented in the discrete function space.
 # Next we would like to apply the boundary values to all degrees of freedom that are on the boundary of the discrete domain. We start by identifying the facets (line-segments) representing the outer boundary, using `dolfinx.mesh.exterior_facet_indices`.
 
 # + vscode={"languageId": "python"}
+import numpy
 # Create facet to cell connectivity required to determine boundary facets
 tdim = domain.topology.dim
 fdim = tdim - 1
@@ -132,11 +127,11 @@ domain.topology.create_connectivity(fdim, tdim)
 boundary_facets = mesh.exterior_facet_indices(domain.topology)
 # -
 
-# For the current problem, as we are using the "Lagrange" 1 function space, the degrees of freedom are located at the vertices of each cell, thus each facet contains two degrees of freedom.
+# For the current problem, as we are using the "Lagrange" 1 function space, the degrees of freedom are located at the vertices of each cell, thus each facet contains two degrees of freedom. 
 #
-# To find the local indices of these degrees of freedom, we use `dolfinx.fem.locate_dofs_topological`, which takes in the function space, the dimension of entities in the mesh we would like to identify and the local entities.
+# To find the local indices of these degrees of freedom, we use `dolfinx.fem.locate_dofs_topological`, which takes in the function space, the dimension of entities in the mesh we would like to identify and the local entities. 
 # ```{admonition} Local ordering of degrees of freedom and mesh vertices
-# Many people expect there to be a 1-1 correspondence between the mesh coordinates and the coordinates of the degrees of freedom.
+# Many people expect there to be a 1-1 correspondence between the mesh coordinates and the coordinates of the degrees of freedom. 
 # However, this is only true in the case of `Lagrange` 1 elements on a first order mesh. Therefore, in DOLFINx we use separate local numbering for the mesh coordinates and the dof coordinates. To obtain the local dof coordinates we can use `V.tabulate_dof_coordinates()`, while the ordering of the local vertices can be obtained by `mesh.geometry.x`.
 # ```
 # With this data at hand, we can create the Dirichlet boundary condition
@@ -154,6 +149,7 @@ bc = fem.dirichletbc(uD, boundary_dofs)
 # We use the [Unified Form Language](https://github.com/FEniCS/ufl/) (UFL) to specify the varitional formulations. See {cite}`ufl2014` for more details.
 
 # + vscode={"languageId": "python"}
+import ufl
 u = ufl.TrialFunction(V)
 v = ufl.TestFunction(V)
 # -
@@ -162,12 +158,13 @@ v = ufl.TestFunction(V)
 # As the source term is constant over the domain, we use `dolfinx.Constant`
 
 # + vscode={"languageId": "python"}
+from petsc4py.PETSc import ScalarType
 f = fem.Constant(domain, ScalarType(-6))
 # -
 
 # ```{admonition} Compilation speed-up
 # Instead of wrapping $-6$ in a `dolfinx.Constant`, we could simply define $f$ as `f=-6`.
-# However, if we would like to change this parameter later in the simulation, we would have to redefine our variational formulation. The `dolfinx.Constant` allows us to update the value in $f$ by using `f.value=5`. Additionally, by indicating that $f$ is a constant, we speed of compilation of the variational formulations required for the created linear system.
+# However, if we would like to change this parameter later in the simulation, we would have to redefine our variational formulation. The `dolfinx.Constant` allows us to update the value in $f$ by using `f.value=5`. Additionally, by indicating that $f$ is a constant, we speed of compilation of the variational formulations required for the created linear system. 
 # ```
 # ## Defining the variational problem
 # As we now have defined all variables used to describe our variational problem, we can create the weak formulation
@@ -178,7 +175,7 @@ L = f * v * ufl.dx
 # -
 
 # Note that there is a very close correspondence between the Python syntax and the mathematical syntax
-# $\int_{\Omega} \nabla u \cdot \nabla v ~\mathrm{d} x$ and $\int_{\Omega}fv~\mathrm{d} x$.
+# $\int_{\Omega} \nabla u \cdot \nabla v ~\mathrm{d} x$ and $\int_{\Omega}fv~\mathrm{d} x$. 
 # The integration over the domain $\Omega$ is defined by using `ufl.dx`, an integration measure over all cells of the mesh.
 #
 # This is the key strength of FEniCSx: the formulas in the variational formulation translate directly to very similar Python code, a feature that makes it easy to specify and solve complicated PDE problems.
@@ -196,7 +193,7 @@ L = f * v * ufl.dx
 #
 # ## Forming and solving the linear system
 #
-# Having defined the finite element variational problem and boundary condition, we can create our `dolfinx.fem.petsc.LinearProblem`, as class for solving
+# Having defined the finite element variational problem and boundary condition, we can create our `dolfinx.fem.petsc.LinearProblem`, as class for solving 
 # the variational problem: Find $u_h\in V$ such that $a(u_h, v)==L(v) \quad \forall v \in \hat{V}$. We will use PETSc as our linear algebra backend, using a direct solver (LU-factorization).  See the [PETSc-documentation](https://petsc.org/main/docs/manual/ksp/?highlight=ksp#ksp-linear-system-solvers) of the method for more information.
 
 # + vscode={"languageId": "python"}
@@ -231,7 +228,7 @@ error_L2 = numpy.sqrt(domain.comm.allreduce(error_local, op=MPI.SUM))
 # As we allready have interpolated the exact solution into the first order space when creating the boundary condition, we can compare the maximum values at any degree of freedom of the approximation space.
 
 # + vscode={"languageId": "python"}
-error_max = numpy.max(numpy.abs(uD.x.array - uh.x.array))
+error_max = numpy.max(numpy.abs(uD.x.array-uh.x.array))
 # Only print the error on one process
 if domain.comm.rank == 0:
     print(f"Error_L2 : {error_L2:.2e}")
@@ -244,9 +241,11 @@ if domain.comm.rank == 0:
 # To do this we use the function `dolfinx.plot.create_vtk_mesh`. The first step is to create an unstructured grid that can be used by `pyvista`.
 # We need to start a virtual framebuffer for plotting through docker containers. You can print the current backend and change it with `pyvista.set_jupyter_backend(backend)`
 
+import pyvista
 print(pyvista.global_theme.jupyter_backend)
 
 # + vscode={"languageId": "python"}
+from dolfinx import plot
 pyvista.start_xvfb()
 topology, cell_types, geometry = plot.create_vtk_mesh(domain, tdim)
 grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
@@ -301,6 +300,7 @@ if not pyvista.OFF_SCREEN:
 # For post-processing outside the python code, it is suggested to save the solution to file using either `dolfinx.io.VTXWriter` or `dolfinx.io.XDMFFile` and using [Paraview](https://www.paraview.org/). This is especially suggested for 3D visualization.
 
 # + vscode={"languageId": "python"}
+from dolfinx import io
 with io.VTXWriter(domain.comm, "output.bp", [uh]) as vtx:
     vtx.write(0.0)
 with io.XDMFFile(domain.comm, "output.xdmf", "w") as xdmf:
