@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.4
+#       jupytext_version: 1.14.5
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -121,4 +121,3 @@ if not pyvista.OFF_SCREEN:
     plotter.show()
 else:
     figure = plotter.screenshot("multiple_dirichlet.png")
-# -

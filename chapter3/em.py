@@ -327,4 +327,3 @@ if not pyvista.OFF_SCREEN:
     plotter.show()
 else:
     B_fig = plotter.screenshot("B.png")
-# -

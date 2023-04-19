@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.4
+#       jupytext_version: 1.14.5
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -45,15 +45,10 @@ g = gamma
 # We then create the mesh, which will consist of hexahedral elements, along with the function space. We will use the convenience function `VectorFunctionSpace`. However, we also could have used `ufl`s functionality, creating a vector element `element = ufl.VectorElement("Lagrange", mesh.ufl_cell(), 1)
 # `, and intitializing the function space as `V = dolfinx.fem.FunctionSpace(mesh, element)`.
 
-# +
-
-
 domain = mesh.create_box(MPI.COMM_WORLD, [np.array([0, 0, 0]), np.array([L, W, W])],
                          [20, 6, 6], cell_type=mesh.CellType.hexahedron)
 V = fem.VectorFunctionSpace(domain, ("Lagrange", 1))
 
-
-# -
 
 # ## Boundary conditions
 # As we would like to clamp the boundary at $x=0$, we do this by using a marker function, which locate the facets where $x$ is close to zero by machine prescision.

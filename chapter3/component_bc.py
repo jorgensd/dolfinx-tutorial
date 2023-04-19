@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.4
+#       jupytext_version: 1.14.5
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -62,15 +62,10 @@ g = 1
 
 # As in the previous demos, we define our mesh and function space. We will create a `ufl.VectorElement` to create a two dimensional vector space.
 
-# +
-
-
 mesh = create_rectangle(MPI.COMM_WORLD, np.array([[0, 0], [L, H]]), [30, 30], cell_type=CellType.triangle)
 element = VectorElement("Lagrange", mesh.ufl_cell(), 1)
 V = FunctionSpace(mesh, element)
 
-
-# -
 
 # ## Boundary conditions
 # As we would like to clamp the boundary at $x=0$, we do this by using a marker function, we use `dolfinx.fem.locate_dofs_geometrical` to identify the relevant degrees of freedom.
@@ -160,4 +155,3 @@ if not pyvista.OFF_SCREEN:
     p.show()
 else:
     fig_array = p.screenshot(f"component.png")
-# -

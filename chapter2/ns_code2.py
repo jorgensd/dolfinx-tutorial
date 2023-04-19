@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.4
+#       jupytext_version: 1.14.5
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -360,7 +360,6 @@ if mesh.comm.rank == 0:
 #
 # As in the previous example, we create output files for the velocity and pressure and solve the time-dependent problem. As we are solving a time dependent problem with many time steps, we use the `tqdm`-package to visualize the progress. This package can be install with `pip3`.
 
-# + tags=[]
 vtx_u = VTXWriter(mesh.comm, "dfg2D-3-u.bp", [u_])
 vtx_p = VTXWriter(mesh.comm, "dfg2D-3-p.bp", [p_])
 vtx_u.write(t)
@@ -446,12 +445,10 @@ for i in range(num_steps):
                 break
 vtx_u.close()
 vtx_p.close()
-# -
 
 # ## Verification using data from FEATFLOW
 # As FEATFLOW has provided data for different  discretization levels, we compare our numerical data with the data provided using `matplotlib`.
 
-# + tags=[]
 if mesh.comm.rank == 0:
     if not os.path.exists("figures"):
         os.mkdir("figures")
@@ -487,4 +484,3 @@ if mesh.comm.rank == 0:
     plt.grid()
     plt.legend()
     plt.savefig("figures/pressure_comparison.png")
-# -

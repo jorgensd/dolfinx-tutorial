@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.4
+#       jupytext_version: 1.14.5
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -257,7 +257,6 @@ L2_error = form(dot(u_ - u_ex, u_ - u_ex) * dx)
 
 # The next step is to create the loop over time. Note that we for all three steps only have to assemble the right hand side and apply the boundary condition using lifting.
 
-# + tags=[]
 for i in range(num_steps):
     # Update current time step
     t += dt
@@ -305,7 +304,6 @@ for i in range(num_steps):
         print(f"Time {t:.2f}, L2-error {error_L2:.2e}, Max error {error_max:.2e}")
 # Close xmdf file
 xdmf.close()
-# -
 
 # ## Verification
 # As for the previous problems we compute the error at each degree of freedom and the $L^2(\Omega)$-error. We start with the  initial condition $u=(0,0)$. We have not specified the initial condition explicitly, and FEniCSx will initialize all `Function`s including `u_n` and `u_` to zero. Since the exact solution is quadratic, we expect to reach machine precision within finite time. For our implementation, we observe that the error quickly approaches zero, and is of order $10^{-6}$ at $T=10

@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.4
+#       jupytext_version: 1.14.5
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -136,8 +136,8 @@ sargs = dict(title_font_size=25, label_font_size=20, fmt="%.2e", color="black",
 renderer = plotter.add_mesh(warped, show_edges=True, lighting=False,
                             cmap=viridis, scalar_bar_args=sargs,
                             clim=[0, max(uh.x.array)])
+# -
 
-# + [markdown] tags=[]
 # ## Updating the solution and right hand side per time step
 # To be able to solve the variation problem at each time step, we have to assemble the right hand side and apply the boundary condition before calling
 # `solver.solve(b, uh.vector)`. We start by resetting the values in `b` as we are reusing the vector at every time step.
@@ -145,7 +145,6 @@ renderer = plotter.add_mesh(warped, show_edges=True, lighting=False,
 # This is because we want to use lifting to apply the boundary condition, which preserves symmetry of the matrix $A$ if the bilinear form $a(u,v)=a(v,u)$ without Dirichlet boundary conditions.
 # When we have applied the boundary condition, we can solve the linear system and update values that are potentially shared between processors.
 # Finally, before moving to the next time step, we update the solution at the previous time step to the solution at this time step.
-# -
 
 for i in range(num_steps):
     t += dt
