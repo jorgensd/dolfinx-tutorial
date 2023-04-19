@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.4
+#       jupytext_version: 1.14.5
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -31,7 +31,7 @@ from ufl import (Circumradius, FacetNormal, SpatialCoordinate, TrialFunction, Te
 
 N = 8
 domain = mesh.create_unit_square(MPI.COMM_WORLD, N, N)
-V = fem.FunctionSpace(domain, ("CG", 1))
+V = fem.FunctionSpace(domain, ("Lagrange", 1))
 # -
 
 # Next, we create a function containing the exact solution (which will also be used in the Dirichlet boundary condition) and the corresponding source function for the right hand side. Note that we use `ufl.SpatialCoordinate` to define the exact solution, which in turn is interpolated into `uD` and used to create the source function `f`.

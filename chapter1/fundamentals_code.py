@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.4
+#       jupytext_version: 1.14.5
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -88,10 +88,10 @@ domain = mesh.create_unit_square(MPI.COMM_WORLD, 8, 8, mesh.CellType.quadrilater
 
 # + vscode={"languageId": "python"}
 from dolfinx.fem import FunctionSpace
-V = FunctionSpace(domain, ("CG", 1))
+V = FunctionSpace(domain, ("Lagrange", 1))
 # -
 
-# The second argument is the tuple containing the type of finite element, and the element degree. The type of element here is "CG", which implies the standard Lagrange family of elements. 
+# The second argument is the tuple containing the type of finite element, and the element degree. The type of element here is "Lagrange", which implies the standard Lagrange family of elements. 
 # DOLFINx supports a large variety on elements on simplices 
 # (triangles and tetrahedra) and non-simplices (quadrilaterals
 # and hexahedra). For an overview, see:
@@ -127,12 +127,12 @@ domain.topology.create_connectivity(fdim, tdim)
 boundary_facets = mesh.exterior_facet_indices(domain.topology)
 # -
 
-# For the current problem, as we are using the "CG" 1 function space, the degrees of freedom are located at the vertices of each cell, thus each facet contains two degrees of freedom. 
+# For the current problem, as we are using the "Lagrange" 1 function space, the degrees of freedom are located at the vertices of each cell, thus each facet contains two degrees of freedom. 
 #
 # To find the local indices of these degrees of freedom, we use `dolfinx.fem.locate_dofs_topological`, which takes in the function space, the dimension of entities in the mesh we would like to identify and the local entities. 
 # ```{admonition} Local ordering of degrees of freedom and mesh vertices
 # Many people expect there to be a 1-1 correspondence between the mesh coordinates and the coordinates of the degrees of freedom. 
-# However, this is only true in the case of `CG` 1 elements on a first order mesh. Therefore, in DOLFINx we use separate local numbering for the mesh coordinates and the dof coordinates. To obtain the local dof coordinates we can use `V.tabulate_dof_coordinates()`, while the ordering of the local vertices can be obtained by `mesh.geometry.x`.
+# However, this is only true in the case of `Lagrange` 1 elements on a first order mesh. Therefore, in DOLFINx we use separate local numbering for the mesh coordinates and the dof coordinates. To obtain the local dof coordinates we can use `V.tabulate_dof_coordinates()`, while the ordering of the local vertices can be obtained by `mesh.geometry.x`.
 # ```
 # With this data at hand, we can create the Dirichlet boundary condition
 
@@ -206,7 +206,7 @@ uh = problem.solve()
 # Finally, we want to compute the error to check the accuracy of the solution. We do this by comparing the finite element solution `u` with the exact solution. We do this by interpolating the exact solution into the the $P_2$-function space.
 
 # + vscode={"languageId": "python"}
-V2 = fem.FunctionSpace(domain, ("CG", 2))
+V2 = fem.FunctionSpace(domain, ("Lagrange", 2))
 uex = fem.Function(V2)
 uex.interpolate(lambda x: 1 + x[0]**2 + 2 * x[1]**2)
 # -

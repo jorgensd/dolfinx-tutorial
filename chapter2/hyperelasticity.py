@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.4
+#       jupytext_version: 1.14.5
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -24,6 +24,10 @@
 # Then, we create a slender cantilever consisting of hexahedral elements and create the function space `V` for our unknown.
 
 # +
+from dolfinx import log
+import matplotlib.pyplot as plt
+import pyvista
+from dolfinx import nls
 import numpy as np
 import ufl
 
@@ -31,8 +35,8 @@ from petsc4py import PETSc
 from mpi4py import MPI
 from dolfinx import fem, mesh, plot
 L = 20.0
-domain = mesh.create_box(MPI.COMM_WORLD,[[0.0,0.0,0.0], [L, 1, 1]], [20, 5, 5], mesh.CellType.hexahedron)
-V = fem.VectorFunctionSpace(domain, ("CG", 2))
+domain = mesh.create_box(MPI.COMM_WORLD, [[0.0, 0.0, 0.0], [L, 1, 1]], [20, 5, 5], mesh.CellType.hexahedron)
+V = fem.VectorFunctionSpace(domain, ("Lagrange", 2))
 
 
 # -
@@ -43,10 +47,12 @@ V = fem.VectorFunctionSpace(domain, ("CG", 2))
 def left(x):
     return np.isclose(x[0], 0)
 
+
 def right(x):
     return np.isclose(x[0], L)
 
-fdim = domain.topology.dim -1
+
+fdim = domain.topology.dim - 1
 left_facets = mesh.locate_entities_boundary(domain, fdim, left)
 right_facets = mesh.locate_entities_boundary(domain, fdim, right)
 # -
@@ -68,7 +74,7 @@ u_bc = np.array((0,) * domain.geometry.dim, dtype=PETSc.ScalarType)
 left_dofs = fem.locate_dofs_topological(V, facet_tag.dim, facet_tag.find(1))
 bcs = [fem.dirichletbc(u_bc, left_dofs, V)]
 
-# Next, we define the body force on the reference configuration (`B`), and nominal (first Piola-Kirchhoff) traction (`T`). 
+# Next, we define the body force on the reference configuration (`B`), and nominal (first Piola-Kirchhoff) traction (`T`).
 
 B = fem.Constant(domain, PETSc.ScalarType((0, 0, 0)))
 T = fem.Constant(domain, PETSc.ScalarType((0, 0, 0)))
@@ -95,7 +101,7 @@ C = ufl.variable(F.T * F)
 
 # Invariants of deformation tensors
 Ic = ufl.variable(ufl.tr(C))
-J  = ufl.variable(ufl.det(F))
+J = ufl.variable(ufl.det(F))
 # -
 
 # Define the elasticity model via a stored strain energy density function $\psi$, and create the expression for the first Piola-Kirchhoff stress:
@@ -103,8 +109,8 @@ J  = ufl.variable(ufl.det(F))
 # Elasticity parameters
 E = PETSc.ScalarType(1.0e4)
 nu = PETSc.ScalarType(0.3)
-mu = fem.Constant(domain, E/(2*(1 + nu)))
-lmbda = fem.Constant(domain, E*nu/((1 + nu)*(1 - 2*nu)))
+mu = fem.Constant(domain, E / (2 * (1 + nu)))
+lmbda = fem.Constant(domain, E * nu / ((1 + nu) * (1 - 2 * nu)))
 # Stored strain energy density (compressible neo-Hookean model)
 psi = (mu / 2) * (Ic - 3) - mu * ufl.ln(J) + (lmbda / 2) * (ufl.ln(J))**2
 # Stress
@@ -125,7 +131,7 @@ metadata = {"quadrature_degree": 4}
 ds = ufl.Measure('ds', domain=domain, subdomain_data=facet_tag, metadata=metadata)
 dx = ufl.Measure("dx", domain=domain, metadata=metadata)
 # Define form F (we want to find u such that F(u) = 0)
-F = ufl.inner(ufl.grad(v), P)*dx - ufl.inner(v, B)*dx - ufl.inner(v, T)*ds(2) 
+F = ufl.inner(ufl.grad(v), P) * dx - ufl.inner(v, B) * dx - ufl.inner(v, T) * ds(2)
 
 # As the varitional form is non-linear and written on residual form, we use the non-linear problem class from DOLFINx to set up required structures to use a Newton solver.
 
@@ -134,7 +140,6 @@ problem = fem.petsc.NonlinearProblem(F, u, bcs)
 # and then create and customize the Newton solver
 
 # +
-from dolfinx import nls
 solver = nls.petsc.NewtonSolver(domain.comm, problem)
 
 # Set Newton solver options
@@ -147,8 +152,6 @@ solver.convergence_criterion = "incremental"
 # We create a function to plot the solution at each time step.
 
 # +
-import pyvista
-import matplotlib.pyplot as plt
 pyvista.start_xvfb()
 plotter = pyvista.Plotter()
 plotter.open_gif("deformation.gif", fps=3)
@@ -178,13 +181,12 @@ warped["mag"] = magnitude.x.array
 
 # Finally, we solve the problem over several time steps, updating the y-component of the traction
 
-from dolfinx import log
 log.set_log_level(log.LogLevel.INFO)
 tval0 = -1.5
 for n in range(1, 10):
     T.value[2] = n * tval0
     num_its, converged = solver.solve(u)
-    assert(converged)
+    assert (converged)
     u.x.scatter_forward()
     print(f"Time step {n}, Number of iterations {num_its}, Load {T.value}")
     function_grid["u"][:, :len(u)] = u.x.array.reshape(geometry.shape[0], len(u))
@@ -198,5 +200,3 @@ for n in range(1, 10):
 plotter.close()
 
 # <img src="./deformation.gif" alt="gif" class="bg-primary mb-1" width="800px">
-
-
