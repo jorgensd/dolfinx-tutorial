@@ -32,3 +32,8 @@ and run
  docker run --rm -ti -v $(pwd):/root/shared -w /root/shared  --init -p 8888:8888 local_lab_env
  ```
 from the main directory.
+
+Note that, when using docker, you:
+
+- Will need to export the display to allow GUI on the host (example on unix-based systems: `xhost +; docker -e DISPLAY="$DISPLAY" -v /tmp/.X11-unix:/tmp/.X11-unix ...`).
+- May need to remove `pyvista.start_xvfb()` from the examples.
