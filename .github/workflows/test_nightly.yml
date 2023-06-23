@@ -49,7 +49,7 @@ jobs:
       - name: Test complex notebooks in parallel
         run: |
           export PKG_CONFIG_PATH=/usr/local/dolfinx-complex/lib/pkgconfig:$PKG_CONFIG_PATH
-          export PETSC_ARCH=linux-gnu-complex64-32
+          export PETSC_ARCH=linux-gnu-complex128-32
           export PYTHONPATH=/usr/local/dolfinx-complex/lib/python3.10/dist-packages:$PYTHONPATH
           export LD_LIBRARY_PATH=/usr/local/dolfinx-complex/lib:$LD_LIBRARY_PATH
           cd chapter1
