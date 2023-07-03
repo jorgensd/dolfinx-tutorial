@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.5
+#       jupytext_version: 1.14.6
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -167,7 +167,7 @@ p_values = []
 # This is efficiently done by creating a bounding box tree of the cells of the mesh, allowing a quick recursive search through the mesh entities.
 
 from dolfinx import geometry
-bb_tree = geometry.BoundingBoxTree(domain, domain.topology.dim)
+bb_tree = geometry.bb_tree(domain, domain.topology.dim)
 
 # Now we can compute which cells the bounding box tree collides with using `dolfinx.geometry.compute_collisions_point`. This function returns a list of cells whose bounding box collide for each input point. As different points might have different number of cells, the data is stored in `dolfinx.cpp.graph.AdjacencyList_int32`, where one can access the cells for the `i`th point by calling `links(i)`.
 #  However, as the bounding box of a cell spans more of $\mathbb{R}^n$ than the actual cell, we check that the actual cell collides with cell 
@@ -179,7 +179,7 @@ bb_tree = geometry.BoundingBoxTree(domain, domain.topology.dim)
 cells = []
 points_on_proc = []
 # Find cells whose bounding-box collide with the the points
-cell_candidates = geometry.compute_collisions(bb_tree, points.T)
+cell_candidates = geometry.compute_collisions_points(bb_tree, points.T)
 # Choose one of the cells that contains the point
 colliding_cells = geometry.compute_colliding_cells(domain, cell_candidates, points.T)
 for i, point in enumerate(points.T):
