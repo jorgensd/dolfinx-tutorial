@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.5
+#       jupytext_version: 1.14.6
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -231,6 +231,7 @@ if proc == 0:
     line_mesh = create_mesh(msh, "line", prune_z=True)
     meshio.write("mesh.xdmf", triangle_mesh)
     meshio.write("mt.xdmf", line_mesh)
+MPI.COMM_WORLD.barrier()
 
 # We have now written the mesh and the cell markers to one file, and the facet markers in a separate file. We can now read this data in DOLFINx using `XDMFFile.read_mesh` and `XDMFFile.read_meshtags`. The `dolfinx.MeshTags` stores the index of the entity, along with the value of the marker in two one dimensional arrays.
 #
