@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.5
+#       jupytext_version: 1.14.6
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -119,17 +119,18 @@ solver.getPC().setType(PETSc.PC.Type.LU)
 # We use the DOLFINx plotting functionality, which is based on pyvista to plot the solution at every $15$th time step. We would also like to visualize a colorbar reflecting the minimal and maximum value of $u$ at each time step. We use the following convenience function `plot_function` for this:
 
 # +
+import matplotlib as mpl
 pyvista.start_xvfb()
 
 grid = pyvista.UnstructuredGrid(*plot.create_vtk_mesh(V))
 
 plotter = pyvista.Plotter()
-plotter.open_gif("u_time.gif")
+plotter.open_gif("u_time.gif", fps=10)
 
 grid.point_data["uh"] = uh.x.array
 warped = grid.warp_by_scalar("uh", factor=1)
 
-viridis = plt.cm.get_cmap("viridis", 25)
+viridis = mpl.colormaps.get_cmap("viridis").resampled(25)
 sargs = dict(title_font_size=25, label_font_size=20, fmt="%.2e", color="black",
              position_x=0.1, position_y=0.8, width=0.8, height=0.1)
 

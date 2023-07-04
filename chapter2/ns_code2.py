@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.5
+#       jupytext_version: 1.14.6
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -56,7 +56,7 @@ from dolfinx.fem import (Constant, Function, FunctionSpace,
 from dolfinx.fem.petsc import (apply_lifting, assemble_matrix, assemble_vector,
                                create_vector, create_matrix, set_bc)
 from dolfinx.graph import create_adjacencylist
-from dolfinx.geometry import BoundingBoxTree, compute_collisions, compute_colliding_cells
+from dolfinx.geometry import bb_tree, compute_collisions_points, compute_colliding_cells
 from dolfinx.io import (VTXWriter, distribute_entity_data, gmshio)
 from dolfinx.mesh import create_mesh, meshtags_from_entities
 
@@ -343,9 +343,9 @@ if mesh.comm.rank == 0:
 
 # We will also evaluate the pressure at two points, on in front of the obstacle, $(0.15, 0.2)$, and one behind the obstacle, $(0.25, 0.2)$. To do this, we have to find which cell is containing each of the points, so that we can create a linear combination of the local basis functions and coefficients.
 
-tree = BoundingBoxTree(mesh, mesh.geometry.dim)
+tree = bb_tree(mesh, mesh.geometry.dim)
 points = np.array([[0.15, 0.2, 0], [0.25, 0.2, 0]])
-cell_candidates = compute_collisions(tree, points)
+cell_candidates = compute_collisions_points(tree, points)
 colliding_cells = compute_colliding_cells(mesh, cell_candidates, points)
 front_cells = colliding_cells.links(0)
 back_cells = colliding_cells.links(1)
