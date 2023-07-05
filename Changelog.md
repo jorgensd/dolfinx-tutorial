@@ -1,7 +1,9 @@
 # Changelog
 
 ## main
-- No changes
+- `dolfinx.geometry.BoundingBoxTree` has been changed to `dolfinx.geometry.bb_tree`
+- `create_mesh` with Meshio has been modified. Note that you now need to pass dtype `np.int32` to the cell_data.
+- Update dolfinx petsc API. Now one needs to explicitly import `dolfinx.fem.petsc` and `dolfinx.fem.nls`, as PETSc is no longer a strict requirement. Replace `petsc4py.PETSc.ScalarType` with `dolfinx.default_scalar_type` in demos where we do not use `petsc4py` explicitly.
 
 ## v0.6.0
 - Remove `ipygany` and `pythreejs` as plotting backends. Using `panel`.

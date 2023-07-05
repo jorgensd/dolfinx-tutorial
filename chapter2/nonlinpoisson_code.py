@@ -30,7 +30,8 @@ from mpi4py import MPI
 from petsc4py import PETSc
 
 from dolfinx import mesh, fem, io, nls, log
-
+from dolfinx.fem.petsc import NonlinearProblem
+from dolfinx.nls.petsc import NewtonSolver
 
 def q(u):
     return 1 + u**2
@@ -68,11 +69,11 @@ F = q(uh) * ufl.dot(ufl.grad(uh), ufl.grad(v)) * ufl.dx - f * v * ufl.dx
 # For details about how to implement a Newton solver, see [Custom Newton solvers](../chapter4/newton-solver.ipynb).
 # Newton's method requires methods for evaluating the residual `F` (including application of boundary conditions), as well as a method for computing the Jacobian matrix. DOLFINx provides the function `NonlinearProblem` that implements these methods. In addition to the boundary conditions, you can supply the variational form for the Jacobian (computed if not supplied), and form and jit parameters, see the [JIT parameters section](../chapter4/compiler_parameters.ipynb).
 
-problem = fem.petsc.NonlinearProblem(F, uh, bcs=[bc])
+problem = NonlinearProblem(F, uh, bcs=[bc])
 
 # Next, we use the dolfinx Newton solver. We can set the convergence criterions for the solver by changing the absolute tolerance (`atol`), relative tolerance (`rtol`) or the convergence criterion (`residual` or `incremental`).
 
-solver = nls.petsc.NewtonSolver(MPI.COMM_WORLD, problem)
+solver = NewtonSolver(MPI.COMM_WORLD, problem)
 solver.convergence_criterion = "incremental"
 solver.rtol = 1e-6
 solver.report = True

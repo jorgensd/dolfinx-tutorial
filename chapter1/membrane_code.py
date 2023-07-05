@@ -54,6 +54,7 @@ gmsh.model.mesh.generate(gdim)
 
 # +
 from dolfinx.io import gmshio
+from dolfinx.fem.petsc import LinearProblem
 from mpi4py import MPI
 
 gmsh_model_rank = 0
@@ -70,10 +71,10 @@ V = fem.FunctionSpace(domain, ("Lagrange", 1))
 # The right hand side pressure function is represented using `ufl.SpatialCoordinate` and two constants, one for $\beta$ and one for $R_0$.
 
 import ufl
-from petsc4py.PETSc import ScalarType
+from dolfinx import default_scalar_type
 x = ufl.SpatialCoordinate(domain)
-beta = fem.Constant(domain, ScalarType(12))
-R0 = fem.Constant(domain, ScalarType(0.3))
+beta = fem.Constant(domain, default_scalar_type(12))
+R0 = fem.Constant(domain, default_scalar_type(0.3))
 p = 4 * ufl.exp(-beta**2 * (x[0]**2 + (x[1] - R0)**2))
 
 # ## Create a Dirichlet boundary condition using geometrical conditions
@@ -92,7 +93,7 @@ boundary_dofs = fem.locate_dofs_geometrical(V, on_boundary)
 
 # As our Dirichlet condition is homogeneous (`u=0` on the whole boundary), we can initialize the `dolfinx.fem.dirichletbc` with a constant value, the degrees of freedom and the function space to apply the boundary condition on.
 
-bc = fem.dirichletbc(ScalarType(0), boundary_dofs, V)
+bc = fem.dirichletbc(default_scalar_type(0), boundary_dofs, V)
 
 # ## Defining the variational problem
 # The variational problem is the same as in our first Poisson problem, where `f` is replaced by `p`.
@@ -101,7 +102,7 @@ u = ufl.TrialFunction(V)
 v = ufl.TestFunction(V)
 a = ufl.dot(ufl.grad(u), ufl.grad(v)) * ufl.dx
 L = p * v * ufl.dx
-problem = fem.petsc.LinearProblem(a, L, bcs=[bc], petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
+problem = LinearProblem(a, L, bcs=[bc], petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
 uh = problem.solve()
 
 # ## Interpolation of a `ufl`-expression

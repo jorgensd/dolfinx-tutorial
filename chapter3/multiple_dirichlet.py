@@ -38,17 +38,19 @@
 # We start by defining the mesh, function space and variational formulation as in the previous exercise
 
 # +
-from dolfinx.plot import create_vtk_mesh
-import numpy as np
-import pyvista
-
+from dolfinx import default_scalar_type
 from dolfinx.fem import (Constant, Function, FunctionSpace,
                          assemble_scalar, dirichletbc, form, locate_dofs_geometrical)
 from dolfinx.fem.petsc import LinearProblem
 from dolfinx.mesh import create_unit_square
+from dolfinx.plot import create_vtk_mesh
+
 from mpi4py import MPI
 from ufl import SpatialCoordinate, TestFunction, TrialFunction, dot, dx, ds, grad
-from petsc4py.PETSc import ScalarType
+
+import numpy as np
+import pyvista
+
 
 
 def u_exact(x):
@@ -62,7 +64,7 @@ v = TestFunction(V)
 a = dot(grad(u), grad(v)) * dx
 x = SpatialCoordinate(mesh)
 g = - 4 * x[1]
-f = Constant(mesh, ScalarType(-6))
+f = Constant(mesh, default_scalar_type(-6))
 L = f * v * dx - g * v * ds
 # -
 

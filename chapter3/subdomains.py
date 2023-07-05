@@ -21,15 +21,11 @@
 # ## Subdomains on built-in meshes
 
 # +
-import meshio
-from dolfinx.io import gmshio
-import gmsh
-import numpy as np
-import pyvista
+from dolfinx import default_scalar_type
 from dolfinx.fem import (Constant, dirichletbc, Function, FunctionSpace, assemble_scalar,
                          form, locate_dofs_geometrical, locate_dofs_topological)
 from dolfinx.fem.petsc import LinearProblem
-from dolfinx.io import XDMFFile
+from dolfinx.io import XDMFFile, gmshio
 from dolfinx.mesh import create_unit_square, locate_entities
 from dolfinx.plot import create_vtk_mesh
 
@@ -37,7 +33,12 @@ from ufl import (SpatialCoordinate, TestFunction, TrialFunction,
                  dx, grad, inner)
 
 from mpi4py import MPI
-from petsc4py.PETSc import ScalarType
+
+import meshio
+import gmsh
+import numpy as np
+import pyvista
+
 pyvista.start_xvfb()
 
 mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
@@ -85,8 +86,8 @@ cells_1 = locate_entities(mesh, mesh.topology.dim, Omega_1)
 # 0.1& \text{if } x\in\Omega_1\\
 # \end{cases}$
 
-kappa.x.array[cells_0] = np.full_like(cells_0, 1, dtype=ScalarType)
-kappa.x.array[cells_1] = np.full_like(cells_1, 0.1, dtype=ScalarType)
+kappa.x.array[cells_0] = np.full_like(cells_0, 1, dtype=default_scalar_type)
+kappa.x.array[cells_1] = np.full_like(cells_1, 0.1, dtype=default_scalar_type)
 
 # We are now ready to define our variational formulation and  Dirichlet boundary condition after using integration by parts
 
@@ -94,9 +95,9 @@ V = FunctionSpace(mesh, ("Lagrange", 1))
 u, v = TrialFunction(V), TestFunction(V)
 a = inner(kappa * grad(u), grad(v)) * dx
 x = SpatialCoordinate(mesh)
-L = Constant(mesh, ScalarType(1)) * v * dx
+L = Constant(mesh, default_scalar_type(1)) * v * dx
 dofs = locate_dofs_geometrical(V, lambda x: np.isclose(x[0], 0))
-bcs = [dirichletbc(ScalarType(1), dofs, V)]
+bcs = [dirichletbc(default_scalar_type(1), dofs, V)]
 
 # We can now solve and visualize the solution of the problem
 
@@ -140,7 +141,7 @@ else:
 # As we saw in the first approach, in many cases, we can use the geometrical coordinates to determine which coefficient we should use. Using the unstructured mesh from the previous example, we illustrate an alternative approach using interpolation:
 
 def eval_kappa(x):
-    values = np.zeros(x.shape[1], dtype=ScalarType)
+    values = np.zeros(x.shape[1], dtype=default_scalar_type)
     # Create a boolean array indicating which dofs (corresponding to cell centers)
     # that are in each domain
     top_coords = x[1] > 0.5
@@ -249,9 +250,9 @@ with XDMFFile(MPI.COMM_WORLD, "mt.xdmf", "r") as xdmf:
 Q = FunctionSpace(mesh, ("DG", 0))
 kappa = Function(Q)
 bottom_cells = ct.find(bottom_marker)
-kappa.x.array[bottom_cells] = np.full_like(bottom_cells, 1, dtype=ScalarType)
+kappa.x.array[bottom_cells] = np.full_like(bottom_cells, 1, dtype=default_scalar_type)
 top_cells = ct.find(top_marker)
-kappa.x.array[top_cells] = np.full_like(top_cells, 0.1, dtype=ScalarType)
+kappa.x.array[top_cells] = np.full_like(top_cells, 0.1, dtype=default_scalar_type)
 
 # We can also efficiently use the facet data `ft` to create the Dirichlet boundary condition
 
@@ -259,7 +260,7 @@ V = FunctionSpace(mesh, ("Lagrange", 1))
 u_bc = Function(V)
 left_facets = ft.find(left_marker)
 left_dofs = locate_dofs_topological(V, mesh.topology.dim - 1, left_facets)
-bcs = [dirichletbc(ScalarType(1), left_dofs, V)]
+bcs = [dirichletbc(default_scalar_type(1), left_dofs, V)]
 
 # We can now solve the problem in a similar fashion as above
 
@@ -267,7 +268,7 @@ bcs = [dirichletbc(ScalarType(1), left_dofs, V)]
 u, v = TrialFunction(V), TestFunction(V)
 a = inner(kappa * grad(u), grad(v)) * dx
 x = SpatialCoordinate(mesh)
-L = Constant(mesh, ScalarType(1)) * v * dx
+L = Constant(mesh, default_scalar_type(1)) * v * dx
 
 problem = LinearProblem(a, L, bcs=bcs, petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
 uh = problem.solve()
@@ -297,3 +298,5 @@ if not pyvista.OFF_SCREEN:
     p2.show()
 else:
     p2.screenshot("unstructured_u.png")
+
+

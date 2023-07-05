@@ -88,20 +88,21 @@
 # We create the domain visualized in the cross section figure above using gmsh. Note that we are using the `gmsh.model.occ.fragment` commands to ensure that the boundaries of the wires are resolved in the mesh.
 
 # +
+from dolfinx import default_scalar_type
 from dolfinx.fem import (dirichletbc, Expression, Function, FunctionSpace,
                          VectorFunctionSpace, locate_dofs_topological)
-from dolfinx.mesh import compute_midpoints
-from petsc4py.PETSc import ScalarType
-from ufl import TestFunction, TrialFunction, as_vector, dot, dx, grad, inner
-from dolfinx.mesh import locate_entities_boundary
 from dolfinx.fem.petsc import LinearProblem
-from dolfinx.plot import create_vtk_mesh
-import pyvista
 from dolfinx.io import XDMFFile
 from dolfinx.io.gmshio import model_to_mesh
+from dolfinx.mesh import compute_midpoints, locate_entities_boundary
+from dolfinx.plot import create_vtk_mesh
+
+from ufl import TestFunction, TrialFunction, as_vector, dot, dx, grad, inner
+from mpi4py import MPI
+
 import gmsh
 import numpy as np
-from mpi4py import MPI
+import pyvista
 
 rank = MPI.COMM_WORLD.rank
 
@@ -243,11 +244,11 @@ for tag in material_tags:
         mu_ = 1e-5  # Iron (This should really be 6.3e-3)
     else:
         mu_ = 1.26e-6  # Copper
-    mu.x.array[cells] = np.full_like(cells, mu_, dtype=ScalarType)
+    mu.x.array[cells] = np.full_like(cells, mu_, dtype=default_scalar_type)
     if tag in range(2, 2 + N):
-        J.x.array[cells] = np.full_like(cells, 1, dtype=ScalarType)
+        J.x.array[cells] = np.full_like(cells, 1, dtype=default_scalar_type)
     elif tag in range(2 + N, 2 * N + 2):
-        J.x.array[cells] = np.full_like(cells, -1, dtype=ScalarType)
+        J.x.array[cells] = np.full_like(cells, -1, dtype=default_scalar_type)
 # -
 
 # In the code above, we have used a somewhat less extreme value for the magnetic permability of iron. This is to make the solution a little more interesting. It would otherwise be completely dominated by the field in the iron cylinder.
@@ -259,7 +260,7 @@ V = FunctionSpace(mesh, ("Lagrange", 1))
 tdim = mesh.topology.dim
 facets = locate_entities_boundary(mesh, tdim - 1, lambda x: np.full(x.shape[1], True))
 dofs = locate_dofs_topological(V, tdim - 1, facets)
-bc = dirichletbc(ScalarType(0), dofs, V)
+bc = dirichletbc(default_scalar_type(0), dofs, V)
 
 u = TrialFunction(V)
 v = TestFunction(V)

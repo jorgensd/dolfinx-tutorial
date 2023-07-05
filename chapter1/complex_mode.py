@@ -62,6 +62,7 @@ print(u_c.x.array.dtype)
 # We check that we are using the correct installation of PETSc by inspecting the scalar type.
 
 from petsc4py import PETSc
+from dolfinx.fem.petsc import assemble_vector
 print(PETSc.ScalarType)
 assert np.dtype(PETSc.ScalarType).kind == 'c'
 
@@ -89,7 +90,7 @@ print(L2)
 
 J = u_c**2 * ufl.dx
 F = ufl.derivative(J, u_c, ufl.conj(v))
-residual = dolfinx.fem.petsc.assemble_vector(dolfinx.fem.form(F))
+residual = assemble_vector(dolfinx.fem.form(F))
 print(residual.array)
 
 # We define our Dirichlet condition and setup and solve the variational problem.
