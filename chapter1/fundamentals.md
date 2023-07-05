@@ -120,7 +120,7 @@ For the Poisson equation, we have:
 a(u,v) &= \int_{\Omega} \nabla u \cdot \nabla v ~\mathrm{d} x,\\
 L(v) &= \int_{\Omega} fv ~\mathrm{d} x.
 \end{align}
-From literature $a(u,v)$ is known as the _bilinear form_ and $L(V)$ as a _linear form_. 
+From literature $a(u,v)$ is known as the _bilinear form_ and $L(v)$ as a _linear form_. 
 For every linear problem, we will identify all terms with the unknown $u$ and collect them in $a(u,v)$, and collect all terms with only  known functions in $L(v)$.
 
 To solve a linear PDE in FEniCSx, such as the Poisson equation, a user thus needs to perform two steps:
