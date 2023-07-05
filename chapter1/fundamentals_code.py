@@ -89,24 +89,6 @@ domain = mesh.create_unit_square(MPI.COMM_WORLD, 8, 8, mesh.CellType.quadrilater
 # + vscode={"languageId": "python"}
 from dolfinx.fem import FunctionSpace
 V = FunctionSpace(domain, ("Lagrange", 1))
-# -
-
-# The second argument is the tuple containing the type of finite element, and the element degree. The type of element here is "Lagrange", which implies the standard Lagrange family of elements. 
-# DOLFINx supports a large variety on elements on simplices 
-# (triangles and tetrahedra) and non-simplices (quadrilaterals
-# and hexahedra). For an overview, see:
-# *FIXME: Add link to all the elements we support*
-#
-# The element degree in the code is 1. This means that we are choosing the standard $P_1$ linear Lagrange element, which has degrees of freedom at the vertices. 
-# The computed solution will be continuous across elements and linearly varying in $x$ and $y$ inside each element. Higher degree polynomial approximations are obtained by increasing the degree argument. 
-#
-# ## Defining the boundary conditions
-#
-# The next step is to specify the boundary condition $u=u_D$ on $\partial\Omega_D$, which is done by over several steps. 
-# The first step is to define the function $u_D$. Into this function, we would like to interpolate the boundary condition $1 + x^2+2y^2$.
-# We do this by first defining a `dolfinx.fem.Function`, and then using a [lambda-function](https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions) in Python to define the 
-# spatially varying function.
-#
 
 # + vscode={"languageId": "python"}
 from dolfinx import fem
@@ -158,8 +140,8 @@ v = ufl.TestFunction(V)
 # As the source term is constant over the domain, we use `dolfinx.Constant`
 
 # + vscode={"languageId": "python"}
-from petsc4py.PETSc import ScalarType
-f = fem.Constant(domain, ScalarType(-6))
+from dolfinx import default_scalar_type
+f = fem.Constant(domain, default_scalar_type(-6))
 # -
 
 # ```{admonition} Compilation speed-up
@@ -194,10 +176,13 @@ L = f * v * ufl.dx
 # ## Forming and solving the linear system
 #
 # Having defined the finite element variational problem and boundary condition, we can create our `dolfinx.fem.petsc.LinearProblem`, as class for solving 
-# the variational problem: Find $u_h\in V$ such that $a(u_h, v)==L(v) \quad \forall v \in \hat{V}$. We will use PETSc as our linear algebra backend, using a direct solver (LU-factorization).  See the [PETSc-documentation](https://petsc.org/main/docs/manual/ksp/?highlight=ksp#ksp-linear-system-solvers) of the method for more information.
+# the variational problem: Find $u_h\in V$ such that $a(u_h, v)==L(v) \quad \forall v \in \hat{V}$. We will use PETSc as our linear algebra backend, using a direct solver (LU-factorization).
+# See the [PETSc-documentation](https://petsc.org/main/docs/manual/ksp/?highlight=ksp#ksp-linear-system-solvers) of the method for more information.
+# PETSc is not a required dependency of DOLFINx, and therefore we explicitly import the DOLFINx wrapper for interfacing with PETSc.
 
 # + vscode={"languageId": "python"}
-problem = fem.petsc.LinearProblem(a, L, bcs=[bc], petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
+from dolfinx.fem.petsc import LinearProblem
+problem = LinearProblem(a, L, bcs=[bc], petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
 uh = problem.solve()
 # -
 

@@ -25,15 +25,17 @@
 #
 
 # +
-import ufl
-import numpy as np
-from mpi4py import MPI
-from petsc4py import PETSc
+from dolfinx import default_scalar_type
 from dolfinx.fem import (Expression, Function, FunctionSpace,
                          assemble_scalar, dirichletbc, form, locate_dofs_topological)
 from dolfinx.fem.petsc import LinearProblem
 from dolfinx.mesh import create_unit_square, locate_entities_boundary
+
+from mpi4py import MPI
 from ufl import SpatialCoordinate, TestFunction, TrialFunction, div, dot, dx, grad, inner
+
+import ufl
+import numpy as np
 
 
 def u_ex(mod):
@@ -122,7 +124,7 @@ def error_L2(uh, u_ex, degree_raise=3):
 # Let us consider a sequence of mesh resolutions $h_0>h_1>h_2$, where $h_i=\frac{1}{N_i}$ we compute the errors for a range of $N_i$s
 
 Ns = [4, 8, 16, 32, 64]
-Es = np.zeros(len(Ns), dtype=PETSc.ScalarType)
+Es = np.zeros(len(Ns), dtype=default_scalar_type)
 hs = np.zeros(len(Ns), dtype=np.float64)
 for i, N in enumerate(Ns):
     uh, u_ex = solve_poisson(N, degree=1)
@@ -149,7 +151,7 @@ if comm.rank == 0:
 
 degrees = [1, 2, 3, 4]
 for degree in degrees:
-    Es = np.zeros(len(Ns), dtype=PETSc.ScalarType)
+    Es = np.zeros(len(Ns), dtype=default_scalar_type)
     hs = np.zeros(len(Ns), dtype=np.float64)
     for i, N in enumerate(Ns):
         uh, u_ex = solve_poisson(N, degree=degree)
@@ -186,7 +188,7 @@ def error_infinity(u_h, u_ex):
 # Running this for various polynomial degrees yields:
 
 for degree in degrees:
-    Es = np.zeros(len(Ns), dtype=PETSc.ScalarType)
+    Es = np.zeros(len(Ns), dtype=default_scalar_type)
     hs = np.zeros(len(Ns), dtype=np.float64)
     for i, N in enumerate(Ns):
         uh, u_ex = solve_poisson(N, degree=degree)

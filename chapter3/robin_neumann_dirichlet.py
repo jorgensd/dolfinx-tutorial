@@ -83,19 +83,20 @@
 # We start by defining the domain $\Omega$ as the unit square $[0,1]\times[0,1]$.
 
 # +
-import numpy as np
-import pyvista
-
+from dolfinx import default_scalar_type
 from dolfinx.fem import (Constant,  Function, FunctionSpace, assemble_scalar, 
                          dirichletbc, form, locate_dofs_topological)
 from dolfinx.fem.petsc import LinearProblem
+from dolfinx.io import XDMFFile
 from dolfinx.mesh import create_unit_square, locate_entities, meshtags
+from dolfinx.plot import create_vtk_mesh
+
 from mpi4py import MPI
-from petsc4py.PETSc import ScalarType
 from ufl import (FacetNormal, Measure, SpatialCoordinate, TestFunction, TrialFunction, 
                  div, dot, dx, grad, inner, lhs, rhs)
-from dolfinx.io import XDMFFile
-from dolfinx.plot import create_vtk_mesh
+
+import numpy as np
+import pyvista
 
 mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
 # -
@@ -133,8 +134,8 @@ s = u_ex(x)
 f = -div(grad(u_ex(x)))
 n = FacetNormal(mesh)
 g = -dot(n, grad(u_ex(x)))
-kappa = Constant(mesh, ScalarType(1))
-r = Constant(mesh, ScalarType(1000))
+kappa = Constant(mesh, default_scalar_type(1))
+r = Constant(mesh, default_scalar_type(1000))
 # Define function space and standard part of variational form
 V = FunctionSpace(mesh, ("Lagrange", 1))
 u, v = TrialFunction(V), TestFunction(V)

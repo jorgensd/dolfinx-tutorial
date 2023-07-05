@@ -40,6 +40,7 @@
 # We start by importing all packages needed to solve the problem.
 
 import dolfinx
+import dolfinx.fem.petsc
 import matplotlib.pyplot as plt
 import numpy as np
 import pyvista

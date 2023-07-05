@@ -31,6 +31,7 @@ from petsc4py import PETSc
 from mpi4py import MPI
 import ufl
 from dolfinx import mesh, fem
+from dolfinx.fem.petsc import assemble_matrix, assemble_vector, apply_lifting, create_vector, set_bc
 import numpy
 t = 0  # Start time
 T = 2  # End time
@@ -96,9 +97,9 @@ L = fem.form(ufl.rhs(F))
 # ## Create the matrix and vector for the linear problem
 # To ensure that we are solving the variational problem efficiently, we will create several structures which can reuse data, such as matrix sparisty patterns. Especially note as the bilinear form `a` is independent of time, we only need to assemble the matrix once.
 
-A = fem.petsc.assemble_matrix(a, bcs=[bc])
+A = assemble_matrix(a, bcs=[bc])
 A.assemble()
-b = fem.petsc.create_vector(L)
+b = create_vector(L)
 uh = fem.Function(V)
 
 # ## Define a linear variational solver
@@ -125,12 +126,12 @@ for n in range(num_steps):
     # Update the right hand side reusing the initial vector
     with b.localForm() as loc_b:
         loc_b.set(0)
-    fem.petsc.assemble_vector(b, L)
+    assemble_vector(b, L)
 
     # Apply Dirichlet boundary condition to the vector
-    fem.petsc.apply_lifting(b, [a], [[bc]])
+    apply_lifting(b, [a], [[bc]])
     b.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
-    fem.petsc.set_bc(b, [bc])
+    set_bc(b, [bc])
 
     # Solve linear problem
     solver.solve(b, uh.vector)

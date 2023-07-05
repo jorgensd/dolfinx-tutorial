@@ -304,6 +304,12 @@ for i in range(num_steps):
         print(f"Time {t:.2f}, L2-error {error_L2:.2e}, Max error {error_max:.2e}")
 # Close xmdf file
 xdmf.close()
+b1.destroy()
+b2.destroy()
+b3.destroy()
+solver1.destroy()
+solver2.destroy()
+solver3.destroy()
 
 # ## Verification
 # As for the previous problems we compute the error at each degree of freedom and the $L^2(\Omega)$-error. We start with the  initial condition $u=(0,0)$. We have not specified the initial condition explicitly, and FEniCSx will initialize all `Function`s including `u_n` and `u_` to zero. Since the exact solution is quadratic, we expect to reach machine precision within finite time. For our implementation, we observe that the error quickly approaches zero, and is of order $10^{-6}$ at $T=10

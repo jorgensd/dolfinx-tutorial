@@ -24,14 +24,15 @@
 # Then, we create a slender cantilever consisting of hexahedral elements and create the function space `V` for our unknown.
 
 # +
-from dolfinx import log
+from dolfinx import log, default_scalar_type
+from dolfinx.fem.petsc import NonlinearProblem
+from dolfinx.nls.petsc import NewtonSolver
 import matplotlib.pyplot as plt
 import pyvista
 from dolfinx import nls
 import numpy as np
 import ufl
 
-from petsc4py import PETSc
 from mpi4py import MPI
 from dolfinx import fem, mesh, plot
 L = 20.0
@@ -67,7 +68,7 @@ facet_tag = mesh.meshtags(domain, fdim, marked_facets[sorted_facets], marked_val
 
 # We then create a function for supplying the boundary condition on the left side, which is fixed.
 
-u_bc = np.array((0,) * domain.geometry.dim, dtype=PETSc.ScalarType)
+u_bc = np.array((0,) * domain.geometry.dim, dtype=default_scalar_type)
 
 # To apply the boundary condition, we identity the dofs located on the facets marked by the `MeshTag`.
 
@@ -76,8 +77,8 @@ bcs = [fem.dirichletbc(u_bc, left_dofs, V)]
 
 # Next, we define the body force on the reference configuration (`B`), and nominal (first Piola-Kirchhoff) traction (`T`).
 
-B = fem.Constant(domain, PETSc.ScalarType((0, 0, 0)))
-T = fem.Constant(domain, PETSc.ScalarType((0, 0, 0)))
+B = fem.Constant(domain, default_scalar_type((0, 0, 0)))
+T = fem.Constant(domain, default_scalar_type((0, 0, 0)))
 
 # Define the test and solution functions on the space $V$
 
@@ -107,8 +108,8 @@ J = ufl.variable(ufl.det(F))
 # Define the elasticity model via a stored strain energy density function $\psi$, and create the expression for the first Piola-Kirchhoff stress:
 
 # Elasticity parameters
-E = PETSc.ScalarType(1.0e4)
-nu = PETSc.ScalarType(0.3)
+E = default_scalar_type(1.0e4)
+nu = default_scalar_type(0.3)
 mu = fem.Constant(domain, E / (2 * (1 + nu)))
 lmbda = fem.Constant(domain, E * nu / ((1 + nu) * (1 - 2 * nu)))
 # Stored strain energy density (compressible neo-Hookean model)
@@ -135,12 +136,12 @@ F = ufl.inner(ufl.grad(v), P) * dx - ufl.inner(v, B) * dx - ufl.inner(v, T) * ds
 
 # As the varitional form is non-linear and written on residual form, we use the non-linear problem class from DOLFINx to set up required structures to use a Newton solver.
 
-problem = fem.petsc.NonlinearProblem(F, u, bcs)
+problem = NonlinearProblem(F, u, bcs)
 
 # and then create and customize the Newton solver
 
 # +
-solver = nls.petsc.NewtonSolver(domain.comm, problem)
+solver = NewtonSolver(domain.comm, problem)
 
 # Set Newton solver options
 solver.atol = 1e-8

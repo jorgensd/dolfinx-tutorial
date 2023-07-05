@@ -27,8 +27,8 @@
 
 # Scaled variable
 import pyvista
-from dolfinx import mesh, fem, plot, io
-from petsc4py.PETSc import ScalarType
+from dolfinx import mesh, fem, plot, io, default_scalar_type
+from dolfinx.fem.petsc import LinearProblem
 from mpi4py import MPI
 import ufl
 import numpy as np
@@ -61,13 +61,13 @@ def clamped_boundary(x):
 fdim = domain.topology.dim - 1
 boundary_facets = mesh.locate_entities_boundary(domain, fdim, clamped_boundary)
 
-u_D = np.array([0, 0, 0], dtype=ScalarType)
+u_D = np.array([0, 0, 0], dtype=default_scalar_type)
 bc = fem.dirichletbc(u_D, fem.locate_dofs_topological(V, fdim, boundary_facets), V)
 # -
 
 # As we want the traction $T$ over the remaining boundary to be $0$, we create a `dolfinx.Constant`
 
-T = fem.Constant(domain, ScalarType((0, 0, 0)))
+T = fem.Constant(domain, default_scalar_type((0, 0, 0)))
 
 # We also want to specify the integration measure $\mathrm{d}s$, which should be the integral over the boundary of our domain. We do this by using `ufl`, and its built in integration measures
 
@@ -88,7 +88,7 @@ def sigma(u):
 
 u = ufl.TrialFunction(V)
 v = ufl.TestFunction(V)
-f = fem.Constant(domain, ScalarType((0, 0, -rho * g)))
+f = fem.Constant(domain, default_scalar_type((0, 0, -rho * g)))
 a = ufl.inner(sigma(u), epsilon(v)) * ufl.dx
 L = ufl.dot(f, v) * ufl.dx + ufl.dot(T, v) * ds
 # -
@@ -105,7 +105,7 @@ L = ufl.dot(f, v) * ufl.dx + ufl.dot(T, v) * ds
 # ## Solve the linear variational problem
 # As in the previous demos, we assemble the matrix and right hand side vector and use PETSc to solve our variational problem
 
-problem = fem.petsc.LinearProblem(a, L, bcs=[bc], petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
+problem = LinearProblem(a, L, bcs=[bc], petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
 uh = problem.solve()
 
 # ## Visualization

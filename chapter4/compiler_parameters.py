@@ -26,20 +26,25 @@
 #
 # We start by specifying the current directory as the place to place the generated C files, we obtain the current directory using pathlib
 
+# +
 import matplotlib.pyplot as plt
-import seaborn
 import pandas as pd
-import ufl
+import seaborn
 import time
-from typing import Dict
-from mpi4py import MPI
+import ufl
+
 from ufl import TestFunction, TrialFunction, dx, inner
 from dolfinx.mesh import create_unit_cube
 from dolfinx.fem.petsc import assemble_matrix
 from dolfinx.fem import FunctionSpace, form
+
+from mpi4py import MPI
 from pathlib import Path
+from typing import Dict
+
 cache_dir = f"{str(Path.cwd())}/.cache"
 print(f"Directory to put C files in: {cache_dir}")
+# -
 
 # Next we generate a general function to assemble the mass matrix for a unit cube. Note that we use `dolfinx.fem.Form` to compile the variational form. For codes using `dolfinx.LinearProblem`, you can supply `jit_options` as a keyword argument.
 

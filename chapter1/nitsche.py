@@ -22,10 +22,10 @@
 # We start by importing the required modules and creating the mesh and function space for our solution
 
 # +
-from dolfinx import fem, mesh, plot
+from dolfinx import fem, mesh, plot, default_scalar_type
+from dolfinx.fem.petsc import LinearProblem
 import numpy
 from mpi4py import MPI
-from petsc4py.PETSc import ScalarType 
 from ufl import (Circumradius, FacetNormal, SpatialCoordinate, TrialFunction, TestFunction,
                  div, dx, ds, grad, inner)
 
@@ -64,7 +64,7 @@ u = TrialFunction(V)
 v = TestFunction(V)
 n = FacetNormal(domain)
 h = 2 * Circumradius(domain)
-alpha = fem.Constant(domain, ScalarType(10))
+alpha = fem.Constant(domain, default_scalar_type(10))
 a = inner(grad(u), grad(v)) * dx - inner(n, grad(u)) * v * ds
 a += - inner(n, grad(v)) * u * ds + alpha / h * inner(u, v) * ds
 L = inner(f, v) * dx 
@@ -72,7 +72,7 @@ L += - inner(n, grad(v)) * uD * ds + alpha / h * inner(uD, v) * ds
 
 # As we now have the variational form, we can solve the linear problem
 
-problem = fem.petsc.LinearProblem(a, L)
+problem = LinearProblem(a, L)
 uh = problem.solve()
 
 # We compute the error of the computation by comparing it to the analytical solution

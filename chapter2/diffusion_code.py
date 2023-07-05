@@ -31,10 +31,11 @@ import pyvista
 import ufl
 import numpy as np
 
-from mpi4py import MPI
 from petsc4py import PETSc
+from mpi4py import MPI
 
 from dolfinx import fem, mesh, io, plot
+from dolfinx.fem.petsc import assemble_vector, assemble_matrix, create_vector, apply_lifting, set_bc
 
 # Define temporal parameters
 t = 0  # Start time
@@ -103,9 +104,9 @@ linear_form = fem.form(L)
 
 # We observe that the left hand side of the system, the matrix $A$ does not change from one time step to another, thus we only need to assemble it once. However, the right hand side, which is dependent on the previous time step `u_n`, we have to assemble it every time step. Therefore, we only create a vector `b` based on `L`, which we will reuse at every time step.
 
-A = fem.petsc.assemble_matrix(bilinear_form, bcs=[bc])
+A = assemble_matrix(bilinear_form, bcs=[bc])
 A.assemble()
-b = fem.petsc.create_vector(linear_form)
+b = create_vector(linear_form)
 
 # ## Using petsc4py to create a linear solver
 # As we have already assembled `a` into the matrix `A`, we can no longer use the `dolfinx.fem.petsc.LinearProblem` class to solve the problem. Therefore, we create a linear algebra solver using PETSc, and assign the matrix `A` to the solver, and choose the solution strategy.
@@ -153,12 +154,12 @@ for i in range(num_steps):
     # Update the right hand side reusing the initial vector
     with b.localForm() as loc_b:
         loc_b.set(0)
-    fem.petsc.assemble_vector(b, linear_form)
+    assemble_vector(b, linear_form)
 
     # Apply Dirichlet boundary condition to the vector
-    fem.petsc.apply_lifting(b, [bilinear_form], [[bc]])
+    apply_lifting(b, [bilinear_form], [[bc]])
     b.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
-    fem.petsc.set_bc(b, [bc])
+    set_bc(b, [bc])
 
     # Solve linear problem
     solver.solve(b, uh.vector)

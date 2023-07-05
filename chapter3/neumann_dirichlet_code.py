@@ -92,17 +92,18 @@
 # As in the previous example, we define our mesh,function space and bilinear form $a(u,v)$.
 
 # +
-from dolfinx.plot import create_vtk_mesh
-import numpy as np
-import pyvista
-
+from dolfinx import default_scalar_type
 from dolfinx.fem import (Constant, Function, FunctionSpace,
                          assemble_scalar, dirichletbc, form, locate_dofs_geometrical)
 from dolfinx.fem.petsc import LinearProblem
 from dolfinx.mesh import create_unit_square
+from dolfinx.plot import create_vtk_mesh
+
 from mpi4py import MPI
-from petsc4py.PETSc import ScalarType
 from ufl import SpatialCoordinate, TestFunction, TrialFunction, dot, ds, dx, grad
+
+import numpy as np
+import pyvista
 
 mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
 V = FunctionSpace(mesh, ("Lagrange", 1))
@@ -134,7 +135,7 @@ bc = dirichletbc(u_bc, dofs_D)
 
 x = SpatialCoordinate(mesh)
 g = -4 * x[1]
-f = Constant(mesh, ScalarType(-6))
+f = Constant(mesh, default_scalar_type(-6))
 L = f * v * dx - g * v * ds
 
 # We can now assemble and solve the linear system of equations

@@ -46,9 +46,9 @@
 from dolfinx.plot import create_vtk_mesh
 import pyvista
 import numpy as np
-from petsc4py.PETSc import ScalarType
 from mpi4py import MPI
 from ufl import Identity, Measure, TestFunction, TrialFunction, VectorElement, dot, dx, inner, grad, nabla_div, sym
+from dolfinx import default_scalar_type
 from dolfinx.mesh import CellType, create_rectangle, locate_entities_boundary
 from dolfinx.fem.petsc import LinearProblem
 from dolfinx.fem import (Constant, dirichletbc, Function, FunctionSpace, locate_dofs_geometrical,
@@ -75,7 +75,7 @@ def clamped_boundary(x):
     return np.isclose(x[1], 0)
 
 
-u_zero = np.array((0,) * mesh.geometry.dim, dtype=ScalarType)
+u_zero = np.array((0,) * mesh.geometry.dim, dtype=default_scalar_type)
 bc = dirichletbc(u_zero, locate_dofs_geometrical(V, clamped_boundary), V)
 
 
@@ -95,12 +95,12 @@ boundary_dofs_x = locate_dofs_topological(V.sub(0), mesh.topology.dim - 1, bound
 
 # We can now create our Dirichlet condition
 
-bcx = dirichletbc(ScalarType(0), boundary_dofs_x, V.sub(0))
+bcx = dirichletbc(default_scalar_type(0), boundary_dofs_x, V.sub(0))
 bcs = [bc, bcx]
 
 # As we want the traction $T$ over the remaining boundary to be $0$, we create a `dolfinx.Constant`
 
-T = Constant(mesh, ScalarType((0, 0)))
+T = Constant(mesh, default_scalar_type((0, 0)))
 
 # We also want to specify the integration measure $\mathrm{d}s$, which should be the integral over the boundary of our domain. We do this by using `ufl`, and its built in integration measures
 
@@ -121,7 +121,7 @@ def sigma(u):
 
 u = TrialFunction(V)
 v = TestFunction(V)
-f = Constant(mesh, ScalarType((0, -rho * g)))
+f = Constant(mesh, default_scalar_type((0, -rho * g)))
 a = inner(sigma(u), epsilon(v)) * dx
 L = dot(f, v) * dx + dot(T, v) * ds
 # -
