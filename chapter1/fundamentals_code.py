@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.6
+#       jupytext_version: 1.14.7
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -286,9 +286,13 @@ if not pyvista.OFF_SCREEN:
 
 # + vscode={"languageId": "python"}
 from dolfinx import io
-with io.VTXWriter(domain.comm, "output.bp", [uh]) as vtx:
+from pathlib import Path
+results_folder = Path("results")
+results_folder.mkdir(exist_ok=True, parents=True)
+filename = results_folder / "fundamentals"
+with io.VTXWriter(domain.comm, filename.with_suffix(".bp"), [uh]) as vtx:
     vtx.write(0.0)
-with io.XDMFFile(domain.comm, "output.xdmf", "w") as xdmf:
+with io.XDMFFile(domain.comm, filename.with_suffix(".xdmf"), "w") as xdmf:
     xdmf.write_mesh(domain)
     xdmf.write_function(uh)
 # -

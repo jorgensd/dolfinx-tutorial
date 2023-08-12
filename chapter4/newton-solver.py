@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.6
+#       jupytext_version: 1.14.7
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -317,3 +317,5 @@ u_plotter.add_mesh(u_grid, show_edges=True)
 u_plotter.view_xy()
 if not pyvista.OFF_SCREEN:
     u_plotter.show()
+
+

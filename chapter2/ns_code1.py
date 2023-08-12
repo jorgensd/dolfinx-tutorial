@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.6
+#       jupytext_version: 1.14.7
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -68,7 +68,7 @@ import pyvista
 
 from dolfinx.fem import Constant, Function, FunctionSpace, assemble_scalar, dirichletbc, form, locate_dofs_geometrical
 from dolfinx.fem.petsc import assemble_matrix, assemble_vector, apply_lifting, create_vector, set_bc
-from dolfinx.io import XDMFFile
+from dolfinx.io import VTXWriter
 from dolfinx.mesh import create_unit_square
 from dolfinx.plot import create_vtk_mesh
 from ufl import (FacetNormal, FiniteElement, Identity, TestFunction, TrialFunction, VectorElement,
@@ -232,10 +232,13 @@ pc3.setType(PETSc.PC.Type.SOR)
 
 # We prepare output files for the velocity and pressure data, and write the mesh and initial conditions to file
 
-xdmf = XDMFFile(mesh.comm, "poiseuille.xdmf", "w")
-xdmf.write_mesh(mesh)
-xdmf.write_function(u_n, t)
-xdmf.write_function(p_n, t)
+from pathlib import Path
+folder = Path("results")
+folder.mkdir(exist_ok=True, parents=True)
+vtx_u = VTXWriter(mesh.comm, folder / "poiseuille_u.bp", u_n, engine="BP4")
+vtx_p = VTXWriter(mesh.comm, folder / "poiseuille_p.bp", p_n, engine="BP4")
+vtx_u.write(t)
+vtx_p.write(t)
 
 # We also interpolate the analytical solution into our function-space and create a variational formulation for the $L^2$-error.
 #
@@ -293,8 +296,8 @@ for i in range(num_steps):
     p_n.x.array[:] = p_.x.array[:]
 
     # Write solutions to file
-    xdmf.write_function(u_n, t)
-    xdmf.write_function(p_n, t)
+    vtx_u.write(t)
+    vtx_p.write(t)
 
     # Compute error at current time-step
     error_L2 = np.sqrt(mesh.comm.allreduce(assemble_scalar(L2_error), op=MPI.SUM))
@@ -303,7 +306,8 @@ for i in range(num_steps):
     if (i % 20 == 0) or (i == num_steps - 1):
         print(f"Time {t:.2f}, L2-error {error_L2:.2e}, Max error {error_max:.2e}")
 # Close xmdf file
-xdmf.close()
+vtx_u.close()
+vtx_p.close()
 b1.destroy()
 b2.destroy()
 b3.destroy()

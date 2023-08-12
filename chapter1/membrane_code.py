@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.6
+#       jupytext_version: 1.14.7
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -210,11 +210,14 @@ plt.savefig(f"membrane_rank{MPI.COMM_WORLD.rank:d}.png")
 # As mentioned in the previous section, we can also use Paraview to visualize the solution.
 
 import dolfinx.io
+from pathlib import Path
 pressure.name = "Load"
 uh.name = "Deflection"
-with dolfinx.io.XDMFFile(MPI.COMM_WORLD, "results_membrane.xdmf", "w") as xdmf:
-    xdmf.write_mesh(domain)
-    xdmf.write_function(pressure)
-    xdmf.write_function(uh)
+results_folder = Path("results")
+results_folder.mkdir(exist_ok=True, parents=True)
+with dolfinx.io.VTXWriter(MPI.COMM_WORLD, results_folder / "membrane_pressure.bp", [pressure], engine="BP4") as vtx:
+    vtx.write(0.0)
+with dolfinx.io.VTXWriter(MPI.COMM_WORLD, results_folder / "membrane_deflection.bp", [uh], engine="BP4") as vtx:
+    vtx.write(0.0)
 
 

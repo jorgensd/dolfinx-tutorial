@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.6
+#       jupytext_version: 1.14.7
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -360,8 +360,11 @@ if mesh.comm.rank == 0:
 #
 # As in the previous example, we create output files for the velocity and pressure and solve the time-dependent problem. As we are solving a time dependent problem with many time steps, we use the `tqdm`-package to visualize the progress. This package can be install with `pip3`.
 
-vtx_u = VTXWriter(mesh.comm, "dfg2D-3-u.bp", [u_])
-vtx_p = VTXWriter(mesh.comm, "dfg2D-3-p.bp", [p_])
+from pathlib import Path
+folder = Path("results")
+folder.mkdir(exist_ok=True, parents=True)
+vtx_u = VTXWriter(mesh.comm, "dfg2D-3-u.bp", [u_], engine="BP4")
+vtx_p = VTXWriter(mesh.comm, "dfg2D-3-p.bp", [p_], engine="BP4")
 vtx_u.write(t)
 vtx_p.write(t)
 progress = tqdm.autonotebook.tqdm(desc="Solving PDE", total=num_steps)
