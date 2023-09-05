@@ -24,27 +24,25 @@ jobs:
       PYVISTA_OFF_SCREEN: true
       DISPLAY: ":99.0"
       PYVISTA_JUPYTER_BACKEND: panel
-    
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checkout release branch to work on schedule
       - name: Checkout release branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         if: ${{ github.event_name == 'schedule' }}
         with:
           ref: release
 
-      - name: Use current branch 
-        uses: actions/checkout@v3
+      - name: Use current branch
+        uses: actions/checkout@v4
         if: ${{ github.event_name != 'schedule' }}
 
       - name: Special handling of some installation
         uses: ./.github/actions/install-dependencies
 
       - name: Install requirements
-        run:
-          python3 -m pip install --no-cache-dir -r docker/requirements.txt --upgrade
-
+        run: python3 -m pip install --no-cache-dir -r docker/requirements.txt --upgrade
 
       - name: Test complex notebooks in parallel
         run: |
@@ -55,7 +53,7 @@ jobs:
           cd chapter1
           python3 complex_mode.py
           mpirun -n 2 python3 complex_mode.py
- 
+
       - name: Test real notebooks in parallel
         run: |
           cd chapter1
@@ -85,10 +83,8 @@ jobs:
           mpirun -n 2 python3 newton-solver.py
 
       - name: Test building the book
-        run: 
-          PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
+        run: PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
 
-      
       - uses: actions/upload-artifact@v3
         with:
           name: webpage

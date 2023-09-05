@@ -28,7 +28,7 @@ env:
 jobs:
   run-tests:
     uses: ./.github/workflows/test_stable.yml
-    
+
   build-book:
     uses: ./.github/workflows/book_stable.yml
 
@@ -38,14 +38,14 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
- 
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      
+        uses: actions/checkout@v4
+
       - name: Setup Pages
         uses: actions/configure-pages@v2
-  
+
       - name: Download docs artifact
         uses: actions/download-artifact@v3
         with:
