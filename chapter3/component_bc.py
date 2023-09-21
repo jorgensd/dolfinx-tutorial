@@ -139,7 +139,7 @@ pyvista.start_xvfb()
 
 # Create plotter and pyvista grid
 p = pyvista.Plotter()
-topology, cell_types, x = vtk_mesh
+topology, cell_types, x = vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(topology, cell_types, x)
 
 # Attach vector values to grid and warp grid by vector
