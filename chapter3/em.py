@@ -95,7 +95,7 @@ from dolfinx.fem.petsc import LinearProblem
 from dolfinx.io import XDMFFile
 from dolfinx.io.gmshio import model_to_mesh
 from dolfinx.mesh import compute_midpoints, locate_entities_boundary
-from dolfinx.plot import create_vtk_mesh
+from dolfinx.plot import vtk_mesh
 
 from ufl import TestFunction, TrialFunction, as_vector, dot, dx, grad, inner
 from mpi4py import MPI
@@ -213,7 +213,7 @@ with XDMFFile(MPI.COMM_WORLD, "mt.xdmf", "w") as xdmf:
 
 pyvista.start_xvfb()
 plotter = pyvista.Plotter()
-grid = pyvista.UnstructuredGrid(*create_vtk_mesh(mesh, mesh.topology.dim))
+grid = pyvista.UnstructuredGrid(*vtk_mesh(mesh, mesh.topology.dim))
 num_local_cells = mesh.topology.index_map(mesh.topology.dim).size_local
 grid.cell_data["Marker"] = ct.values[ct.indices < num_local_cells]
 grid.set_active_scalars("Marker")
@@ -288,7 +288,7 @@ B.interpolate(B_expr)
 # +
 plotter = pyvista.Plotter()
 
-Az_grid = pyvista.UnstructuredGrid(*create_vtk_mesh(V))
+Az_grid = pyvista.UnstructuredGrid(*vtk_mesh(V))
 Az_grid.point_data["A_z"] = A_z.x.array
 Az_grid.set_active_scalars("A_z")
 warp = Az_grid.warp_by_scalar("A_z", factor=1e7)

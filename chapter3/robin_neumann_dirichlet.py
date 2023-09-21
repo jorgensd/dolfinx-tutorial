@@ -89,7 +89,7 @@ from dolfinx.fem import (Constant,  Function, FunctionSpace, assemble_scalar,
 from dolfinx.fem.petsc import LinearProblem
 from dolfinx.io import XDMFFile
 from dolfinx.mesh import create_unit_square, locate_entities, meshtags
-from dolfinx.plot import create_vtk_mesh
+from dolfinx.plot import vtk_mesh
 
 from mpi4py import MPI
 from ufl import (FacetNormal, Measure, SpatialCoordinate, TestFunction, TrialFunction, 
@@ -228,7 +228,7 @@ uh = problem.solve()
 
 # Visualize solution
 pyvista.start_xvfb()
-pyvista_cells, cell_types, geometry = create_vtk_mesh(V)
+pyvista_cells, cell_types, geometry = vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(pyvista_cells, cell_types, geometry)
 grid.point_data["u"] = uh.x.array
 grid.set_active_scalars("u")

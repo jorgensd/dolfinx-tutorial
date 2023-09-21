@@ -43,7 +43,7 @@
 # $\partial\Omega_N$ is the left and right side of the beam, $\partial\Omega_D$ the bottom of the  beam, while $\partial\Omega_{Dx}$ is the right side of the beam.
 # We will prescribe a displacement $u_x=0$ on the right side of the beam, while the beam is being deformed under its own weight. The sides of the box is traction free.
 
-from dolfinx.plot import create_vtk_mesh
+from dolfinx.plot import vtk_mesh
 import pyvista
 import numpy as np
 from mpi4py import MPI
@@ -139,7 +139,7 @@ pyvista.start_xvfb()
 
 # Create plotter and pyvista grid
 p = pyvista.Plotter()
-topology, cell_types, x = create_vtk_mesh(V)
+topology, cell_types, x = vtk_mesh
 grid = pyvista.UnstructuredGrid(topology, cell_types, x)
 
 # Attach vector values to grid and warp grid by vector

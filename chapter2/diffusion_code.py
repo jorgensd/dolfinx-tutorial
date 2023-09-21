@@ -123,7 +123,7 @@ solver.getPC().setType(PETSc.PC.Type.LU)
 import matplotlib as mpl
 pyvista.start_xvfb()
 
-grid = pyvista.UnstructuredGrid(*plot.create_vtk_mesh(V))
+grid = pyvista.UnstructuredGrid(*plot.vtk_mesh(V))
 
 plotter = pyvista.Plotter()
 plotter.open_gif("u_time.gif", fps=10)

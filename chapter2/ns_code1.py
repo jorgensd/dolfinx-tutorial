@@ -70,7 +70,7 @@ from dolfinx.fem import Constant, Function, FunctionSpace, assemble_scalar, diri
 from dolfinx.fem.petsc import assemble_matrix, assemble_vector, apply_lifting, create_vector, set_bc
 from dolfinx.io import VTXWriter
 from dolfinx.mesh import create_unit_square
-from dolfinx.plot import create_vtk_mesh
+from dolfinx.plot import vtk_mesh
 from ufl import (FacetNormal, FiniteElement, Identity, TestFunction, TrialFunction, VectorElement,
                  div, dot, ds, dx, inner, lhs, nabla_grad, rhs, sym)
 
@@ -323,7 +323,7 @@ solver3.destroy()
 
 # +
 pyvista.start_xvfb()
-topology, cell_types, geometry = create_vtk_mesh(V)
+topology, cell_types, geometry = vtk_mesh(V)
 values = np.zeros((geometry.shape[0], 3), dtype=np.float64)
 values[:, :len(u_n)] = u_n.x.array.real.reshape((geometry.shape[0], len(u_n)))
 
@@ -333,7 +333,7 @@ function_grid["u"] = values
 glyphs = function_grid.glyph(orient="u", factor=0.2)
 
 # Create a pyvista-grid for the mesh
-grid = pyvista.UnstructuredGrid(*create_vtk_mesh(mesh, mesh.topology.dim))
+grid = pyvista.UnstructuredGrid(*vtk_mesh(mesh, mesh.topology.dim))
 
 # Create plotter
 plotter = pyvista.Plotter()

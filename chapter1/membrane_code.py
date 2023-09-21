@@ -118,12 +118,12 @@ pressure.interpolate(expr)
 # We first plot the deflection $u_h$ over the domain $\Omega$.
 
 # +
-from dolfinx.plot import create_vtk_mesh
+from dolfinx.plot import vtk_mesh
 import pyvista
 pyvista.start_xvfb()
 
 # Extract topology from mesh and create pyvista mesh
-topology, cell_types, x = create_vtk_mesh(V)
+topology, cell_types, x = vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(topology, cell_types, x)
 
 # Set deflection values and add it to plotter
@@ -141,7 +141,7 @@ else:
 # We next plot the load on the domain
 
 load_plotter = pyvista.Plotter()
-p_grid = pyvista.UnstructuredGrid(*create_vtk_mesh(Q))
+p_grid = pyvista.UnstructuredGrid(*vtk_mesh(Q))
 p_grid.point_data["p"] = pressure.x.array.real
 warped_p = p_grid.warp_by_scalar("p", factor=0.5)
 warped_p.set_active_scalars("p")
