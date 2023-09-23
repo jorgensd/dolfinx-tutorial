@@ -157,7 +157,7 @@ pyvista.start_xvfb()
 plotter = pyvista.Plotter()
 plotter.open_gif("deformation.gif", fps=3)
 
-topology, cells, geometry = plot.create_vtk_mesh(u.function_space)
+topology, cells, geometry = plot.vtk_mesh(u.function_space)
 function_grid = pyvista.UnstructuredGrid(topology, cells, geometry)
 
 values = np.zeros((geometry.shape[0], 3))

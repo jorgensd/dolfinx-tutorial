@@ -223,7 +223,7 @@ if domain.comm.rank == 0:
 # ## Plotting the mesh using pyvista
 # We will visualizing the mesh using [pyvista](https://docs.pyvista.org/), an interface to the VTK toolkit.
 # We start by converting the mesh to a format that can be used with `pyvista`.
-# To do this we use the function `dolfinx.plot.create_vtk_mesh`. The first step is to create an unstructured grid that can be used by `pyvista`.
+# To do this we use the function `dolfinx.plot.vtk_mesh`. The first step is to create an unstructured grid that can be used by `pyvista`.
 # We need to start a virtual framebuffer for plotting through docker containers. You can print the current backend and change it with `pyvista.set_jupyter_backend(backend)`
 
 import pyvista
@@ -232,7 +232,7 @@ print(pyvista.global_theme.jupyter_backend)
 # + vscode={"languageId": "python"}
 from dolfinx import plot
 pyvista.start_xvfb()
-topology, cell_types, geometry = plot.create_vtk_mesh(domain, tdim)
+topology, cell_types, geometry = plot.vtk_mesh(domain, tdim)
 grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
 # -
 
@@ -252,10 +252,10 @@ else:
 # -
 
 # ## Plotting a function using pyvista
-# We want to plot the solution `uh`. As the function space used to defined the mesh is disconnected from the function space defining the mesh, we create a mesh based on the dof coordinates for the function space `V`. We use `dolfinx.plot.create_vtk_mesh` with the function space as input to create a mesh with mesh geometry based on the dof coordinates.
+# We want to plot the solution `uh`. As the function space used to defined the mesh is disconnected from the function space defining the mesh, we create a mesh based on the dof coordinates for the function space `V`. We use `dolfinx.plot.vtk_mesh` with the function space as input to create a mesh with mesh geometry based on the dof coordinates.
 
 # + vscode={"languageId": "python"}
-u_topology, u_cell_types, u_geometry = plot.create_vtk_mesh(V)
+u_topology, u_cell_types, u_geometry = plot.vtk_mesh(V)
 # -
 
 # Next, we create the `pyvista.UnstructuredGrid` and add the dof-values to the mesh.

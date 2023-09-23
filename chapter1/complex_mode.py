@@ -119,8 +119,8 @@ print(global_error, max_error)
 
 import pyvista
 pyvista.start_xvfb()
-p_mesh = pyvista.UnstructuredGrid(*dolfinx.plot.create_vtk_mesh(mesh, mesh.topology.dim))
-pyvista_cells, cell_types, geometry = dolfinx.plot.create_vtk_mesh(V)
+p_mesh = pyvista.UnstructuredGrid(*dolfinx.plot.vtk_mesh(mesh, mesh.topology.dim))
+pyvista_cells, cell_types, geometry = dolfinx.plot.vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(pyvista_cells, cell_types, geometry)
 grid.point_data["u_real"] = uh.x.array.real
 grid.point_data["u_imag"] = uh.x.array.imag

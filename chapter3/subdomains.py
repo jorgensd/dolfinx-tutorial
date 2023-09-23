@@ -27,7 +27,7 @@ from dolfinx.fem import (Constant, dirichletbc, Function, FunctionSpace, assembl
 from dolfinx.fem.petsc import LinearProblem
 from dolfinx.io import XDMFFile, gmshio
 from dolfinx.mesh import create_unit_square, locate_entities
-from dolfinx.plot import create_vtk_mesh
+from dolfinx.plot import vtk_mesh
 
 from ufl import (SpatialCoordinate, TestFunction, TrialFunction,
                  dx, grad, inner)
@@ -112,7 +112,7 @@ cells_0 = cells_0[cells_0 < num_cells_local]
 cells_1 = cells_1[cells_1 < num_cells_local]
 marker[cells_0] = 1
 marker[cells_1] = 2
-topology, cell_types, x = create_vtk_mesh(mesh, mesh.topology.dim, np.arange(num_cells_local, dtype=np.int32))
+topology, cell_types, x = vtk_mesh(mesh, mesh.topology.dim, np.arange(num_cells_local, dtype=np.int32))
 
 p = pyvista.Plotter(window_size=[800, 800])
 grid = pyvista.UnstructuredGrid(topology, cell_types, x)
@@ -125,7 +125,7 @@ p.show()
 # -
 
 p2 = pyvista.Plotter(window_size=[800, 800])
-grid_uh = pyvista.UnstructuredGrid(*create_vtk_mesh(V))
+grid_uh = pyvista.UnstructuredGrid(*vtk_mesh(V))
 grid_uh.point_data["u"] = uh.x.array.real
 grid_uh.set_active_scalars("u")
 p2.add_mesh(grid_uh, show_edges=True)
@@ -276,7 +276,7 @@ uh = problem.solve()
 # As the dolfinx.MeshTag contains a value for every cell in the
 # geometry, we can attach it directly to the grid
 
-topology, cell_types, x = create_vtk_mesh(mesh, mesh.topology.dim)
+topology, cell_types, x = vtk_mesh(mesh, mesh.topology.dim)
 grid = pyvista.UnstructuredGrid(topology, cell_types, x)
 num_local_cells = mesh.topology.index_map(mesh.topology.dim).size_local
 grid.cell_data["Marker"] = ct.values[ct.indices < num_local_cells]
@@ -289,7 +289,7 @@ if not pyvista.OFF_SCREEN:
 else:
     figure = p.screenshot("subdomains_unstructured.png")
 # -
-grid_uh = pyvista.UnstructuredGrid(*create_vtk_mesh(V))
+grid_uh = pyvista.UnstructuredGrid(*vtk_mesh(V))
 grid_uh.point_data["u"] = uh.x.array.real
 grid_uh.set_active_scalars("u")
 p2 = pyvista.Plotter(window_size=[800, 800])

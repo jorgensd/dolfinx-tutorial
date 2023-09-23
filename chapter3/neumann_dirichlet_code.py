@@ -97,7 +97,7 @@ from dolfinx.fem import (Constant, Function, FunctionSpace,
                          assemble_scalar, dirichletbc, form, locate_dofs_geometrical)
 from dolfinx.fem.petsc import LinearProblem
 from dolfinx.mesh import create_unit_square
-from dolfinx.plot import create_vtk_mesh
+from dolfinx.plot import vtk_mesh
 
 from mpi4py import MPI
 from ufl import SpatialCoordinate, TestFunction, TrialFunction, dot, ds, dx, grad
@@ -166,7 +166,7 @@ print(f"Error_max : {error_max:.2e}")
 # +
 pyvista.start_xvfb()
 
-pyvista_cells, cell_types, geometry = create_vtk_mesh(V)
+pyvista_cells, cell_types, geometry = vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(pyvista_cells, cell_types, geometry)
 grid.point_data["u"] = uh.x.array
 grid.set_active_scalars("u")
