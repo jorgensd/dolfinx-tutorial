@@ -128,7 +128,7 @@ u_bc.interpolate(u_exact)
 bc = dirichletbc(u_bc, dofs_D)
 # -
 
-# The next step is to define the Neumann condition. We first define $g$ uses `UFL`s `SpatialCoordinate`-function, and then in turn create a boundary integration measure `ds`. As the test function $v$ is zero on the boundary integrals over the Dirichlet boundary dissapears, and wee can integrate `g*v*ds` over the entire boundary.
+# The next step is to define the Neumann condition. We first define $g$ uses `UFL`s `SpatialCoordinate`-function, and then in turn create a boundary integration measure `ds`. As the test function $v$ is zero on the boundary integrals over the Dirichlet boundary disappears, and we can integrate `g*v*ds` over the entire boundary.
 
 x = SpatialCoordinate(mesh)
 g = -4 * x[1]
