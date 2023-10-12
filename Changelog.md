@@ -1,6 +1,6 @@
 # Changelog
 
-## main
+## v0.7.0
 
 - Renamed `dolfinx.graph.create_adjacencylist` to `dolfinx.graph.adjacencylist`
 - Renamed `dolfinx.plot.create_vtk_mesh` to `dolfinx.plot.vtk_mesh`

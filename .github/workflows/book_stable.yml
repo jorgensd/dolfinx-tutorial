@@ -15,28 +15,25 @@ env:
 jobs:
   build-book:
     runs-on: ubuntu-latest
-    container: ghcr.io/fenics/dolfinx/lab:v0.6.0-r1
-   
+    container: ghcr.io/fenics/dolfinx/lab:v0.7.0
+
     env:
-      PYVISTA_TRAME_SERVER_PROXY_PREFIX: '/proxy/'
+      PYVISTA_TRAME_SERVER_PROXY_PREFIX: "/proxy/"
       PYVISTA_TRAME_SERVER_PROXY_ENABLED: "True"
       PYVISTA_OFF_SCREEN: false
       PYVISTA_JUPYTER_BACKEND: "panel"
 
     steps:
+      - uses: actions/checkout@v4
 
-      - uses: actions/checkout@v3
-  
       - name: Install common packages
         uses: ./.github/actions/install-dependencies
 
       - name: Install book deps
-        run:
-          python3 -m pip install -r docker/requirements.txt
+        run: python3 -m pip install -r docker/requirements.txt
 
       - name: Build the book
-        run: 
-          jupyter-book build . -W
+        run: jupyter-book build . -W
 
       - uses: actions/upload-artifact@v3
         with:
