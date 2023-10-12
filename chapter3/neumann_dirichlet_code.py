@@ -6,19 +6,18 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.4
+#       jupytext_version: 1.14.7
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
 #     name: python3
 # ---
 
-# + [markdown] tags=[]
 # # Combining Dirichlet and Neumann conditions
 # Author: Jørgen S. Dokken
 #
 # Let's return to the Poisson problem from the [Fundamentals chapter](./../chapter1/fundamentals.md) and see how to extend the mathematics and the implementation to handle Dirichlet condition in combination with a Neumann condition.
-# The domain is still the unit square, but now we set the Dirichlet condition $u=u_D$ at the left and right sides, while the Neumann condition 
+# The domain is still the unit square, but now we set the Dirichlet condition $u=u_D$ at the left and right sides, while the Neumann condition
 #
 # $$
 # -\frac{\partial u}{\partial n}=g
@@ -80,7 +79,7 @@
 # $$
 #     \int_\Omega \nabla u \cdot \nabla v~\mathrm{d} x = \int_\Omega fv~\mathrm{d} x - \int_{\Lambda_N}gv~\mathrm{d}s.
 # $$
-# Expressing this equation in the standard notation $a(u,v)=L(v)$ is straight-forward with 
+# Expressing this equation in the standard notation $a(u,v)=L(v)$ is straight-forward with
 #
 # $$
 #     a(u,v) = \int_{\Omega} \nabla u \cdot \nabla v ~\mathrm{d} x,\\
@@ -93,19 +92,21 @@
 # As in the previous example, we define our mesh,function space and bilinear form $a(u,v)$.
 
 # +
-import numpy as np
-import pyvista
-
-from dolfinx.fem import (Constant, Function, FunctionSpace, 
+from dolfinx import default_scalar_type
+from dolfinx.fem import (Constant, Function, FunctionSpace,
                          assemble_scalar, dirichletbc, form, locate_dofs_geometrical)
 from dolfinx.fem.petsc import LinearProblem
 from dolfinx.mesh import create_unit_square
+from dolfinx.plot import vtk_mesh
+
 from mpi4py import MPI
-from petsc4py.PETSc import ScalarType
 from ufl import SpatialCoordinate, TestFunction, TrialFunction, dot, ds, dx, grad
 
+import numpy as np
+import pyvista
+
 mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
-V = FunctionSpace(mesh, ("CG", 1))
+V = FunctionSpace(mesh, ("Lagrange", 1))
 u = TrialFunction(V)
 v = TestFunction(V)
 a = dot(grad(u), grad(v)) * dx
@@ -113,14 +114,16 @@ a = dot(grad(u), grad(v)) * dx
 
 # -
 
-# Now we get to the Neumann and Dirichlet boundary condition. As previously, we use a Python-function to define the boundary where we should have a Dirichlet condition. Then, with this function, we locate degrees of freedom that fullfils this condition. 
+# Now we get to the Neumann and Dirichlet boundary condition. As previously, we use a Python-function to define the boundary where we should have a Dirichlet condition. Then, with this function, we locate degrees of freedom that fullfils this condition.
 
 # +
 def u_exact(x):
-    return 1 + x[0]**2 + 2*x[1]**2
+    return 1 + x[0]**2 + 2 * x[1]**2
+
 
 def boundary_D(x):
-    return np.logical_or(np.isclose(x[0], 0), np.isclose(x[0],1))
+    return np.logical_or(np.isclose(x[0], 0), np.isclose(x[0], 1))
+
 
 dofs_D = locate_dofs_geometrical(V, boundary_D)
 u_bc = Function(V)
@@ -132,16 +135,16 @@ bc = dirichletbc(u_bc, dofs_D)
 
 x = SpatialCoordinate(mesh)
 g = -4 * x[1]
-f = Constant(mesh, ScalarType(-6))
+f = Constant(mesh, default_scalar_type(-6))
 L = f * v * dx - g * v * ds
 
-# We can now assemble and solve the linear system of equations 
+# We can now assemble and solve the linear system of equations
 
 # +
 problem = LinearProblem(a, L, bcs=[bc], petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
 uh = problem.solve()
 
-V2 = FunctionSpace(mesh, ("CG", 2))
+V2 = FunctionSpace(mesh, ("Lagrange", 2))
 uex = Function(V2)
 uex.interpolate(u_exact)
 error_L2 = assemble_scalar(form((uh - uex)**2 * dx))
@@ -163,8 +166,7 @@ print(f"Error_max : {error_max:.2e}")
 # +
 pyvista.start_xvfb()
 
-from dolfinx.plot import create_vtk_mesh
-pyvista_cells, cell_types, geometry = create_vtk_mesh(V)
+pyvista_cells, cell_types, geometry = vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(pyvista_cells, cell_types, geometry)
 grid.point_data["u"] = uh.x.array
 grid.set_active_scalars("u")
@@ -178,6 +180,3 @@ if not pyvista.OFF_SCREEN:
     plotter.show()
 else:
     figure = plotter.screenshot("neumann_dirichlet.png")
-# -
-
-

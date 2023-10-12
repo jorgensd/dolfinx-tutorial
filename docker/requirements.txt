@@ -16,3 +16,5 @@ pandas
 # Progress bar
 tqdm
 
+# Pyvista
+pyvista[all,trame]

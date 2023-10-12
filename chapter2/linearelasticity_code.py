@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.4
+#       jupytext_version: 1.14.7
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -26,34 +26,29 @@
 # As a test example, we will model a clamped beam deformed under its own weigth in 3D. This can be modeled, by setting the right-hand side body force per unit volume to $f=(0,0,-\rho g)$ with $\rho$ the density of the beam and $g$ the acceleration of gravity. The beam is box-shaped with length $L$ and has a square cross section of width $W$. we set $u=u_D=(0,0,0)$ at the clamped end, x=0. The rest of the boundary is traction free, that is, we set $T=0$. We start by defining the physical variables used in the program.
 
 # Scaled variable
+import pyvista
+from dolfinx import mesh, fem, plot, io, default_scalar_type
+from dolfinx.fem.petsc import LinearProblem
+from mpi4py import MPI
+import ufl
+import numpy as np
 L = 1
 W = 0.2
 mu = 1
 rho = 1
-delta = W/L
-gamma = 0.4*delta**2
+delta = W / L
+gamma = 0.4 * delta**2
 beta = 1.25
 lambda_ = beta
 g = gamma
 
-# We then create the mesh, which will consist of hexahedral elements, along with the function space. We will use the convenience function `VectorFunctionSpace`. However, we also could have used `ufl`s functionality, creating a vector element `element = ufl.VectorElement("CG", mesh.ufl_cell(), 1)
+# We then create the mesh, which will consist of hexahedral elements, along with the function space. We will use the convenience function `VectorFunctionSpace`. However, we also could have used `ufl`s functionality, creating a vector element `element = ufl.VectorElement("Lagrange", mesh.ufl_cell(), 1)
 # `, and intitializing the function space as `V = dolfinx.fem.FunctionSpace(mesh, element)`.
 
-# +
-import numpy as np
-import ufl
+domain = mesh.create_box(MPI.COMM_WORLD, [np.array([0, 0, 0]), np.array([L, W, W])],
+                         [20, 6, 6], cell_type=mesh.CellType.hexahedron)
+V = fem.VectorFunctionSpace(domain, ("Lagrange", 1))
 
-from mpi4py import MPI
-from petsc4py.PETSc import ScalarType
-
-from dolfinx import mesh, fem, plot, io
-
-domain = mesh.create_box(MPI.COMM_WORLD, [np.array([0,0,0]), np.array([L, W, W])],
-                  [20,6,6], cell_type=mesh.CellType.hexahedron)
-V = fem.VectorFunctionSpace(domain, ("CG", 1))
-
-
-# -
 
 # ## Boundary conditions
 # As we would like to clamp the boundary at $x=0$, we do this by using a marker function, which locate the facets where $x$ is close to zero by machine prescision.
@@ -62,16 +57,17 @@ V = fem.VectorFunctionSpace(domain, ("CG", 1))
 def clamped_boundary(x):
     return np.isclose(x[0], 0)
 
+
 fdim = domain.topology.dim - 1
 boundary_facets = mesh.locate_entities_boundary(domain, fdim, clamped_boundary)
 
-u_D = np.array([0,0,0], dtype=ScalarType)
+u_D = np.array([0, 0, 0], dtype=default_scalar_type)
 bc = fem.dirichletbc(u_D, fem.locate_dofs_topological(V, fdim, boundary_facets), V)
 # -
 
 # As we want the traction $T$ over the remaining boundary to be $0$, we create a `dolfinx.Constant`
 
-T = fem.Constant(domain, ScalarType((0, 0, 0)))
+T = fem.Constant(domain, default_scalar_type((0, 0, 0)))
 
 # We also want to specify the integration measure $\mathrm{d}s$, which should be the integral over the boundary of our domain. We do this by using `ufl`, and its built in integration measures
 
@@ -83,30 +79,33 @@ ds = ufl.Measure("ds", domain=domain)
 
 # +
 def epsilon(u):
-    return ufl.sym(ufl.grad(u)) # Equivalent to 0.5*(ufl.nabla_grad(u) + ufl.nabla_grad(u).T)
+    return ufl.sym(ufl.grad(u))  # Equivalent to 0.5*(ufl.nabla_grad(u) + ufl.nabla_grad(u).T)
+
+
 def sigma(u):
-    return lambda_ * ufl.nabla_div(u) * ufl.Identity(len(u)) + 2*mu*epsilon(u)
+    return lambda_ * ufl.nabla_div(u) * ufl.Identity(len(u)) + 2 * mu * epsilon(u)
+
 
 u = ufl.TrialFunction(V)
 v = ufl.TestFunction(V)
-f = fem.Constant(domain, ScalarType((0, 0, -rho*g)))
+f = fem.Constant(domain, default_scalar_type((0, 0, -rho * g)))
 a = ufl.inner(sigma(u), epsilon(v)) * ufl.dx
 L = ufl.dot(f, v) * ufl.dx + ufl.dot(T, v) * ds
 # -
 
 # ```{note}
-# Note that we used `nabla_grad` and optionally `nabla_div` for the variational formulation, as oposed to our previous usage of 
+# Note that we used `nabla_grad` and optionally `nabla_div` for the variational formulation, as oposed to our previous usage of
 # `div` and `grad`. This is because for scalar functions $\nabla u$ has a clear meaning
 # $\nabla u = \left(\frac{\partial u}{\partial x}, \frac{\partial u}{\partial y}, \frac{\partial u}{\partial z} \right)$.
 #
-# However, if $u$ is vector valued, the meaning is less clear. Some sources define $\nabla u$ as a matrix with the elements $\frac{\partial u_j}{\partial x_i}$, while other  sources prefer 
+# However, if $u$ is vector valued, the meaning is less clear. Some sources define $\nabla u$ as a matrix with the elements $\frac{\partial u_j}{\partial x_i}$, while other  sources prefer
 # $\frac{\partial u_i}{\partial x_j}$. In DOLFINx `grad(u)` is defined as the amtrix with element $\frac{\partial u_i}{\partial x_j}$. However, as it is common in continuum mechanics to use the other definition, `ufl` supplies us with `nabla_grad` for this purpose.
 # ```
-#  
+#
 # ## Solve the linear variational problem
 # As in the previous demos, we assemble the matrix and right hand side vector and use PETSc to solve our variational problem
 
-problem = fem.petsc.LinearProblem(a, L, bcs=[bc], petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
+problem = LinearProblem(a, L, bcs=[bc], petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
 uh = problem.solve()
 
 # ## Visualization
@@ -114,12 +113,11 @@ uh = problem.solve()
 # As in the previous demos, we can either use Pyvista or Paraview for visualization. We start by using Pyvista. Instead of adding scalar values to the grid, we add vectors.
 
 # +
-import pyvista
 pyvista.start_xvfb()
 
 # Create plotter and pyvista grid
 p = pyvista.Plotter()
-topology, cell_types, geometry = plot.create_vtk_mesh(V)
+topology, cell_types, geometry = plot.vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
 
 # Attach vector values to grid and warp grid by vector
@@ -129,9 +127,9 @@ warped = grid.warp_by_vector("u", factor=1.5)
 actor_1 = p.add_mesh(warped, show_edges=True)
 p.show_axes()
 if not pyvista.OFF_SCREEN:
-   p.show()
+    p.show()
 else:
-   figure_as_array = p.screenshot("deflection.png")
+    figure_as_array = p.screenshot("deflection.png")
 # -
 
 # We could also use Paraview for visualizing this.
@@ -146,8 +144,8 @@ with io.XDMFFile(domain.comm, "deformation.xdmf", "w") as xdmf:
 # ## Stress computation
 # As soon as the displacement is computed, we can compute various stress measures. We will compute the von Mises stress defined as $\sigma_m=\sqrt{\frac{3}{2}s:s}$ where $s$ is the deviatoric stress tensor $s(u)=\sigma(u)-\frac{1}{3}\mathrm{tr}(\sigma(u))I$.
 
-s = sigma(uh) -1./3*ufl.tr(sigma(uh))*ufl.Identity(len(uh))
-von_Mises = ufl.sqrt(3./2*ufl.inner(s, s))
+s = sigma(uh) - 1. / 3 * ufl.tr(sigma(uh)) * ufl.Identity(len(uh))
+von_Mises = ufl.sqrt(3. / 2 * ufl.inner(s, s))
 
 # The `von_Mises` variable is now an expression that must be projected into an appropriate function space so that we can visualize it. As `uh` is a linear combination of first order piecewise continuous functions, the von Mises stresses will be a cell-wise constant function.
 
@@ -164,8 +162,6 @@ p = pyvista.Plotter()
 p.add_mesh(warped)
 p.show_axes()
 if not pyvista.OFF_SCREEN:
-   p.show()
+    p.show()
 else:
-   stress_figure = p.screenshot(f"stresses.png")
-
-
+    stress_figure = p.screenshot(f"stresses.png")

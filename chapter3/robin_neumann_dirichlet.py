@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.4
+#       jupytext_version: 1.14.7
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -83,19 +83,20 @@
 # We start by defining the domain $\Omega$ as the unit square $[0,1]\times[0,1]$.
 
 # +
-import numpy as np
-import pyvista
-
+from dolfinx import default_scalar_type
 from dolfinx.fem import (Constant,  Function, FunctionSpace, assemble_scalar, 
                          dirichletbc, form, locate_dofs_topological)
 from dolfinx.fem.petsc import LinearProblem
+from dolfinx.io import XDMFFile
 from dolfinx.mesh import create_unit_square, locate_entities, meshtags
+from dolfinx.plot import vtk_mesh
+
 from mpi4py import MPI
-from petsc4py.PETSc import ScalarType
 from ufl import (FacetNormal, Measure, SpatialCoordinate, TestFunction, TrialFunction, 
                  div, dot, dx, grad, inner, lhs, rhs)
-from dolfinx.io import XDMFFile
-from dolfinx.plot import create_vtk_mesh
+
+import numpy as np
+import pyvista
 
 mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
 # -
@@ -133,10 +134,10 @@ s = u_ex(x)
 f = -div(grad(u_ex(x)))
 n = FacetNormal(mesh)
 g = -dot(n, grad(u_ex(x)))
-kappa = Constant(mesh, ScalarType(1))
-r = Constant(mesh, ScalarType(1000))
+kappa = Constant(mesh, default_scalar_type(1))
+r = Constant(mesh, default_scalar_type(1000))
 # Define function space and standard part of variational form
-V = FunctionSpace(mesh, ("CG", 1))
+V = FunctionSpace(mesh, ("Lagrange", 1))
 u, v = TrialFunction(V), TestFunction(V)
 F = kappa * inner(grad(u), grad(v)) * dx - inner(f, v) * dx
 
@@ -148,8 +149,6 @@ boundaries = [(1, lambda x: np.isclose(x[0], 0)),
               (4, lambda x: np.isclose(x[1], 1))]
 
 # We now loop through all the boundary conditions and create `MeshTags` identifying the facets for each boundary condition.
-
-
 
 facet_indices, facet_markers = [], []
 fdim = mesh.topology.dim - 1
@@ -168,7 +167,7 @@ facet_tag = meshtags(mesh, fdim, facet_indices[sorted_facets], facet_markers[sor
 mesh.topology.create_connectivity(mesh.topology.dim-1, mesh.topology.dim)
 with XDMFFile(mesh.comm, "facet_tags.xdmf", "w") as xdmf:
     xdmf.write_mesh(mesh)
-    xdmf.write_meshtags(facet_tag)
+    xdmf.write_meshtags(facet_tag, mesh.geometry)
 
 # Now we can create a custom integration measure `ds`, which can be used to restrict integration. If we integrate over `ds(1)`, we only integrate over facets marked with value 1 in the corresponding `facet_tag`.
 
@@ -229,7 +228,7 @@ uh = problem.solve()
 
 # Visualize solution
 pyvista.start_xvfb()
-pyvista_cells, cell_types, geometry = create_vtk_mesh(V)
+pyvista_cells, cell_types, geometry = vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(pyvista_cells, cell_types, geometry)
 grid.point_data["u"] = uh.x.array
 grid.set_active_scalars("u")
@@ -249,7 +248,7 @@ else:
 
 # +
 # Compute L2 error and error at nodes
-V_ex = FunctionSpace(mesh, ("CG", 2))
+V_ex = FunctionSpace(mesh, ("Lagrange", 2))
 u_exact = Function(V_ex)
 u_exact.interpolate(u_ex)
 error_L2 = np.sqrt(mesh.comm.allreduce(assemble_scalar(form((uh - u_exact)**2 * dx)), op=MPI.SUM))

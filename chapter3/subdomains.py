@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.4
+#       jupytext_version: 1.14.7
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -21,21 +21,24 @@
 # ## Subdomains on built-in meshes
 
 # +
-import gmsh
-import numpy as np
-import pyvista
+from dolfinx import default_scalar_type
 from dolfinx.fem import (Constant, dirichletbc, Function, FunctionSpace, assemble_scalar,
                          form, locate_dofs_geometrical, locate_dofs_topological)
 from dolfinx.fem.petsc import LinearProblem
-from dolfinx.io import XDMFFile
+from dolfinx.io import XDMFFile, gmshio
 from dolfinx.mesh import create_unit_square, locate_entities
-from dolfinx.plot import create_vtk_mesh
+from dolfinx.plot import vtk_mesh
 
 from ufl import (SpatialCoordinate, TestFunction, TrialFunction,
                  dx, grad, inner)
 
 from mpi4py import MPI
-from petsc4py.PETSc import ScalarType
+
+import meshio
+import gmsh
+import numpy as np
+import pyvista
+
 pyvista.start_xvfb()
 
 mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
@@ -44,12 +47,13 @@ Q = FunctionSpace(mesh, ("DG", 0))
 
 # -
 
-# We will use a simple example with two materials in two dimensions to demonstrate the idea. The whole domain will be $\Omega=[0,1]\times[0,1]$, which consists of two subdomains 
+# We will use a simple example with two materials in two dimensions to demonstrate the idea. The whole domain will be $\Omega=[0,1]\times[0,1]$, which consists of two subdomains
 # $\Omega_0=[0,1]\times [0,1/2]$ and $\Omega_1=[0,1]\times[1/2, 1]$. We start by creating two python functions, where each returns `True` if the input coordinate is inside its domain.
 
 # +
 def Omega_0(x):
     return x[1] <= 0.5
+
 
 def Omega_1(x):
     return x[1] >= 0.5
@@ -82,33 +86,33 @@ cells_1 = locate_entities(mesh, mesh.topology.dim, Omega_1)
 # 0.1& \text{if } x\in\Omega_1\\
 # \end{cases}$
 
-kappa.x.array[cells_0] = np.full_like(cells_0, 1, dtype=ScalarType)
-kappa.x.array[cells_1] = np.full_like(cells_1, 0.1, dtype=ScalarType)
+kappa.x.array[cells_0] = np.full_like(cells_0, 1, dtype=default_scalar_type)
+kappa.x.array[cells_1] = np.full_like(cells_1, 0.1, dtype=default_scalar_type)
 
-# We are now ready to define our variational formulation and  Dirichlet boundary condition after using integration by parts 
+# We are now ready to define our variational formulation and  Dirichlet boundary condition after using integration by parts
 
-V = FunctionSpace(mesh, ("CG", 1))
+V = FunctionSpace(mesh, ("Lagrange", 1))
 u, v = TrialFunction(V), TestFunction(V)
-a = inner(kappa*grad(u), grad(v)) * dx
+a = inner(kappa * grad(u), grad(v)) * dx
 x = SpatialCoordinate(mesh)
-L = Constant(mesh, ScalarType(1)) * v * dx
+L = Constant(mesh, default_scalar_type(1)) * v * dx
 dofs = locate_dofs_geometrical(V, lambda x: np.isclose(x[0], 0))
-bcs = [dirichletbc(ScalarType(1), dofs, V)]
+bcs = [dirichletbc(default_scalar_type(1), dofs, V)]
 
 # We can now solve and visualize the solution of the problem
 
-# + tags=[]
+# +
 problem = LinearProblem(a, L, bcs=bcs, petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
 uh = problem.solve()
 
 # Filter out ghosted cells
 num_cells_local = mesh.topology.index_map(mesh.topology.dim).size_local
 marker = np.zeros(num_cells_local, dtype=np.int32)
-cells_0 = cells_0[cells_0<num_cells_local]
-cells_1 = cells_1[cells_1<num_cells_local]
+cells_0 = cells_0[cells_0 < num_cells_local]
+cells_1 = cells_1[cells_1 < num_cells_local]
 marker[cells_0] = 1
 marker[cells_1] = 2
-topology, cell_types, x = create_vtk_mesh(mesh, mesh.topology.dim, np.arange(num_cells_local, dtype=np.int32))
+topology, cell_types, x = vtk_mesh(mesh, mesh.topology.dim, np.arange(num_cells_local, dtype=np.int32))
 
 p = pyvista.Plotter(window_size=[800, 800])
 grid = pyvista.UnstructuredGrid(topology, cell_types, x)
@@ -121,7 +125,7 @@ p.show()
 # -
 
 p2 = pyvista.Plotter(window_size=[800, 800])
-grid_uh = pyvista.UnstructuredGrid(*create_vtk_mesh(V))
+grid_uh = pyvista.UnstructuredGrid(*vtk_mesh(V))
 grid_uh.point_data["u"] = uh.x.array.real
 grid_uh.set_active_scalars("u")
 p2.add_mesh(grid_uh, show_edges=True)
@@ -137,28 +141,30 @@ else:
 # As we saw in the first approach, in many cases, we can use the geometrical coordinates to determine which coefficient we should use. Using the unstructured mesh from the previous example, we illustrate an alternative approach using interpolation:
 
 def eval_kappa(x):
-    values = np.zeros(x.shape[1], dtype=ScalarType)
+    values = np.zeros(x.shape[1], dtype=default_scalar_type)
     # Create a boolean array indicating which dofs (corresponding to cell centers)
     # that are in each domain
-    top_coords = x[1]>0.5 
-    bottom_coords = x[1]<0.5
+    top_coords = x[1] > 0.5
+    bottom_coords = x[1] < 0.5
     values[top_coords] = np.full(sum(top_coords), 0.1)
     values[bottom_coords] = np.full(sum(bottom_coords), 1)
     return values
+
+
 kappa2 = Function(Q)
 kappa2.interpolate(eval_kappa)
 
 # We verify this by assembling the error between this new function and the old one
 
 # Difference in kappa's
-error = mesh.comm.allreduce(assemble_scalar(form((kappa-kappa2)**2*dx)))
+error = mesh.comm.allreduce(assemble_scalar(form((kappa - kappa2)**2 * dx)))
 print(error)
 
 # ## Subdomains defined from external mesh data
 # Let us now consider the same problem, but using GMSH to generate the mesh and subdomains. We will then in turn show how to use this data to generate discontinuous functions in DOLFINx.
 
 gmsh.initialize()
-proc = MPI.COMM_WORLD.rank 
+proc = MPI.COMM_WORLD.rank
 top_marker = 2
 bottom_marker = 1
 left_marker = 1
@@ -166,15 +172,15 @@ if proc == 0:
     # We create one rectangle for each subdomain
     gmsh.model.occ.addRectangle(0, 0, 0, 1, 0.5, tag=1)
     gmsh.model.occ.addRectangle(0, 0.5, 0, 1, 0.5, tag=2)
-    # We fuse the two rectangles and keep the interface between them 
-    gmsh.model.occ.fragment([(2,1)],[(2,2)])
+    # We fuse the two rectangles and keep the interface between them
+    gmsh.model.occ.fragment([(2, 1)], [(2, 2)])
     gmsh.model.occ.synchronize()
-   
+
     # Mark the top (2) and bottom (1) rectangle
     top, bottom = None, None
     for surface in gmsh.model.getEntities(dim=2):
         com = gmsh.model.occ.getCenterOfMass(surface[0], surface[1])
-        if np.allclose(com, [0.5,0.25, 0]):
+        if np.allclose(com, [0.5, 0.25, 0]):
             bottom = surface[1]
         else:
             top = surface[1]
@@ -194,7 +200,6 @@ gmsh.finalize()
 # ## Read in MSH files with DOLFINx
 # You can read in MSH files with DOLFINx, which will read them in on a single process, and then distribute them over the available ranks in the MPI communicator.
 
-from dolfinx.io import gmshio
 mesh, cell_markers, facet_markers = gmshio.read_from_msh("mesh.msh", MPI.COMM_WORLD, gdim=2)
 
 # ## Convert msh-files to XDMF using meshio
@@ -207,12 +212,12 @@ mesh, cell_markers, facet_markers = gmshio.read_from_msh("mesh.msh", MPI.COMM_WO
 # ```
 # We start by creating a convenience function for extracting data for a single cell type, and creating a new `meshio.Mesh`.
 
-import meshio
+
 def create_mesh(mesh, cell_type, prune_z=False):
     cells = mesh.get_cells_type(cell_type)
     cell_data = mesh.get_cell_data("gmsh:physical", cell_type)
-    points = mesh.points[:,:2] if prune_z else mesh.points
-    out_mesh = meshio.Mesh(points=points, cells={cell_type: cells}, cell_data={"name_to_read":[cell_data]})
+    points = mesh.points[:, :2] if prune_z else mesh.points
+    out_mesh = meshio.Mesh(points=points, cells={cell_type: cells}, cell_data={"name_to_read": [cell_data.astype(np.int32)]})
     return out_mesh
 
 
@@ -221,12 +226,13 @@ def create_mesh(mesh, cell_type, prune_z=False):
 if proc == 0:
     # Read in mesh
     msh = meshio.read("mesh.msh")
-   
-    # Create and save one file for the mesh, and one file for the facets 
+
+    # Create and save one file for the mesh, and one file for the facets
     triangle_mesh = create_mesh(msh, "triangle", prune_z=True)
     line_mesh = create_mesh(msh, "line", prune_z=True)
     meshio.write("mesh.xdmf", triangle_mesh)
     meshio.write("mt.xdmf", line_mesh)
+MPI.COMM_WORLD.barrier()
 
 # We have now written the mesh and the cell markers to one file, and the facet markers in a separate file. We can now read this data in DOLFINx using `XDMFFile.read_mesh` and `XDMFFile.read_meshtags`. The `dolfinx.MeshTags` stores the index of the entity, along with the value of the marker in two one dimensional arrays.
 #
@@ -235,7 +241,7 @@ if proc == 0:
 with XDMFFile(MPI.COMM_WORLD, "mesh.xdmf", "r") as xdmf:
     mesh = xdmf.read_mesh(name="Grid")
     ct = xdmf.read_meshtags(mesh, name="Grid")
-mesh.topology.create_connectivity(mesh.topology.dim, mesh.topology.dim-1)
+mesh.topology.create_connectivity(mesh.topology.dim, mesh.topology.dim - 1)
 with XDMFFile(MPI.COMM_WORLD, "mt.xdmf", "r") as xdmf:
     ft = xdmf.read_meshtags(mesh, name="Grid")
 
@@ -244,25 +250,25 @@ with XDMFFile(MPI.COMM_WORLD, "mt.xdmf", "r") as xdmf:
 Q = FunctionSpace(mesh, ("DG", 0))
 kappa = Function(Q)
 bottom_cells = ct.find(bottom_marker)
-kappa.x.array[bottom_cells] = np.full_like(bottom_cells, 1, dtype=ScalarType)
+kappa.x.array[bottom_cells] = np.full_like(bottom_cells, 1, dtype=default_scalar_type)
 top_cells = ct.find(top_marker)
-kappa.x.array[top_cells]  = np.full_like(top_cells, 0.1, dtype=ScalarType)
+kappa.x.array[top_cells] = np.full_like(top_cells, 0.1, dtype=default_scalar_type)
 
 # We can also efficiently use the facet data `ft` to create the Dirichlet boundary condition
 
-V = FunctionSpace(mesh, ("CG", 1))
+V = FunctionSpace(mesh, ("Lagrange", 1))
 u_bc = Function(V)
 left_facets = ft.find(left_marker)
-left_dofs = locate_dofs_topological(V, mesh.topology.dim-1, left_facets)
-bcs = [dirichletbc(ScalarType(1), left_dofs, V)]
+left_dofs = locate_dofs_topological(V, mesh.topology.dim - 1, left_facets)
+bcs = [dirichletbc(default_scalar_type(1), left_dofs, V)]
 
 # We can now solve the problem in a similar fashion as above
 
 # +
 u, v = TrialFunction(V), TestFunction(V)
-a = inner(kappa*grad(u), grad(v)) * dx
+a = inner(kappa * grad(u), grad(v)) * dx
 x = SpatialCoordinate(mesh)
-L = Constant(mesh, ScalarType(1)) * v * dx
+L = Constant(mesh, default_scalar_type(1)) * v * dx
 
 problem = LinearProblem(a, L, bcs=bcs, petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
 uh = problem.solve()
@@ -270,10 +276,10 @@ uh = problem.solve()
 # As the dolfinx.MeshTag contains a value for every cell in the
 # geometry, we can attach it directly to the grid
 
-topology, cell_types, x = create_vtk_mesh(mesh, mesh.topology.dim)
+topology, cell_types, x = vtk_mesh(mesh, mesh.topology.dim)
 grid = pyvista.UnstructuredGrid(topology, cell_types, x)
 num_local_cells = mesh.topology.index_map(mesh.topology.dim).size_local
-grid.cell_data["Marker"] = ct.values[ct.indices<num_local_cells]
+grid.cell_data["Marker"] = ct.values[ct.indices < num_local_cells]
 grid.set_active_scalars("Marker")
 
 p = pyvista.Plotter(window_size=[800, 800])
@@ -283,7 +289,7 @@ if not pyvista.OFF_SCREEN:
 else:
     figure = p.screenshot("subdomains_unstructured.png")
 # -
-grid_uh = pyvista.UnstructuredGrid(*create_vtk_mesh(V))
+grid_uh = pyvista.UnstructuredGrid(*vtk_mesh(V))
 grid_uh.point_data["u"] = uh.x.array.real
 grid_uh.set_active_scalars("u")
 p2 = pyvista.Plotter(window_size=[800, 800])
@@ -292,8 +298,5 @@ if not pyvista.OFF_SCREEN:
     p2.show()
 else:
     p2.screenshot("unstructured_u.png")
-
-
-
 
 

@@ -22,26 +22,31 @@ Most of the mathematical part of the examples will be kept at a simple level, su
 Occasionally we will consider a more physically relevant example to remind the reader that there are no big leaps from solving simple model problems to challenging real-world problems when using FEniCSx.
 
 ## Interactive tutorials
+
 As this book has been published as a Jupyter Book, we provide interactive notebooks that can be run in the browser. To start such a notebook click the ![Binder symbol](binder.png)-symbol in the top right corner of the relevant tutorial.
 
 ## Obtaining the software
 
-If you would like to work with DOLFINx outside of the binder-notebooks, you need to install the FEniCS software. 
-The recommended way of installing DOLFINx for new users is by using Docker. 
-Docker is a software that uses *containers* to supply software across different kinds of operating systems (Linux, Mac, Windows). The first step is to install docker, following the instructions at their [webpage](https://docs.docker.com/get-started/).
+If you would like to work with DOLFINx outside of the binder-notebooks, you need to install the FEniCS software.
+The recommended way of installing DOLFINx for new users is by using Docker.
+Docker is a software that uses _containers_ to supply software across different kinds of operating systems (Linux, Mac, Windows). The first step is to install docker, following the instructions at their [webpage](https://docs.docker.com/get-started/).
 
 All notebooks can be converted to python files using [nbconvert](https://nbconvert.readthedocs.io/en/latest/).
 
 ### Tutorial compatible docker images
+
 The tutorial uses several dependencies for meshing, plotting and timings. A compatible `JupyterLab` image is available in the [Github Packages](https://github.com/jorgensd/dolfinx-tutorial/pkgs/container/dolfinx-tutorial))
 
 To use the notebooks in this tutorial with DOLFINx on your own computer, you should use the docker image using the following command:
+
 ```bash
-  docker run --init -p 8888:8888 -v "$(pwd)":/root/shared ghcr.io/jorgensd/dolfinx-tutorial:v0.6.0
+  docker run --init -p 8888:8888 -v "$(pwd)":/root/shared ghcr.io/jorgensd/dolfinx-tutorial:v0.7.0
 ```
+
 This image can also be used as a normal docker container by adding:
+
 ```bash
-  docker run --ti -v "$(pwd)":/root/shared  --entrypoint="/bin/bash" ghcr.io/jorgensd/dolfinx-tutorial:v0.6.0
+  docker run --ti -v "$(pwd)":/root/shared  --entrypoint="/bin/bash" ghcr.io/jorgensd/dolfinx-tutorial:v0.7.0
 ```
 
 The tutorials can also be exported as a notebook or PDF by clicking the ![Download](save.png)-symbol in the top right corner of the relevant tutorial. The notebook can in turn be used with a Python kernel which has DOLFINx.
@@ -51,32 +56,36 @@ The tutorials can also be exported as a notebook or PDF by clicking the ![Downlo
 The FEniCS project supplies pre-built docker images at [https://hub.docker.com/r/dolfinx/dolfinx](https://hub.docker.com/r/dolfinx/dolfinx).
 The [Dockerfile](https://github.com/FEniCS/dolfinx/blob/main/docker/Dockerfile)
 provides a definitive build recipe. As the DOLFINx docker images are hosted at Docker-hub, one can directly access the image:
+
 ```
-docker run dolfinx/dolfinx:v0.6.0-r1
+docker run dolfinx/dolfinx:v0.7.0
 ```
+
 There are several ways of customizing a docker container, such as mounting volumes/sharing folder, setting a working directory, sharing graphical interfaces etc. See `docker run --help` for an extensive list.
 
 Once you have installed DOLFINx, either by using docker or installing form source, you can test the installation by running `python3 -c "import dolfinx"`. If all goes well, no error-messages should appear.
 
-
 ## Installation from source
+
 The software is quite complex, and building the software and all the dependencies from source can be a daunting task. The list of dependencies can be found at [docs.fenicsproject.org/dolfinx/main/python/installation.html](https://docs.fenicsproject.org/dolfinx/main/python/installation.html).
 
 ## Introduction to Python for beginners
+
 If you are a beginner in Python, we suggest reading {cite}`Langtangen2016` by Hans Petter Langtangen, which will give you a gentle introduction to the Python programming language. Note that DOLFINx, being a state of the art finite element solver, only supports Python 3, as Python 2 reached its end of life January 1st, 2020. To automatically transfer Python 2 scripts to Python 3, it is suggested to use the [2to3](https://docs.python.org/3/library/2to3.html)-package, which provides automated translation of the code.
 
-
 ## Introduction to the finite element method
+
 In the last decade, a wide range of lecture notes on finite elements methods has been made open access. See for instance:
 
 - [Numerical methods for partial differential equations](http://hplgit.github.io/num-methods-for-PDEs/doc/web/index.html), by Hans Petter Langtangen
 - [Finite elements - analysis and implementation](https://finite-element.github.io/), by David A. Ham and Colin J. Cotter
-- [Finite element analysis for coupled problems](https://david-kamensky.eng.ucsd.edu/teaching/mae-207-fea-for-coupled-problems), by David Kamensky. 
+- [Finite element analysis for coupled problems](https://david-kamensky.eng.ucsd.edu/teaching/mae-207-fea-for-coupled-problems), by David Kamensky.
 - [DefElement: an encyclopedia of finite element definitions](https://defelement.com/), by Matthew W. Scroggs.
 
-There has been written many good text-books on the finite element method, and we refer to the original FEniCS tutorial, for references to these, see Chapter 1.6.2 of The FEniCS tutorial  {cite}`FenicsTutorial`.
+There has been written many good text-books on the finite element method, and we refer to the original FEniCS tutorial, for references to these, see Chapter 1.6.2 of The FEniCS tutorial {cite}`FenicsTutorial`.
 
 ## References
+
 ```{bibliography}
    :filter: cited and ({"fem"} >= docnames)
 ```

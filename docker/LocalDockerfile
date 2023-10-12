@@ -10,7 +10,7 @@ ARG FFCX_BRANCH=main
 ARG BASIX_BRANCH=main
 ARG DOLFINX_BRANCH=main
 ARG BUILD_TYPE=Release
-ARG PETSC_ARCH=linux-gnu-real-32
+ARG PETSC_ARCH=linux-gnu-real64-32
 ARG HDF5_DIR="/usr/local"
 ARG HDF5_MPI="ON"
 # Can be set to "notebook"
