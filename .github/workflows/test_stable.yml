@@ -20,13 +20,13 @@ jobs:
   test:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container: ghcr.io/fenics/dolfinx/lab:v0.6.0-r1
+    container: ghcr.io/fenics/dolfinx/lab:v0.7.0
     env:
       PYVISTA_OFF_SCREEN: true
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ./.github/actions/install-dependencies
 
@@ -44,8 +44,7 @@ jobs:
           cd chapter1
           python3 complex_mode.py
           mpirun -n 2 python3 complex_mode.py
- 
-  
+
       - name: Test notebooks in parallel
         run: |
           python3 -c "from pyvista import start_xvfb; start_xvfb(0.1)"
