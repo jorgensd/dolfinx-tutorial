@@ -19,4 +19,4 @@ pandas
 tqdm
 
 # Pyvista
-pyvista[all,trame]
+pyvista[all]
