@@ -17,7 +17,7 @@
 # Author: Jørgen S. Dokken
 #
 # In this section, we will learn how to prescribe Dirichlet boundary conditions on a component of your unknown $u_h$.
-# We will illustrate the problem using a `VectorElement`. However, the method generalizes to any `MixedElement`.
+# We will illustrate the problem using a vector element. However, the method generalizes to any mixed element.
 #
 # We will use a slightly modified version of [the linear elasticity demo](./../chapter2/linearelasticity_code), namely
 # $$

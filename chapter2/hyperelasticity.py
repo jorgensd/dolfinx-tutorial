@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.7
+#       jupytext_version: 1.15.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -37,7 +37,7 @@ from mpi4py import MPI
 from dolfinx import fem, mesh, plot
 L = 20.0
 domain = mesh.create_box(MPI.COMM_WORLD, [[0.0, 0.0, 0.0], [L, 1, 1]], [20, 5, 5], mesh.CellType.hexahedron)
-V = fem.VectorFunctionSpace(domain, ("Lagrange", 2))
+V = fem.functionspace(domain, ("Lagrange", 2, (domain.geometry.dim, )))
 
 
 # -
