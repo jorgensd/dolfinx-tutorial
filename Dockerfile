@@ -1,4 +1,4 @@
-FROM ghcr.io/jorgensd/dolfinx-tutorial:v0.7.0
+FROM ghcr.io/jorgensd/dolfinx-tutorial:v0.7.1
 
 # create user with a home directory
 ARG NB_USER=jovyan
