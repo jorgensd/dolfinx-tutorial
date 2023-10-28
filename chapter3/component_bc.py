@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.7
+#       jupytext_version: 1.15.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -43,28 +43,30 @@
 # $\partial\Omega_N$ is the left and right side of the beam, $\partial\Omega_D$ the bottom of the  beam, while $\partial\Omega_{Dx}$ is the right side of the beam.
 # We will prescribe a displacement $u_x=0$ on the right side of the beam, while the beam is being deformed under its own weight. The sides of the box is traction free.
 
-from dolfinx.plot import vtk_mesh
+# +
 import pyvista
 import numpy as np
 from mpi4py import MPI
-from ufl import Identity, Measure, TestFunction, TrialFunction, VectorElement, dot, dx, inner, grad, nabla_div, sym
+from ufl import Identity, Measure, TestFunction, TrialFunction, dot, dx, inner, grad, nabla_div, sym
 from dolfinx import default_scalar_type
 from dolfinx.mesh import CellType, create_rectangle, locate_entities_boundary
 from dolfinx.fem.petsc import LinearProblem
-from dolfinx.fem import (Constant, dirichletbc, Function, FunctionSpace, locate_dofs_geometrical,
+from dolfinx.fem import (Constant, dirichletbc, Function, functionspace, locate_dofs_geometrical,
                          locate_dofs_topological)
+from dolfinx.plot import vtk_mesh
+
 L = 1
 H = 1.3
 lambda_ = 1.25
 mu = 1
 rho = 1
 g = 1
+# -
 
-# As in the previous demos, we define our mesh and function space. We will create a `ufl.VectorElement` to create a two dimensional vector space.
+# As in the previous demos, we define our mesh and function space.
 
 mesh = create_rectangle(MPI.COMM_WORLD, np.array([[0, 0], [L, H]]), [30, 30], cell_type=CellType.triangle)
-element = VectorElement("Lagrange", mesh.ufl_cell(), 1)
-V = FunctionSpace(mesh, element)
+V = functionspace(mesh, ("Lagrange", 1, (mesh.geometry.dim , )))
 
 
 # ## Boundary conditions

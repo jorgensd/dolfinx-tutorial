@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.7
+#       jupytext_version: 1.15.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -50,8 +50,10 @@ import tqdm.autonotebook
 from mpi4py import MPI
 from petsc4py import PETSc
 
+from basix.ufl import element
+
 from dolfinx.cpp.mesh import to_type, cell_entity_type
-from dolfinx.fem import (Constant, Function, FunctionSpace,
+from dolfinx.fem import (Constant, Function, functionspace,
                          assemble_scalar, dirichletbc, form, locate_dofs_topological, set_bc)
 from dolfinx.fem.petsc import (apply_lifting, assemble_matrix, assemble_vector,
                                create_vector, create_matrix, set_bc)
@@ -59,9 +61,8 @@ from dolfinx.graph import adjacencylist
 from dolfinx.geometry import bb_tree, compute_collisions_points, compute_colliding_cells
 from dolfinx.io import (VTXWriter, distribute_entity_data, gmshio)
 from dolfinx.mesh import create_mesh, meshtags_from_entities
-
-from ufl import (FacetNormal, FiniteElement, Identity, Measure, TestFunction, TrialFunction, VectorElement,
-                 as_vector, div, dot, ds, dx, inner, lhs, grad, nabla_grad, rhs, sym)
+from ufl import (FacetNormal, Identity, Measure, TestFunction, TrialFunction,
+                 as_vector, div, dot, ds, dx, inner, lhs, grad, nabla_grad, rhs, sym, system)
 
 gmsh.initialize()
 
@@ -178,10 +179,10 @@ rho = Constant(mesh, PETSc.ScalarType(1))     # Density
 # As we have created the mesh and relevant mesh tags, we can now specify the function spaces `V` and `Q` along with the boundary conditions. As the `ft` contains markers for facets, we use this class to find the facets for the inlet and walls.
 
 # +
-v_cg2 = VectorElement("Lagrange", mesh.ufl_cell(), 2)
-s_cg1 = FiniteElement("Lagrange", mesh.ufl_cell(), 1)
-V = FunctionSpace(mesh, v_cg2)
-Q = FunctionSpace(mesh, s_cg1)
+v_cg2 = element("Lagrange", mesh.topology.cell_name(), 2, shape=(mesh.geometry.dim, ))
+s_cg1 = element("Lagrange", mesh.topology.cell_name(), 1)
+V = functionspace(mesh, v_cg2)
+Q = functionspace(mesh, s_cg1)
 
 fdim = mesh.topology.dim - 1
 
@@ -487,3 +488,5 @@ if mesh.comm.rank == 0:
     plt.grid()
     plt.legend()
     plt.savefig("figures/pressure_comparison.png")
+
+

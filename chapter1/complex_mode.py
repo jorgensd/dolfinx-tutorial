@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.7
+#       jupytext_version: 1.15.2
 #   kernelspec:
 #     display_name: Python 3 (DOLFINx complex)
 #     language: python
@@ -47,7 +47,7 @@ import dolfinx
 from mpi4py import MPI
 import numpy as np
 mesh = dolfinx.mesh.create_unit_square(MPI.COMM_WORLD, 10, 10)
-V = dolfinx.fem.FunctionSpace(mesh, ("Lagrange", 1))
+V = dolfinx.fem.functionspace(mesh, ("Lagrange", 1))
 u_r = dolfinx.fem.Function(V, dtype=np.float64) 
 u_r.interpolate(lambda x: x[0])
 u_c = dolfinx.fem.Function(V, dtype=np.complex128)

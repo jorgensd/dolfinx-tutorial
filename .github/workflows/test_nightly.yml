@@ -17,7 +17,7 @@ jobs:
   test-nightly:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container: ghcr.io/fenics/dolfinx/lab:v0.7.1
+    container: ghcr.io/fenics/dolfinx/lab:nightly
 
     env:
       HDF5_MPI: "ON"

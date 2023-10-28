@@ -173,7 +173,7 @@ warped.set_active_vectors("u")
 actor = plotter.add_mesh(warped, show_edges=True, lighting=False, clim=[0, 10])
 
 # Compute magnitude of displacement to visualize in GIF
-Vs = fem.FunctionSpace(domain, ("Lagrange", 2))
+Vs = fem.functionspace(domain, ("Lagrange", 2))
 magnitude = fem.Function(Vs)
 us = fem.Expression(ufl.sqrt(sum([u[i]**2 for i in range(len(u))])), Vs.element.interpolation_points())
 magnitude.interpolate(us)

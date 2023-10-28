@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.7
+#       jupytext_version: 1.15.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -87,8 +87,8 @@ domain = mesh.create_unit_square(MPI.COMM_WORLD, 8, 8, mesh.CellType.quadrilater
 #  We import the function space initializer from the `dolfinx.fem` module.
 
 # + vscode={"languageId": "python"}
-from dolfinx.fem import FunctionSpace
-V = FunctionSpace(domain, ("Lagrange", 1))
+from dolfinx.fem import functionspace
+V = functionspace(domain, ("Lagrange", 1))
 
 # + vscode={"languageId": "python"}
 from dolfinx import fem
@@ -191,7 +191,7 @@ uh = problem.solve()
 # Finally, we want to compute the error to check the accuracy of the solution. We do this by comparing the finite element solution `u` with the exact solution. We do this by interpolating the exact solution into the the $P_2$-function space.
 
 # + vscode={"languageId": "python"}
-V2 = fem.FunctionSpace(domain, ("Lagrange", 2))
+V2 = fem.functionspace(domain, ("Lagrange", 2))
 uex = fem.Function(V2)
 uex.interpolate(lambda x: 1 + x[0]**2 + 2 * x[1]**2)
 # -

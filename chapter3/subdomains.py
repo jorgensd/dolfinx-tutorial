@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.7
+#       jupytext_version: 1.15.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -22,7 +22,7 @@
 
 # +
 from dolfinx import default_scalar_type
-from dolfinx.fem import (Constant, dirichletbc, Function, FunctionSpace, assemble_scalar,
+from dolfinx.fem import (Constant, dirichletbc, Function, functionspace, assemble_scalar,
                          form, locate_dofs_geometrical, locate_dofs_topological)
 from dolfinx.fem.petsc import LinearProblem
 from dolfinx.io import XDMFFile, gmshio
@@ -42,7 +42,7 @@ import pyvista
 pyvista.start_xvfb()
 
 mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
-Q = FunctionSpace(mesh, ("DG", 0))
+Q = functionspace(mesh, ("DG", 0))
 
 
 # -
@@ -91,7 +91,7 @@ kappa.x.array[cells_1] = np.full_like(cells_1, 0.1, dtype=default_scalar_type)
 
 # We are now ready to define our variational formulation and  Dirichlet boundary condition after using integration by parts
 
-V = FunctionSpace(mesh, ("Lagrange", 1))
+V = functionspace(mesh, ("Lagrange", 1))
 u, v = TrialFunction(V), TestFunction(V)
 a = inner(kappa * grad(u), grad(v)) * dx
 x = SpatialCoordinate(mesh)
@@ -247,7 +247,7 @@ with XDMFFile(MPI.COMM_WORLD, "mt.xdmf", "r") as xdmf:
 
 # We have now read in the mesh and corresponding cell and facet data. We can now create our discontinuous function `kappa` as follows
 
-Q = FunctionSpace(mesh, ("DG", 0))
+Q = functionspace(mesh, ("DG", 0))
 kappa = Function(Q)
 bottom_cells = ct.find(bottom_marker)
 kappa.x.array[bottom_cells] = np.full_like(bottom_cells, 1, dtype=default_scalar_type)
@@ -256,7 +256,7 @@ kappa.x.array[top_cells] = np.full_like(top_cells, 0.1, dtype=default_scalar_typ
 
 # We can also efficiently use the facet data `ft` to create the Dirichlet boundary condition
 
-V = FunctionSpace(mesh, ("Lagrange", 1))
+V = functionspace(mesh, ("Lagrange", 1))
 u_bc = Function(V)
 left_facets = ft.find(left_marker)
 left_dofs = locate_dofs_topological(V, mesh.topology.dim - 1, left_facets)
