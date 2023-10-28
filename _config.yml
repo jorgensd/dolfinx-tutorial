@@ -35,6 +35,11 @@ sphinx:
   config:
     html_last_updated_fmt: "%b %d, %Y"
     suppress_warnings: ["mystnb.unknown_mime_type"]
+
+  # To avoid warning about default changing due to
+  # https://github.com/pydata/pydata-sphinx-theme/issues/1492
+  html_theme_options:
+    navigation_with_keys: false
 parse:
   myst_enable_extensions:
     - "amsmath"
