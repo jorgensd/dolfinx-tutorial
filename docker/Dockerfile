@@ -1,6 +1,6 @@
 # Execute from root of repo as: docker buildx build --platform=linux/arm64,linux/amd64 -f docker/Dockerfile ./docker/ --progress=plain
 
-FROM ghcr.io/fenics/dolfinx/lab:v0.7.1
+FROM ghcr.io/fenics/dolfinx/lab:nightly
 ARG TARGETPLATFORM
 
 

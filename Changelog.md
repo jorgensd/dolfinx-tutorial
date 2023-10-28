@@ -1,5 +1,9 @@
 # Changelog
 
+## Release
+ - Replace all `ufl.FiniteElement` and `ufl.VectorElement` with the appropriate `basix.ufl.element`
+ - Replace `dolfinx.fem.FunctionSpace` with `dolfinx.fem.functionspace`
+
 ## v0.7.1
  - No API changes, release due to various bug-fixes from the 0.7.0 release, see:
    https://github.com/FEniCS/dolfinx/releases/tag/v0.7.1 for more information

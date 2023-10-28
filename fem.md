@@ -58,7 +58,7 @@ The [Dockerfile](https://github.com/FEniCS/dolfinx/blob/main/docker/Dockerfile)
 provides a definitive build recipe. As the DOLFINx docker images are hosted at Docker-hub, one can directly access the image:
 
 ```
-docker run dolfinx/dolfinx:v0.7.1
+docker run dolfinx/dolfinx:nightly
 ```
 
 There are several ways of customizing a docker container, such as mounting volumes/sharing folder, setting a working directory, sharing graphical interfaces etc. See `docker run --help` for an extensive list.
