@@ -63,7 +63,7 @@ docker run dolfinx/dolfinx:v0.7.2
 
 There are several ways of customizing a docker container, such as mounting volumes/sharing folder, setting a working directory, sharing graphical interfaces etc. See `docker run --help` for an extensive list.
 
-Once you have installed DOLFINx, either by using docker or installing form source, you can test the installation by running `python3 -c "import dolfinx"`. If all goes well, no error-messages should appear.
+Once you have installed DOLFINx, either by using docker or installing from source, you can test the installation by running `python3 -c "import dolfinx"`. If all goes well, no error-messages should appear.
 
 ## Installation from source
 
