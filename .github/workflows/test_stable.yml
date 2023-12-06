@@ -32,7 +32,7 @@ jobs:
 
       - name: Install additional deps
         run: |
-          python3 -m pip install -r --no-binary=h5py .
+          python3 -m pip install --no-binary=h5py .
 
       - name: Test complex notebooks in parallel
         run: |
