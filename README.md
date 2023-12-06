@@ -18,7 +18,25 @@ Alternatively, if you want to add a separate chapter, a Jupyter notebook can be 
 
 Note that every chapter is written as an IPython notebook and a Python file. These are kept in sync by jupytext. See [their notes](https://jupytext.readthedocs.io/en/latest/install.html#jupytext-commands-in-jupyterlab) on how to keep them in sync.
 
+## Dependencies
+It is adviced to use a pre-installed version of DOLFINx, for instance through conda or docker. Remaining dependencies can be installed with
+```bash
+python3 -m pip install --no-binary=h5py -e .
+```
+
 # Docker images
 Docker images for this tutorial can be found in the [packages tab](https://github.com/jorgensd/dolfinx-tutorial/pkgs/container/dolfinx-tutorial) 
 
-Additional requirements on top of the `dolfinx/lab:nightly` images can be found at [Dockerfile](docker/Dockerfile) and [requirements.txt](docker/requirements.txt)
+Additional requirements on top of the `dolfinx/lab:nightly` images can be found at [Dockerfile](docker/Dockerfile) and [pyproject.toml](./pyproject.toml)
+
+##
+An image building DOLFINx, Basix, UFL and FFCx from source can be built using:
+```bash
+cd docker
+docker build -f ./docker/Dockerfile -t local_lab_env .
+```
+from the root of this repository, and run
+```bash
+ docker run --rm -ti -v $(pwd):/root/shared -w /root/shared  --init -p 8888:8888 local_lab_env
+ ```
+from the main directory.

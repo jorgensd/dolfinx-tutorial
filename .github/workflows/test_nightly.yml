@@ -42,7 +42,7 @@ jobs:
         uses: ./.github/actions/install-dependencies
 
       - name: Install requirements
-        run: python3 -m pip install --no-cache-dir -r docker/requirements.txt --upgrade
+        run: python3 -m pip install --no-cache-dir --no-binary=h5py . --upgrade
 
       - name: Test complex notebooks in parallel
         run: |

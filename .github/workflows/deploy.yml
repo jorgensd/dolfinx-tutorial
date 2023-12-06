@@ -44,7 +44,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Pages
-        uses: actions/configure-pages@v2
+        uses: actions/configure-pages@v4
 
       - name: Download docs artifact
         uses: actions/download-artifact@v3
@@ -53,10 +53,10 @@ jobs:
           path: "./public"
 
       - name: Upload page artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v2
         with:
           path: "./public"
 
       - name: Deploy coverage report to GH Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v3

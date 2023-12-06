@@ -40,13 +40,13 @@ The tutorial uses several dependencies for meshing, plotting and timings. A comp
 To use the notebooks in this tutorial with DOLFINx on your own computer, you should use the docker image using the following command:
 
 ```bash
-  docker run --init -p 8888:8888 -v "$(pwd)":/root/shared ghcr.io/jorgensd/dolfinx-tutorial:v0.7.1
+  docker run --init -p 8888:8888 -v "$(pwd)":/root/shared ghcr.io/jorgensd/dolfinx-tutorial:v0.7.2
 ```
 
 This image can also be used as a normal docker container by adding:
 
 ```bash
-  docker run --ti -v "$(pwd)":/root/shared  --entrypoint="/bin/bash" ghcr.io/jorgensd/dolfinx-tutorial:v0.7.1
+  docker run --ti -v "$(pwd)":/root/shared  --entrypoint="/bin/bash" ghcr.io/jorgensd/dolfinx-tutorial:v0.7.2
 ```
 
 The tutorials can also be exported as a notebook or PDF by clicking the ![Download](save.png)-symbol in the top right corner of the relevant tutorial. The notebook can in turn be used with a Python kernel which has DOLFINx.
@@ -63,7 +63,7 @@ docker run dolfinx/dolfinx:nightly
 
 There are several ways of customizing a docker container, such as mounting volumes/sharing folder, setting a working directory, sharing graphical interfaces etc. See `docker run --help` for an extensive list.
 
-Once you have installed DOLFINx, either by using docker or installing form source, you can test the installation by running `python3 -c "import dolfinx"`. If all goes well, no error-messages should appear.
+Once you have installed DOLFINx, either by using docker or installing from source, you can test the installation by running `python3 -c "import dolfinx"`. If all goes well, no error-messages should appear.
 
 ## Installation from source
 

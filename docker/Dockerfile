@@ -1,5 +1,4 @@
 # Execute from root of repo as: docker buildx build --platform=linux/arm64,linux/amd64 -f docker/Dockerfile ./docker/ --progress=plain
-
 FROM ghcr.io/fenics/dolfinx/lab:nightly
 ARG TARGETPLATFORM
 
@@ -30,8 +29,8 @@ RUN echo ${TARGETPLATFORM}
 RUN if [ "$TARGETPLATFORM" = "linux/arm64" ]; then python3 -m pip install "https://github.com/finsberg/vtk-aarch64/releases/download/vtk-9.2.6-cp310/vtk-9.2.6.dev0-cp310-cp310-linux_aarch64.whl"; fi
 RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then python3 -m pip install vtk; fi
 
-ADD requirements.txt /tmp/requirements.txt
-RUN python3 -m pip install --no-cache-dir -v -r requirements.txt
+ADD pyproject.toml /tmp/pyproject.toml
+RUN python3 -m pip install --no-cache-dir --no-binary=h5py -v pyproject.toml
 RUN python3 -m pip cache purge
 RUN jupyter lab build
 ENTRYPOINT ["jupyter", "lab", "--ip", "0.0.0.0", "--no-browser", "--allow-root"]
