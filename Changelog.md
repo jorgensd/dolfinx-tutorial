@@ -2,7 +2,7 @@
 
 ## v0.7.2
  - Change pyvista backend to `html`, using Pyvista main branch
- - Using DOLFINx v0.7.2 https://github.com/FEniCS/dolfinx/releases/tag/v0.7.1 as base
+ - Using DOLFINx v0.7.2 https://github.com/FEniCS/dolfinx/releases/tag/v0.7.2 as base
 
 ## v0.7.1
  - No API changes, release due to various bug-fixes from the 0.7.0 release, see:
