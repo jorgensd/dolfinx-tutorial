@@ -23,7 +23,7 @@
 # -\frac{\partial u}{\partial n}=g
 # $$
 #
-# is applied to the  remaining sides $y=0$ and $y=1$.
+# is applied to the remaining sides $y=0$ and $y=1$.
 #
 # ## The PDE problem
 # Let $\Lambda_D$ and $\Lambda_N$ denote parts of the boundary $\partial \Omega$ where the Dirichlet and Neumann conditions apply, respectively.
