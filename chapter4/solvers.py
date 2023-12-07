@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.7
+#       jupytext_version: 1.15.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -28,7 +28,7 @@
 # We start by creating a generic module for evaluating the analytical solution  at any point $x$.
 
 # +
-from dolfinx.fem import dirichletbc, FunctionSpace, Function, locate_dofs_topological
+from dolfinx.fem import dirichletbc, functionspace, Function, locate_dofs_topological
 from dolfinx.fem.petsc import LinearProblem
 from dolfinx.mesh import create_unit_square, locate_entities_boundary
 
@@ -59,7 +59,7 @@ f = -div(grad(u_ufl(x)))
 
 # Next, we define our linear variational problem
 
-V = FunctionSpace(mesh, ("Lagrange", 1))
+V = functionspace(mesh, ("Lagrange", 1))
 u = TrialFunction(V)
 v = TestFunction(V)
 a = inner(grad(u), grad(v)) * dx
@@ -89,7 +89,7 @@ for line in solver_output.readlines():
 #
 # For large problems, we instead need to use an iterative method which are faster and require less memory.
 # ## Choosing a linear solver and preconditioner
-# As the Poisson equation results in a symmetric, positive definite system matrix, the optimal Krylov solver is the conjugate gradient (Lagrange) method. The default preconditioner is the incomplete LU factorization (ILU), which is a popular and robous overall preconditioner. We can change the preconditioner by setting `"pc_type"` to some of the other preconditioners in petsc, which you can find in the [PETSc documentation](https://www.mcs.anl.gov/petsc/documentation/linearsolvertable.html).
+# As the Poisson equation results in a symmetric, positive definite system matrix, the optimal Krylov solver is the conjugate gradient (Lagrange) method. The default preconditioner is the incomplete LU factorization (ILU), which is a popular and robous overall preconditioner. We can change the preconditioner by setting `"pc_type"` to some of the other preconditioners in petsc, which you can find in at [PETSc KSP solvers](https://petsc.org/release/manual/ksp/#tab-kspdefaults) and [PETSc preconditioners](https://petsc.org/release/manual/ksp/#tab-pcdefaults).
 # You can set any opition in `PETSc` through the `petsc_options` input, such as the absolute tolerance (`"ksp_atol"`), relative tolerance (`"ksp_rtol"`) and maximum number of iterations (`"ksp_max_it"`).
 
 cg_problem = LinearProblem(a, L, bcs=bcs,

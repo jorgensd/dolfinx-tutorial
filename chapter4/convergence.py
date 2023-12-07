@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.7
+#       jupytext_version: 1.15.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -26,7 +26,7 @@
 
 # +
 from dolfinx import default_scalar_type
-from dolfinx.fem import (Expression, Function, FunctionSpace,
+from dolfinx.fem import (Expression, Function, functionspace,
                          assemble_scalar, dirichletbc, form, locate_dofs_topological)
 from dolfinx.fem.petsc import LinearProblem
 from dolfinx.mesh import create_unit_square, locate_entities_boundary
@@ -51,7 +51,7 @@ def solve_poisson(N=10, degree=1):
     mesh = create_unit_square(MPI.COMM_WORLD, N, N)
     x = SpatialCoordinate(mesh)
     f = -div(grad(u_ufl(x)))
-    V = FunctionSpace(mesh, ("Lagrange", degree))
+    V = functionspace(mesh, ("Lagrange", degree))
     u = TrialFunction(V)
     v = TestFunction(V)
     a = inner(grad(u), grad(v)) * dx
@@ -92,10 +92,10 @@ if comm.rank == 0:
 
 def error_L2(uh, u_ex, degree_raise=3):
     # Create higher order function space
-    degree = uh.function_space.ufl_element().degree()
-    family = uh.function_space.ufl_element().family()
+    degree = uh.function_space.ufl_element().degree
+    family = uh.function_space.ufl_element().family_name
     mesh = uh.function_space.mesh
-    W = FunctionSpace(mesh, (family, degree + degree_raise))
+    W = functionspace(mesh, (family, degree + degree_raise))
     # Interpolate approximate solution
     u_W = Function(W)
     u_W.interpolate(uh)

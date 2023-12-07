@@ -40,13 +40,13 @@ The tutorial uses several dependencies for meshing, plotting and timings. A comp
 To use the notebooks in this tutorial with DOLFINx on your own computer, you should use the docker image using the following command:
 
 ```bash
-  docker run --init -p 8888:8888 -v "$(pwd)":/root/shared ghcr.io/jorgensd/dolfinx-tutorial:v0.7.1
+  docker run --init -p 8888:8888 -v "$(pwd)":/root/shared ghcr.io/jorgensd/dolfinx-tutorial:v0.7.2
 ```
 
 This image can also be used as a normal docker container by adding:
 
 ```bash
-  docker run --ti -v "$(pwd)":/root/shared  --entrypoint="/bin/bash" ghcr.io/jorgensd/dolfinx-tutorial:v0.7.1
+  docker run --ti -v "$(pwd)":/root/shared  --entrypoint="/bin/bash" ghcr.io/jorgensd/dolfinx-tutorial:v0.7.2
 ```
 
 The tutorials can also be exported as a notebook or PDF by clicking the ![Download](save.png)-symbol in the top right corner of the relevant tutorial. The notebook can in turn be used with a Python kernel which has DOLFINx.
@@ -58,12 +58,12 @@ The [Dockerfile](https://github.com/FEniCS/dolfinx/blob/main/docker/Dockerfile)
 provides a definitive build recipe. As the DOLFINx docker images are hosted at Docker-hub, one can directly access the image:
 
 ```
-docker run dolfinx/dolfinx:v0.7.1
+docker run dolfinx/dolfinx:nightly
 ```
 
 There are several ways of customizing a docker container, such as mounting volumes/sharing folder, setting a working directory, sharing graphical interfaces etc. See `docker run --help` for an extensive list.
 
-Once you have installed DOLFINx, either by using docker or installing form source, you can test the installation by running `python3 -c "import dolfinx"`. If all goes well, no error-messages should appear.
+Once you have installed DOLFINx, either by using docker or installing from source, you can test the installation by running `python3 -c "import dolfinx"`. If all goes well, no error-messages should appear.
 
 ## Installation from source
 
@@ -77,9 +77,9 @@ If you are a beginner in Python, we suggest reading {cite}`Langtangen2016` by Ha
 
 In the last decade, a wide range of lecture notes on finite elements methods has been made open access. See for instance:
 
-- [Numerical methods for partial differential equations](http://hplgit.github.io/num-methods-for-PDEs/doc/web/index.html), by Hans Petter Langtangen
+- [Numerical methods for partial differential equations](https://hplgit.github.io/num-methods-for-PDEs/doc/web/index.html), by Hans Petter Langtangen
 - [Finite elements - analysis and implementation](https://finite-element.github.io/), by David A. Ham and Colin J. Cotter
-- [Finite element analysis for coupled problems](https://david-kamensky.eng.ucsd.edu/teaching/mae-207-fea-for-coupled-problems), by David Kamensky.
+- [Finite element analysis for coupled problems](https://drive.google.com/file/d/1o0DY1RWoXd-gOISqyRzJoDHUHvSMvSg3/view?usp=sharing), by David Kamensky.
 - [DefElement: an encyclopedia of finite element definitions](https://defelement.com/), by Matthew W. Scroggs.
 
 There has been written many good text-books on the finite element method, and we refer to the original FEniCS tutorial, for references to these, see Chapter 1.6.2 of The FEniCS tutorial {cite}`FenicsTutorial`.

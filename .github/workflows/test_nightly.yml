@@ -17,13 +17,13 @@ jobs:
   test-nightly:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container: ghcr.io/fenics/dolfinx/lab:v0.7.1
+    container: ghcr.io/fenics/dolfinx/lab:nightly
 
     env:
       HDF5_MPI: "ON"
       PYVISTA_OFF_SCREEN: true
       DISPLAY: ":99.0"
-      PYVISTA_JUPYTER_BACKEND: panel
+      PYVISTA_JUPYTER_BACKEND: html
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -42,7 +42,10 @@ jobs:
         uses: ./.github/actions/install-dependencies
 
       - name: Install requirements
-        run: python3 -m pip install --no-cache-dir -r docker/requirements.txt --upgrade
+        run: python3 -m pip install --no-cache-dir --no-binary=h5py . --upgrade
+
+      - name: Test building the book
+        run: PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
 
       - name: Test complex notebooks in parallel
         run: |
@@ -81,9 +84,6 @@ jobs:
           mpirun -n 2 python3 convergence.py
           mpirun -n 2 python3 compiler_parameters.py
           mpirun -n 2 python3 newton-solver.py
-
-      - name: Test building the book
-        run: PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
 
       - uses: actions/upload-artifact@v3
         with:

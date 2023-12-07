@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.7
+#       jupytext_version: 1.15.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -93,7 +93,7 @@
 
 # +
 from dolfinx import default_scalar_type
-from dolfinx.fem import (Constant, Function, FunctionSpace,
+from dolfinx.fem import (Constant, Function, functionspace,
                          assemble_scalar, dirichletbc, form, locate_dofs_geometrical)
 from dolfinx.fem.petsc import LinearProblem
 from dolfinx.mesh import create_unit_square
@@ -106,7 +106,7 @@ import numpy as np
 import pyvista
 
 mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
-V = FunctionSpace(mesh, ("Lagrange", 1))
+V = functionspace(mesh, ("Lagrange", 1))
 u = TrialFunction(V)
 v = TestFunction(V)
 a = dot(grad(u), grad(v)) * dx
@@ -144,7 +144,7 @@ L = f * v * dx - g * v * ds
 problem = LinearProblem(a, L, bcs=[bc], petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
 uh = problem.solve()
 
-V2 = FunctionSpace(mesh, ("Lagrange", 2))
+V2 = functionspace(mesh, ("Lagrange", 2))
 uex = Function(V2)
 uex.interpolate(u_exact)
 error_L2 = assemble_scalar(form((uh - uex)**2 * dx))
