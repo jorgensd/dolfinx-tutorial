@@ -27,9 +27,7 @@
 from dolfinx import log, default_scalar_type
 from dolfinx.fem.petsc import NonlinearProblem
 from dolfinx.nls.petsc import NewtonSolver
-import matplotlib.pyplot as plt
 import pyvista
-from dolfinx import nls
 import numpy as np
 import ufl
 
@@ -194,10 +192,9 @@ for n in range(1, 10):
     magnitude.interpolate(us)
     warped.set_active_scalars("mag")
     warped_n = function_grid.warp_by_vector(factor=1)
-    plotter.update_coordinates(warped_n.points.copy(), render=False)
+    warped.points[:, :] = warped_n.points
+    warped.point_data["mag"][:] = magnitude.x.array
     plotter.update_scalar_bar_range([0, 10])
-    plotter.update_scalars(magnitude.x.array)
-    plotter.write_frame()
 plotter.close()
 
 # <img src="./deformation.gif" alt="gif" class="bg-primary mb-1" width="800px">

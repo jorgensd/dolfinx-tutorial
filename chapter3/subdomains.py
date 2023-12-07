@@ -259,6 +259,7 @@ kappa.x.array[top_cells] = np.full_like(top_cells, 0.1, dtype=default_scalar_typ
 V = functionspace(mesh, ("Lagrange", 1))
 u_bc = Function(V)
 left_facets = ft.find(left_marker)
+mesh.topology.create_connectivity(mesh.topology.dim - 1, mesh.topology.dim)
 left_dofs = locate_dofs_topological(V, mesh.topology.dim - 1, left_facets)
 bcs = [dirichletbc(default_scalar_type(1), left_dofs, V)]
 

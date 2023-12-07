@@ -328,7 +328,7 @@ plotter.set_position([0, 0, 5])
 # We include ghosts cells as we access all degrees of freedom (including ghosts) on each process
 top_imap = mesh.topology.index_map(mesh.topology.dim)
 num_cells = top_imap.size_local + top_imap.num_ghosts
-midpoints = compute_midpoints(mesh, mesh.topology.dim, range(num_cells))
+midpoints = compute_midpoints(mesh, mesh.topology.dim, np.arange(num_cells, dtype=np.int32))
 
 num_dofs = W.dofmap.index_map.size_local + W.dofmap.index_map.num_ghosts
 assert (num_cells == num_dofs)
