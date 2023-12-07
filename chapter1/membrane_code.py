@@ -27,7 +27,7 @@
 #
 # ## Creating the mesh
 #
-# To create the computational geometry, we use the python-API of [GMSH](http://gmsh.info/). We start by importing the gmsh-module and initializing it.
+# To create the computational geometry, we use the python-API of [GMSH](https://gmsh.info/). We start by importing the gmsh-module and initializing it.
 
 import gmsh
 gmsh.initialize()

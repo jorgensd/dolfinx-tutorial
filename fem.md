@@ -77,9 +77,9 @@ If you are a beginner in Python, we suggest reading {cite}`Langtangen2016` by Ha
 
 In the last decade, a wide range of lecture notes on finite elements methods has been made open access. See for instance:
 
-- [Numerical methods for partial differential equations](http://hplgit.github.io/num-methods-for-PDEs/doc/web/index.html), by Hans Petter Langtangen
+- [Numerical methods for partial differential equations](https://hplgit.github.io/num-methods-for-PDEs/doc/web/index.html), by Hans Petter Langtangen
 - [Finite elements - analysis and implementation](https://finite-element.github.io/), by David A. Ham and Colin J. Cotter
-- [Finite element analysis for coupled problems](https://david-kamensky.eng.ucsd.edu/teaching/mae-207-fea-for-coupled-problems), by David Kamensky.
+- [Finite element analysis for coupled problems](https://drive.google.com/file/d/1o0DY1RWoXd-gOISqyRzJoDHUHvSMvSg3/view?usp=sharing), by David Kamensky.
 - [DefElement: an encyclopedia of finite element definitions](https://defelement.com/), by Matthew W. Scroggs.
 
 There has been written many good text-books on the finite element method, and we refer to the original FEniCS tutorial, for references to these, see Chapter 1.6.2 of The FEniCS tutorial {cite}`FenicsTutorial`.
