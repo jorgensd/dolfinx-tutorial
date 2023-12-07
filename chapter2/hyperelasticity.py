@@ -195,6 +195,7 @@ for n in range(1, 10):
     warped.points[:, :] = warped_n.points
     warped.point_data["mag"][:] = magnitude.x.array
     plotter.update_scalar_bar_range([0, 10])
+    plotter.write_frame()
 plotter.close()
 
 # <img src="./deformation.gif" alt="gif" class="bg-primary mb-1" width="800px">
