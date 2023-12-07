@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.4
+#       jupytext_version: 1.14.7
 #   kernelspec:
 #     display_name: Python 3 (DOLFINx complex)
 #     language: python
@@ -62,6 +62,7 @@ print(u_c.x.array.dtype)
 # We check that we are using the correct installation of PETSc by inspecting the scalar type.
 
 from petsc4py import PETSc
+from dolfinx.fem.petsc import assemble_vector
 print(PETSc.ScalarType)
 assert np.dtype(PETSc.ScalarType).kind == 'c'
 
@@ -89,7 +90,7 @@ print(L2)
 
 J = u_c**2 * ufl.dx
 F = ufl.derivative(J, u_c, ufl.conj(v))
-residual = dolfinx.fem.petsc.assemble_vector(dolfinx.fem.form(F))
+residual = assemble_vector(dolfinx.fem.form(F))
 print(residual.array)
 
 # We define our Dirichlet condition and setup and solve the variational problem.
@@ -118,8 +119,8 @@ print(global_error, max_error)
 
 import pyvista
 pyvista.start_xvfb()
-p_mesh = pyvista.UnstructuredGrid(*dolfinx.plot.create_vtk_mesh(mesh, mesh.topology.dim))
-pyvista_cells, cell_types, geometry = dolfinx.plot.create_vtk_mesh(V)
+p_mesh = pyvista.UnstructuredGrid(*dolfinx.plot.vtk_mesh(mesh, mesh.topology.dim))
+pyvista_cells, cell_types, geometry = dolfinx.plot.vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(pyvista_cells, cell_types, geometry)
 grid.point_data["u_real"] = uh.x.array.real
 grid.point_data["u_imag"] = uh.x.array.imag

@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.4
+#       jupytext_version: 1.14.7
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -24,9 +24,9 @@
 # ![Cross section of wires](wire.png)
 #
 # Through the copper wires a static current of $J=1A$ is flowing.
-# We would like to compute the magnetic field $B$ in the iron cylinder, the copper wires, and the surrounding vaccum. 
+# We would like to compute the magnetic field $B$ in the iron cylinder, the copper wires, and the surrounding vaccum.
 #
-# We start by simplifying the problem to a 2D problem. We can do this by assuming that the cylinder extends far along the z-axis and as a consequence the field is virtually independent of the z-coordinate. 
+# We start by simplifying the problem to a 2D problem. We can do this by assuming that the cylinder extends far along the z-axis and as a consequence the field is virtually independent of the z-coordinate.
 # Next, we consder Maxwell's equation to derive a Poisson equation for the magnetic field (or rather its potential)
 #
 # $$
@@ -49,8 +49,8 @@
 # B =\mu H,
 # $$
 #
-# which holds for an isotropic linear magnetic medium. 
-# Here, $\mu$ is the magnetic permability of the material. 
+# which holds for an isotropic linear magnetic medium.
+# Here, $\mu$ is the magnetic permability of the material.
 # Now, since $B$ is solenodial (divergence free) accoording to Maxwell's equations, we known that $B$ must be the curl of some vector field $A$. This field is called the magnetic vector potential. Since the problem is static and thus $\frac{\partial D}{\partial t}=0$, it follows that
 #
 # $$
@@ -88,9 +88,21 @@
 # We create the domain visualized in the cross section figure above using gmsh. Note that we are using the `gmsh.model.occ.fragment` commands to ensure that the boundaries of the wires are resolved in the mesh.
 
 # +
+from dolfinx import default_scalar_type
+from dolfinx.fem import (dirichletbc, Expression, Function, FunctionSpace,
+                         VectorFunctionSpace, locate_dofs_topological)
+from dolfinx.fem.petsc import LinearProblem
+from dolfinx.io import XDMFFile
+from dolfinx.io.gmshio import model_to_mesh
+from dolfinx.mesh import compute_midpoints, locate_entities_boundary
+from dolfinx.plot import vtk_mesh
+
+from ufl import TestFunction, TrialFunction, as_vector, dot, dx, grad, inner
+from mpi4py import MPI
+
 import gmsh
 import numpy as np
-from mpi4py import MPI
+import pyvista
 
 rank = MPI.COMM_WORLD.rank
 
@@ -100,8 +112,8 @@ R = 5     # Radius of domain
 a = 1     # Radius of inner iron cylinder
 b = 1.2   # Radius of outer iron cylinder
 N = 8     # Number of windings
-c_1 = 0.8 # Radius of inner copper wires
-c_2 = 1.4 # Radius of outer copper wires
+c_1 = 0.8  # Radius of inner copper wires
+c_2 = 1.4  # Radius of outer copper wires
 gdim = 2  # Geometric dimension of the mesh
 model_rank = 0
 mesh_comm = MPI.COMM_WORLD
@@ -120,12 +132,12 @@ if mesh_comm.rank == model_rank:
     gmsh.model.occ.synchronize()
 
     # Define the copper-wires inside iron cylinder
-    angles_N = [i*2*np.pi/N for i in range(N)]
-    wires_N = [(2, gmsh.model.occ.addDisk(c_1*np.cos(v), c_1*np.sin(v), 0, r, r)) for v in angles_N]
+    angles_N = [i * 2 * np.pi / N for i in range(N)]
+    wires_N = [(2, gmsh.model.occ.addDisk(c_1 * np.cos(v), c_1 * np.sin(v), 0, r, r)) for v in angles_N]
 
     # Define the copper-wires outside the iron cylinder
-    angles_S = [(i+0.5)*2*np.pi/N for i in range(N)]
-    wires_S = [(2, gmsh.model.occ.addDisk(c_2*np.cos(v), c_2*np.sin(v), 0, r, r)) for v in angles_S]
+    angles_S = [(i + 0.5) * 2 * np.pi / N for i in range(N)]
+    wires_S = [(2, gmsh.model.occ.addDisk(c_2 * np.cos(v), c_2 * np.sin(v), 0, r, r)) for v in angles_S]
     gmsh.model.occ.synchronize()
     # Resolve all boundaries of the different wires in the background domain
     all_surfaces = [(2, iron)]
@@ -147,7 +159,7 @@ if mesh_comm.rank == model_rank:
         com = gmsh.model.occ.getCenterOfMass(domain[0], domain[1])
         mass = gmsh.model.occ.getMass(domain[0], domain[1])
         # Identify iron circle by its mass
-        if np.isclose(mass, np.pi*(b**2-a**2)):
+        if np.isclose(mass, np.pi * (b**2 - a**2)):
             gmsh.model.addPhysicalGroup(domain[0], [domain[1]], tag=1)
             other_surfaces.append(domain)
         # Identify the background circle by its center of mass
@@ -157,12 +169,12 @@ if mesh_comm.rank == model_rank:
         # Identify the inner circles by their center of mass
         elif np.isclose(np.linalg.norm(com), c_1):
             gmsh.model.addPhysicalGroup(domain[0], [domain[1]], inner_tag)
-            inner_tag +=1
+            inner_tag += 1
             other_surfaces.append(domain)
         # Identify the outer circles by their center of mass
         elif np.isclose(np.linalg.norm(com), c_2):
             gmsh.model.addPhysicalGroup(domain[0], [domain[1]], outer_tag)
-            outer_tag +=1
+            outer_tag += 1
             other_surfaces.append(domain)
     # Add marker for the vacuum
     gmsh.model.addPhysicalGroup(2, background_surfaces, tag=0)
@@ -182,34 +194,28 @@ if mesh_comm.rank == model_rank:
     gmsh.model.mesh.field.setAsBackgroundMesh(5)
     # Generate mesh
     gmsh.option.setNumber("Mesh.Algorithm", 7)
-    gmsh.model.mesh.generate(gdim) 
+    gmsh.model.mesh.generate(gdim)
     gmsh.model.mesh.optimize("Netgen")
 # -
 
 # As in [the Navier-Stokes tutorial](../chapter2/ns_code2) we load the mesh directly into DOLFINx, without writing it to file.
 
-from dolfinx.io.gmshio import model_to_mesh
 mesh, ct, _ = model_to_mesh(gmsh.model, mesh_comm, model_rank, gdim=2)
 gmsh.finalize()
 
 # To inspect the mesh, we use Paraview, and obtain the following mesh
 
-from dolfinx.io import XDMFFile
 with XDMFFile(MPI.COMM_WORLD, "mt.xdmf", "w") as xdmf:
     xdmf.write_mesh(mesh)
-    xdmf.write_meshtags(ct)
+    xdmf.write_meshtags(ct, mesh.geometry)
 
 # We can also visualize the subdommains using pyvista
 
-# +
-import pyvista
 pyvista.start_xvfb()
-from dolfinx.plot import create_vtk_mesh
-
 plotter = pyvista.Plotter()
-grid = pyvista.UnstructuredGrid(*create_vtk_mesh(mesh, mesh.topology.dim))
+grid = pyvista.UnstructuredGrid(*vtk_mesh(mesh, mesh.topology.dim))
 num_local_cells = mesh.topology.index_map(mesh.topology.dim).size_local
-grid.cell_data["Marker"] = ct.values[ct.indices<num_local_cells]
+grid.cell_data["Marker"] = ct.values[ct.indices < num_local_cells]
 grid.set_active_scalars("Marker")
 actor = plotter.add_mesh(grid, show_edges=True)
 plotter.view_xy()
@@ -217,17 +223,11 @@ if not pyvista.OFF_SCREEN:
     plotter.show()
 else:
     cell_tag_fig = plotter.screenshot("cell_tags.png")
-# -
+
 
 # Next, we define the discontinous functions for the permability $\mu$ and current $J_z$ using the `MeshTags` as in [Defining material parameters through subdomains](./subdomains)
 
 # +
-from dolfinx.fem import (dirichletbc, Expression, Function, FunctionSpace, 
-                         VectorFunctionSpace, locate_dofs_topological)
-from dolfinx.fem.petsc import LinearProblem
-from dolfinx.mesh import locate_entities_boundary
-from ufl import TestFunction, TrialFunction, as_vector, dot, dx, grad, inner
-from petsc4py.PETSc import ScalarType
 
 Q = FunctionSpace(mesh, ("DG", 0))
 material_tags = np.unique(ct.values)
@@ -239,16 +239,16 @@ for tag in material_tags:
     cells = ct.find(tag)
     # Set values for mu
     if tag == 0:
-        mu_ = 4 * np.pi*1e-7 # Vacuum
+        mu_ = 4 * np.pi * 1e-7  # Vacuum
     elif tag == 1:
-        mu_ = 1e-5 # Iron (This should really be 6.3e-3)
+        mu_ = 1e-5  # Iron (This should really be 6.3e-3)
     else:
-        mu_ = 1.26e-6 # Copper
-    mu.x.array[cells] = np.full_like(cells, mu_, dtype=ScalarType)
-    if tag in range(2, 2+N):
-        J.x.array[cells] = np.full_like(cells, 1, dtype=ScalarType)
-    elif tag in range(2+N, 2*N + 2):
-        J.x.array[cells] = np.full_like(cells, -1, dtype=ScalarType)
+        mu_ = 1.26e-6  # Copper
+    mu.x.array[cells] = np.full_like(cells, mu_, dtype=default_scalar_type)
+    if tag in range(2, 2 + N):
+        J.x.array[cells] = np.full_like(cells, 1, dtype=default_scalar_type)
+    elif tag in range(2 + N, 2 * N + 2):
+        J.x.array[cells] = np.full_like(cells, -1, dtype=default_scalar_type)
 # -
 
 # In the code above, we have used a somewhat less extreme value for the magnetic permability of iron. This is to make the solution a little more interesting. It would otherwise be completely dominated by the field in the iron cylinder.
@@ -256,11 +256,11 @@ for tag in material_tags:
 # We can now define the weak problem
 
 # +
-V = FunctionSpace(mesh, ("CG", 1))
+V = FunctionSpace(mesh, ("Lagrange", 1))
 tdim = mesh.topology.dim
-facets = locate_entities_boundary(mesh, tdim-1, lambda x: np.full(x.shape[1], True))
-dofs = locate_dofs_topological(V, tdim-1, facets)
-bc = dirichletbc(ScalarType(0), dofs, V)
+facets = locate_entities_boundary(mesh, tdim - 1, lambda x: np.full(x.shape[1], True))
+dofs = locate_dofs_topological(V, tdim - 1, facets)
+bc = dirichletbc(default_scalar_type(0), dofs, V)
 
 u = TrialFunction(V)
 v = TestFunction(V)
@@ -288,7 +288,7 @@ B.interpolate(B_expr)
 # +
 plotter = pyvista.Plotter()
 
-Az_grid = pyvista.UnstructuredGrid(*create_vtk_mesh(V))
+Az_grid = pyvista.UnstructuredGrid(*vtk_mesh(V))
 Az_grid.point_data["A_z"] = A_z.x.array
 Az_grid.set_active_scalars("A_z")
 warp = Az_grid.warp_by_scalar("A_z", factor=1e7)
@@ -306,17 +306,16 @@ else:
 # We connect the vector field with the midpoint by using `pyvista.PolyData`.
 
 # +
-from dolfinx.mesh import compute_midpoints
 plotter = pyvista.Plotter()
-plotter.set_position([0,0,5])
+plotter.set_position([0, 0, 5])
 
 # We include ghosts cells as we access all degrees of freedom (including ghosts) on each process
 top_imap = mesh.topology.index_map(mesh.topology.dim)
 num_cells = top_imap.size_local + top_imap.num_ghosts
 midpoints = compute_midpoints(mesh, mesh.topology.dim, range(num_cells))
 
-num_dofs = W.dofmap.index_map.size_local +  W.dofmap.index_map.num_ghosts
-assert(num_cells == num_dofs)
+num_dofs = W.dofmap.index_map.size_local + W.dofmap.index_map.num_ghosts
+assert (num_cells == num_dofs)
 values = np.zeros((num_dofs, 3), dtype=np.float64)
 values[:, :mesh.geometry.dim] = B.x.array.real.reshape(num_dofs, W.dofmap.index_map_bs)
 cloud = pyvista.PolyData(midpoints)
@@ -329,6 +328,3 @@ if not pyvista.OFF_SCREEN:
     plotter.show()
 else:
     B_fig = plotter.screenshot("B.png")
-# -
-
-

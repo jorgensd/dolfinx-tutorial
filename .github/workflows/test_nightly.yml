@@ -17,7 +17,7 @@ jobs:
   test-nightly:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container: dolfinx/lab:nightly
+    container: ghcr.io/fenics/dolfinx/lab:nightly
 
     env:
       HDF5_MPI: "ON"
@@ -42,7 +42,7 @@ jobs:
         uses: ./.github/actions/install-dependencies
 
       - name: Install requirements
-        run: python3 -m pip install --no-cache-dir -r docker/requirements.txt --upgrade
+        run: python3 -m pip install --no-cache-dir --no-binary=h5py . --upgrade
 
       - name: Test complex notebooks in parallel
         run: |

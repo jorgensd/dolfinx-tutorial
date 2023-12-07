@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.4
+#       jupytext_version: 1.14.7
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -88,25 +88,7 @@ domain = mesh.create_unit_square(MPI.COMM_WORLD, 8, 8, mesh.CellType.quadrilater
 
 # + vscode={"languageId": "python"}
 from dolfinx.fem import FunctionSpace
-V = FunctionSpace(domain, ("CG", 1))
-# -
-
-# The second argument is the tuple containing the type of finite element, and the element degree. The type of element here is "CG", which implies the standard Lagrange family of elements. 
-# DOLFINx supports a large variety on elements on simplices 
-# (triangles and tetrahedra) and non-simplices (quadrilaterals
-# and hexahedra). For an overview, see:
-# *FIXME: Add link to all the elements we support*
-#
-# The element degree in the code is 1. This means that we are choosing the standard $P_1$ linear Lagrange element, which has degrees of freedom at the vertices. 
-# The computed solution will be continuous across elements and linearly varying in $x$ and $y$ inside each element. Higher degree polynomial approximations are obtained by increasing the degree argument. 
-#
-# ## Defining the boundary conditions
-#
-# The next step is to specify the boundary condition $u=u_D$ on $\partial\Omega_D$, which is done by over several steps. 
-# The first step is to define the function $u_D$. Into this function, we would like to interpolate the boundary condition $1 + x^2+2y^2$.
-# We do this by first defining a `dolfinx.fem.Function`, and then using a [lambda-function](https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions) in Python to define the 
-# spatially varying function.
-#
+V = FunctionSpace(domain, ("Lagrange", 1))
 
 # + vscode={"languageId": "python"}
 from dolfinx import fem
@@ -127,12 +109,12 @@ domain.topology.create_connectivity(fdim, tdim)
 boundary_facets = mesh.exterior_facet_indices(domain.topology)
 # -
 
-# For the current problem, as we are using the "CG" 1 function space, the degrees of freedom are located at the vertices of each cell, thus each facet contains two degrees of freedom. 
+# For the current problem, as we are using the "Lagrange" 1 function space, the degrees of freedom are located at the vertices of each cell, thus each facet contains two degrees of freedom. 
 #
 # To find the local indices of these degrees of freedom, we use `dolfinx.fem.locate_dofs_topological`, which takes in the function space, the dimension of entities in the mesh we would like to identify and the local entities. 
 # ```{admonition} Local ordering of degrees of freedom and mesh vertices
 # Many people expect there to be a 1-1 correspondence between the mesh coordinates and the coordinates of the degrees of freedom. 
-# However, this is only true in the case of `CG` 1 elements on a first order mesh. Therefore, in DOLFINx we use separate local numbering for the mesh coordinates and the dof coordinates. To obtain the local dof coordinates we can use `V.tabulate_dof_coordinates()`, while the ordering of the local vertices can be obtained by `mesh.geometry.x`.
+# However, this is only true in the case of `Lagrange` 1 elements on a first order mesh. Therefore, in DOLFINx we use separate local numbering for the mesh coordinates and the dof coordinates. To obtain the local dof coordinates we can use `V.tabulate_dof_coordinates()`, while the ordering of the local vertices can be obtained by `mesh.geometry.x`.
 # ```
 # With this data at hand, we can create the Dirichlet boundary condition
 
@@ -158,8 +140,8 @@ v = ufl.TestFunction(V)
 # As the source term is constant over the domain, we use `dolfinx.Constant`
 
 # + vscode={"languageId": "python"}
-from petsc4py.PETSc import ScalarType
-f = fem.Constant(domain, ScalarType(-6))
+from dolfinx import default_scalar_type
+f = fem.Constant(domain, default_scalar_type(-6))
 # -
 
 # ```{admonition} Compilation speed-up
@@ -194,10 +176,13 @@ L = f * v * ufl.dx
 # ## Forming and solving the linear system
 #
 # Having defined the finite element variational problem and boundary condition, we can create our `dolfinx.fem.petsc.LinearProblem`, as class for solving 
-# the variational problem: Find $u_h\in V$ such that $a(u_h, v)==L(v) \quad \forall v \in \hat{V}$. We will use PETSc as our linear algebra backend, using a direct solver (LU-factorization).  See the [PETSc-documentation](https://petsc.org/main/docs/manual/ksp/?highlight=ksp#ksp-linear-system-solvers) of the method for more information.
+# the variational problem: Find $u_h\in V$ such that $a(u_h, v)==L(v) \quad \forall v \in \hat{V}$. We will use PETSc as our linear algebra backend, using a direct solver (LU-factorization).
+# See the [PETSc-documentation](https://petsc.org/main/docs/manual/ksp/?highlight=ksp#ksp-linear-system-solvers) of the method for more information.
+# PETSc is not a required dependency of DOLFINx, and therefore we explicitly import the DOLFINx wrapper for interfacing with PETSc.
 
 # + vscode={"languageId": "python"}
-problem = fem.petsc.LinearProblem(a, L, bcs=[bc], petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
+from dolfinx.fem.petsc import LinearProblem
+problem = LinearProblem(a, L, bcs=[bc], petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
 uh = problem.solve()
 # -
 
@@ -206,7 +191,7 @@ uh = problem.solve()
 # Finally, we want to compute the error to check the accuracy of the solution. We do this by comparing the finite element solution `u` with the exact solution. We do this by interpolating the exact solution into the the $P_2$-function space.
 
 # + vscode={"languageId": "python"}
-V2 = fem.FunctionSpace(domain, ("CG", 2))
+V2 = fem.FunctionSpace(domain, ("Lagrange", 2))
 uex = fem.Function(V2)
 uex.interpolate(lambda x: 1 + x[0]**2 + 2 * x[1]**2)
 # -
@@ -238,7 +223,7 @@ if domain.comm.rank == 0:
 # ## Plotting the mesh using pyvista
 # We will visualizing the mesh using [pyvista](https://docs.pyvista.org/), an interface to the VTK toolkit.
 # We start by converting the mesh to a format that can be used with `pyvista`.
-# To do this we use the function `dolfinx.plot.create_vtk_mesh`. The first step is to create an unstructured grid that can be used by `pyvista`.
+# To do this we use the function `dolfinx.plot.vtk_mesh`. The first step is to create an unstructured grid that can be used by `pyvista`.
 # We need to start a virtual framebuffer for plotting through docker containers. You can print the current backend and change it with `pyvista.set_jupyter_backend(backend)`
 
 import pyvista
@@ -247,7 +232,7 @@ print(pyvista.global_theme.jupyter_backend)
 # + vscode={"languageId": "python"}
 from dolfinx import plot
 pyvista.start_xvfb()
-topology, cell_types, geometry = plot.create_vtk_mesh(domain, tdim)
+topology, cell_types, geometry = plot.vtk_mesh(domain, tdim)
 grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
 # -
 
@@ -267,10 +252,10 @@ else:
 # -
 
 # ## Plotting a function using pyvista
-# We want to plot the solution `uh`. As the function space used to defined the mesh is disconnected from the function space defining the mesh, we create a mesh based on the dof coordinates for the function space `V`. We use `dolfinx.plot.create_vtk_mesh` with the function space as input to create a mesh with mesh geometry based on the dof coordinates.
+# We want to plot the solution `uh`. As the function space used to defined the mesh is disconnected from the function space defining the mesh, we create a mesh based on the dof coordinates for the function space `V`. We use `dolfinx.plot.vtk_mesh` with the function space as input to create a mesh with mesh geometry based on the dof coordinates.
 
 # + vscode={"languageId": "python"}
-u_topology, u_cell_types, u_geometry = plot.create_vtk_mesh(V)
+u_topology, u_cell_types, u_geometry = plot.vtk_mesh(V)
 # -
 
 # Next, we create the `pyvista.UnstructuredGrid` and add the dof-values to the mesh.
@@ -301,9 +286,13 @@ if not pyvista.OFF_SCREEN:
 
 # + vscode={"languageId": "python"}
 from dolfinx import io
-with io.VTXWriter(domain.comm, "output.bp", [uh]) as vtx:
+from pathlib import Path
+results_folder = Path("results")
+results_folder.mkdir(exist_ok=True, parents=True)
+filename = results_folder / "fundamentals"
+with io.VTXWriter(domain.comm, filename.with_suffix(".bp"), [uh]) as vtx:
     vtx.write(0.0)
-with io.XDMFFile(domain.comm, "output.xdmf", "w") as xdmf:
+with io.XDMFFile(domain.comm, filename.with_suffix(".xdmf"), "w") as xdmf:
     xdmf.write_mesh(domain)
     xdmf.write_function(uh)
 # -

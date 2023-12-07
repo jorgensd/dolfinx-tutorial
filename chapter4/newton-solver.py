@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.4
+#       jupytext_version: 1.14.7
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -40,6 +40,7 @@
 # We start by importing all packages needed to solve the problem.
 
 import dolfinx
+import dolfinx.fem.petsc
 import matplotlib.pyplot as plt
 import numpy as np
 import pyvista
@@ -72,7 +73,7 @@ x_spacing = np.linspace(0, 1, N)
 # Next, we define the mesh, and the appropriate function space and function `uh` to hold the approximate solution.
 
 mesh = dolfinx.mesh.create_unit_interval(MPI.COMM_WORLD, N)
-V = dolfinx.fem.FunctionSpace(mesh, ("CG", 1))
+V = dolfinx.fem.FunctionSpace(mesh, ("Lagrange", 1))
 uh = dolfinx.fem.Function(V)
 
 # ## Definition of residual and Jacobian
@@ -109,7 +110,7 @@ max_iterations = 25
 solutions = np.zeros((max_iterations + 1, len(coords)))
 solutions[0] = uh.x.array[sort_order]
 
-# We are now ready to solve the linear problem. At each iteration, we reassemble the Jacobian and residual, and use the norm of the magnitude of the update (`dx`) as a termination criteria. 
+# We are now ready to solve the linear problem. At each iteration, we reassemble the Jacobian and residual, and use the norm of the magnitude of the update (`dx`) as a termination criteria.
 # ## The Newton iterations
 
 i = 0
@@ -122,7 +123,7 @@ while i < max_iterations:
     A.assemble()
     dolfinx.fem.petsc.assemble_vector(L, residual)
     L.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
-    
+
     # Scale residual by -1
     L.scale(-1)
     L.ghostUpdate(addv=PETSc.InsertMode.INSERT_VALUES, mode=PETSc.ScatterMode.FORWARD)
@@ -139,7 +140,7 @@ while i < max_iterations:
     print(f"Iteration {i}: Correction norm {correction_norm}")
     if correction_norm < 1e-10:
         break
-    solutions[i,:] = uh.x.array[sort_order]
+    solutions[i, :] = uh.x.array[sort_order]
 
 # We now compute the magnitude of the residual.
 
@@ -172,7 +173,7 @@ plt.legend()
 # -
 
 # # Newton's method with DirichletBC
-# In the previous example, we did not consider handling of Dirichlet boundary conditions. 
+# In the previous example, we did not consider handling of Dirichlet boundary conditions.
 # For this example, we will consider the [non-linear Poisson](./../chapter2/nonlinpoisson)-problem.
 # We start by defining the mesh, the analytical solution and the forcing term $f$.
 
@@ -196,7 +197,7 @@ def u_exact(x):
 # Next, we define the boundary condition `bc`, the residual `F` and the Jacobian `J`.
 
 # +
-V = dolfinx.fem.FunctionSpace(domain, ("CG", 1))
+V = dolfinx.fem.FunctionSpace(domain, ("Lagrange", 1))
 u_D = dolfinx.fem.Function(V)
 u_D.interpolate(u_exact)
 fdim = domain.topology.dim - 1
@@ -256,7 +257,7 @@ while i < max_iterations:
     L.scale(-1)
 
     # Compute b - J(u_D-u_(i-1))
-    dolfinx.fem.petsc.apply_lifting(L, [jacobian], [[bc]], x0=[uh.vector], scale=1) 
+    dolfinx.fem.petsc.apply_lifting(L, [jacobian], [[bc]], x0=[uh.vector], scale=1)
     # Set dx|_bc = u_{i-1}-u_D
     dolfinx.fem.petsc.set_bc(L, [bc], uh.vector, 1.0)
     L.ghostUpdate(addv=PETSc.InsertMode.INSERT_VALUES, mode=PETSc.ScatterMode.FORWARD)
@@ -275,7 +276,7 @@ while i < max_iterations:
     # Compute L2 error comparing to the analytical solution
     L2_error.append(np.sqrt(mesh.comm.allreduce(dolfinx.fem.assemble_scalar(error), op=MPI.SUM)))
     dx_norm.append(correction_norm)
-    
+
     print(f"Iteration {i}: Correction norm {correction_norm}, L2 error: {L2_error[-1]}")
     if correction_norm < 1e-10:
         break
@@ -292,7 +293,7 @@ plt.xlabel("Iterations")
 plt.ylabel(r"$L^2$-error")
 plt.grid()
 plt.subplot(122)
-plt.title(r"Residual of $\vert\vert\delta x_i\vert\vert$") 
+plt.title(r"Residual of $\vert\vert\delta x_i\vert\vert$")
 plt.plot(np.arange(i), dx_norm)
 ax = plt.gca()
 ax.set_yscale('log')
@@ -307,7 +308,7 @@ if domain.comm.rank == 0:
     print(f"Error_max: {error_max:.2e}")
 
 pyvista.start_xvfb()
-u_topology, u_cell_types, u_geometry = dolfinx.plot.create_vtk_mesh(V)
+u_topology, u_cell_types, u_geometry = dolfinx.plot.vtk_mesh(V)
 u_grid = pyvista.UnstructuredGrid(u_topology, u_cell_types, u_geometry)
 u_grid.point_data["u"] = uh.x.array.real
 u_grid.set_active_scalars("u")

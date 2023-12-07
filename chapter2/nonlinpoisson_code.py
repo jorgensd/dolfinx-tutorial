@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.4
+#       jupytext_version: 1.14.7
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -18,7 +18,7 @@
 # Author: Jørgen S. Dokken
 #
 # ## Test problem
-# To solve a test problem, we need to choose the right hand side $f$ and the coefficient $q(u)$ and the boundary $u_D$. Previously, we have worked with manufactured solutions that can  be reproduced without approximation errors. This is more difficult in non-linear porblems, and the algebra is more tedious. Howeve, we will utilize UFLs differentiation capabilities to obtain a manufactured solution. 
+# To solve a test problem, we need to choose the right hand side $f$ and the coefficient $q(u)$ and the boundary $u_D$. Previously, we have worked with manufactured solutions that can  be reproduced without approximation errors. This is more difficult in non-linear porblems, and the algebra is more tedious. Howeve, we will utilize UFLs differentiation capabilities to obtain a manufactured solution.
 #
 # For this problem, we will choose $q(u) = 1 + u^2$ and define a two dimensional manufactured solution that is linear in $x$ and $y$:
 
@@ -30,23 +30,28 @@ from mpi4py import MPI
 from petsc4py import PETSc
 
 from dolfinx import mesh, fem, io, nls, log
+from dolfinx.fem.petsc import NonlinearProblem
+from dolfinx.nls.petsc import NewtonSolver
 
 def q(u):
     return 1 + u**2
 
+
 domain = mesh.create_unit_square(MPI.COMM_WORLD, 10, 10)
 x = ufl.SpatialCoordinate(domain)
-u_ufl = 1 + x[0] + 2*x[1]
-f = - ufl.div(q(u_ufl)*ufl.grad(u_ufl))
+u_ufl = 1 + x[0] + 2 * x[1]
+f = - ufl.div(q(u_ufl) * ufl.grad(u_ufl))
 # -
 
 # Note that since `x` is a 2D vector, the first component (index 0) resemble $x$, while the second component (index 1) resemble $y$. The resulting function `f` can be directly used in variational formulations in DOLFINx.
 #
 # As we now have defined our source term and exact solution, we can create the appropriate function space and boundary conditions.
-# Note that as we have already defined the exact solution, we only have to convert it to a python function that can be evaluated in the interpolation function. We do this by employing the Python `eval` and `lambda`-functions. 
+# Note that as we have already defined the exact solution, we only have to convert it to a python function that can be evaluated in the interpolation function. We do this by employing the Python `eval` and `lambda`-functions.
 
-V = fem.FunctionSpace(domain, ("CG", 1))
-u_exact = lambda x: eval(str(u_ufl))
+V = fem.FunctionSpace(domain, ("Lagrange", 1))
+def u_exact(x): return eval(str(u_ufl))
+
+
 u_D = fem.Function(V)
 u_D.interpolate(u_exact)
 fdim = domain.topology.dim - 1
@@ -57,18 +62,18 @@ bc = fem.dirichletbc(u_D, fem.locate_dofs_topological(V, fdim, boundary_facets))
 
 uh = fem.Function(V)
 v = ufl.TestFunction(V)
-F = q(uh)*ufl.dot(ufl.grad(uh), ufl.grad(v))*ufl.dx - f*v*ufl.dx
+F = q(uh) * ufl.dot(ufl.grad(uh), ufl.grad(v)) * ufl.dx - f * v * ufl.dx
 
 # ## Newton's method
 # The next step is to define the non-linear problem. As it is non-linear we will use [Newtons method](https://en.wikipedia.org/wiki/Newton%27s_method).
 # For details about how to implement a Newton solver, see [Custom Newton solvers](../chapter4/newton-solver.ipynb).
 # Newton's method requires methods for evaluating the residual `F` (including application of boundary conditions), as well as a method for computing the Jacobian matrix. DOLFINx provides the function `NonlinearProblem` that implements these methods. In addition to the boundary conditions, you can supply the variational form for the Jacobian (computed if not supplied), and form and jit parameters, see the [JIT parameters section](../chapter4/compiler_parameters.ipynb).
 
-problem = fem.petsc.NonlinearProblem(F, uh, bcs=[bc])
+problem = NonlinearProblem(F, uh, bcs=[bc])
 
 # Next, we use the dolfinx Newton solver. We can set the convergence criterions for the solver by changing the absolute tolerance (`atol`), relative tolerance (`rtol`) or the convergence criterion (`residual` or `incremental`).
 
-solver = nls.petsc.NewtonSolver(MPI.COMM_WORLD, problem)
+solver = NewtonSolver(MPI.COMM_WORLD, problem)
 solver.convergence_criterion = "incremental"
 solver.rtol = 1e-6
 solver.report = True
@@ -87,7 +92,7 @@ ksp.setFromOptions()
 
 log.set_log_level(log.LogLevel.INFO)
 n, converged = solver.solve(uh)
-assert(converged)
+assert (converged)
 print(f"Number of interations: {n:d}")
 
 # We observe that the solver converges after $8$ iterations.
@@ -95,7 +100,7 @@ print(f"Number of interations: {n:d}")
 
 # +
 # Compute L2 error and error at nodes
-V_ex = fem.FunctionSpace(domain, ("CG", 2))
+V_ex = fem.FunctionSpace(domain, ("Lagrange", 2))
 u_ex = fem.Function(V_ex)
 u_ex.interpolate(u_exact)
 error_local = fem.assemble_scalar(fem.form((uh - u_ex)**2 * ufl.dx))
@@ -104,8 +109,6 @@ if domain.comm.rank == 0:
     print(f"L2-error: {error_L2:.2e}")
 
 # Compute values at mesh vertices
-error_max = domain.comm.allreduce(numpy.max(numpy.abs(uh.x.array -u_D.x.array)), op=MPI.MAX)
+error_max = domain.comm.allreduce(numpy.max(numpy.abs(uh.x.array - u_D.x.array)), op=MPI.MAX)
 if domain.comm.rank == 0:
     print(f"Error_max: {error_max:.2e}")
-# -
-

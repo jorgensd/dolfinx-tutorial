@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.4
+#       jupytext_version: 1.14.7
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -16,7 +16,7 @@
 # # Test problem 2: Flow past a cylinder (DFG 2D-3 benchmark)
 # Author: Jørgen S. Dokken
 #
-# In this section, we will turn our attention to a slightly more challenging problem: flow past a cylinder. The geometry and parameters are taken from the [DFG 2D-3 benchmark](http://www.featflow.de/en/benchmarks/cfdbenchmarking/flow/dfg_benchmark3_re100.html) in FeatFlow.
+# In this section, we will turn our attention to a slightly more challenging problem: flow past a cylinder. The geometry and parameters are taken from the [DFG 2D-3 benchmark](https://www.featflow.de/en/benchmarks/cfdbenchmarking/flow/dfg_benchmark3_re100.html) in FeatFlow.
 #
 # To be able to solve this problem efficiently and ensure numerical stability, we will substitute our first order backward difference scheme with a Crank-Nicholson discretization in time, and a semi-implicit Adams-Bashforth approximation of the non-linear term.
 #
@@ -36,7 +36,7 @@
 #     U=U(t) = 1.5\sin(\pi t/8)
 # $$
 #
-# which has a maximum magnitude of $1.5$ at $y=0.41/2$. We do not use any scaling for this problem since all exact parameters are known. 
+# which has a maximum magnitude of $1.5$ at $y=0.41/2$. We do not use any scaling for this problem since all exact parameters are known.
 # ## Mesh generation
 # As in the [Deflection of a membrane](./../chapter1/membrane_code.ipynb) we use GMSH to generate the mesh. We fist create the rectangle and obstacle.
 
@@ -51,12 +51,12 @@ from mpi4py import MPI
 from petsc4py import PETSc
 
 from dolfinx.cpp.mesh import to_type, cell_entity_type
-from dolfinx.fem import (Constant, Function, FunctionSpace, 
+from dolfinx.fem import (Constant, Function, FunctionSpace,
                          assemble_scalar, dirichletbc, form, locate_dofs_topological, set_bc)
-from dolfinx.fem.petsc import (apply_lifting, assemble_matrix, assemble_vector, 
+from dolfinx.fem.petsc import (apply_lifting, assemble_matrix, assemble_vector,
                                create_vector, create_matrix, set_bc)
-from dolfinx.graph import create_adjacencylist
-from dolfinx.geometry import BoundingBoxTree, compute_collisions, compute_colliding_cells
+from dolfinx.graph import adjacencylist
+from dolfinx.geometry import bb_tree, compute_collisions_points, compute_colliding_cells
 from dolfinx.io import (VTXWriter, distribute_entity_data, gmshio)
 from dolfinx.mesh import create_mesh, meshtags_from_entities
 
@@ -67,13 +67,13 @@ gmsh.initialize()
 
 L = 2.2
 H = 0.41
-c_x = c_y =0.2
+c_x = c_y = 0.2
 r = 0.05
 gdim = 2
 mesh_comm = MPI.COMM_WORLD
 model_rank = 0
 if mesh_comm.rank == model_rank:
-    rectangle = gmsh.model.occ.addRectangle(0,0,0, L, H, tag=1)
+    rectangle = gmsh.model.occ.addRectangle(0, 0, 0, L, H, tag=1)
     obstacle = gmsh.model.occ.addDisk(c_x, c_y, 0, r, r)
 # -
 
@@ -88,7 +88,7 @@ if mesh_comm.rank == model_rank:
 fluid_marker = 1
 if mesh_comm.rank == model_rank:
     volumes = gmsh.model.getEntities(dim=gdim)
-    assert(len(volumes) == 1)
+    assert (len(volumes) == 1)
     gmsh.model.addPhysicalGroup(volumes[0][0], [volumes[0][1]], fluid_marker)
     gmsh.model.setPhysicalName(volumes[0][0], fluid_marker, "Fluid")
 
@@ -100,11 +100,11 @@ if mesh_comm.rank == model_rank:
     boundaries = gmsh.model.getBoundary(volumes, oriented=False)
     for boundary in boundaries:
         center_of_mass = gmsh.model.occ.getCenterOfMass(boundary[0], boundary[1])
-        if np.allclose(center_of_mass, [0, H/2, 0]):
+        if np.allclose(center_of_mass, [0, H / 2, 0]):
             inflow.append(boundary[1])
-        elif np.allclose(center_of_mass, [L, H/2, 0]):
+        elif np.allclose(center_of_mass, [L, H / 2, 0]):
             outflow.append(boundary[1])
-        elif np.allclose(center_of_mass, [L/2, H, 0]) or np.allclose(center_of_mass, [L/2, 0, 0]):
+        elif np.allclose(center_of_mass, [L / 2, H, 0]) or np.allclose(center_of_mass, [L / 2, 0, 0]):
             walls.append(boundary[1])
         else:
             obstacle.append(boundary[1])
@@ -164,9 +164,9 @@ ft.name = "Facet markers"
 
 t = 0
 T = 8                       # Final time
-dt = 1/1600                 # Time step size
-num_steps = int(T/dt)
-k = Constant(mesh, PETSc.ScalarType(dt))        
+dt = 1 / 1600                 # Time step size
+num_steps = int(T / dt)
+k = Constant(mesh, PETSc.ScalarType(dt))
 mu = Constant(mesh, PETSc.ScalarType(0.001))  # Dynamic viscosity
 rho = Constant(mesh, PETSc.ScalarType(1))     # Density
 
@@ -178,22 +178,25 @@ rho = Constant(mesh, PETSc.ScalarType(1))     # Density
 # As we have created the mesh and relevant mesh tags, we can now specify the function spaces `V` and `Q` along with the boundary conditions. As the `ft` contains markers for facets, we use this class to find the facets for the inlet and walls.
 
 # +
-v_cg2 = VectorElement("CG", mesh.ufl_cell(), 2)
-s_cg1 = FiniteElement("CG", mesh.ufl_cell(), 1)
+v_cg2 = VectorElement("Lagrange", mesh.ufl_cell(), 2)
+s_cg1 = FiniteElement("Lagrange", mesh.ufl_cell(), 1)
 V = FunctionSpace(mesh, v_cg2)
 Q = FunctionSpace(mesh, s_cg1)
 
 fdim = mesh.topology.dim - 1
 
 # Define boundary conditions
+
+
 class InletVelocity():
     def __init__(self, t):
         self.t = t
 
     def __call__(self, x):
-        values = np.zeros((gdim, x.shape[1]),dtype=PETSc.ScalarType)
-        values[0] = 4 * 1.5 * np.sin(self.t * np.pi/8) * x[1] * (0.41 - x[1])/(0.41**2)
+        values = np.zeros((gdim, x.shape[1]), dtype=PETSc.ScalarType)
+        values[0] = 4 * 1.5 * np.sin(self.t * np.pi / 8) * x[1] * (0.41 - x[1]) / (0.41**2)
         return values
+
 
 # Inlet
 u_inlet = Function(V)
@@ -243,7 +246,7 @@ bcp = [bcp_outlet]
 # Finally, the third step is
 #
 # $$
-# \rho (u^{n+1}-u^{*}) = -\delta t \phi. 
+# \rho (u^{n+1}-u^{*}) = -\delta t \phi.
 # $$
 #
 # We start by defining all the variables used in the variational formulations.
@@ -263,10 +266,10 @@ phi = Function(Q)
 
 # Next, we define the variational formulation for the first step, where we have integrated the diffusion term, as well as the pressure term by parts.
 
-f = Constant(mesh, PETSc.ScalarType((0,0)))
-F1 = rho / k * dot(u - u_n, v) * dx 
+f = Constant(mesh, PETSc.ScalarType((0, 0)))
+F1 = rho / k * dot(u - u_n, v) * dx
 F1 += inner(dot(1.5 * u_n - 0.5 * u_n1, 0.5 * nabla_grad(u + u_n)), v) * dx
-F1 += 0.5 * mu * inner(grad(u + u_n), grad(v))*dx - dot(p_, div(v))*dx
+F1 += 0.5 * mu * inner(grad(u + u_n), grad(v)) * dx - dot(p_, div(v)) * dx
 F1 += dot(f, v) * dx
 a1 = form(lhs(F1))
 L1 = form(rhs(F1))
@@ -275,7 +278,7 @@ b1 = create_vector(L1)
 
 # Next we define the second step
 
-a2 = form(dot(grad(p), grad(q))*dx)
+a2 = form(dot(grad(p), grad(q)) * dx)
 L2 = form(-rho / k * dot(div(u_s), q) * dx)
 A2 = assemble_matrix(a2, bcs=bcp)
 A2.assemble()
@@ -283,8 +286,8 @@ b2 = create_vector(L2)
 
 # We finally create the last step
 
-a3 = form(rho * dot(u, v)*dx)
-L3 = form(rho * dot(u_s, v)*dx - k * dot(nabla_grad(phi), v)*dx)
+a3 = form(rho * dot(u, v) * dx)
+L3 = form(rho * dot(u_s, v) * dx - k * dot(nabla_grad(phi), v) * dx)
 A3 = assemble_matrix(a3)
 A3.assemble()
 b3 = create_vector(L3)
@@ -320,14 +323,14 @@ pc3.setType(PETSc.PC.Type.SOR)
 #
 # $$
 #     C_{\text{D}}(u,p,t,\partial\Omega_S) = \frac{2}{\rho L U_{mean}^2}\int_{\partial\Omega_S}\rho \nu n \cdot \nabla u_{t_S}(t)n_y -p(t)n_x~\mathrm{d} s,
-# $$    
-# $$ 
+# $$
+# $$
 #     C_{\text{L}}(u,p,t,\partial\Omega_S) = -\frac{2}{\rho L U_{mean}^2}\int_{\partial\Omega_S}\rho \nu n \cdot \nabla u_{t_S}(t)n_x + p(t)n_y~\mathrm{d} s,
 # $$
 #
 # where $u_{t_S}$ is the tangential velocity component at the interface of the obstacle $\partial\Omega_S$, defined as $u_{t_S}=u\cdot (n_y,-n_x)$, $U_{mean}=1$ the average inflow velocity, and $L$ the length of the channel. We use `UFL` to create the relevant integrals, and assemble them at each time step.
 
-n = -FacetNormal(mesh) # Normal pointing out of obstacle
+n = -FacetNormal(mesh)  # Normal pointing out of obstacle
 dObs = Measure("ds", domain=mesh, subdomain_data=ft, subdomain_id=obstacle_marker)
 u_t = inner(as_vector((n[1], -n[0])), u_)
 drag = form(2 / 0.1 * (mu / rho * inner(grad(u_t), n) * n[1] - p_ * n[0]) * dObs)
@@ -340,9 +343,9 @@ if mesh.comm.rank == 0:
 
 # We will also evaluate the pressure at two points, on in front of the obstacle, $(0.15, 0.2)$, and one behind the obstacle, $(0.25, 0.2)$. To do this, we have to find which cell is containing each of the points, so that we can create a linear combination of the local basis functions and coefficients.
 
-tree = BoundingBoxTree(mesh, mesh.geometry.dim)
+tree = bb_tree(mesh, mesh.geometry.dim)
 points = np.array([[0.15, 0.2, 0], [0.25, 0.2, 0]])
-cell_candidates = compute_collisions(tree, points)
+cell_candidates = compute_collisions_points(tree, points)
 colliding_cells = compute_colliding_cells(mesh, cell_candidates, points)
 front_cells = colliding_cells.links(0)
 back_cells = colliding_cells.links(1)
@@ -357,9 +360,11 @@ if mesh.comm.rank == 0:
 #
 # As in the previous example, we create output files for the velocity and pressure and solve the time-dependent problem. As we are solving a time dependent problem with many time steps, we use the `tqdm`-package to visualize the progress. This package can be install with `pip3`.
 
-# + tags=[]
-vtx_u = VTXWriter(mesh.comm, "dfg2D-3-u.bp", [u_])
-vtx_p = VTXWriter(mesh.comm, "dfg2D-3-p.bp", [p_])
+from pathlib import Path
+folder = Path("results")
+folder.mkdir(exist_ok=True, parents=True)
+vtx_u = VTXWriter(mesh.comm, "dfg2D-3-u.bp", [u_], engine="BP4")
+vtx_p = VTXWriter(mesh.comm, "dfg2D-3-p.bp", [p_], engine="BP4")
 vtx_u.write(t)
 vtx_p.write(t)
 progress = tqdm.autonotebook.tqdm(desc="Solving PDE", total=num_steps)
@@ -416,7 +421,7 @@ for i in range(num_steps):
 
     # Compute physical quantities
     # For this to work in paralell, we gather contributions from all processors
-    # to processor zero and sum the contributions. 
+    # to processor zero and sum the contributions.
     drag_coeff = mesh.comm.gather(assemble_scalar(drag), root=0)
     lift_coeff = mesh.comm.gather(assemble_scalar(lift), root=0)
     p_front = None
@@ -443,46 +448,42 @@ for i in range(num_steps):
                 break
 vtx_u.close()
 vtx_p.close()
-# -
 
 # ## Verification using data from FEATFLOW
 # As FEATFLOW has provided data for different  discretization levels, we compare our numerical data with the data provided using `matplotlib`.
 
-# + tags=[]
 if mesh.comm.rank == 0:
     if not os.path.exists("figures"):
         os.mkdir("figures")
     num_velocity_dofs = V.dofmap.index_map_bs * V.dofmap.index_map.size_global
     num_pressure_dofs = Q.dofmap.index_map_bs * V.dofmap.index_map.size_global
-    
+
     turek = np.loadtxt("bdforces_lv4")
     turek_p = np.loadtxt("pointvalues_lv4")
-    fig = plt.figure(figsize=(25,8))
-    l1 = plt.plot(t_u, C_D, label=r"FEniCSx  ({0:d} dofs)".format(num_velocity_dofs+num_pressure_dofs),linewidth=2)
-    l2 = plt.plot(turek[1:,1], turek[1:,3], marker="x", markevery=50, 
-                linestyle="", markersize=4, label="FEATFLOW (42016 dofs)")
+    fig = plt.figure(figsize=(25, 8))
+    l1 = plt.plot(t_u, C_D, label=r"FEniCSx  ({0:d} dofs)".format(num_velocity_dofs + num_pressure_dofs), linewidth=2)
+    l2 = plt.plot(turek[1:, 1], turek[1:, 3], marker="x", markevery=50,
+                  linestyle="", markersize=4, label="FEATFLOW (42016 dofs)")
     plt.title("Drag coefficient")
     plt.grid()
     plt.legend()
     plt.savefig("figures/drag_comparison.png")
 
-    fig = plt.figure(figsize=(25,8))
+    fig = plt.figure(figsize=(25, 8))
     l1 = plt.plot(t_u, C_L, label=r"FEniCSx  ({0:d} dofs)".format(
-        num_velocity_dofs+num_pressure_dofs),linewidth=2)
-    l2 = plt.plot(turek[1:,1], turek[1:,4], marker="x", markevery=50, 
-                linestyle="", markersize=4, label="FEATFLOW (42016 dofs)")
+        num_velocity_dofs + num_pressure_dofs), linewidth=2)
+    l2 = plt.plot(turek[1:, 1], turek[1:, 4], marker="x", markevery=50,
+                  linestyle="", markersize=4, label="FEATFLOW (42016 dofs)")
     plt.title("Lift coefficient")
     plt.grid()
     plt.legend()
     plt.savefig("figures/lift_comparison.png")
 
-    fig = plt.figure(figsize=(25,8))
-    l1 = plt.plot(t_p, p_diff, label=r"FEniCSx ({0:d} dofs)".format(num_velocity_dofs+num_pressure_dofs),linewidth=2)
-    l2 = plt.plot(turek[1:,1], turek_p[1:,6]-turek_p[1:,-1], marker="x", markevery=50, 
-                linestyle="", markersize=4, label="FEATFLOW (42016 dofs)")
+    fig = plt.figure(figsize=(25, 8))
+    l1 = plt.plot(t_p, p_diff, label=r"FEniCSx ({0:d} dofs)".format(num_velocity_dofs + num_pressure_dofs), linewidth=2)
+    l2 = plt.plot(turek[1:, 1], turek_p[1:, 6] - turek_p[1:, -1], marker="x", markevery=50,
+                  linestyle="", markersize=4, label="FEATFLOW (42016 dofs)")
     plt.title("Pressure difference")
     plt.grid()
     plt.legend()
     plt.savefig("figures/pressure_comparison.png")
-# -
-

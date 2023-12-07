@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=64.4.0", "wheel", "pip>=22.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "DOLFINx_Tutorial"
+version = "0.7.2"
+dependencies = [
+    "jupyter-book",
+    # Pin docutils due to https://github.com/executablebooks/jupyter-book/issues/1970#issuecomment-1466051277
+    "docutils==0.17.1",
+    "meshio",
+    "h5py",
+    "seaborn",
+    "pandas",
+    "tqdm",
+    "pyvista[all]>=0.43.0",
+    "fenics-dolfinx>=0.7.0",
+]
+
+[project.optional-dependencies]
+dev = ["pdbpp", "ipython"]
+
+[tool.setuptools]
+packages = []

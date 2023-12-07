@@ -8,7 +8,7 @@ logo: fenics_logo.png
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html
 execute:
-  execute_notebooks: force
+  execute_notebooks: cache
 
   # Set timeout for any example to 20 minutes
   timeout: 1800
@@ -35,6 +35,11 @@ sphinx:
   config:
     html_last_updated_fmt: "%b %d, %Y"
     suppress_warnings: ["mystnb.unknown_mime_type"]
+
+    # To avoid warning about default changing due to
+    # https://github.com/pydata/pydata-sphinx-theme/issues/1492
+    # html_theme_options:
+    #   navigation_with_keys: false
 parse:
   myst_enable_extensions:
     - "amsmath"

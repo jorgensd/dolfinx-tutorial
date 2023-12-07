@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.4
+#       jupytext_version: 1.14.7
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -27,25 +27,26 @@
 #
 # We start by defining the temporal discretization parameters, along with the parameters for $\alpha$ and $\beta$.
 
-t = 0 # Start time
-T = 2 # End time
-num_steps = 20 # Number of time steps
-dt = (T-t)/num_steps # Time step size
+from petsc4py import PETSc
+from mpi4py import MPI
+import ufl
+from dolfinx import mesh, fem
+from dolfinx.fem.petsc import assemble_matrix, assemble_vector, apply_lifting, create_vector, set_bc
+import numpy
+t = 0  # Start time
+T = 2  # End time
+num_steps = 20  # Number of time steps
+dt = (T - t) / num_steps  # Time step size
 alpha = 3
 beta = 1.2
 
 # As for the previous problem, we define the mesh and appropriate function spaces.
 
 # +
-import numpy
-from dolfinx import mesh, fem
-import ufl
-from mpi4py import MPI
-from petsc4py import PETSc
 
 nx, ny = 5, 5
 domain = mesh.create_unit_square(MPI.COMM_WORLD, nx, ny, mesh.CellType.triangle)
-V = fem.FunctionSpace(domain, ("CG", 1))
+V = fem.FunctionSpace(domain, ("Lagrange", 1))
 
 
 # -
@@ -58,8 +59,11 @@ class exact_solution():
         self.alpha = alpha
         self.beta = beta
         self.t = t
+
     def __call__(self, x):
         return 1 + x[0]**2 + self.alpha * x[1]**2 + self.beta * self.t
+
+
 u_exact = exact_solution(alpha, beta, t)
 
 # ## Defining the boundary condition
@@ -86,16 +90,16 @@ f = fem.Constant(domain, beta - 2 - 2 * alpha)
 # We can now create our variational formulation, with the bilinear form `a` and  linear form `L`.
 
 u, v = ufl.TrialFunction(V), ufl.TestFunction(V)
-F = u*v*ufl.dx + dt*ufl.dot(ufl.grad(u), ufl.grad(v))*ufl.dx - (u_n + dt*f)*v*ufl.dx
+F = u * v * ufl.dx + dt * ufl.dot(ufl.grad(u), ufl.grad(v)) * ufl.dx - (u_n + dt * f) * v * ufl.dx
 a = fem.form(ufl.lhs(F))
 L = fem.form(ufl.rhs(F))
 
 # ## Create the matrix and vector for the linear problem
 # To ensure that we are solving the variational problem efficiently, we will create several structures which can reuse data, such as matrix sparisty patterns. Especially note as the bilinear form `a` is independent of time, we only need to assemble the matrix once.
 
-A = fem.petsc.assemble_matrix(a, bcs=[bc])
+A = assemble_matrix(a, bcs=[bc])
 A.assemble()
-b = fem.petsc.create_vector(L)
+b = create_vector(L)
 uh = fem.Function(V)
 
 # ## Define a linear variational solver
@@ -108,26 +112,26 @@ solver.getPC().setType(PETSc.PC.Type.LU)
 
 # ## Solving the time-dependent problem
 # With these structures in place, we crete our time-stepping loop.
-# In this loop, we first update the Dirichlet boundary condition by interpolating the updated 
+# In this loop, we first update the Dirichlet boundary condition by interpolating the updated
 # expression `u_exact` into `V`. The next step is to re-assemble the vector `b`, with the update `u_n`.
 # Then, we need to apply the boundary condition to this vector. We do this by using the lifting operation,
 # which applies the boundary condition such that symmetry of the matrix is preserved.
 # Then we solve the problem using PETSc and update `u_n` with the data from `uh`.
 
 for n in range(num_steps):
-    # Update Diriclet boundary condition 
-    u_exact.t+=dt
+    # Update Diriclet boundary condition
+    u_exact.t += dt
     u_D.interpolate(u_exact)
-    
+
     # Update the right hand side reusing the initial vector
     with b.localForm() as loc_b:
         loc_b.set(0)
-    fem.petsc.assemble_vector(b, L)
-    
+    assemble_vector(b, L)
+
     # Apply Dirichlet boundary condition to the vector
-    fem.petsc.apply_lifting(b, [a], [[bc]])
+    apply_lifting(b, [a], [[bc]])
     b.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
-    fem.petsc.set_bc(b, [bc])
+    set_bc(b, [bc])
 
     # Solve linear problem
     solver.solve(b, uh.vector)
@@ -137,12 +141,12 @@ for n in range(num_steps):
     u_n.x.array[:] = uh.x.array
 
 # ## Verifying the numerical solution
-# As in the first chapter, we compute the L2-error and the error at the mesh vertices for the last time step. 
+# As in the first chapter, we compute the L2-error and the error at the mesh vertices for the last time step.
 # to verify our implementation.
 
 # +
 # Compute L2 error and error at nodes
-V_ex = fem.FunctionSpace(domain, ("CG", 2))
+V_ex = fem.FunctionSpace(domain, ("Lagrange", 2))
 u_ex = fem.Function(V_ex)
 u_ex.interpolate(u_exact)
 error_L2 = numpy.sqrt(domain.comm.allreduce(fem.assemble_scalar(fem.form((uh - u_ex)**2 * ufl.dx)), op=MPI.SUM))
@@ -150,9 +154,6 @@ if domain.comm.rank == 0:
     print(f"L2-error: {error_L2:.2e}")
 
 # Compute values at mesh vertices
-error_max = domain.comm.allreduce(numpy.max(numpy.abs(uh.x.array-u_D.x.array)), op=MPI.MAX)
+error_max = domain.comm.allreduce(numpy.max(numpy.abs(uh.x.array - u_D.x.array)), op=MPI.MAX)
 if domain.comm.rank == 0:
     print(f"Error_max: {error_max:.2e}")
-# -
-
-
