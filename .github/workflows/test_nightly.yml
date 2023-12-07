@@ -44,6 +44,9 @@ jobs:
       - name: Install requirements
         run: python3 -m pip install --no-cache-dir --no-binary=h5py . --upgrade
 
+      - name: Test building the book
+        run: PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
+
       - name: Test complex notebooks in parallel
         run: |
           export PKG_CONFIG_PATH=/usr/local/dolfinx-complex/lib/pkgconfig:$PKG_CONFIG_PATH
@@ -81,9 +84,6 @@ jobs:
           mpirun -n 2 python3 convergence.py
           mpirun -n 2 python3 compiler_parameters.py
           mpirun -n 2 python3 newton-solver.py
-
-      - name: Test building the book
-        run: PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
 
       - uses: actions/upload-artifact@v3
         with:
