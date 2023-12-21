@@ -18,11 +18,11 @@ u(\mathbf{x}) &= u_D(\mathbf{x})&& \mathbf{x} \in \partial\Omega
 \end{align}
 
 Here, $u=u(\mathbf{x})$ is the unknown function, $f=f(\mathbf{x})$ a prescribed function, $\nabla^2$ the Laplace operator
-(often written as $\Delta$), $\Omega$ the spatial domain, and $\partial\Omega$ the boundary of $\Omega$. The Poisson problem, including both the PDE $-\nabla^2 u = f$ and the boundary condition $u=u_D$ on $\partial\Omega$, is an example of a _boundary-value problem_, which must be precisely stated before we can start solving it numerically with FEniCSx. 
+(often written as $\Delta$), $\Omega$ the spatial domain, and $\partial\Omega$ the boundary of $\Omega$. The Poisson problem, including both the PDE, $-\nabla^2 u = f$, and the boundary condition, $u=u_D$ on $\partial\Omega$, is an example of a _boundary-value problem_, which must be precisely stated before we can start solving it numerically with FEniCSx. 
 
 In the two-dimensional space with coordinates $x$ and $y$, we can expand the Poisson equation as
 
-$ -\frac{\partial^2 u}{\partial x^2} - \frac{\partial^2 u}{\partial y^2} = f(x,y)$
+$-\frac{\partial^2 u}{\partial x^2} - \frac{\partial^2 u}{\partial y^2} = f(x,y)$
 
 The unknown $u$ is now a function of two variables, $u=u(x,y)$, defined over the two-dimensional domain $\Omega$. 
 
@@ -68,9 +68,9 @@ Here, we have a second-order differential of $u$, which can be transformed to a 
 [integration by parts](https://en.wikipedia.org/wiki/Integration_by_parts).
 The formula reads 
 
-$ -\int_\Omega (\nabla^2 u)v ~\mathrm{d}x
-= \int_\Omega\nabla u\cdot\nabla v ~\mathrm{d}x- 
-\int_{\partial\Omega}\frac{\partial u}{\partial n}v ~\mathrm{d}s,$
+$-\int_\Omega (\nabla^2 u)v~\mathrm{d}x
+= \int_\Omega\nabla u\cdot\nabla v~\mathrm{d}x- 
+\int_{\partial\Omega}\frac{\partial u}{\partial n}v~\mathrm{d}s,$
 
 where $\frac{\partial u}{\partial n}=\nabla u \cdot \vec{n}$ is the derivative of $u$ in the outward normal direction $\vec{n}$ on the boundary.
 
@@ -78,13 +78,13 @@ Another feature of variational formulations is that the test function $v$ is req
 
 In the present problem, this means that $v$ is $0$ on the whole boundary $\partial\Omega$. Thus, the second term in the integration by parts formula vanishes, and we have that 
 
-$\int_\Omega \nabla u \cdot \nabla v ~\mathrm{d} x = \int_\Omega f v~\mathrm{d} x.$
+$\int_\Omega \nabla u \cdot \nabla v~\mathrm{d} x = \int_\Omega f v~\mathrm{d} x.$
 
 If we require that this equation holds for all test functions $v$ in some suitable space $\hat{V}$, the so-called _test space_, we obtain a well-defined mathematical problem that uniquely determines the solution $u$ which lies in some function space $V$. Note that $V$ does not have to be the same space as 
 $\hat{V}$. We call the space $V$ the _trial space_. We refer to the equation above as the _weak form_/_variational form_ of the original boundary-value problem. We now properly state our variational problem:
 Find $u\in V$ such that 
 
-$\int_\Omega \nabla u \cdot \nabla v \mathrm{d} x = \int_\Omega f v\mathrm{d} x\qquad \forall v \in \hat{V}.$
+$\int_\Omega \nabla u \cdot \nabla v~\mathrm{d} x = \int_\Omega f v~\mathrm{d} x\qquad \forall v \in \hat{V}.$
 
 For the present problem, the trial and test spaces $V$ and $\hat{V}$ are defined as
 \begin{align}
@@ -100,10 +100,10 @@ such as intervals, triangles, quadrilaterals, tetrahedra and
 hexahedra. 
 
 The variational problem is a _continuous problem_: it defines the solution $u$ in the infinite-dimensional function space $V$.
-The finite element method for the  Poisson equation finds an approximate solution of the variational problem by replacing the infinite-dimensional function spaces $V$ and $\hat V$ by _discrete_ (finite dimensional) trial and test spaces $V_h\subset V$ and $\hat{V}_h \subset \hat{V}$. The discrete
+The finite element method for the  Poisson equation finds an approximate solution of the variational problem by replacing the infinite-dimensional function spaces $V$ and $\hat{V}$ by _discrete_ (finite dimensional) trial and test spaces $V_h\subset V$ and $\hat{V}_h \subset \hat{V}$. The discrete
 variational problem reads: Find $u_h\in V_h$ such that 
 \begin{align}
-\int_\Omega \nabla u_h \cdot \nabla v ~\mathrm{d} x &= \int_\Omega fv~ \mathrm{d} x && \forall v \in \hat{V}_h.
+\int_\Omega \nabla u_h \cdot \nabla v~\mathrm{d} x &= \int_\Omega fv~\mathrm{d} x && \forall v \in \hat{V}_h.
 \end{align}
 This variational problem, together with suitable definitions of $V_h$ and $\hat{V}_h$ uniquely define our approximate numerical solution of the Poisson equation. 
 Note that the boundary condition is encoded as part of the test and trial spaces. This might seem complicated at first glance, 
@@ -118,8 +118,8 @@ a(u,v)&=L(v)&& \forall v \in \hat{V}.
 \end{align}
 For the Poisson equation, we have:
 \begin{align}
-a(u,v) &= \int_{\Omega} \nabla u \cdot \nabla v ~\mathrm{d} x,\\
-L(v) &= \int_{\Omega} fv ~\mathrm{d} x.
+a(u,v) &= \int_{\Omega} \nabla u \cdot \nabla v~\mathrm{d} x,\\
+L(v) &= \int_{\Omega} fv~\mathrm{d} x.
 \end{align}
 In the literature $a(u,v)$ is known as the _bilinear form_ and $L(v)$ as a _linear form_. 
 For every linear problem, we will identify all terms with the unknown $u$ and collect them in $a(u,v)$, and collect all terms with only  known functions in $L(v)$.
