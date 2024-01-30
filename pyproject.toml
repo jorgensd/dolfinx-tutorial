@@ -7,8 +7,6 @@ name = "DOLFINx_Tutorial"
 version = "0.7.2"
 dependencies = [
     "jupyter-book",
-    # Pin docutils due to https://github.com/executablebooks/jupyter-book/issues/1970#issuecomment-1466051277
-    "docutils==0.17.1",
     "meshio",
     "h5py",
     "seaborn",
