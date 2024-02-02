@@ -108,7 +108,7 @@ uh = problem.solve()
 
 x = ufl.SpatialCoordinate(mesh)
 u_ex = 0.5 * x[0]**2 + 1j*x[1]**2
-L2_error = dolfinx.fem.form(ufl.dot(uh-u_ex, uh-u_ex) * ufl.dx(metadata={"quadrature_degree": 5}))
+L2_error = dolfinx.fem.form(ufl.dot(uh-u_ex, ufl.conj(uh-u_ex)) * ufl.dx(metadata={"quadrature_degree": 5}))
 local_error = dolfinx.fem.assemble_scalar(L2_error)
 global_error = np.sqrt(mesh.comm.allreduce(local_error, op=MPI.SUM))
 max_error = mesh.comm.allreduce(np.max(np.abs(u_c.x.array-uh.x.array)))
