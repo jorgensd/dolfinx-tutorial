@@ -39,7 +39,7 @@ The IPCS scheme involves three steps. First, we compute a *tentative velocity $u
     -\left\langle \mu \nabla u^{n+\frac{1}{2}}\cdot n, v \right \rangle_{\partial\Omega}=
     \left\langle f^{n+1}, v \right\rangle.
 ```
-This notation, suitable for problems wit many terms in the variational formulations, requires some explaination. 
+This notation, suitable for problems with many terms in the variational formulations, requires some explanation. 
 First, we use the short-hand notation
 ```{math}
 \langle v, w \rangle = \int_{\Omega} vw~\mathrm{d}x, \qquad
@@ -50,7 +50,7 @@ This allows us to express the variational problem in a more compact way. Second,
    u^{n+\frac{1}{2}}\approx \frac{u^{n}+ u^{n+1}}{2}.
 ```
 Third, we notice that the variational problem [](ipcs-one) arises from the integration by parts of the term 
-$langle -\nabla \cdot \sigma, v\rangle$. Just as for the [linear elasticity problem](./linearelasticity.md), we obtain
+$\langle -\nabla \cdot \sigma, v\rangle$. Just as for the [linear elasticity problem](./linearelasticity.md), we obtain
 ```{math}
     \langle -\nabla \cdot \sigma, v\rangle =
     \langle \sigma, \epsilon(v) \rangle 
@@ -88,7 +88,7 @@ Taking the divergence and requiring that $\nabla \cdot u^{n+1}=0$ by the Navier-
 :label: ipcs-tmp
  - \frac{\rho \nabla\cdot  u^*}{\Delta t}+ \nabla^2p^{n+1}-\nabla^2p^n=0,
 ```
-which is the Poisson problem for the pressure $p^{n+1} resulting in the variational formulation [](ipcs-two).
+which is the Poisson problem for the pressure $p^{n+1}$ resulting in the variational formulation [](ipcs-two).
 
 Finally, we compute the corrected velocity $u^{n+1}$ from the equation [](ipcs-tmp). Multiplying this equation by a test function $v$, we obtain
 ```{math}

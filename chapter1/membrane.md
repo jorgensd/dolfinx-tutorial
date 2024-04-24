@@ -8,7 +8,7 @@ In this section, we will turn our attentition to a physically more relevant prob
 
 We would like to compute the deflection $D(x,y)$ of a two-dimensional, circular membrane of radius $R$, subject to a load $p$ over the membrane. The appropriate PDE model is 
 \begin{align}
-     -T \nabla^2D&=p \quad\text{in }\quad \Omega=\{(x,y)\vert x^2+y^2\leq R \}.
+     -T \nabla^2D&=p \quad\text{in }\quad \Omega=\{(x,y)\vert x^2+y^2\leq R^2 \}.
 \end{align}
 Here, $T$ is the tension in the membrane (constant), and  $p$ is the external pressure load. The boundary of the membrane has no deflection. This implies that $D=0$ is the boundary condition. We model a localized load as a Gaussian function:
 \begin{align}
