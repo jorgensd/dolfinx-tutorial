@@ -23,8 +23,8 @@
 #
 # $$-\Delta u = f \text{ in } \Omega,$$
 # $$ f = -1 - 2j \text{ in } \Omega,$$
-# $$ u = u*{exact} \text{ on } \partial\Omega,$$
-# $$u*{exact}(x, y) = \frac{1}{2}x^2 + 1j\cdot y^2,$$
+# $$ u = u_{exact} \text{ on } \partial\Omega,$$
+# $$u_{exact}(x, y) = \frac{1}{2}x^2 + 1j\cdot y^2,$$
 #
 # As in [Solving the Poisson equation](./fundamentals) we want to express our partial differential equation as a weak formulation.
 #
