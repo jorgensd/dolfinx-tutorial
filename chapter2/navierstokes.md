@@ -67,7 +67,7 @@ which means that we must use the UFL-operator `nabla_grad`. If we use the operat
 As mentioned in the note in [Linear elasticity implementation](./linearelasticity_code) the usage of `nabla_grad` and `grad` has to be interpreted with care. For the Navier-Stokes equations it is important to consider the term $u\cdot \nabla u$ which should be interpreted as the vector $w$ with elements
 $w_i=\sum_{j}\left(u_j\frac{\partial}{\partial x_j}\right)u_i = \sum_j u_j\frac{\partial u_i}{\partial x_j}$. 
 This term can be  implemented in  FEniCSx as either 
-`grad(u)*u`, since this expression becomes $\sum_j\frac{\partial u_j}{\partial x_j}u_j$, or as `dot(u, nabla_grad(u))` since this 
+`grad(u)*u`, since this expression becomes $\sum_j\frac{\partial u_i}{\partial x_j}u_j$, or as `dot(u, nabla_grad(u))` since this 
 expression becomes $\sum_i u_i\frac{\partial u_j}{x_i}$. We will use the notation `dot(u, nabla_grad(u))` below since it corresponds more closely to the standard notation $u\cdot \nabla u$.
 ```
 

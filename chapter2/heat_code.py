@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.7
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -111,7 +111,7 @@ solver.setType(PETSc.KSP.Type.PREONLY)
 solver.getPC().setType(PETSc.PC.Type.LU)
 
 # ## Solving the time-dependent problem
-# With these structures in place, we crete our time-stepping loop.
+# With these structures in place, we create our time-stepping loop.
 # In this loop, we first update the Dirichlet boundary condition by interpolating the updated
 # expression `u_exact` into `V`. The next step is to re-assemble the vector `b`, with the update `u_n`.
 # Then, we need to apply the boundary condition to this vector. We do this by using the lifting operation,
