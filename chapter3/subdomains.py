@@ -61,7 +61,7 @@ def Omega_1(x):
 
 # -
 
-# Note that both function uses a $\leq$ or $\geq$, as FEniCSx will evaluate each cell at all of the vertices, and thus for has to return `True` for all vertices align with the interface to be marked properly.
+# Note that both functions use a $\leq$ or $\geq$, as FEniCSx will evaluate each cell at all of the vertices, and thus has to return `True` for all vertices aligned with the interface to be marked properly.
 #
 # We will solve a variable-coefficient extension of the Poisson equation
 #
