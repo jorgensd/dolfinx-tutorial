@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -114,7 +114,7 @@ a = dot(grad(u), grad(v)) * dx
 
 # -
 
-# Now we get to the Neumann and Dirichlet boundary condition. As previously, we use a Python-function to define the boundary where we should have a Dirichlet condition. Then, with this function, we locate degrees of freedom that fullfils this condition.
+# Now we get to the Neumann and Dirichlet boundary condition. As previously, we use a Python-function to define the boundary where we should have a Dirichlet condition. Then, with this function, we locate degrees of freedom that fulfill this condition.
 
 # +
 def u_exact(x):

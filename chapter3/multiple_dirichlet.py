@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -15,7 +15,7 @@
 
 # # Setting multiple Dirichlet condition
 #
-# In the previous section, we used a single function to $u_d$ to setting Dirichlet conditions on two parts of the boundary. However, it is often more practical to use multiple functions, one for each subdomain of the boundary. We consider a similar example to [the previous example](./neumann_dirichlet_code) and redefine it consist of two Dirichlet boundary conditions
+# In the previous section, we used a single function for $u_D$ to set Dirichlet conditions on two parts of the boundary. However, it is often more practical to use multiple functions, one for each subdomain of the boundary. We consider a similar example to [the previous example](./neumann_dirichlet_code) and redefine it to consist of two Dirichlet boundary conditions
 #
 # $$
 # -\nabla^2 u =f \quad \text{in } \Omega,

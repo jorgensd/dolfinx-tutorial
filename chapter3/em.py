@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.7
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -27,17 +27,20 @@
 # We would like to compute the magnetic field $B$ in the iron cylinder, the copper wires, and the surrounding vaccum.
 #
 # We start by simplifying the problem to a 2D problem. We can do this by assuming that the cylinder extends far along the z-axis and as a consequence the field is virtually independent of the z-coordinate.
-# Next, we consder Maxwell's equation to derive a Poisson equation for the magnetic field (or rather its potential)
+# Next, we consider Maxwell's equation to derive a Poisson equation for the magnetic field (or rather its potential)
 #
 # $$
 # \nabla \cdot D = \rho,
 # $$
+#
 # $$
 # \nabla \cdot B = 0,
 # $$
+#
 # $$
 # \nabla \times E = -\frac{\partial B}{\partial t},
 # $$
+#
 # $$
 # \nabla \times H = \frac{\partial D}{\partial t}+ J.
 # $$
@@ -63,29 +66,33 @@
 # $$
 #     - \nabla \cdot (\mu^{-1} \nabla A_z) = J_z \qquad \text{in } \mathbb{R}^2,\\
 # $$
+#
 # $$
 # \lim_{\vert(x,y)\vert\to \infty}A_z = 0.
 # $$
 #
-# Since we cannot solve the problem on an infinite domain, we will truncate the domain using a large disk, and set $A_z=0$ on the boundary. The current $J_z$ is set to $+1$A in the interior set of the circles (copper-wire cross sections) and to $-1$ A in the exteriror set of circles in the cross section figure.
+# Since we cannot solve the problem on an infinite domain, we will truncate the domain using a large disk, and set $A_z=0$ on the boundary. The current $J_z$ is set to $+1$A in the interior set of the circles (copper-wire cross sections) and to $-1$ A in the exterior set of circles in the cross section figure.
 # Once the magnetic field vector potential has been computed, we can compute the magnetic field $B=B(x,y)$ by
 #
 # $$
 #     B(x,y)=\left(\frac{\partial A_z}{\partial y}, - \frac{\partial A_z}{\partial x} \right).
 # $$
 #
-# The weak formulation is easily obtained by multiplication of a test function $v$, followed by integration by parts, where all boundary integrals vanishes due to the Dirichlet condition, we obtain $a(A_z,v)=L(v)$ with
+# The weak formulation is easily obtained by multiplication of a test function $v$, followed by integration by parts, where all boundary integrals vanish due to the Dirichlet condition, we obtain $a(A_z,v)=L(v)$ with
 #
 # $$
 # a(A_z, v)=\int_\Omega \mu^{-1}\nabla A_z \cdot \nabla v ~\mathrm{d}x,
 # $$
+#
 # $$
 # L(v)=\int_\Omega J_z v~\mathrm{d} x.
 # $$
+#
 
 # ## Meshing a complex structure with subdomains
 #
 # We create the domain visualized in the cross section figure above using gmsh. Note that we are using the `gmsh.model.occ.fragment` commands to ensure that the boundaries of the wires are resolved in the mesh.
+#
 
 # +
 from dolfinx import default_scalar_type
@@ -199,17 +206,20 @@ if mesh_comm.rank == model_rank:
 # -
 
 # As in [the Navier-Stokes tutorial](../chapter2/ns_code2) we load the mesh directly into DOLFINx, without writing it to file.
+#
 
 mesh, ct, _ = model_to_mesh(gmsh.model, mesh_comm, model_rank, gdim=2)
 gmsh.finalize()
 
 # To inspect the mesh, we use Paraview, and obtain the following mesh
+#
 
 with XDMFFile(MPI.COMM_WORLD, "mt.xdmf", "w") as xdmf:
     xdmf.write_mesh(mesh)
     xdmf.write_meshtags(ct, mesh.geometry)
 
 # We can also visualize the subdommains using pyvista
+#
 
 pyvista.start_xvfb()
 plotter = pyvista.Plotter()
@@ -225,7 +235,8 @@ else:
     cell_tag_fig = plotter.screenshot("cell_tags.png")
 
 
-# Next, we define the discontinous functions for the permability $\mu$ and current $J_z$ using the `MeshTags` as in [Defining material parameters through subdomains](./subdomains)
+# Next, we define the discontinous functions for the permeability $\mu$ and current $J_z$ using the `MeshTags` as in [Defining material parameters through subdomains](./subdomains)
+#
 
 # +
 
@@ -254,6 +265,7 @@ for tag in material_tags:
 # In the code above, we have used a somewhat less extreme value for the magnetic permability of iron. This is to make the solution a little more interesting. It would otherwise be completely dominated by the field in the iron cylinder.
 #
 # We can now define the weak problem
+#
 
 # +
 V = FunctionSpace(mesh, ("Lagrange", 1))
@@ -269,12 +281,14 @@ L = J * v * dx
 # -
 
 # We are now ready to solve the linear problem
+#
 
 A_z = Function(V)
 problem = LinearProblem(a, L, u=A_z, bcs=[bc])
 problem.solve()
 
 # As we have computed the magnetic potential, we can now compute the magnetic field, by setting `B=curl(A_z)`. Note that as we have chosen a function space of first order piecewise linear function to describe our potential, the curl of a function in this space is a discontinous zeroth order function (a function of cell-wise constants). We use `dolfinx.fem.Expression` to interpolate the curl into `W`.
+#
 
 W = VectorFunctionSpace(mesh, ("DG", 0))
 B = Function(W)
@@ -284,6 +298,7 @@ B.interpolate(B_expr)
 # Note that we used `ufl.as_vector` to interpret the `Python`-tuple `(A_z.dx(1), -A_z.dx(0))` as a vector in the unified form language (UFL).
 #
 # We now plot the magnetic potential $A_z$ and the magnetic field $B$. We start by creating a new plotter
+#
 
 # +
 plotter = pyvista.Plotter()
@@ -300,10 +315,12 @@ else:
 # -
 
 # ## Visualizing the magnetic field
+#
 # As the magnetic field is a piecewise constant vector field, we need create a custom plotting function.
 # We start by computing the midpoints of each cell, which is where we would like to visualize the cell-wise constant vector.
-# Next, we take the data from the function `B`, and  shape it to become a 3D vector.
+# Next, we take the data from the function `B`, and shape it to become a 3D vector.
 # We connect the vector field with the midpoint by using `pyvista.PolyData`.
+#
 
 # +
 plotter = pyvista.Plotter()

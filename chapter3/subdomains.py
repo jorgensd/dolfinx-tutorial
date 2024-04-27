@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.7
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -16,7 +16,7 @@
 # # Defining subdomains for different materials
 # Author: Jørgen S. Dokken
 #
-# Solving PDEs in domains made up of different materials is frequently encountered task. In FEniCSx, we handle these problems by defining a Discontinous cell-wise constant function.
+# Solving PDEs in domains made up of different materials is a frequently encountered task. In FEniCSx, we handle these problems by defining a Discontinous cell-wise constant function.
 # Such a function can be created over any mesh in the following way
 # ## Subdomains on built-in meshes
 
@@ -61,7 +61,7 @@ def Omega_1(x):
 
 # -
 
-# Note that both fucntion uses a $\leq$ or $\geq$, as FEniCSx will evaluate each cell at all of the vertices, and thus for has to return `True` for all vertices align with the interface to be marked properly.
+# Note that both function uses a $\leq$ or $\geq$, as FEniCSx will evaluate each cell at all of the vertices, and thus for has to return `True` for all vertices align with the interface to be marked properly.
 #
 # We will solve a variable-coefficient extension of the Poisson equation
 #
@@ -81,7 +81,7 @@ kappa = Function(Q)
 cells_0 = locate_entities(mesh, mesh.topology.dim, Omega_0)
 cells_1 = locate_entities(mesh, mesh.topology.dim, Omega_1)
 
-# In the previous code block, we found which cells (triangular elements) which satisfies the condition for being in $\Omega_0, \Omega_1$. As the $DG-0$ function contain only one degree of freedom per mesh, there is a one to one mapping between the cell indicies and the degrees of freedom. We let $\kappa=\begin{cases}
+# In the previous code block, we found which cells (triangular elements) satisfy the condition for being in $\Omega_0, \Omega_1$. As the $DG-0$ function contains only one degree of freedom per cell, there is a one to one mapping between the cell indicies and the degrees of freedom. We let $\kappa=\begin{cases}
 # 1 &\text{if } x\in\Omega_0\\
 # 0.1& \text{if } x\in\Omega_1\\
 # \end{cases}$
@@ -135,7 +135,7 @@ else:
     figure = p2.screenshot("subdomains_structured2.png")
 
 
-# We clearly observe different behavior in the two regions, whose both has the same Dirichlet boundary condition on the left side, where $x=0$.
+# We clearly observe different behavior in the two regions, which both have the same Dirichlet boundary condition on the left side, where $x=0$.
 
 # ## Interpolation with Python-function
 # As we saw in the first approach, in many cases, we can use the geometrical coordinates to determine which coefficient we should use. Using the unstructured mesh from the previous example, we illustrate an alternative approach using interpolation:
