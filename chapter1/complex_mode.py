@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.1
+#       jupytext_version: 1.15.2
 #   kernelspec:
 #     display_name: Python 3 (DOLFINx complex)
 #     language: python
@@ -28,10 +28,10 @@
 #
 # As in [Solving the Poisson equation](./fundamentals) we want to express our partial differential equation as a weak formulation.
 #
-# We start by defining our discrete function space $V_h$, such that $u_h\in V_h$ and $u_h = \sum_{i=1}^N c_i \phi_i(x, y)$ where $\phi_i$ are **real valued** global basis functions of our space $V_h$, $c_i \in \mathcal{C}$ are the **complex valued** degrees of freedom.
+# We start by defining our discrete function space $V_h$, such that $u_h\in V_h$ and $u_h = \sum_{i=1}^N c_i \phi_i(x, y)$ where $\phi_i$ are **real valued** global basis functions of our space $V_h$, and $c_i \in \mathcal{C}$ are the **complex valued** degrees of freedom.
 #
 # Next, we choose a test function $v\in \hat V_h$ where $\hat V_h\subset V_h$ such that $v\vert_{\partial\Omega}=0$, as done in the first tutorial.
-# We now need to define our inner product space. We choose the $L^2$ inner product spaces, which is a _[sesquilinear](https://en.wikipedia.org/wiki/Sesquilinear_form) 2-form_, Meaning that $\langle u, v\rangle$ is a map from $V_h\times V_h\mapsto K$, and $\langle u, v \rangle = \int_\Omega u \cdot \bar v ~\mathrm{d} x$. As it is sesquilinear, we have the following properties:
+# We now need to define our inner product space. We choose the $L^2$ inner product spaces, which is a _[sesquilinear](https://en.wikipedia.org/wiki/Sesquilinear_form) 2-form_, meaning that $\langle u, v\rangle$ is a map from $V_h\times V_h\mapsto K$, and $\langle u, v \rangle = \int_\Omega u \cdot \bar v ~\mathrm{d} x$. As it is sesquilinear, we have the following properties:
 #
 # $$\langle u , v \rangle = \overline{\langle v, u \rangle},$$
 # $$\langle u , u \rangle \geq 0.$$
@@ -42,7 +42,7 @@
 #
 # ## Installation of FEniCSx with complex number support
 #
-# FEniCSx supports both real and complex numbers, meaning that we can create function spaces with real valued or complex valued coefficients.
+# FEniCSx supports both real and complex numbers, so we can create a function space with real valued or complex valued coefficients.
 #
 
 import dolfinx
@@ -57,7 +57,7 @@ u_c.interpolate(lambda x:0.5*x[0]**2 + 1j*x[1]**2)
 print(u_r.x.array.dtype)
 print(u_c.x.array.dtype)
 
-# However, as we would like to solve linear algebra problems on the form $Ax=b$, we need to be able to use matrices and vectors that support real and complex numbers. As [PETSc](https://petsc.org/release/) is one of the most popular interfaces to linear algebra packages, we need to be able to work with their matrix and vector structures.
+# However, as we would like to solve linear algebra problems of the form $Ax=b$, we need to be able to use matrices and vectors that support real and complex numbers. As [PETSc](https://petsc.org/release/) is one of the most popular interfaces to linear algebra packages, we need to be able to work with their matrix and vector structures.
 #
 # Unfortunately, PETSc only supports one floating type in their matrices, thus we need to install two versions of PETSc, one that supports `float64` and one that supports `complex128`. In the [docker images](https://hub.docker.com/r/dolfinx/dolfinx) for DOLFINx, both versions are installed, and one can switch between them by calling `source dolfinx-real-mode` or `source dolfinx-complex-mode`. For the `dolfinx/lab` images, one can change the Python kernel to be either the real or complex mode, by going to `Kernel->Change Kernel...` and choosing `Python3 (ipykernel)` (for real mode) or `Python3 (DOLFINx complex)` (for complex mode).
 #
@@ -83,7 +83,7 @@ L = ufl.inner(f, v) * ufl.dx
 
 # Note that we have used the `PETSc.ScalarType` to wrap the constant source on the right hand side. This is because we want the integration kernels to assemble into the correct floating type.
 #
-# Secondly, note that we are using `ufl.inner` to describe multiplication of $f$ and $v$, even if they are scalar values. This is because `ufl.inner` takes the conjugate of the second argument, as decribed by the $L^2$ inner product. One could alternatively write this out manually
+# Secondly, note that we are using `ufl.inner` to describe multiplication of $f$ and $v$, even if they are scalar values. This is because `ufl.inner` takes the conjugate of the second argument, as decribed by the $L^2$ inner product. One could alternatively write this out explicitly
 #
 # ### Inner-products and derivatives
 #
@@ -112,7 +112,7 @@ bc = dolfinx.fem.dirichletbc(u_c, boundary_dofs)
 problem = dolfinx.fem.petsc.LinearProblem(a, L, bcs=[bc])
 uh = problem.solve()
 
-# We compute the $L^2$ error and the max error
+# We compute the $L^2$ error and the max error.
 #
 # ## Error computation
 #
@@ -127,7 +127,7 @@ print(global_error, max_error)
 
 # ## Plotting
 #
-# Finally, we plot the real and imaginary solution
+# Finally, we plot the real and imaginary solutions.
 #
 
 import pyvista

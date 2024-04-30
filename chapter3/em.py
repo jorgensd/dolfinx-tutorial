@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.1
+#       jupytext_version: 1.15.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -32,15 +32,12 @@
 # $$
 # \nabla \cdot D = \rho,
 # $$
-#
 # $$
 # \nabla \cdot B = 0,
 # $$
-#
 # $$
 # \nabla \times E = -\frac{\partial B}{\partial t},
 # $$
-#
 # $$
 # \nabla \times H = \frac{\partial D}{\partial t}+ J.
 # $$
@@ -66,7 +63,6 @@
 # $$
 #     - \nabla \cdot (\mu^{-1} \nabla A_z) = J_z \qquad \text{in } \mathbb{R}^2,\\
 # $$
-#
 # $$
 # \lim_{\vert(x,y)\vert\to \infty}A_z = 0.
 # $$
@@ -83,16 +79,13 @@
 # $$
 # a(A_z, v)=\int_\Omega \mu^{-1}\nabla A_z \cdot \nabla v ~\mathrm{d}x,
 # $$
-#
 # $$
 # L(v)=\int_\Omega J_z v~\mathrm{d} x.
 # $$
-#
 
 # ## Meshing a complex structure with subdomains
 #
 # We create the domain visualized in the cross section figure above using gmsh. Note that we are using the `gmsh.model.occ.fragment` commands to ensure that the boundaries of the wires are resolved in the mesh.
-#
 
 # +
 from dolfinx import default_scalar_type
@@ -206,20 +199,17 @@ if mesh_comm.rank == model_rank:
 # -
 
 # As in [the Navier-Stokes tutorial](../chapter2/ns_code2) we load the mesh directly into DOLFINx, without writing it to file.
-#
 
 mesh, ct, _ = model_to_mesh(gmsh.model, mesh_comm, model_rank, gdim=2)
 gmsh.finalize()
 
 # To inspect the mesh, we use Paraview, and obtain the following mesh
-#
 
 with XDMFFile(MPI.COMM_WORLD, "mt.xdmf", "w") as xdmf:
     xdmf.write_mesh(mesh)
     xdmf.write_meshtags(ct, mesh.geometry)
 
 # We can also visualize the subdommains using pyvista
-#
 
 pyvista.start_xvfb()
 plotter = pyvista.Plotter()
@@ -265,7 +255,6 @@ for tag in material_tags:
 # In the code above, we have used a somewhat less extreme value for the magnetic permability of iron. This is to make the solution a little more interesting. It would otherwise be completely dominated by the field in the iron cylinder.
 #
 # We can now define the weak problem
-#
 
 # +
 V = FunctionSpace(mesh, ("Lagrange", 1))
@@ -281,14 +270,12 @@ L = J * v * dx
 # -
 
 # We are now ready to solve the linear problem
-#
 
 A_z = Function(V)
 problem = LinearProblem(a, L, u=A_z, bcs=[bc])
 problem.solve()
 
 # As we have computed the magnetic potential, we can now compute the magnetic field, by setting `B=curl(A_z)`. Note that as we have chosen a function space of first order piecewise linear function to describe our potential, the curl of a function in this space is a discontinous zeroth order function (a function of cell-wise constants). We use `dolfinx.fem.Expression` to interpolate the curl into `W`.
-#
 
 W = VectorFunctionSpace(mesh, ("DG", 0))
 B = Function(W)
@@ -298,7 +285,6 @@ B.interpolate(B_expr)
 # Note that we used `ufl.as_vector` to interpret the `Python`-tuple `(A_z.dx(1), -A_z.dx(0))` as a vector in the unified form language (UFL).
 #
 # We now plot the magnetic potential $A_z$ and the magnetic field $B$. We start by creating a new plotter
-#
 
 # +
 plotter = pyvista.Plotter()
@@ -315,12 +301,10 @@ else:
 # -
 
 # ## Visualizing the magnetic field
-#
 # As the magnetic field is a piecewise constant vector field, we need create a custom plotting function.
 # We start by computing the midpoints of each cell, which is where we would like to visualize the cell-wise constant vector.
-# Next, we take the data from the function `B`, and shape it to become a 3D vector.
+# Next, we take the data from the function `B`, and  shape it to become a 3D vector.
 # We connect the vector field with the midpoint by using `pyvista.PolyData`.
-#
 
 # +
 plotter = pyvista.Plotter()
