@@ -1,5 +1,6 @@
 # Execute from root of repo as: docker buildx build --platform=linux/arm64,linux/amd64 -f docker/Dockerfile ./docker/ --progress=plain
-FROM ghcr.io/fenics/dolfinx/lab:nightly
+
+FROM ghcr.io/fenics/dolfinx/lab:v0.8.0
 ARG TARGETPLATFORM
 
 
@@ -30,7 +31,7 @@ RUN if [ "$TARGETPLATFORM" = "linux/arm64" ]; then python3 -m pip install "https
 RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then python3 -m pip install vtk; fi
 
 ADD pyproject.toml /tmp/pyproject.toml
-RUN python3 -m pip install --no-cache-dir --no-binary=h5py -v pyproject.toml
+RUN python3 -m pip install --no-cache-dir --no-binary=h5py -v .
 RUN python3 -m pip cache purge
 RUN jupyter lab build
 ENTRYPOINT ["jupyter", "lab", "--ip", "0.0.0.0", "--no-browser", "--allow-root"]

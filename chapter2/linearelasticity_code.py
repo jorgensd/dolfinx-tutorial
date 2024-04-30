@@ -52,7 +52,7 @@ V = fem.functionspace(domain, ("Lagrange", 1, (domain.geometry.dim, )))
 
 
 # ## Boundary conditions
-# As we would like to clamp the boundary at $x=0$, we do this by using a marker function, which locate the facets where $x$ is close to zero by machine prescision.
+# As we would like to clamp the boundary at $x=0$, we do this by using a marker function, which locate the facets where $x$ is close to zero by machine precision.
 
 # +
 def clamped_boundary(x):

@@ -1,7 +1,7 @@
 # Deflection of a membrane
 Authors: Hans Petter Langtangen and Anders Logg.
 
-Modified to DOLFINx by Jørgen S. Dokken
+Modified for DOLFINx by Jørgen S. Dokken
 
 In the first FEniCSx program, we solved a simple problem which we could easily use to verify the implementation.
 In this section, we will turn our attentition to a physically more relevant problem with solutions of a somewhat more exciting shape.
@@ -12,13 +12,13 @@ We would like to compute the deflection $D(x,y)$ of a two-dimensional, circular 
 \end{align}
 Here, $T$ is the tension in the membrane (constant), and  $p$ is the external pressure load. The boundary of the membrane has no deflection. This implies that $D=0$ is the boundary condition. We model a localized load as a Gaussian function:
 \begin{align}
-     p(x,y)&=\frac{A}{2\pi\sigma}e^{-\frac{1}{2}\left(\frac{x-x_0}{\sigma}\right)^2-\frac{1}{2}\left(\frac{y-y_0}{\sigma}\right)^2}
+     p(x,y)&=\frac{A}{2\pi\sigma}e^{-\frac{1}{2}\left(\frac{x-x_0}{\sigma}\right)^2-\frac{1}{2}\left(\frac{y-y_0}{\sigma}\right)^2}.
 \end{align}
-The parameter $A$ is the amplitude of the pressure, $(x_0, y_0)$ the localization of the maximum point of the load, and $\sigma$ the "width" of $p$. We will take the center $(x_0,y_0)$ to be $(0,R_0)$ for some $0<R_0<R$.
+The parameter $A$ is the amplitude of the pressure, $(x_0, y_0)$ the location of the maximum point of the load, and $\sigma$ the "width" of $p$. We will take the center $(x_0,y_0)$ to be $(0,R_0)$ for some $0<R_0<R$.
 Then we have 
 \begin{align}
      p(x,y)&=\frac{A}{2\pi\sigma}e^{-\frac{1}{2}\left(\left(\frac{x}{\sigma}\right)^2
-     +\left(\frac{y-R_0}{\sigma}\right)^2\right)}
+     +\left(\frac{y-R_0}{\sigma}\right)^2\right)}.
 \end{align}
 ## Scaling the  equation
 
@@ -36,7 +36,7 @@ With $D_e=\frac{AR^2}{8\pi\sigma T}$ and dropping the bars we obtain the scaled 
 \begin{align}
     -\nabla^2 w = 4e^{-\beta^2(x^2+(y-R_0)^2)}
 \end{align}
-to be solved over the unit disc with $w=0$ on the boundary. Now there are only two parameters to vary the dimensionless extent of the pressure, $\beta$, and the localization of the pressure peak, $R_0\in[0,1]$. As $\beta\to 0$, the solution will approach the special case $1-x^2-y^2$. Given a computed scaed solution $w$, the physical deflection can be computed by
+to be solved over the unit disc with $w=0$ on the boundary. Now there are only two parameters which vary the dimensionless extent of the pressure, $\beta$, and the location of the pressure peak, $R_0\in[0,1]$. As $\beta\to 0$, the solution will approach the special case $w=1-x^2-y^2$. Given a computed scaed solution $w$, the physical deflection can be computed by
 \begin{align}
-    D=\frac{AR^2}{8\pi\sigma T}w
+    D=\frac{AR^2}{8\pi\sigma T}w.
 \end{align}
