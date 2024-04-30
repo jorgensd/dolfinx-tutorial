@@ -90,7 +90,7 @@ for line in solver_output.readlines():
 # For large problems, we instead need to use an iterative method which are faster and require less memory.
 # ## Choosing a linear solver and preconditioner
 # As the Poisson equation results in a symmetric, positive definite system matrix, the optimal Krylov solver is the conjugate gradient (Lagrange) method. The default preconditioner is the incomplete LU factorization (ILU), which is a popular and robous overall preconditioner. We can change the preconditioner by setting `"pc_type"` to some of the other preconditioners in petsc, which you can find in at [PETSc KSP solvers](https://petsc.org/release/manual/ksp/#tab-kspdefaults) and [PETSc preconditioners](https://petsc.org/release/manual/ksp/#tab-pcdefaults).
-# You can set any opition in `PETSc` through the `petsc_options` input, such as the absolute tolerance (`"ksp_atol"`), relative tolerance (`"ksp_rtol"`) and maximum number of iterations (`"ksp_max_it"`).
+# You can set any option in `PETSc` through the `petsc_options` input, such as the absolute tolerance (`"ksp_atol"`), relative tolerance (`"ksp_rtol"`) and maximum number of iterations (`"ksp_max_it"`).
 
 cg_problem = LinearProblem(a, L, bcs=bcs,
                            petsc_options={"ksp_type": "cg", "ksp_rtol": 1e-6, "ksp_atol": 1e-10, "ksp_max_it": 1000})

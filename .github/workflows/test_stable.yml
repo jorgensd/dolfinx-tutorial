@@ -72,7 +72,7 @@ jobs:
           mpirun -n 2 python3 compiler_parameters.py
 
       - name: Upload Navier-Stokes DFG 2D 3 plots
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: DFG2D-3
           path: chapter2/figures

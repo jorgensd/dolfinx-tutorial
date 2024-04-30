@@ -15,7 +15,7 @@
 
 # # Setting multiple Dirichlet condition
 #
-# In the previous section, we used a single function to $u_d$ to setting Dirichlet conditions on two parts of the boundary. However, it is often more practical to use multiple functins, one for each subdomain of the boundary. We consider a similar example to [the previous example](./neumann_dirichlet_code) and redefine it consist of two Dirichlet boundary conditions
+# In the previous section, we used a single function to $u_d$ to setting Dirichlet conditions on two parts of the boundary. However, it is often more practical to use multiple functions, one for each subdomain of the boundary. We consider a similar example to [the previous example](./neumann_dirichlet_code) and redefine it consist of two Dirichlet boundary conditions
 #
 # $$
 # -\nabla^2 u =f \quad \text{in } \Omega,
@@ -50,7 +50,6 @@ from ufl import SpatialCoordinate, TestFunction, TrialFunction, dot, dx, ds, gra
 
 import numpy as np
 import pyvista
-
 
 
 def u_exact(x):
@@ -123,6 +122,3 @@ if not pyvista.OFF_SCREEN:
     plotter.show()
 else:
     figure = plotter.screenshot("multiple_dirichlet.png")
-# -
-
-

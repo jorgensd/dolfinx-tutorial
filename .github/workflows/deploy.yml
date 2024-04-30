@@ -47,16 +47,16 @@ jobs:
         uses: actions/configure-pages@v4
 
       - name: Download docs artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: webpage
           path: "./public"
 
       - name: Upload page artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: "./public"
 
       - name: Deploy coverage report to GH Pages
         id: deployment
-        uses: actions/deploy-pages@v3
+        uses: actions/deploy-pages@v4

@@ -23,7 +23,7 @@
 # -\frac{\partial u}{\partial n}=g
 # $$
 #
-# is applied to the  remaining sides $y=0$ and $y=1$.
+# is applied to the remaining sides $y=0$ and $y=1$.
 #
 # ## The PDE problem
 # Let $\Lambda_D$ and $\Lambda_N$ denote parts of the boundary $\partial \Omega$ where the Dirichlet and Neumann conditions apply, respectively.
@@ -131,7 +131,7 @@ u_bc.interpolate(u_exact)
 bc = dirichletbc(u_bc, dofs_D)
 # -
 
-# The next step is to define the Neumann condition. We first define $g$ uses `UFL`s `SpatialCoordinate`-function, and then in turn create a boundary integration measure `ds`. As the test function $v$ is zero on the boundary integrals over the Dirichlet boundary dissapears, and wee can integrate `g*v*ds` over the entire boundary.
+# The next step is to define the Neumann condition. We first define $g$ uses `UFL`s `SpatialCoordinate`-function, and then in turn create a boundary integration measure `ds`. As the test function $v$ is zero on the boundary integrals over the Dirichlet boundary disappears, and we can integrate `g*v*ds` over the entire boundary.
 
 x = SpatialCoordinate(mesh)
 g = -4 * x[1]
