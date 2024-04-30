@@ -7,8 +7,7 @@ name = "DOLFINx_Tutorial"
 version = "0.7.2"
 dependencies = [
     "jupyter-book",
-    # Pin docutils due to https://github.com/executablebooks/jupyter-book/issues/1970#issuecomment-1466051277
-    "docutils==0.17.1",
+    "docutils",
     "meshio",
     "h5py",
     "seaborn",
@@ -19,7 +18,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pdbpp", "ipython"]
+dev = ["pdbpp", "ipython", "jupytext"]
 
 [tool.setuptools]
 packages = []
+
+
+[tool.jupytext]
+formats = "ipynb,py:percent"
