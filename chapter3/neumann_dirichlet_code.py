@@ -114,7 +114,7 @@ a = dot(grad(u), grad(v)) * dx
 
 # -
 
-# Now we get to the Neumann and Dirichlet boundary condition. As previously, we use a Python-function to define the boundary where we should have a Dirichlet condition. Then, with this function, we locate degrees of freedom that fullfils this condition.
+# Now we get to the Neumann and Dirichlet boundary condition. As previously, we use a Python-function to define the boundary where we should have a Dirichlet condition. Then, with this function, we locate degrees of freedom that fulfill this condition.
 
 # +
 def u_exact(x):

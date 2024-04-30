@@ -19,12 +19,12 @@
 # In this chapter, we will explore how to optimize and inspect the integration kernels used in DOLFINx.
 # As we have seen in the previous demos, DOLFINx uses the [Unified form language](https://github.com/FEniCS/ufl/) to describe variational problems.
 #
-# These descriptions has to be translated in to code for assembling the right and left hand side of the discrete variational problem.
+# These descriptions have to be translated into code for assembling the right and left hand side of the discrete variational problem.
 #
 # DOLFINx uses [ffcx](https://github.com/FEniCS/ffcx/) to generate efficient C code assembling the element matrices.
-# This C code is in turned compiled using [CFFI](https://cffi.readthedocs.io/en/latest/), and we can specify a variety of compile options.
+# This C code is in turn compiled using [CFFI](https://cffi.readthedocs.io/en/latest/), and we can specify a variety of compile options.
 #
-# We start by specifying the current directory as the place to place the generated C files, we obtain the current directory using pathlib
+# We start by specifying the current directory as the location to place the generated C files, we obtain the current directory using pathlib
 
 # +
 import matplotlib.pyplot as plt
@@ -67,7 +67,7 @@ def compile_form(space: str, degree: int, jit_options: Dict):
 
 # -
 
-# We start by considering the different levels of optimization the C compiled can use on the optimized code. A list of optimization options and explainations can be found [here](https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html)
+# We start by considering the different levels of optimization that the C compiler can use on the optimized code. A list of optimization options and explanations can be found [here](https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html)
 
 optimization_options = ["-O1", "-O2", "-O3", "-Ofast"]
 

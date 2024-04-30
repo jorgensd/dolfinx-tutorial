@@ -27,7 +27,7 @@
 # We would like to compute the magnetic field $B$ in the iron cylinder, the copper wires, and the surrounding vaccum.
 #
 # We start by simplifying the problem to a 2D problem. We can do this by assuming that the cylinder extends far along the z-axis and as a consequence the field is virtually independent of the z-coordinate.
-# Next, we consder Maxwell's equation to derive a Poisson equation for the magnetic field (or rather its potential)
+# Next, we consider Maxwell's equation to derive a Poisson equation for the magnetic field (or rather its potential)
 #
 # $$
 # \nabla \cdot D = \rho,
@@ -67,14 +67,14 @@
 # \lim_{\vert(x,y)\vert\to \infty}A_z = 0.
 # $$
 #
-# Since we cannot solve the problem on an infinite domain, we will truncate the domain using a large disk, and set $A_z=0$ on the boundary. The current $J_z$ is set to $+1$A in the interior set of the circles (copper-wire cross sections) and to $-1$ A in the exteriror set of circles in the cross section figure.
+# Since we cannot solve the problem on an infinite domain, we will truncate the domain using a large disk, and set $A_z=0$ on the boundary. The current $J_z$ is set to $+1$A in the interior set of the circles (copper-wire cross sections) and to $-1$ A in the exterior set of circles in the cross section figure.
 # Once the magnetic field vector potential has been computed, we can compute the magnetic field $B=B(x,y)$ by
 #
 # $$
 #     B(x,y)=\left(\frac{\partial A_z}{\partial y}, - \frac{\partial A_z}{\partial x} \right).
 # $$
 #
-# The weak formulation is easily obtained by multiplication of a test function $v$, followed by integration by parts, where all boundary integrals vanishes due to the Dirichlet condition, we obtain $a(A_z,v)=L(v)$ with
+# The weak formulation is easily obtained by multiplication of a test function $v$, followed by integration by parts, where all boundary integrals vanish due to the Dirichlet condition, we obtain $a(A_z,v)=L(v)$ with
 #
 # $$
 # a(A_z, v)=\int_\Omega \mu^{-1}\nabla A_z \cdot \nabla v ~\mathrm{d}x,
@@ -225,7 +225,8 @@ else:
     cell_tag_fig = plotter.screenshot("cell_tags.png")
 
 
-# Next, we define the discontinous functions for the permability $\mu$ and current $J_z$ using the `MeshTags` as in [Defining material parameters through subdomains](./subdomains)
+# Next, we define the discontinous functions for the permeability $\mu$ and current $J_z$ using the `MeshTags` as in [Defining material parameters through subdomains](./subdomains)
+#
 
 # +
 

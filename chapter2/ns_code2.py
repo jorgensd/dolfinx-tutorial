@@ -92,7 +92,8 @@ if mesh_comm.rank == model_rank:
     gmsh.model.addPhysicalGroup(volumes[0][0], [volumes[0][1]], fluid_marker)
     gmsh.model.setPhysicalName(volumes[0][0], fluid_marker, "Fluid")
 
-# To tag the different surfaces of the mesh, we tag the inflow (left hand side) with marker 2, the outflow (right hand side) with marker 3 and the fluid walls with 4 and obstacle with 5. We will do this by compute the center of mass for each geometrical entitiy.
+# To tag the different surfaces of the mesh, we tag the inflow (left hand side) with marker 2, the outflow (right hand side) with marker 3 and the fluid walls with 4 and obstacle with 5. We will do this by computing the center of mass for each geometrical entity.
+#
 
 inlet_marker, outlet_marker, wall_marker, obstacle_marker = 2, 3, 4, 5
 inflow, outflow, walls, obstacle = [], [], [], []
@@ -341,7 +342,8 @@ if mesh.comm.rank == 0:
     t_u = np.zeros(num_steps, dtype=np.float64)
     t_p = np.zeros(num_steps, dtype=np.float64)
 
-# We will also evaluate the pressure at two points, on in front of the obstacle, $(0.15, 0.2)$, and one behind the obstacle, $(0.25, 0.2)$. To do this, we have to find which cell is containing each of the points, so that we can create a linear combination of the local basis functions and coefficients.
+# We will also evaluate the pressure at two points, one in front of the obstacle, $(0.15, 0.2)$, and one behind the obstacle, $(0.25, 0.2)$. To do this, we have to find which cell contains each of the points, so that we can create a linear combination of the local basis functions and coefficients.
+#
 
 tree = bb_tree(mesh, mesh.geometry.dim)
 points = np.array([[0.15, 0.2, 0], [0.25, 0.2, 0]])
@@ -358,7 +360,8 @@ if mesh.comm.rank == 0:
 # Other temporal discretization schemes such as the second order backward difference discretization or Crank-Nicholson discretization with Adams-Bashforth linearization are better behaved than our simple backward difference scheme.
 # ```
 #
-# As in the previous example, we create output files for the velocity and pressure and solve the time-dependent problem. As we are solving a time dependent problem with many time steps, we use the `tqdm`-package to visualize the progress. This package can be install with `pip3`.
+# As in the previous example, we create output files for the velocity and pressure and solve the time-dependent problem. As we are solving a time dependent problem with many time steps, we use the `tqdm`-package to visualize the progress. This package can be installed with `pip3`.
+#
 
 from pathlib import Path
 folder = Path("results")

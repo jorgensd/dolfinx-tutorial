@@ -52,7 +52,7 @@ V = fem.FunctionSpace(domain, ("Lagrange", 1))
 
 # -
 
-# Note that we have used a much higher resolution that before to better resolve features of the solution.
+# Note that we have used a much higher resolution than before to better resolve features of the solution.
 # We also easily update the intial and boundary conditions. Instead of using a class to define the initial condition, we simply use a function
 
 # +
@@ -73,7 +73,7 @@ bc = fem.dirichletbc(PETSc.ScalarType(0), fem.locate_dofs_topological(V, fdim, b
 # -
 
 # ## Time-dependent output
-# To visualize the solution in an external program such as Paraview, we create a an `XDMFFile` which we can store multiple solutions in. The main advantage with an XDMFFile, is that we only need to store the mesh once, and can append multiple solutions to the same grid, reducing the storage space.
+# To visualize the solution in an external program such as Paraview, we create a an `XDMFFile` which we can store multiple solutions in. The main advantage with an XDMFFile is that we only need to store the mesh once and that we can append multiple solutions to the same grid, reducing the storage space.
 # The first argument to the XDMFFile is which communicator should be used to store the data. As we would like one output, independent of the number of processors, we use the `COMM_WORLD`. The second argument is the file name of the output file, while the third argument is the state of the file,
 # this could be read (`"r"`), write (`"w"`) or append (`"a"`).
 
@@ -109,7 +109,7 @@ A.assemble()
 b = create_vector(linear_form)
 
 # ## Using petsc4py to create a linear solver
-# As we have already assembled `a` into the matrix `A`, we can no longer use the `dolfinx.fem.petsc.LinearProblem` class to solve the problem. Therefore, we create a linear algebra solver using PETSc, and assign the matrix `A` to the solver, and choose the solution strategy.
+# As we have already assembled `a` into the matrix `A`, we can no longer use the `dolfinx.fem.petsc.LinearProblem` class to solve the problem. Therefore, we create a linear algebra solver using PETSc, assign the matrix `A` to the solver, and choose the solution strategy.
 
 solver = PETSc.KSP().create(domain.comm)
 solver.setOperators(A)
@@ -143,8 +143,8 @@ renderer = plotter.add_mesh(warped, show_edges=True, lighting=False,
 # ## Updating the solution and right hand side per time step
 # To be able to solve the variation problem at each time step, we have to assemble the right hand side and apply the boundary condition before calling
 # `solver.solve(b, uh.vector)`. We start by resetting the values in `b` as we are reusing the vector at every time step.
-# The next step is to assemble the vector, calling `dolfinx.fem.petsc.assemble_vector(b, L)` which means that we are assemble the linear for `L(v)` into the vector `b`. Note that we do not supply the boundary conditions for assembly, as opposed to the left hand side.
-# This is because we want to use lifting to apply the boundary condition, which preserves symmetry of the matrix $A$ if the bilinear form $a(u,v)=a(v,u)$ without Dirichlet boundary conditions.
+# The next step is to assemble the vector calling `dolfinx.fem.petsc.assemble_vector(b, L)`, which means that we are assembling the linear form `L(v)` into the vector `b`. Note that we do not supply the boundary conditions for assembly, as opposed to the left hand side.
+# This is because we want to use lifting to apply the boundary condition, which preserves symmetry of the matrix $A$ in the bilinear form $a(u,v)=a(v,u)$ without Dirichlet boundary conditions.
 # When we have applied the boundary condition, we can solve the linear system and update values that are potentially shared between processors.
 # Finally, before moving to the next time step, we update the solution at the previous time step to the solution at this time step.
 
@@ -185,4 +185,4 @@ xdmf.close()
 #
 # Then, we add a time-annotation to the figure, pressing: `Sources->Alphabetical->Annotate Time` and `Apply` in the properties panel. It Is also a good idea to select an output resolution, by pressing `View->Preview->1280 x 720 (HD)`.
 #
-# Then finally, click `File->Save Animation`, and save the animation to the desired format, such as `avi`, `ogv` or a sequence of `png`s. Make sure to set the framerate to something, sensible, in the range of $5-10$ frames per second.
+# Then finally, click `File->Save Animation`, and save the animation to the desired format, such as `avi`, `ogv` or a sequence of `png`s. Make sure to set the frame rate to something sensible, in the range of $5-10$ frames per second.

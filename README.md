@@ -16,15 +16,15 @@ If you want to contribute to this tutorial, please make a fork of the repository
 act -j test-nightly
 ```
 
-Any code added to the tutorial should work in parallel.
-
 Alternatively, if you want to add a separate chapter, a Jupyter notebook can be added to a pull request, without integrating it into the tutorial. If so, the notebook will be reviewed and modified to be included in the tutorial.
 
-Also ensure that both Python file and notebook files are updated by using jupytext, i.e.
+Any code added to the tutorial should work in parallel. If any changes are made to `ipynb` files, please ensure that these changes are reflected in the corresponding `py` files by using [`jupytext`](https://jupytext.readthedocs.io/en/latest/faq.html#can-i-use-jupytext-with-jupyterhub-binder-nteract-colab-saturn-or-azure):
 
 ```bash
 python3 -m jupytext --sync  */*.ipynb
 ```
+
+Any code added to the tutorial should work in parallel.
 
 ## Dependencies
 

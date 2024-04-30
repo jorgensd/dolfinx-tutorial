@@ -148,7 +148,7 @@ dolfinx.fem.petsc.assemble_vector(L, residual)
 print(f"Final residual {L.norm(0)}")
 
 # ## Visualization of Newton iterations
-# We next look at the evolution of the solutions and the error of the solution when compared to the two exact roots of the problem.
+# We next look at the evolution of the solution and the error of the solution when compared to the two exact roots of the problem.
 
 # +
 # Plot solution for each of the iterations

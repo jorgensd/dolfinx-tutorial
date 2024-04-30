@@ -180,7 +180,7 @@ magnitude.interpolate(us)
 warped["mag"] = magnitude.x.array
 # -
 
-# Finally, we solve the problem over several time steps, updating the y-component of the traction
+# Finally, we solve the problem over several time steps, updating the z-component of the traction
 
 log.set_log_level(log.LogLevel.INFO)
 tval0 = -1.5

@@ -24,7 +24,7 @@
 # - $\Gamma_N$ for Neumann conditions: $-\kappa \frac{\partial u}{\partial n}=g_j \text{ on } \Gamma_N^j$ where $\Gamma_N=\Gamma_N^0\cup \Gamma_N^1 \cup \dots$.
 # - $\Gamma_R$ for Robin conditions: $-\kappa \frac{\partial u}{\partial n}=r(u-s)$
 #
-# where $r$ and $s$ are specified functions. The Robin condition is most often used to model heat transfer to the surroundings and arise naturally from Newton's cooling law.
+# where $r$ and $s$ are specified functions. The Robin condition is most often used to model heat transfer to the surroundings and arises naturally from Newton's cooling law.
 # In that case, $r$ is a heat transfer coefficient, and $s$ is the temperature of the surroundings. 
 # Both can be space and time-dependent. The Robin conditions apply at some parts $\Gamma_R^0,\Gamma_R^1,\dots$, of the boundary:
 #
@@ -119,12 +119,12 @@ mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
 #     u_D=u_{ex}=1+x^2+2y^2
 # $$
 # $$
-#     g_0=\left.\frac{\partial u_{ex}}{y}\right\vert_{y=1}=4y\vert_{y=1}=-4
+#     g_0=-\left.\frac{\partial u_{ex}}{\partial y}\right\vert_{y=1}=-4y\vert_{y=1}=-4
 # $$
 #
 # The Robin condition can be specified in many ways. As
-# $-\left.\frac{\partial u_{ex}}{n}\right\vert_{x=0}=\left.\frac{\partial u_{ex}}{\partial x}\right\vert_{x=0}=2x=0,$
-# we can specify $r\neq 0$ arbitrarly and $s=u_{ex}$. We choose $r=1000$.
+# $-\left.\frac{\partial u_{ex}}{\partial n}\right\vert_{y=0}=\left.\frac{\partial u_{ex}}{\partial y}\right\vert_{y=0}=4y=0,$
+# we can specify $r\neq 0$ arbitrarily and $s=u_{ex}$. We choose $r=1000$.
 # We can now create all the necessary variable definitions and the traditional part of the variational form.
 
 u_ex = lambda x: 1 + x[0]**2 + 2*x[1]**2
@@ -244,7 +244,7 @@ else:
 # -
 
 # ## Verification
-# As for the previous problems, we compute the error of our computed solution and compare it to the analytical solution.
+# As for the previous problems, we compute the error of our computed solution and compare it with the analytical solution.
 
 # +
 # Compute L2 error and error at nodes

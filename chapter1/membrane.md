@@ -8,7 +8,7 @@ In this section, we will turn our attentition to a physically more relevant prob
 
 We would like to compute the deflection $D(x,y)$ of a two-dimensional, circular membrane of radius $R$, subject to a load $p$ over the membrane. The appropriate PDE model is 
 \begin{align}
-     -T \nabla^2D&=p \quad\text{in }\quad \Omega=\{(x,y)\vert x^2+y^2\leq R \}.
+     -T \nabla^2D&=p \quad\text{in }\quad \Omega=\{(x,y)\vert x^2+y^2\leq R^2 \}.
 \end{align}
 Here, $T$ is the tension in the membrane (constant), and  $p$ is the external pressure load. The boundary of the membrane has no deflection. This implies that $D=0$ is the boundary condition. We model a localized load as a Gaussian function:
 \begin{align}
@@ -36,7 +36,7 @@ With $D_e=\frac{AR^2}{8\pi\sigma T}$ and dropping the bars we obtain the scaled 
 \begin{align}
     -\nabla^2 w = 4e^{-\beta^2(x^2+(y-R_0)^2)}
 \end{align}
-to be solved over the unit disc with $w=0$ on the boundary. Now there are only two parameters which vary the dimensionless extent of the pressure, $\beta$, and the location of the pressure peak, $R_0\in[0,1]$. As $\beta\to 0$, the solution will approach the special case $w=1-x^2-y^2$. Given a computed scaed solution $w$, the physical deflection can be computed by
+to be solved over the unit disc with $w=0$ on the boundary. Now there are only two parameters which vary the dimensionless extent of the pressure, $\beta$, and the location of the pressure peak, $R_0\in[0,1]$. As $\beta\to 0$, the solution will approach the special case $w=1-x^2-y^2$. Given a computed scaled solution $w$, the physical deflection can be computed by
 \begin{align}
     D=\frac{AR^2}{8\pi\sigma T}w.
 \end{align}

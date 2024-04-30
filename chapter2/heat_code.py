@@ -111,7 +111,7 @@ solver.setType(PETSc.KSP.Type.PREONLY)
 solver.getPC().setType(PETSc.PC.Type.LU)
 
 # ## Solving the time-dependent problem
-# With these structures in place, we crete our time-stepping loop.
+# With these structures in place, we create our time-stepping loop.
 # In this loop, we first update the Dirichlet boundary condition by interpolating the updated
 # expression `u_exact` into `V`. The next step is to re-assemble the vector `b`, with the update `u_n`.
 # Then, we need to apply the boundary condition to this vector. We do this by using the lifting operation,

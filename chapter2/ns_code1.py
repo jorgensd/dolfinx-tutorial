@@ -316,7 +316,7 @@ solver2.destroy()
 solver3.destroy()
 
 # ## Verification
-# As for the previous problems we compute the error at each degree of freedom and the $L^2(\Omega)$-error. We start with the  initial condition $u=(0,0)$. We have not specified the initial condition explicitly, and FEniCSx will initialize all `Function`s including `u_n` and `u_` to zero. Since the exact solution is quadratic, we expect to reach machine precision within finite time. For our implementation, we observe that the error quickly approaches zero, and is of order $10^{-6}$ at $T=10
+# As for the previous problems we compute the error at each degree of freedom and the $L^2(\Omega)$-error. We start with the  initial condition $u=(0,0)$. We have not specified the initial condition explicitly, and FEniCSx will initialize all `Function`s including `u_n` and `u_` to zero. Since the exact solution is quadratic, we expect to reach machine precision within finite time. For our implementation, we observe that the error quickly approaches zero, and is of order $10^{-6}$ at $T=10$
 #
 # ## Visualization of vectors
 # We have already looked at how to plot higher order functions and vector functions. In this section we will look at how to visualize vector functions with glyphs, instead of warping the mesh.
