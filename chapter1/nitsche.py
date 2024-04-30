@@ -16,7 +16,7 @@
 # # Weak imposition of Dirichlet conditions for the Poisson problem
 # Author: Jørgen S. Dokken
 #
-# In this section, we will go through how to solve the Poisson problem from the [Fundamentals](fundamentals.ipynb) tutorial using Nitsche's method {cite}`Nitsche1971`.
+# In this section, we will go through how to solve the Poisson problem from the [Fundamentals](fundamentals_code.ipynb) tutorial using Nitsche's method {cite}`Nitsche1971`.
 # The idea of weak imposition is that we add additional terms to the variational formulation to impose the boundary condition, instead of modifying the matrix system using strong imposition (lifting).
 #
 # We start by importing the required modules and creating the mesh and function space for our solution

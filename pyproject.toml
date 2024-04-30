@@ -7,7 +7,6 @@ name = "DOLFINx_Tutorial"
 version = "0.7.2"
 dependencies = [
     "jupyter-book",
-    "docutils",
     "meshio",
     "h5py",
     "seaborn",
@@ -18,7 +17,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pdbpp", "ipython", "jupytext"]
+dev = ["pdbpp", "ipython", "jupytext", "ruff"]
 
 [tool.setuptools]
 packages = []
@@ -26,3 +25,19 @@ packages = []
 
 [tool.jupytext]
 formats = "ipynb,py:percent"
+
+
+[tool.ruff.lint.isort]
+known-first-party = ["basix", "dolfinx", "ffcx", "ufl"]
+known-third-party = ["gmsh", "numpy", "pytest"]
+section-order = [
+    "future",
+    "standard-library",
+    "mpi",
+    "third-party",
+    "first-party",
+    "local-folder",
+]
+
+[tool.ruff.lint.isort.sections]
+"mpi" = ["mpi4py", "petsc4py"]

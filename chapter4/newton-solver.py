@@ -6,7 +6,6 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -20,20 +19,20 @@
 #
 # Given a function $F:\mathbb{R}^M\mapsto \mathbb{R}^M$, we have that $u_k, u_{k+1}\in \mathbb{R}^M$ is related as:
 #
-# $$x_{k+1} = x_{k} - J_F(x_k)^{-1} F(x_k)$$
+# $$u_{k+1} = u_{k} - J_F(u_k)^{-1} F(u_k)$$
 #
 # where $J_F$ is the Jacobian matrix of $F$.
 #
-# We can rewrite this equation as $\delta x_k = x_{k+1} - x_{k}$,
+# We can rewrite this equation as $\delta u_k = u_{k+1} - u_{k}$,
 #
 # $$
-# J_F(x_k)\delta x_k = - F(x_k)
+# J_F(u_k)\delta u_k = - F(u_k)
 # $$
 #
 # and
 #
 # $$
-# x_{k+1} = x_k + \delta x_k.
+# u_{k+1} = u_k + \delta u_k.
 # $$
 
 # ## Problem specification
@@ -95,11 +94,11 @@ jacobian = dolfinx.fem.form(J)
 A = dolfinx.fem.petsc.create_matrix(jacobian)
 L = dolfinx.fem.petsc.create_vector(residual)
 
-# Next, we create the linear solver and the vector to hold `dx`.
+# Next, we create the linear solver and the vector to hold `du`.
 
 solver = PETSc.KSP().create(mesh.comm)
 solver.setOperators(A)
-dx = dolfinx.fem.Function(V)
+du = dolfinx.fem.Function(V)
 
 # We would like to monitor the evolution of `uh` for each iteration. Therefore, we get the dof coordinates, and sort them in increasing order.
 
@@ -129,14 +128,14 @@ while i < max_iterations:
     L.ghostUpdate(addv=PETSc.InsertMode.INSERT_VALUES, mode=PETSc.ScatterMode.FORWARD)
 
     # Solve linear problem
-    solver.solve(L, dx.vector)
-    dx.x.scatter_forward()
-    # Update u_{i+1} = u_i + delta x_i
-    uh.x.array[:] += dx.x.array
+    solver.solve(L, du.vector)
+    du.x.scatter_forward()
+    # Update u_{i+1} = u_i + delta u_i
+    uh.x.array[:] += du.x.array
     i += 1
 
     # Compute norm of update
-    correction_norm = dx.vector.norm(0)
+    correction_norm = du.vector.norm(0)
     print(f"Iteration {i}: Correction norm {correction_norm}")
     if correction_norm < 1e-10:
         break
@@ -213,29 +212,29 @@ residual = dolfinx.fem.form(F)
 jacobian = dolfinx.fem.form(J)
 
 # -
-# Next, we define the matrix `A`, right hand side vector `L` and the correction function `dx`
+# Next, we define the matrix `A`, right hand side vector `L` and the correction function `du`
 
-dx = dolfinx.fem.Function(V)
+du = dolfinx.fem.Function(V)
 A = dolfinx.fem.petsc.create_matrix(jacobian)
 L = dolfinx.fem.petsc.create_vector(residual)
 solver = PETSc.KSP().create(mesh.comm)
 solver.setOperators(A)
 
-# As we for this problem has strong Dirichlet conditions, we need to apply lifting to the right hand side of our Newton problem.
+# Since this problem has strong Dirichlet conditions, we need to apply lifting to the right hand side of our Newton problem.
 # We previously had that we wanted to solve the system:
 #
 # $$
 # \begin{align}
-# J_F(x_k)\delta x_k &= - F(x_k)\\
-# x_{k+1} &= x_k + \delta x_k
+# J_F(u_k)\delta u_k &= - F(u_k)\\
+# u_{k+1} &= u_k + \delta u_k
 # \end{align}
 # $$
 #
-# we want $x_{k+1}\vert_{bc}= u_D$. However, we do not know if $x_k\vert_{bc}=u_D$.
-# Therefore, we want to apply the following boundary condition for our correction $\delta x_k$
+# we want $u_{k+1}\vert_{bc}= u_D$. However, we do not know if $u_k\vert_{bc}=u_D$.
+# Therefore, we want to apply the following boundary condition for our correction $\delta u_k$
 #
 # $$
-# \delta x_k\vert_{bc} = u_D-x_k\vert_{bc}
+# \delta u_k\vert_{bc} = u_D-u_k\vert_{bc}
 # $$
 #
 # We therefore arrive at the following Newton scheme
@@ -244,7 +243,7 @@ solver.setOperators(A)
 i = 0
 error = dolfinx.fem.form(ufl.inner(uh - u_ufl, uh - u_ufl) * ufl.dx(metadata={"quadrature_degree": 4}))
 L2_error = []
-dx_norm = []
+du_norm = []
 while i < max_iterations:
     # Assemble Jacobian and residual
     with L.localForm() as loc_L:
@@ -258,30 +257,30 @@ while i < max_iterations:
 
     # Compute b - J(u_D-u_(i-1))
     dolfinx.fem.petsc.apply_lifting(L, [jacobian], [[bc]], x0=[uh.vector], scale=1)
-    # Set dx|_bc = u_{i-1}-u_D
+    # Set du|_bc = u_{i-1}-u_D
     dolfinx.fem.petsc.set_bc(L, [bc], uh.vector, 1.0)
     L.ghostUpdate(addv=PETSc.InsertMode.INSERT_VALUES, mode=PETSc.ScatterMode.FORWARD)
 
     # Solve linear problem
-    solver.solve(L, dx.vector)
-    dx.x.scatter_forward()
+    solver.solve(L, du.vector)
+    du.x.scatter_forward()
 
-    # Update u_{i+1} = u_i + delta x_i
-    uh.x.array[:] += dx.x.array
+    # Update u_{i+1} = u_i + delta u_i
+    uh.x.array[:] += du.x.array
     i += 1
 
     # Compute norm of update
-    correction_norm = dx.vector.norm(0)
+    correction_norm = du.vector.norm(0)
 
     # Compute L2 error comparing to the analytical solution
     L2_error.append(np.sqrt(mesh.comm.allreduce(dolfinx.fem.assemble_scalar(error), op=MPI.SUM)))
-    dx_norm.append(correction_norm)
+    du_norm.append(correction_norm)
 
     print(f"Iteration {i}: Correction norm {correction_norm}, L2 error: {L2_error[-1]}")
     if correction_norm < 1e-10:
         break
 
-# We plot the $L^2$-error and the residual norm ($\delta x$) per iteration
+# We plot the $L^2$-error and the residual norm ($\delta u$) per iteration
 
 fig = plt.figure(figsize=(15, 8))
 plt.subplot(121)
@@ -293,12 +292,12 @@ plt.xlabel("Iterations")
 plt.ylabel(r"$L^2$-error")
 plt.grid()
 plt.subplot(122)
-plt.title(r"Residual of $\vert\vert\delta x_i\vert\vert$")
-plt.plot(np.arange(i), dx_norm)
+plt.title(r"Residual of $\vert\vert\delta u_i\vert\vert$")
+plt.plot(np.arange(i), du_norm)
 ax = plt.gca()
 ax.set_yscale('log')
 plt.xlabel("Iterations")
-plt.ylabel(r"$\vert\vert \delta x\vert\vert$")
+plt.ylabel(r"$\vert\vert \delta u\vert\vert$")
 plt.grid()
 
 # We compute the max error and plot the solution
