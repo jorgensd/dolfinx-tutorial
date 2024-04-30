@@ -86,7 +86,6 @@ jobs:
           mpirun -n 2 python3 newton-solver.py
 
       - uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: webpage
           path: ./_build/html

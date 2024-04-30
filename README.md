@@ -21,27 +21,10 @@ Any code added to the tutorial should work in parallel.
 Alternatively, if you want to add a separate chapter, a Jupyter notebook can be added to a pull request, without integrating it into the tutorial. If so, the notebook will be reviewed and modified to be included in the tutorial.
 
 Note that every chapter is written as an IPython notebook and a Python file. These are kept in sync by jupytext. See [their notes](https://jupytext.readthedocs.io/en/latest/install.html#jupytext-commands-in-jupyterlab) on how to keep them in sync.
-
-## Dependencies
-
-It is adviced to use a pre-installed version of DOLFINx, for instance through conda or docker. Remaining dependencies can be installed with
-
-```bash
-python3 -m pip install --no-binary=h5py -e .
-```
-
-# Docker images
-
-Docker images for this tutorial can be found in the [packages tab](https://github.com/jorgensd/dolfinx-tutorial/pkgs/container/dolfinx-tutorial)
-
 Also ensure that both Python file and notebook files are updated by using jupytext, i.e.
 
 ```bash
 python3 -m jupytext --sync  */*.ipynb
-```
-
-## Dependencies
-
 It is adviced to use a pre-installed version of DOLFINx, for instance through conda or docker. Remaining dependencies can be installed with
 
 ```bash

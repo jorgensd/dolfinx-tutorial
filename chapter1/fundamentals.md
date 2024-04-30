@@ -120,8 +120,8 @@ a(u,v)&=L(v)&& \forall v \in \hat{V}.
 \end{align}
 For the Poisson equation, we have:
 \begin{align}
-a(u,v) &= \int*{\Omega} \nabla u \cdot \nabla v~\mathrm{d} x,\\
-L(v) &= \int*{\Omega} fv~\mathrm{d} x.
+a(u,v) &= \int_{\Omega} \nabla u \cdot \nabla v~\mathrm{d} x,\\
+L(v) &= \int_{\Omega} fv~\mathrm{d} x.
 \end{align}
 In the literature $a(u,v)$ is known as the _bilinear form_ and $L(v)$ as a _linear form_.
 For every linear problem, we will identify all terms with the unknown $u$ and collect them in $a(u,v)$, and collect all terms with only known functions in $L(v)$.
