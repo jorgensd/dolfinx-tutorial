@@ -45,8 +45,8 @@
 # FEniCSx supports both real and complex numbers, so we can create a function space with real valued or complex valued coefficients.
 #
 
-import dolfinx
 from mpi4py import MPI
+import dolfinx
 import numpy as np
 mesh = dolfinx.mesh.create_unit_square(MPI.COMM_WORLD, 10, 10)
 V = dolfinx.fem.FunctionSpace(mesh, ("Lagrange", 1))
