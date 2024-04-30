@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.7
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -18,7 +18,7 @@
 # Author: Jørgen S. Dokken
 #
 # ## Test problem
-# To solve a test problem, we need to choose the right hand side $f$ and the coefficient $q(u)$ and the boundary $u_D$. Previously, we have worked with manufactured solutions that can  be reproduced without approximation errors. This is more difficult in non-linear porblems, and the algebra is more tedious. Howeve, we will utilize UFLs differentiation capabilities to obtain a manufactured solution.
+# To solve a test problem, we need to choose the right hand side $f$, the coefficient $q(u)$, and the boundary $u_D$. Previously, we have worked with manufactured solutions that can  be reproduced without approximation errors. This is more difficult in nonlinear problems, and the algebra is more tedious. However, we will utilize the UFL differentiation capabilities to obtain a manufactured solution.
 #
 # For this problem, we will choose $q(u) = 1 + u^2$ and define a two dimensional manufactured solution that is linear in $x$ and $y$:
 
@@ -43,10 +43,10 @@ u_ufl = 1 + x[0] + 2 * x[1]
 f = - ufl.div(q(u_ufl) * ufl.grad(u_ufl))
 # -
 
-# Note that since `x` is a 2D vector, the first component (index 0) resemble $x$, while the second component (index 1) resemble $y$. The resulting function `f` can be directly used in variational formulations in DOLFINx.
+# Note that since `x` is a 2D vector, the first component (index 0) represents $x$, while the second component (index 1) represents $y$. The resulting function `f` can be directly used in variational formulations in DOLFINx.
 #
-# As we now have defined our source term and exact solution, we can create the appropriate function space and boundary conditions.
-# Note that as we have already defined the exact solution, we only have to convert it to a python function that can be evaluated in the interpolation function. We do this by employing the Python `eval` and `lambda`-functions.
+# As we now have defined our source term and an exact solution, we can create the appropriate function space and boundary conditions.
+# Note that as we have already defined the exact solution, we only have to convert it to a Python function that can be evaluated in the interpolation function. We do this by employing the Python `eval` and `lambda`-functions.
 
 V = fem.FunctionSpace(domain, ("Lagrange", 1))
 def u_exact(x): return eval(str(u_ufl))
@@ -58,7 +58,7 @@ fdim = domain.topology.dim - 1
 boundary_facets = mesh.locate_entities_boundary(domain, fdim, lambda x: numpy.full(x.shape[1], True, dtype=bool))
 bc = fem.dirichletbc(u_D, fem.locate_dofs_topological(V, fdim, boundary_facets))
 
-# We are now ready to define the variational formulation. Note that as the problem is non-linear, we have replace the `TrialFunction` with a `Function`, which serves as the unknown of our problem.
+# We are now ready to define the variational formulation. Note that as the problem is nonlinear, we have to replace the `TrialFunction` with a `Function`, which serves as the unknown of our problem.
 
 uh = fem.Function(V)
 v = ufl.TestFunction(V)
@@ -71,7 +71,7 @@ F = q(uh) * ufl.dot(ufl.grad(uh), ufl.grad(v)) * ufl.dx - f * v * ufl.dx
 
 problem = NonlinearProblem(F, uh, bcs=[bc])
 
-# Next, we use the dolfinx Newton solver. We can set the convergence criterions for the solver by changing the absolute tolerance (`atol`), relative tolerance (`rtol`) or the convergence criterion (`residual` or `incremental`).
+# Next, we use the DOLFINx Newton solver. We can set the convergence criteria for the solver by changing the absolute tolerance (`atol`), relative tolerance (`rtol`) or the convergence criterion (`residual` or `incremental`).
 
 solver = NewtonSolver(MPI.COMM_WORLD, problem)
 solver.convergence_criterion = "incremental"
@@ -96,7 +96,7 @@ assert (converged)
 print(f"Number of interations: {n:d}")
 
 # We observe that the solver converges after $8$ iterations.
-# If we think of the problem in terms of finite differences on a uniform mesh, $\mathcal{P}_1$ elements mimic standard second-order finite differences, which compute the derivative of a linear or quadratic funtion exactly. Here $\nabla u$ is a constant vector, which is multiplied by $1+u^2$, which is a second order polynomial in $x$ and $y$, which the finite difference operator would compute exactly. We can therefore, even with $\mathcal{P}_1$ elements, expect the manufactured solution to be reproduced by the numerical method. However, if we had chosen a nonlinearity, such as $1+u^4$, this would not be the case, and we would need to verify convergence rates.
+# If we think of the problem in terms of finite differences on a uniform mesh, $\mathcal{P}_1$ elements mimic standard second-order finite differences, which compute the derivative of a linear or quadratic funtion exactly. Here $\nabla u$ is a constant vector, which is multiplied by $1+u^2$, giving a second order polynomial in $x$ and $y$, which the finite difference operator would compute exactly. We can therefore, even with $\mathcal{P}_1$ elements, expect the manufactured solution to be reproduced by the numerical method. However, if we had chosen a nonlinearity, such as $1+u^4$, this would not be the case, and we would need to verify convergence rates.
 
 # +
 # Compute L2 error and error at nodes
