@@ -1,3 +1,4 @@
+name: Publish tutorial docker image
 on:
   push:
     branches:
@@ -41,8 +42,22 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Build and push Docker image
+      - name: Build Docker image
         uses: docker/build-push-action@v5
+        with:
+          context: .
+          load: true
+          push: false
+          file: docker/Dockerfile
+          platforms: linux/amd64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+  
+
+
+      - name: Build (arm) and push (amd/arm) Docker image
+        uses: docker/build-push-action@v5
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
         with:
           context: .
           push: true

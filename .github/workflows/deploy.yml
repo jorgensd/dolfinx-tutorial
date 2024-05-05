@@ -3,7 +3,7 @@ name: Publish book
 on:
   push:
     branches:
-      - "main"
+      - "release"
   workflow_dispatch:
 
   # Weekly build on Mondays at 8 am
@@ -18,12 +18,6 @@ permissions:
 concurrency:
   group: "pages"
   cancel-in-progress: true
-
-env:
-  HDF5_MPI: "ON"
-  HDF5_DIR: "/usr/local/"
-  DISPLAY: ":99.0"
-  DEB_PYTHON_INSTALL_LAYOUT: deb_system
 
 jobs:
   run-tests:

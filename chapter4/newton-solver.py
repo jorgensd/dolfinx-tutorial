@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -148,7 +148,7 @@ dolfinx.fem.petsc.assemble_vector(L, residual)
 print(f"Final residual {L.norm(0)}")
 
 # ## Visualization of Newton iterations
-# We next look at the evolution of the solutions and the error of the solution when compared to the two exact roots of the problem.
+# We next look at the evolution of the solution and the error of the solution when compared to the two exact roots of the problem.
 
 # +
 # Plot solution for each of the iterations

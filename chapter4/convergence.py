@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -67,7 +67,7 @@ def solve_poisson(N=10, degree=1):
 
 # -
 
-# Now, we can compute the error between the analyical solution `u_ex=u_ufl(x)` and approximated solution `uh`. A natural choice might seem to compute `(u_ex-uh)**2*ufl.dx`.
+# Now, we can compute the error between the analyical solution `u_ex=u_ufl(x)` and the approximated solution `uh`. A natural choice might seem to compute `(u_ex-uh)**2*ufl.dx`.
 
 uh, u_ex = solve_poisson(10)
 comm = uh.function_space.mesh.comm
@@ -76,7 +76,7 @@ E = np.sqrt(comm.allreduce(assemble_scalar(error), MPI.SUM))
 if comm.rank == 0:
     print(f"L2-error: {E:.2e}")
 
-# Sometimes it is of interest to compute the error fo the gradient field, $\vert\vert \nabla(u_e-u_h)\vert\vert$, often referred to as the $H_0^1$-nrom of the error, this can be expressed as
+# Sometimes it is of interest to compute the error fo the gradient field, $\vert\vert \nabla(u_e-u_h)\vert\vert$, often referred to as the $H_0^1$-norm of the error, this can be expressed as
 
 eh = uh - u_ex
 error_H10 = form(dot(grad(eh), grad(eh)) * dx)
@@ -137,11 +137,11 @@ for i, N in enumerate(Ns):
     if comm.rank == 0:
         print(f"h: {hs[i]:.2e} Error: {Es[i]:.2e}")
 
-# If we assume that $E_i$ is of the form $E_i=Ch_i^r$, with unknown constants $C$ and $r$, we can compare two consecqutive experiments, $E_{i-1}= Ch_{i-1}^r$ and $E_i=Ch_i^r$, and solve for $r$:
+# If we assume that $E_i$ is of the form $E_i=Ch_i^r$, with unknown constants $C$ and $r$, we can compare two consecutive experiments, $E_{i-1}= Ch_{i-1}^r$ and $E_i=Ch_i^r$, and solve for $r$:
 # ```{math}
 # r=\frac{\ln(E_i/E_{i-1})}{\ln(h_i/h_{i-1})}
 # ```
-# The $r$ values should approac the expected convergence rate (which is typically the polynomial degree + 1 for the $L^2$-error.) as $i$ increases. This can be written compactly using `numpy`.
+# The $r$ values should approach the expected convergence rate (which is typically the polynomial degree + 1 for the $L^2$-error.) as $i$ increases. This can be written compactly using `numpy`.
 
 rates = np.log(Es[1:] / Es[:-1]) / np.log(hs[1:] / hs[:-1])
 if comm.rank == 0:

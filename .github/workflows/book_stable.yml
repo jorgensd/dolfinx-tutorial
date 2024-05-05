@@ -4,8 +4,9 @@ on:
   workflow_dispatch:
   workflow_call:
   pull_request:
-    branches: ["main"]
-
+    branches: ["release"]
+  push:
+    branches: ["release"]
 env:
   HDF5_MPI: "ON"
   HDF5_DIR: "/usr/local/"
@@ -36,6 +37,7 @@ jobs:
         run: jupyter-book build . -W
 
       - uses: actions/upload-artifact@v4
+        if : always()
         with:
           name: webpage
           path: ./_build/html

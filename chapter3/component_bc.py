@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -20,6 +20,7 @@
 # We will illustrate the problem using a vector element. However, the method generalizes to any mixed element.
 #
 # We will use a slightly modified version of [the linear elasticity demo](./../chapter2/linearelasticity_code), namely
+#
 # $$
 # -\nabla \cdot \sigma (u) = f\quad \text{in } \Omega,
 # $$
@@ -41,7 +42,7 @@
 # $$
 # We will consider a two dimensional box spanning $[0,L]\times[0,H]$, where
 # $\partial\Omega_N$ is the left and right side of the beam, $\partial\Omega_D$ the bottom of the  beam, while $\partial\Omega_{Dx}$ is the right side of the beam.
-# We will prescribe a displacement $u_x=0$ on the right side of the beam, while the beam is being deformed under its own weight. The sides of the box is traction free.
+# We will prescribe a displacement $u_x=0$ on the right side of the beam, while the beam is being deformed under its own weight. The sides of the box are traction free.
 
 # +
 import pyvista

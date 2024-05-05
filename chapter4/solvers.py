@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -16,7 +16,7 @@
 # # Solver configuration
 # Author: Jørgen S. Dokken
 #
-# In this section, we will go through how to specify what linear algebra solver we would like to use to solve our PDEs, as well as how to verify the implemenation by considering convergence rates.
+# In this section, we will go through how to specify what linear algebra solver we would like to use to solve our PDEs, as well as how to verify the implementation by considering convergence rates.
 #
 # $$
 # -\Delta u = f \text{ in } \Omega
@@ -87,9 +87,9 @@ for line in solver_output.readlines():
 
 # This is a very robust and simple method, and is the recommended method up to a few thousand unknowns and can be efficiently used for many 2D and smaller 3D problems. However, sparse LU decomposition quickly becomes slow, as for a $N\times N$-matrix the number of floating point operations scales as $\sim (2/3)N^3$.
 #
-# For large problems, we instead need to use an iterative method which are faster and require less memory.
+# For large problems, we instead need to use an iterative method which is faster and requires less memory.
 # ## Choosing a linear solver and preconditioner
-# As the Poisson equation results in a symmetric, positive definite system matrix, the optimal Krylov solver is the conjugate gradient (Lagrange) method. The default preconditioner is the incomplete LU factorization (ILU), which is a popular and robous overall preconditioner. We can change the preconditioner by setting `"pc_type"` to some of the other preconditioners in petsc, which you can find in at [PETSc KSP solvers](https://petsc.org/release/manual/ksp/#tab-kspdefaults) and [PETSc preconditioners](https://petsc.org/release/manual/ksp/#tab-pcdefaults).
+# As the Poisson equation results in a symmetric, positive definite system matrix, the optimal Krylov solver is the conjugate gradient (Lagrange) method. The default preconditioner is the incomplete LU factorization (ILU), which is a popular and robust overall preconditioner. We can change the preconditioner by setting `"pc_type"` to some of the other preconditioners in petsc, which you can find at [PETSc KSP solvers](https://petsc.org/release/manual/ksp/#tab-kspdefaults) and [PETSc preconditioners](https://petsc.org/release/manual/ksp/#tab-pcdefaults).
 # You can set any option in `PETSc` through the `petsc_options` input, such as the absolute tolerance (`"ksp_atol"`), relative tolerance (`"ksp_rtol"`) and maximum number of iterations (`"ksp_max_it"`).
 
 cg_problem = LinearProblem(a, L, bcs=bcs,
@@ -102,7 +102,7 @@ solver_output = open("cg_output.txt", "r")
 for line in solver_output.readlines():
     print(line)
 
-# For non-symmetrix problems, a Krylov solver for non-symmetrix systems, such as GMRES is a better.
+# For non-symmetric problems, a Krylov solver for non-symmetric systems, such as GMRES is better.
 
 gmres_problem = LinearProblem(a, L, bcs=bcs,
                               petsc_options={"ksp_type": "gmres", "ksp_rtol": 1e-6, "ksp_atol": 1e-10, "ksp_max_it": 1000, "pc_type": "none"})

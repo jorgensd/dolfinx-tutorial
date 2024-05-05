@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -178,7 +178,7 @@ magnitude.interpolate(us)
 warped["mag"] = magnitude.x.array
 # -
 
-# Finally, we solve the problem over several time steps, updating the y-component of the traction
+# Finally, we solve the problem over several time steps, updating the z-component of the traction
 
 log.set_log_level(log.LogLevel.INFO)
 tval0 = -1.5

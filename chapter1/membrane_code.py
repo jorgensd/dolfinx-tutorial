@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -27,7 +27,7 @@
 #
 # ## Creating the mesh
 #
-# To create the computational geometry, we use the python-API of [GMSH](https://gmsh.info/). We start by importing the gmsh-module and initializing it.
+# To create the computational geometry, we use the Python-API of [GMSH](https://gmsh.info/). We start by importing the gmsh-module and initializing it.
 
 import gmsh
 gmsh.initialize()
@@ -171,8 +171,8 @@ from dolfinx import geometry
 bb_tree = geometry.bb_tree(domain, domain.topology.dim)
 
 # Now we can compute which cells the bounding box tree collides with using `dolfinx.geometry.compute_collisions_points`. This function returns a list of cells whose bounding box collide for each input point. As different points might have different number of cells, the data is stored in `dolfinx.cpp.graph.AdjacencyList_int32`, where one can access the cells for the `i`th point by calling `links(i)`.
-#  However, as the bounding box of a cell spans more of $\mathbb{R}^n$ than the actual cell, we check that the actual cell collides with cell 
-#  using `dolfinx.geometry.select_colliding_cells`, who measures the exact distance between the point and the cell (approximated as a convex hull for higher order geometries).
+# However, as the bounding box of a cell spans more of $\mathbb{R}^n$ than the actual cell, we check that the actual cell collides with cell
+# using `dolfinx.geometry.select_colliding_cells`, which measures the exact distance between the point and the cell (approximated as a convex hull for higher order geometries).
 # This function also returns an adjacency-list, as the point might align with a facet, edge or vertex that is shared between multiple cells in the mesh.
 #
 # Finally, we would like the code below to run in parallel, when the mesh is distributed over multiple processors. In that case, it is not guaranteed that every point in `points` is on each processor. Therefore we create a subset `points_on_proc` only containing the points found on the current processor.
@@ -188,7 +188,8 @@ for i, point in enumerate(points.T):
         points_on_proc.append(point)
         cells.append(colliding_cells.links(i)[0])
 
-# We now got a list of points on the processor, on in which cell each point belongs. We can then call `uh.eval` and `pressure.eval` to obtain the set of values for all the points.
+# We now have a list of points on the processor, on in which cell each point belongs. We can then call `uh.eval` and `pressure.eval` to obtain the set of values for all the points.
+#
 
 points_on_proc = np.array(points_on_proc, dtype=np.float64)
 u_values = uh.eval(points_on_proc, cells)

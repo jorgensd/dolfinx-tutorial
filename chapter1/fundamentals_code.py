@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -43,7 +43,7 @@
 #
 # Inserting $u_e$ in the original boundary problem, we find that  
 # \begin{align}
-#     f(x,y)= -6,\qquad u_d(x,y)=u_e(x,y)=1+x^2+2y^2,
+#     f(x,y)= -6,\qquad u_D(x,y)=u_e(x,y)=1+x^2+2y^2,
 # \end{align}
 # regardless of the shape of the domain as long as we prescribe 
 # $u_e$ on the boundary.

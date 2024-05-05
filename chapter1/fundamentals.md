@@ -4,7 +4,8 @@ Authors: Hans Petter Langtangen, Anders Logg
 
 Adapted to FEniCSx by Jørgen S. Dokken
 
-The goal of this tutorial is to solve one of the most basic PDEs, the Poisson equation, with a few lines of code in FEniCSx. We start by introducing some fundamental FEniCSx objects, such as `Function`, `functionspace`, `TrialFunction` and `TestFunction`, and learn how to write a basic PDE solver.
+The goal of this tutorial is to solve one of the most basic PDEs, the Poisson equation, with a few lines of code in FEniCSx.
+We start by introducing some fundamental FEniCSx objects, such as `Function`, `functionspace`, `TrialFunction` and `TestFunction`, and learn how to write a basic PDE solver.
 This will include:
 
 - How to formulate a mathematical variational problem
@@ -19,7 +20,8 @@ u(\mathbf{x}) &= u_D(\mathbf{x})&& \mathbf{x} \in \partial\Omega
 \end{align}
 
 Here, $u=u(\mathbf{x})$ is the unknown function, $f=f(\mathbf{x})$ a prescribed function, $\nabla^2$ the Laplace operator
-(often written as $\Delta$), $\Omega$ the spatial domain, and $\partial\Omega$ the boundary of $\Omega$. The Poisson problem, including both the PDE, $-\nabla^2 u = f$, and the boundary condition, $u=u_D$ on $\partial\Omega$, is an example of a _boundary-value problem_, which must be precisely stated before we can start solving it numerically with FEniCSx.
+(often written as $\Delta$), $\Omega$ the spatial domain, and $\partial\Omega$ the boundary of $\Omega$.
+The Poisson problem, including both the PDE, $-\nabla^2 u = f$, and the boundary condition, $u=u_D$ on $\partial\Omega$, is an example of a _boundary-value problem_, which must be precisely stated before we can start solving it numerically with FEniCSx.
 
 In the two-dimensional space with coordinates $x$ and $y$, we can expand the Poisson equation as
 

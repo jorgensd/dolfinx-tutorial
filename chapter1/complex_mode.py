@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (DOLFINx complex)
 #     language: python
@@ -19,7 +19,7 @@
 #
 # Many PDEs, such as the [Helmholtz equation](https://docs.fenicsproject.org/dolfinx/v0.4.1/python/demos/demo_helmholtz.html) require complex-valued fields.
 #
-# For simplicity, let us consider a Poisson equation of the form:
+# For simplicity, let us consider a Poisson equation of the form: 
 #
 # $$-\Delta u = f \text{ in } \Omega,$$
 # $$ f = -1 - 2j \text{ in } \Omega,$$
@@ -59,10 +59,9 @@ print(u_c.x.array.dtype)
 
 # However, as we would like to solve linear algebra problems of the form $Ax=b$, we need to be able to use matrices and vectors that support real and complex numbers. As [PETSc](https://petsc.org/release/) is one of the most popular interfaces to linear algebra packages, we need to be able to work with their matrix and vector structures.
 #
-# Unfortunately, PETSc only supports one floating type in their matrices, thus we need to install two versions of PETSc, one that supports `float64` and one that supports `complex128`. In the [docker images](https://hub.docker.com/r/dolfinx/dolfinx) for DOLFINx, both versions are installed, and one can switch between them by calling `source dolfinx-real-mode` or `source dolfinx-complex-mode`. For the `dolfinx/lab` images, one can change the Python kernel to be either the real or complex mode, by going to `Kernel->Change Kernel...` and choose `Python3 (ipykernel)` (for real mode) or `Python3 (DOLFINx complex)` (for complex mode).
+# Unfortunately, PETSc only supports one floating type in their matrices, thus we need to install two versions of PETSc, one that supports `float64` and one that supports `complex128`. In the [docker images](https://hub.docker.com/r/dolfinx/dolfinx) for DOLFINx, both versions are installed, and one can switch between them by calling `source dolfinx-real-mode` or `source dolfinx-complex-mode`. For the `dolfinx/lab` images, one can change the Python kernel to be either the real or complex mode, by going to `Kernel->Change Kernel...` and choosing `Python3 (ipykernel)` (for real mode) or `Python3 (DOLFINx complex)` (for complex mode).
 #
 # We check that we are using the correct installation of PETSc by inspecting the scalar type.
-#
 
 from petsc4py import PETSc
 from dolfinx.fem.petsc import assemble_vector
@@ -70,9 +69,7 @@ print(PETSc.ScalarType)
 assert np.dtype(PETSc.ScalarType).kind == 'c'
 
 # ## Variational problem
-#
 # We are now ready to define our variational problem
-#
 
 import ufl
 u = ufl.TrialFunction(V)
@@ -86,13 +83,12 @@ L = ufl.inner(f, v) * ufl.dx
 # Secondly, note that we are using `ufl.inner` to describe multiplication of $f$ and $v$, even if they are scalar values. This is because `ufl.inner` takes the conjugate of the second argument, as decribed by the $L^2$ inner product. One could alternatively write this out explicitly
 #
 # ### Inner-products and derivatives
-#
 
 L2 = f * ufl.conj(v) * ufl.dx
 print(L)
 print(L2)
 
-# Similarly, if we want to use the function `ufl.derivative` to take derivatives of functionals, we need to take some special care. As `derivative` inserts a `ufl.TestFunction` to represent the variation, we need to take the conjugate of this to in order to assemble vectors.
+# Similarly, if we want to use the function `ufl.derivative` to take derivatives of functionals, we need to take some special care. As `ufl.derivative` inserts a `ufl.TestFunction` to represent the variation, we need to take the conjugate of this to be able to use it to assemble vectors.
 #
 
 J = u_c**2 * ufl.dx
@@ -101,9 +97,7 @@ residual = assemble_vector(dolfinx.fem.form(F))
 print(residual.array)
 
 # We define our Dirichlet condition and setup and solve the variational problem.
-#
 # ## Solve variational problem
-#
 
 mesh.topology.create_connectivity(mesh.topology.dim-1, mesh.topology.dim)
 boundary_facets = dolfinx.mesh.exterior_facet_indices(mesh.topology)
