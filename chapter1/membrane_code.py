@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -65,7 +65,7 @@ domain, cell_markers, facet_markers = gmshio.model_to_mesh(gmsh.model, mesh_comm
 # We define the function space as in the previous tutorial
 
 from dolfinx import fem
-V = fem.FunctionSpace(domain, ("Lagrange", 1))
+V = fem.functionspace(domain, ("Lagrange", 1))
 
 # ## Defining a spatially varying load
 # The right hand side pressure function is represented using `ufl.SpatialCoordinate` and two constants, one for $\beta$ and one for $R_0$.
@@ -109,7 +109,7 @@ uh = problem.solve()
 # As we previously defined the load `p` as a spatially varying function, we would like to interpolate this function into an appropriate function space for visualization. To do this we use the `dolfinx.Expression`. The expression takes in any `ufl`-expression, and a set of points on the reference element. We will use the interpolation points of the space we want to interpolate in to.
 # We choose a high order function space to represent the function `p`, as it is rapidly varying in space.
 
-Q = fem.FunctionSpace(domain, ("Lagrange", 5))
+Q = fem.functionspace(domain, ("Lagrange", 5))
 expr = fem.Expression(p, Q.element.interpolation_points())
 pressure = fem.Function(Q)
 pressure.interpolate(expr)

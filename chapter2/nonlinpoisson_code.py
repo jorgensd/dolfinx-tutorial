@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -48,7 +48,7 @@ f = - ufl.div(q(u_ufl) * ufl.grad(u_ufl))
 # As we now have defined our source term and an exact solution, we can create the appropriate function space and boundary conditions.
 # Note that as we have already defined the exact solution, we only have to convert it to a Python function that can be evaluated in the interpolation function. We do this by employing the Python `eval` and `lambda`-functions.
 
-V = fem.FunctionSpace(domain, ("Lagrange", 1))
+V = fem.functionspace(domain, ("Lagrange", 1))
 def u_exact(x): return eval(str(u_ufl))
 
 
@@ -100,7 +100,7 @@ print(f"Number of interations: {n:d}")
 
 # +
 # Compute L2 error and error at nodes
-V_ex = fem.FunctionSpace(domain, ("Lagrange", 2))
+V_ex = fem.functionspace(domain, ("Lagrange", 2))
 u_ex = fem.Function(V_ex)
 u_ex.interpolate(u_exact)
 error_local = fem.assemble_scalar(fem.form((uh - u_ex)**2 * ufl.dx))

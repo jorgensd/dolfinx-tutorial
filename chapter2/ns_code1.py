@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -66,12 +66,13 @@ from petsc4py import PETSc
 import numpy as np
 import pyvista
 
-from dolfinx.fem import Constant, Function, FunctionSpace, assemble_scalar, dirichletbc, form, locate_dofs_geometrical
+from dolfinx.fem import Constant, Function, functionspace, assemble_scalar, dirichletbc, form, locate_dofs_geometrical
 from dolfinx.fem.petsc import assemble_matrix, assemble_vector, apply_lifting, create_vector, set_bc
 from dolfinx.io import VTXWriter
 from dolfinx.mesh import create_unit_square
 from dolfinx.plot import vtk_mesh
-from ufl import (FacetNormal, FiniteElement, Identity, TestFunction, TrialFunction, VectorElement,
+from basix.ufl import element
+from ufl import (FacetNormal, Identity, TestFunction, TrialFunction,
                  div, dot, ds, dx, inner, lhs, nabla_grad, rhs, sym)
 
 mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
@@ -83,13 +84,24 @@ dt = T / num_steps
 
 # As opposed to the previous demos, we will create our two function spaces using the `ufl` element definitions as input
 
-v_cg2 = VectorElement("Lagrange", mesh.ufl_cell(), 2)
-s_cg1 = FiniteElement("Lagrange", mesh.ufl_cell(), 1)
-V = FunctionSpace(mesh, v_cg2)
-Q = FunctionSpace(mesh, s_cg1)
+v_cg2 = element("Lagrange", mesh.topology.cell_name(), 2, shape=(mesh.geometry.dim, ))
+s_cg1 = element("Lagrange", mesh.topology.cell_name(), 1)
+V = functionspace(mesh, v_cg2)
+Q = functionspace(mesh, s_cg1)
 
-# The first space `V` is a vector valued function space for the velocity, while `Q` is a scalar valued function space for pressure. We use piecewise quadratic elements for the velocity and piecewise linear elements for the pressure. When creating the vector finite element, the dimension of the vector element will be set to the geometric dimension of the mesh. One can easily create vector-valued function spaces with other dimensions by adding the keyword argument dim, i.e.
-# `v_cg = ufl.VectorElement("Lagrange", mesh.ufl_cell(), 2, dim=10)`.
+# The first space `V` is a vector valued function space for the velocity, while `Q` is a scalar valued function space for pressure. We use piecewise quadratic elements for the velocity and piecewise linear elements for the pressure. When creating the vector finite element, the dimension of the vector element will be set to the geometric dimension of the mesh. One can easily create vector-valued function spaces with other dimensions by replacing `(mesh.geometry.dim, )` with something else, like
+# ```
+# v_cg  basix.ufl.element("Lagrange", mesh.topology.cell_name(), 2, shape=(10,))
+# ```
+# or 
+# ```
+# tensor_element = basix.ufl.element("Lagrange", mesh.topology.cell_name(), 2, shape=(3, 3))
+# ```
+# or
+# ```
+# tensor_element = basix.ufl.element("Lagrange", mesh.topology.cell_name(), 2, shape=(3, 2, 4))
+# ```
+#
 #
 # ```{admonition} Stable finite element spaces for the Navier-Stokes equation
 # It is well-known that certain finite element spaces are not *stable* for the Navier-Stokes equations, or even for the  simpler Stokes equation. The prime example of an unstable pair of finite element spaces is to use first order degree continuous piecewise polynomials for both the velocity and the pressure.

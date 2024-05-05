@@ -1,13 +1,14 @@
 # Execute from root of repo as: docker buildx build --platform=linux/arm64,linux/amd64 -f docker/Dockerfile ./docker/ --progress=plain
 
-FROM ghcr.io/fenics/dolfinx/lab:v0.7.3
+FROM ghcr.io/fenics/dolfinx/lab:v0.8.0
 ARG TARGETPLATFORM
 
 
 ENV DEB_PYTHON_INSTALL_LAYOUT=deb_system
 ENV HDF5_MPI="ON"
 ENV HDF5_DIR="/usr/local"
-ENV PYVISTA_JUPYTER_BACKEND="panel"
+ENV PYVISTA_JUPYTER_BACKEND="static"
+
 WORKDIR /tmp/
 # Requirements for pyvista (gl1 and render1) and jupyterlab (nodejs and curl)
 RUN apt-get update && apt-get install -y libgl1-mesa-glx libxrender1 xvfb curl

@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -84,7 +84,7 @@
 
 # +
 from dolfinx import default_scalar_type
-from dolfinx.fem import (Constant,  Function, FunctionSpace, assemble_scalar, 
+from dolfinx.fem import (Constant,  Function, functionspace, assemble_scalar, 
                          dirichletbc, form, locate_dofs_topological)
 from dolfinx.fem.petsc import LinearProblem
 from dolfinx.io import XDMFFile
@@ -137,7 +137,7 @@ g = -dot(n, grad(u_ex(x)))
 kappa = Constant(mesh, default_scalar_type(1))
 r = Constant(mesh, default_scalar_type(1000))
 # Define function space and standard part of variational form
-V = FunctionSpace(mesh, ("Lagrange", 1))
+V = functionspace(mesh, ("Lagrange", 1))
 u, v = TrialFunction(V), TestFunction(V)
 F = kappa * inner(grad(u), grad(v)) * dx - inner(f, v) * dx
 
@@ -248,7 +248,7 @@ else:
 
 # +
 # Compute L2 error and error at nodes
-V_ex = FunctionSpace(mesh, ("Lagrange", 2))
+V_ex = functionspace(mesh, ("Lagrange", 2))
 u_exact = Function(V_ex)
 u_exact.interpolate(u_ex)
 error_L2 = np.sqrt(mesh.comm.allreduce(assemble_scalar(form((uh - u_exact)**2 * dx)), op=MPI.SUM))

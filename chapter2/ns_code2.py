@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -14,6 +14,7 @@
 # ---
 
 # # Test problem 2: Flow past a cylinder (DFG 2D-3 benchmark)
+#
 # Author: Jørgen S. Dokken
 #
 # In this section, we will turn our attention to a slightly more challenging problem: flow past a cylinder. The geometry and parameters are taken from the [DFG 2D-3 benchmark](https://www.featflow.de/en/benchmarks/cfdbenchmarking/flow/dfg_benchmark3_re100.html) in FeatFlow.
@@ -32,13 +33,17 @@
 # $$
 #     u(x,y,t) = \left( \frac{4Uy(0.41-y)}{0.41^2}, 0 \right)
 # $$
+#
 # $$
 #     U=U(t) = 1.5\sin(\pi t/8)
 # $$
 #
 # which has a maximum magnitude of $1.5$ at $y=0.41/2$. We do not use any scaling for this problem since all exact parameters are known.
+#
 # ## Mesh generation
+#
 # As in the [Deflection of a membrane](./../chapter1/membrane_code.ipynb) we use GMSH to generate the mesh. We fist create the rectangle and obstacle.
+#
 
 # +
 import gmsh
@@ -50,8 +55,10 @@ import tqdm.autonotebook
 from mpi4py import MPI
 from petsc4py import PETSc
 
+from basix.ufl import element
+
 from dolfinx.cpp.mesh import to_type, cell_entity_type
-from dolfinx.fem import (Constant, Function, FunctionSpace,
+from dolfinx.fem import (Constant, Function, functionspace,
                          assemble_scalar, dirichletbc, form, locate_dofs_topological, set_bc)
 from dolfinx.fem.petsc import (apply_lifting, assemble_matrix, assemble_vector,
                                create_vector, create_matrix, set_bc)
@@ -59,9 +66,8 @@ from dolfinx.graph import adjacencylist
 from dolfinx.geometry import bb_tree, compute_collisions_points, compute_colliding_cells
 from dolfinx.io import (VTXWriter, distribute_entity_data, gmshio)
 from dolfinx.mesh import create_mesh, meshtags_from_entities
-
-from ufl import (FacetNormal, FiniteElement, Identity, Measure, TestFunction, TrialFunction, VectorElement,
-                 as_vector, div, dot, ds, dx, inner, lhs, grad, nabla_grad, rhs, sym)
+from ufl import (FacetNormal, Identity, Measure, TestFunction, TrialFunction,
+                 as_vector, div, dot, ds, dx, inner, lhs, grad, nabla_grad, rhs, sym, system)
 
 gmsh.initialize()
 
@@ -78,12 +84,14 @@ if mesh_comm.rank == model_rank:
 # -
 
 # The next step is to subtract the obstacle from the channel, such that we do not mesh the interior of the circle.
+#
 
 if mesh_comm.rank == model_rank:
     fluid = gmsh.model.occ.cut([(gdim, rectangle)], [(gdim, obstacle)])
     gmsh.model.occ.synchronize()
 
 # To get GMSH to mesh the fluid, we add a physical volume marker
+#
 
 fluid_marker = 1
 if mesh_comm.rank == model_rank:
@@ -118,7 +126,8 @@ if mesh_comm.rank == model_rank:
     gmsh.model.addPhysicalGroup(1, obstacle, obstacle_marker)
     gmsh.model.setPhysicalName(1, obstacle_marker, "Obstacle")
 
-# In our previous meshes, we have used uniform mesh sizes. In this example, we will have variable mesh sizes to resolve the flow solution in  the area of interest; close to the circular obstacle. To do this, we use GMSH Fields.
+# In our previous meshes, we have used uniform mesh sizes. In this example, we will have variable mesh sizes to resolve the flow solution in the area of interest; close to the circular obstacle. To do this, we use GMSH Fields.
+#
 
 # Create distance field from obstacle.
 # Add threshold of mesh sizes based on the distance field
@@ -142,7 +151,9 @@ if mesh_comm.rank == model_rank:
     gmsh.model.mesh.field.setAsBackgroundMesh(min_field)
 
 # ## Generating the mesh
+#
 # We are now ready to generate the mesh. However, we have to decide if our mesh should consist of triangles or quadrilaterals. In this demo, to match the DFG 2D-3 benchmark, we use second order quadrilateral elements.
+#
 
 if mesh_comm.rank == model_rank:
     gmsh.option.setNumber("Mesh.Algorithm", 8)
@@ -154,14 +165,18 @@ if mesh_comm.rank == model_rank:
     gmsh.model.mesh.optimize("Netgen")
 
 # ## Loading mesh and boundary markers
+#
 # As we have generated the mesh, we now need to load the mesh and corresponding facet markers into DOLFINx.
-# To load the mesh, we follow the same structure as in  [Deflection of a membrane](./../chapter1/membrane_code.ipynb), with the difference being that we will load in facet markers as well. To learn more about the specifics of the function below, see [A GMSH tutorial for DOLFINx](https://jsdokken.com/src/tutorial_gmsh.html).
+# To load the mesh, we follow the same structure as in [Deflection of a membrane](./../chapter1/membrane_code.ipynb), with the difference being that we will load in facet markers as well. To learn more about the specifics of the function below, see [A GMSH tutorial for DOLFINx](https://jsdokken.com/src/tutorial_gmsh.html).
+#
 
 mesh, _, ft = gmshio.model_to_mesh(gmsh.model, mesh_comm, model_rank, gdim=gdim)
 ft.name = "Facet markers"
 
 # ## Physical and discretization parameters
+#
 # Following the DGF-2 benchmark, we define our problem specific parameters
+#
 
 t = 0
 T = 8                       # Final time
@@ -176,13 +191,15 @@ rho = Constant(mesh, PETSc.ScalarType(1))     # Density
 # ```
 #
 # ## Boundary conditions
+#
 # As we have created the mesh and relevant mesh tags, we can now specify the function spaces `V` and `Q` along with the boundary conditions. As the `ft` contains markers for facets, we use this class to find the facets for the inlet and walls.
+#
 
 # +
-v_cg2 = VectorElement("Lagrange", mesh.ufl_cell(), 2)
-s_cg1 = FiniteElement("Lagrange", mesh.ufl_cell(), 1)
-V = FunctionSpace(mesh, v_cg2)
-Q = FunctionSpace(mesh, s_cg1)
+v_cg2 = element("Lagrange", mesh.topology.cell_name(), 2, shape=(mesh.geometry.dim, ))
+s_cg1 = element("Lagrange", mesh.topology.cell_name(), 1)
+V = functionspace(mesh, v_cg2)
+Q = functionspace(mesh, s_cg1)
 
 fdim = mesh.topology.dim - 1
 
@@ -216,6 +233,7 @@ bcp = [bcp_outlet]
 # -
 
 # ## Variational form
+#
 # As opposed to [Pouseille flow](./ns_code1.ipynb), we will use a Crank-Nicolson discretization, and an semi-implicit Adams-Bashforth approximation.
 # The first step can be written as
 #
@@ -230,7 +248,9 @@ bcp = [bcp_outlet]
 # $$
 # \frac{1}{2}\nu \nabla (u^*+u^n) \cdot n = p^{n-\frac{1}{2}} \qquad \text{ on } \partial \Omega_{N}
 # $$
+#
 # where we have used the two previous time steps in the temporal derivative for the velocity, and compute the pressure staggered in time, at the time between the previous and current solution. The second step becomes
+#
 # $$
 # \nabla \phi = -\frac{\rho}{\delta t} \nabla \cdot u^* \qquad\text{in } \Omega,
 # $$
@@ -251,6 +271,7 @@ bcp = [bcp_outlet]
 # $$
 #
 # We start by defining all the variables used in the variational formulations.
+#
 
 u = TrialFunction(V)
 v = TestFunction(V)
@@ -266,6 +287,7 @@ p_.name = "p"
 phi = Function(Q)
 
 # Next, we define the variational formulation for the first step, where we have integrated the diffusion term, as well as the pressure term by parts.
+#
 
 f = Constant(mesh, PETSc.ScalarType((0, 0)))
 F1 = rho / k * dot(u - u_n, v) * dx
@@ -278,6 +300,7 @@ A1 = create_matrix(a1)
 b1 = create_vector(L1)
 
 # Next we define the second step
+#
 
 a2 = form(dot(grad(p), grad(q)) * dx)
 L2 = form(-rho / k * dot(div(u_s), q) * dx)
@@ -286,6 +309,7 @@ A2.assemble()
 b2 = create_vector(L2)
 
 # We finally create the last step
+#
 
 a3 = form(rho * dot(u, v) * dx)
 L3 = form(rho * dot(u_s, v) * dx - k * dot(nabla_grad(phi), v) * dx)
@@ -294,6 +318,7 @@ A3.assemble()
 b3 = create_vector(L3)
 
 # As in the previous tutorials, we use PETSc as a linear algebra backend.
+#
 
 # +
 # Solver for step 1
@@ -320,16 +345,19 @@ pc3.setType(PETSc.PC.Type.SOR)
 # -
 
 # ## Verification of the implementation compute known physical quantities
+#
 # As a further verification of our implementation, we compute the drag and lift coefficients over the obstacle, defined as
 #
 # $$
 #     C_{\text{D}}(u,p,t,\partial\Omega_S) = \frac{2}{\rho L U_{mean}^2}\int_{\partial\Omega_S}\rho \nu n \cdot \nabla u_{t_S}(t)n_y -p(t)n_x~\mathrm{d} s,
 # $$
+#
 # $$
 #     C_{\text{L}}(u,p,t,\partial\Omega_S) = -\frac{2}{\rho L U_{mean}^2}\int_{\partial\Omega_S}\rho \nu n \cdot \nabla u_{t_S}(t)n_x + p(t)n_y~\mathrm{d} s,
 # $$
 #
 # where $u_{t_S}$ is the tangential velocity component at the interface of the obstacle $\partial\Omega_S$, defined as $u_{t_S}=u\cdot (n_y,-n_x)$, $U_{mean}=1$ the average inflow velocity, and $L$ the length of the channel. We use `UFL` to create the relevant integrals, and assemble them at each time step.
+#
 
 n = -FacetNormal(mesh)  # Normal pointing out of obstacle
 dObs = Measure("ds", domain=mesh, subdomain_data=ft, subdomain_id=obstacle_marker)
@@ -355,6 +383,7 @@ if mesh.comm.rank == 0:
     p_diff = np.zeros(num_steps, dtype=PETSc.ScalarType)
 
 # ## Solving the time-dependent problem
+#
 # ```{admonition} Stability of the Navier-Stokes equation
 # Note that the current splitting scheme has to fullfil the a [Courant–Friedrichs–Lewy condition](https://en.wikipedia.org/wiki/Courant%E2%80%93Friedrichs%E2%80%93Lewy_condition). This limits the spatial discretization with respect to the inlet velocity and temporal discretization.
 # Other temporal discretization schemes such as the second order backward difference discretization or Crank-Nicholson discretization with Adams-Bashforth linearization are better behaved than our simple backward difference scheme.
@@ -453,7 +482,9 @@ vtx_u.close()
 vtx_p.close()
 
 # ## Verification using data from FEATFLOW
-# As FEATFLOW has provided data for different  discretization levels, we compare our numerical data with the data provided using `matplotlib`.
+#
+# As FEATFLOW has provided data for different discretization levels, we compare our numerical data with the data provided using `matplotlib`.
+#
 
 if mesh.comm.rank == 0:
     if not os.path.exists("figures"):
@@ -490,3 +521,5 @@ if mesh.comm.rank == 0:
     plt.grid()
     plt.legend()
     plt.savefig("figures/pressure_comparison.png")
+
+

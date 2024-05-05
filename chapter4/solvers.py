@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -28,7 +28,7 @@
 # We start by creating a generic module for evaluating the analytical solution  at any point $x$.
 
 # +
-from dolfinx.fem import dirichletbc, FunctionSpace, Function, locate_dofs_topological
+from dolfinx.fem import dirichletbc, functionspace, Function, locate_dofs_topological
 from dolfinx.fem.petsc import LinearProblem
 from dolfinx.mesh import create_unit_square, locate_entities_boundary
 
@@ -59,7 +59,7 @@ f = -div(grad(u_ufl(x)))
 
 # Next, we define our linear variational problem
 
-V = FunctionSpace(mesh, ("Lagrange", 1))
+V = functionspace(mesh, ("Lagrange", 1))
 u = TrialFunction(V)
 v = TestFunction(V)
 a = inner(grad(u), grad(v)) * dx

@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -36,7 +36,7 @@ import ufl
 from ufl import TestFunction, TrialFunction, dx, inner
 from dolfinx.mesh import create_unit_cube
 from dolfinx.fem.petsc import assemble_matrix
-from dolfinx.fem import FunctionSpace, form
+from dolfinx.fem import functionspace, form
 
 from mpi4py import MPI
 from pathlib import Path
@@ -54,7 +54,7 @@ print(f"Directory to put C files in: {cache_dir}")
 def compile_form(space: str, degree: int, jit_options: Dict):
     N = 10
     mesh = create_unit_cube(MPI.COMM_WORLD, N, N, N)
-    V = FunctionSpace(mesh, (space, degree))
+    V = functionspace(mesh, (space, degree))
     u = TrialFunction(V)
     v = TestFunction(V)
     a = inner(u, v) * dx

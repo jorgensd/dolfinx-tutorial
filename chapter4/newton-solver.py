@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -73,7 +73,7 @@ x_spacing = np.linspace(0, 1, N)
 # Next, we define the mesh, and the appropriate function space and function `uh` to hold the approximate solution.
 
 mesh = dolfinx.mesh.create_unit_interval(MPI.COMM_WORLD, N)
-V = dolfinx.fem.FunctionSpace(mesh, ("Lagrange", 1))
+V = dolfinx.fem.functionspace(mesh, ("Lagrange", 1))
 uh = dolfinx.fem.Function(V)
 
 # ## Definition of residual and Jacobian
@@ -197,7 +197,7 @@ def u_exact(x):
 # Next, we define the boundary condition `bc`, the residual `F` and the Jacobian `J`.
 
 # +
-V = dolfinx.fem.FunctionSpace(domain, ("Lagrange", 1))
+V = dolfinx.fem.functionspace(domain, ("Lagrange", 1))
 u_D = dolfinx.fem.Function(V)
 u_D.interpolate(u_exact)
 fdim = domain.topology.dim - 1

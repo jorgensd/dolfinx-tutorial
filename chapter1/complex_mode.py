@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (DOLFINx complex)
 #     language: python
@@ -19,7 +19,7 @@
 #
 # Many PDEs, such as the [Helmholtz equation](https://docs.fenicsproject.org/dolfinx/v0.4.1/python/demos/demo_helmholtz.html) require complex-valued fields.
 #
-# For simplicity, let us consider a Poisson equation of the form:
+# For simplicity, let us consider a Poisson equation of the form: 
 #
 # $$-\Delta u = f \text{ in } \Omega,$$
 # $$ f = -1 - 2j \text{ in } \Omega,$$
@@ -49,7 +49,7 @@ from mpi4py import MPI
 import dolfinx
 import numpy as np
 mesh = dolfinx.mesh.create_unit_square(MPI.COMM_WORLD, 10, 10)
-V = dolfinx.fem.FunctionSpace(mesh, ("Lagrange", 1))
+V = dolfinx.fem.functionspace(mesh, ("Lagrange", 1))
 u_r = dolfinx.fem.Function(V, dtype=np.float64) 
 u_r.interpolate(lambda x: x[0])
 u_c = dolfinx.fem.Function(V, dtype=np.complex128)
@@ -62,7 +62,6 @@ print(u_c.x.array.dtype)
 # Unfortunately, PETSc only supports one floating type in their matrices, thus we need to install two versions of PETSc, one that supports `float64` and one that supports `complex128`. In the [docker images](https://hub.docker.com/r/dolfinx/dolfinx) for DOLFINx, both versions are installed, and one can switch between them by calling `source dolfinx-real-mode` or `source dolfinx-complex-mode`. For the `dolfinx/lab` images, one can change the Python kernel to be either the real or complex mode, by going to `Kernel->Change Kernel...` and choosing `Python3 (ipykernel)` (for real mode) or `Python3 (DOLFINx complex)` (for complex mode).
 #
 # We check that we are using the correct installation of PETSc by inspecting the scalar type.
-#
 
 from petsc4py import PETSc
 from dolfinx.fem.petsc import assemble_vector
@@ -70,9 +69,7 @@ print(PETSc.ScalarType)
 assert np.dtype(PETSc.ScalarType).kind == 'c'
 
 # ## Variational problem
-#
 # We are now ready to define our variational problem
-#
 
 import ufl
 u = ufl.TrialFunction(V)
@@ -86,7 +83,6 @@ L = ufl.inner(f, v) * ufl.dx
 # Secondly, note that we are using `ufl.inner` to describe multiplication of $f$ and $v$, even if they are scalar values. This is because `ufl.inner` takes the conjugate of the second argument, as decribed by the $L^2$ inner product. One could alternatively write this out explicitly
 #
 # ### Inner-products and derivatives
-#
 
 L2 = f * ufl.conj(v) * ufl.dx
 print(L)
@@ -101,9 +97,7 @@ residual = assemble_vector(dolfinx.fem.form(F))
 print(residual.array)
 
 # We define our Dirichlet condition and setup and solve the variational problem.
-#
 # ## Solve variational problem
-#
 
 mesh.topology.create_connectivity(mesh.topology.dim-1, mesh.topology.dim)
 boundary_facets = dolfinx.mesh.exterior_facet_indices(mesh.topology)

@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -26,6 +26,7 @@
 # The first difference from the previous problem is that we are not using a unit square. We create the rectangular domain with `dolfinx.mesh.create_rectangle`.
 
 # +
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pyvista
 import ufl
@@ -47,7 +48,7 @@ dt = T / num_steps  # time step size
 nx, ny = 50, 50
 domain = mesh.create_rectangle(MPI.COMM_WORLD, [np.array([-2, -2]), np.array([2, 2])],
                                [nx, ny], mesh.CellType.triangle)
-V = fem.FunctionSpace(domain, ("Lagrange", 1))
+V = fem.functionspace(domain, ("Lagrange", 1))
 
 
 # -
@@ -120,7 +121,6 @@ solver.getPC().setType(PETSc.PC.Type.LU)
 # We use the DOLFINx plotting functionality, which is based on pyvista to plot the solution at every $15$th time step. We would also like to visualize a colorbar reflecting the minimal and maximum value of $u$ at each time step. We use the following convenience function `plot_function` for this:
 
 # +
-import matplotlib as mpl
 pyvista.start_xvfb()
 
 grid = pyvista.UnstructuredGrid(*plot.vtk_mesh(V))
@@ -171,9 +171,9 @@ for i in range(num_steps):
     # Write solution to file
     xdmf.write_function(uh, t)
     # Update plot
-    warped = grid.warp_by_scalar("uh", factor=1)
-    plotter.update_coordinates(warped.points.copy(), render=False)
-    plotter.update_scalars(uh.x.array, render=False)
+    new_warped = grid.warp_by_scalar("uh", factor=1)
+    warped.points[:, :] = new_warped.points
+    warped.point_data["uh"][:] = uh.x.array
     plotter.write_frame()
 plotter.close()
 xdmf.close()

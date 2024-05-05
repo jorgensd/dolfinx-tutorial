@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -27,9 +27,7 @@
 from dolfinx import log, default_scalar_type
 from dolfinx.fem.petsc import NonlinearProblem
 from dolfinx.nls.petsc import NewtonSolver
-import matplotlib.pyplot as plt
 import pyvista
-from dolfinx import nls
 import numpy as np
 import ufl
 
@@ -37,7 +35,7 @@ from mpi4py import MPI
 from dolfinx import fem, mesh, plot
 L = 20.0
 domain = mesh.create_box(MPI.COMM_WORLD, [[0.0, 0.0, 0.0], [L, 1, 1]], [20, 5, 5], mesh.CellType.hexahedron)
-V = fem.VectorFunctionSpace(domain, ("Lagrange", 2))
+V = fem.functionspace(domain, ("Lagrange", 2, (domain.geometry.dim, )))
 
 
 # -
@@ -173,7 +171,7 @@ warped.set_active_vectors("u")
 actor = plotter.add_mesh(warped, show_edges=True, lighting=False, clim=[0, 10])
 
 # Compute magnitude of displacement to visualize in GIF
-Vs = fem.FunctionSpace(domain, ("Lagrange", 2))
+Vs = fem.functionspace(domain, ("Lagrange", 2))
 magnitude = fem.Function(Vs)
 us = fem.Expression(ufl.sqrt(sum([u[i]**2 for i in range(len(u))])), Vs.element.interpolation_points())
 magnitude.interpolate(us)
@@ -194,9 +192,9 @@ for n in range(1, 10):
     magnitude.interpolate(us)
     warped.set_active_scalars("mag")
     warped_n = function_grid.warp_by_vector(factor=1)
-    plotter.update_coordinates(warped_n.points.copy(), render=False)
+    warped.points[:, :] = warped_n.points
+    warped.point_data["mag"][:] = magnitude.x.array
     plotter.update_scalar_bar_range([0, 10])
-    plotter.update_scalars(magnitude.x.array)
     plotter.write_frame()
 plotter.close()
 

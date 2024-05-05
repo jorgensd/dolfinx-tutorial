@@ -4,8 +4,9 @@ on:
   workflow_dispatch:
   workflow_call:
   pull_request:
-    branches: ["main"]
-
+    branches: ["release"]
+  push:
+    branches: ["release"]
 env:
   HDF5_MPI: "ON"
   HDF5_DIR: "/usr/local/"
@@ -15,7 +16,7 @@ env:
 jobs:
   build-book:
     runs-on: ubuntu-latest
-    container: ghcr.io/fenics/dolfinx/lab:v0.7.3
+    container: ghcr.io/fenics/dolfinx/lab:v0.8.0
 
     env:
       PYVISTA_TRAME_SERVER_PROXY_PREFIX: "/proxy/"

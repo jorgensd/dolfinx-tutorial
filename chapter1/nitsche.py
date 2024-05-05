@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -16,7 +16,7 @@
 # # Weak imposition of Dirichlet conditions for the Poisson problem
 # Author: Jørgen S. Dokken
 #
-# In this section, we will go through how to solve the Poisson problem from the [Fundamentals](fundamentals_code.ipynb) tutorial using Nitsche's method {cite}`Nitsche1971`.
+# In this section, we will go through how to solve the Poisson problem from the [Fundamentals](./fundamentals_code.ipynb) tutorial using Nitsche's method {cite}`Nitsche1971`.
 # The idea of weak imposition is that we add additional terms to the variational formulation to impose the boundary condition, instead of modifying the matrix system using strong imposition (lifting).
 #
 # We start by importing the required modules and creating the mesh and function space for our solution
@@ -31,7 +31,7 @@ from ufl import (Circumradius, FacetNormal, SpatialCoordinate, TrialFunction, Te
 
 N = 8
 domain = mesh.create_unit_square(MPI.COMM_WORLD, N, N)
-V = fem.FunctionSpace(domain, ("Lagrange", 1))
+V = fem.functionspace(domain, ("Lagrange", 1))
 # -
 
 # Next, we create a function containing the exact solution (which will also be used in the Dirichlet boundary condition) and the corresponding source function for the right hand side. Note that we use `ufl.SpatialCoordinate` to define the exact solution, which in turn is interpolated into `uD` and used to create the source function `f`.

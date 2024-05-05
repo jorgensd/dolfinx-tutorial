@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -89,8 +89,7 @@
 
 # +
 from dolfinx import default_scalar_type
-from dolfinx.fem import (dirichletbc, Expression, Function, FunctionSpace,
-                         VectorFunctionSpace, locate_dofs_topological)
+from dolfinx.fem import (dirichletbc, Expression, Function, functionspace, locate_dofs_topological)
 from dolfinx.fem.petsc import LinearProblem
 from dolfinx.io import XDMFFile
 from dolfinx.io.gmshio import model_to_mesh
@@ -230,7 +229,7 @@ else:
 
 # +
 
-Q = FunctionSpace(mesh, ("DG", 0))
+Q = functionspace(mesh, ("DG", 0))
 material_tags = np.unique(ct.values)
 mu = Function(Q)
 J = Function(Q)
@@ -257,7 +256,7 @@ for tag in material_tags:
 # We can now define the weak problem
 
 # +
-V = FunctionSpace(mesh, ("Lagrange", 1))
+V = functionspace(mesh, ("Lagrange", 1))
 tdim = mesh.topology.dim
 facets = locate_entities_boundary(mesh, tdim - 1, lambda x: np.full(x.shape[1], True))
 dofs = locate_dofs_topological(V, tdim - 1, facets)
@@ -277,7 +276,7 @@ problem.solve()
 
 # As we have computed the magnetic potential, we can now compute the magnetic field, by setting `B=curl(A_z)`. Note that as we have chosen a function space of first order piecewise linear function to describe our potential, the curl of a function in this space is a discontinous zeroth order function (a function of cell-wise constants). We use `dolfinx.fem.Expression` to interpolate the curl into `W`.
 
-W = VectorFunctionSpace(mesh, ("DG", 0))
+W = functionspace(mesh, ("DG", 0, (mesh.geometry.dim, )))
 B = Function(W)
 B_expr = Expression(as_vector((A_z.dx(1), -A_z.dx(0))), W.element.interpolation_points())
 B.interpolate(B_expr)
@@ -313,7 +312,7 @@ plotter.set_position([0, 0, 5])
 # We include ghosts cells as we access all degrees of freedom (including ghosts) on each process
 top_imap = mesh.topology.index_map(mesh.topology.dim)
 num_cells = top_imap.size_local + top_imap.num_ghosts
-midpoints = compute_midpoints(mesh, mesh.topology.dim, range(num_cells))
+midpoints = compute_midpoints(mesh, mesh.topology.dim, np.arange(num_cells, dtype=np.int32))
 
 num_dofs = W.dofmap.index_map.size_local + W.dofmap.index_map.num_ghosts
 assert (num_cells == num_dofs)
@@ -329,3 +328,6 @@ if not pyvista.OFF_SCREEN:
     plotter.show()
 else:
     B_fig = plotter.screenshot("B.png")
+# -
+
+

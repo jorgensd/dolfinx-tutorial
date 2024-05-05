@@ -13,7 +13,7 @@ dependencies = [
     "pandas",
     "tqdm",
     "pyvista[all]>=0.43.0",
-    "fenics-dolfinx>=0.7.0",
+    "fenics-dolfinx>=0.8.0",
 ]
 
 [project.optional-dependencies]
