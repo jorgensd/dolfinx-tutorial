@@ -26,6 +26,7 @@ jobs:
       PYVISTA_JUPYTER_BACKEND: html
 
     steps:
+      - uses: actions/checkout@v4
 
       - name: Special handling of some installation
         uses: ./.github/actions/install-dependencies
