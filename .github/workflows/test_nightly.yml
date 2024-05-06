@@ -32,7 +32,9 @@ jobs:
         uses: ./.github/actions/install-dependencies
 
       - name: Install requirements
-        run: python3 -m pip install --no-cache-dir --no-binary=h5py . --upgrade
+        run: |
+          python3 -m pip install --break-system-packages -U pip setuptools pkgconfig
+          python3 -m pip install --no-build-isolation --break-system-packages --no-cache-dir --no-binary=h5py . --upgrade
 
       - name: Test building the book
         run: PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
@@ -42,7 +44,7 @@ jobs:
         run: |
           export PKG_CONFIG_PATH=/usr/local/dolfinx-complex/lib/pkgconfig:$PKG_CONFIG_PATH
           export PETSC_ARCH=linux-gnu-complex128-32
-          export PYTHONPATH=/usr/local/dolfinx-complex/lib/python3.10/dist-packages:$PYTHONPATH
+          export PYTHONPATH=/usr/local/dolfinx-complex/lib/python3.12/dist-packages:$PYTHONPATH
           export LD_LIBRARY_PATH=/usr/local/dolfinx-complex/lib:$LD_LIBRARY_PATH
           python3 complex_mode.py
           mpirun -n 2 python3 complex_mode.py
@@ -50,14 +52,14 @@ jobs:
       - name: Test chapter 1
         working-directory: chapter1
         run: |
-            python3 -c "from pyvista import start_xvfb; start_xvfb(0.1)"
-            mpirun -n 2 python3 fundamentals_code.py
-            mpirun -n 2 python3 nitsche.py
-            mpirun -n 2 python3 membrane_code.py
+          python3 -c "from pyvista import start_xvfb; start_xvfb(0.1)"
+          mpirun -n 2 python3 fundamentals_code.py
+          mpirun -n 2 python3 nitsche.py
+          mpirun -n 2 python3 membrane_code.py
 
       - name: Test chapter 2
         working-directory: chapter2
-        run: |    
+        run: |
           mpirun -n 2 python3 diffusion_code.py
           mpirun -n 2 python3 heat_code.py
           mpirun -n 2 python3 linearelasticity_code.py
@@ -65,7 +67,7 @@ jobs:
           mpirun -n 2 python3 nonlinpoisson_code.py
           mpirun -n 2 python3 ns_code1.py
           mpirun -n 2 python3 ns_code2.py
-       
+
       - name: Test chapter 3
         working-directory: chapter3
         run: |
@@ -75,7 +77,7 @@ jobs:
           mpirun -n 2 python3 robin_neumann_dirichlet.py
           mpirun -n 2 python3 component_bc.py
           mpirun -n 2 python3 em.py
-  
+
       - name: Test chapter 4
         working-directory: chapter4
         run: |
