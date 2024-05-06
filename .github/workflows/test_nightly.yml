@@ -32,7 +32,7 @@ jobs:
         uses: ./.github/actions/install-dependencies
 
       - name: Install requirements
-        run: python3 -m pip install --break-system-packages --no-cache-dir --no-binary=h5py . --upgrade
+        run: python3 -m pip install --no-build-isolation --break-system-packages --no-cache-dir --no-binary=h5py . --upgrade
 
       - name: Test building the book
         run: PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
