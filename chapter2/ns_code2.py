@@ -267,7 +267,7 @@ bcp = [bcp_outlet]
 # Finally, the third step is
 #
 # $$
-# \rho (u^{n+1}-u^{*}) = -\delta t \phi.
+# \rho (u^{n+1}-u^{*}) = -\delta t \nabla\phi.
 # $$
 #
 # We start by defining all the variables used in the variational formulations.
