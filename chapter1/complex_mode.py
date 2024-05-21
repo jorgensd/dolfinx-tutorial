@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.1
+#       jupytext_version: 1.15.2
 #   kernelspec:
 #     display_name: Python 3 (DOLFINx complex)
 #     language: python
@@ -126,6 +126,7 @@ print(global_error, max_error)
 
 import pyvista
 pyvista.start_xvfb()
+mesh.topology.create_connectivity(mesh.topology.dim, mesh.topology.dim)
 p_mesh = pyvista.UnstructuredGrid(*dolfinx.plot.vtk_mesh(mesh, mesh.topology.dim))
 pyvista_cells, cell_types, geometry = dolfinx.plot.vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(pyvista_cells, cell_types, geometry)

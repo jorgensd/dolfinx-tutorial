@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.1
+#       jupytext_version: 1.15.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -232,6 +232,7 @@ print(pyvista.global_theme.jupyter_backend)
 # + vscode={"languageId": "python"}
 from dolfinx import plot
 pyvista.start_xvfb()
+domain.topology.create_connectivity(tdim, tdim)
 topology, cell_types, geometry = plot.vtk_mesh(domain, tdim)
 grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
 # -

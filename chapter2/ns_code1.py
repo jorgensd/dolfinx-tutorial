@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.1
+#       jupytext_version: 1.15.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -345,6 +345,7 @@ function_grid["u"] = values
 glyphs = function_grid.glyph(orient="u", factor=0.2)
 
 # Create a pyvista-grid for the mesh
+mesh.topology.create_connectivity(mesh.topology.dim, mesh.topology.dim)
 grid = pyvista.UnstructuredGrid(*vtk_mesh(mesh, mesh.topology.dim))
 
 # Create plotter
