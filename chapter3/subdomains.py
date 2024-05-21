@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.2
+#       jupytext_version: 1.16.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -279,9 +279,11 @@ uh = problem.solve()
 # As the dolfinx.MeshTag contains a value for every cell in the
 # geometry, we can attach it directly to the grid
 
-topology, cell_types, x = vtk_mesh(mesh, mesh.topology.dim)
+tdim = mesh.topology.dim
+mesh.topology.create_connectivity(tdim, tdim)
+topology, cell_types, x = vtk_mesh(mesh, tdim)
 grid = pyvista.UnstructuredGrid(topology, cell_types, x)
-num_local_cells = mesh.topology.index_map(mesh.topology.dim).size_local
+num_local_cells = mesh.topology.index_map(tdim).size_local
 grid.cell_data["Marker"] = ct.values[ct.indices < num_local_cells]
 grid.set_active_scalars("Marker")
 
