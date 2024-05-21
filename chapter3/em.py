@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.1
+#       jupytext_version: 1.15.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -312,6 +312,7 @@ plotter.set_position([0, 0, 5])
 # We include ghosts cells as we access all degrees of freedom (including ghosts) on each process
 top_imap = mesh.topology.index_map(mesh.topology.dim)
 num_cells = top_imap.size_local + top_imap.num_ghosts
+mesh.topology.create_connectivity(mesh.topology.dim, mesh.topology.dim)
 midpoints = compute_midpoints(mesh, mesh.topology.dim, np.arange(num_cells, dtype=np.int32))
 
 num_dofs = W.dofmap.index_map.size_local + W.dofmap.index_map.num_ghosts
