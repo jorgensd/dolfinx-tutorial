@@ -212,8 +212,10 @@ with XDMFFile(MPI.COMM_WORLD, "mt.xdmf", "w") as xdmf:
 
 pyvista.start_xvfb()
 plotter = pyvista.Plotter()
-grid = pyvista.UnstructuredGrid(*vtk_mesh(mesh, mesh.topology.dim))
-num_local_cells = mesh.topology.index_map(mesh.topology.dim).size_local
+tdim = mesh.topology.dim
+mesh.topology.create_connectivity(tdim, tdim)
+grid = pyvista.UnstructuredGrid(*vtk_mesh(mesh, tdim))
+num_local_cells = mesh.topology.index_map(tdim).size_local
 grid.cell_data["Marker"] = ct.values[ct.indices < num_local_cells]
 grid.set_active_scalars("Marker")
 actor = plotter.add_mesh(grid, show_edges=True)

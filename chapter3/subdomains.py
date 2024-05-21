@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.1
+#       jupytext_version: 1.15.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -35,7 +35,7 @@ from ufl import (SpatialCoordinate, TestFunction, TrialFunction,
 from mpi4py import MPI
 
 import meshio
-import gmsh
+import gmsht
 import numpy as np
 import pyvista
 
@@ -106,13 +106,15 @@ problem = LinearProblem(a, L, bcs=bcs, petsc_options={"ksp_type": "preonly", "pc
 uh = problem.solve()
 
 # Filter out ghosted cells
-num_cells_local = mesh.topology.index_map(mesh.topology.dim).size_local
+tdim = mesh.topology.dim
+num_cells_local = mesh.topology.index_map(tdim).size_local
 marker = np.zeros(num_cells_local, dtype=np.int32)
 cells_0 = cells_0[cells_0 < num_cells_local]
 cells_1 = cells_1[cells_1 < num_cells_local]
 marker[cells_0] = 1
 marker[cells_1] = 2
-topology, cell_types, x = vtk_mesh(mesh, mesh.topology.dim, np.arange(num_cells_local, dtype=np.int32))
+mesh.topology.create_connectivity(tdim, tdim)
+topology, cell_types, x = vtk_mesh(mesh, tdim, np.arange(num_cells_local, dtype=np.int32))
 
 p = pyvista.Plotter(window_size=[800, 800])
 grid = pyvista.UnstructuredGrid(topology, cell_types, x)
