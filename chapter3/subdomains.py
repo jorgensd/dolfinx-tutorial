@@ -35,7 +35,7 @@ from ufl import (SpatialCoordinate, TestFunction, TrialFunction,
 from mpi4py import MPI
 
 import meshio
-import gmsht
+import gmsh
 import numpy as np
 import pyvista
 
