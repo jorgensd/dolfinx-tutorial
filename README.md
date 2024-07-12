@@ -46,7 +46,7 @@ An image building DOLFINx, Basix, UFL and FFCx from source can be built using:
 
 ```bash
 cd docker
-docker build -f ./docker/Dockerfile -t local_lab_env .
+docker build -f ./Dockerfile -t local_lab_env .
 ```
 
 from the root of this repository, and run
