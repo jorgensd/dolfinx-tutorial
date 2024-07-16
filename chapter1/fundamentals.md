@@ -107,7 +107,7 @@ The variational problem is a _continuous problem_: it defines the solution $u$ i
 The finite element method for the Poisson equation finds an approximate solution of the variational problem by replacing the infinite-dimensional function spaces $V$ and $\hat{V}$ by _discrete_ (finite dimensional) trial and test spaces $V_h\subset V$ and $\hat{V}_h \subset \hat{V}$. The discrete
 variational problem reads: Find $u_h\in V_h$ such that
 \begin{align}
-\int_\Omega \nabla u_h \cdot \nabla v~\mathrm{d} x &= \int_\Omega fv~\mathrm{d} x && \forall v \in \hat{V}\_h.
+\int_\Omega \nabla u_h \cdot \nabla v~\mathrm{d} x &= \int_\Omega fv~\mathrm{d} x && \forall v \in \hat{V}_h.
 \end{align}
 This variational problem, together with suitable definitions of $V_h$ and $\hat{V}_h$ uniquely define our approximate numerical solution of the Poisson equation.
 Note that the boundary condition is encoded as part of the test and trial spaces. This might seem complicated at first glance,
