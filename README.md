@@ -45,7 +45,6 @@ Additional requirements on top of the `dolfinx/lab:nightly` images can be found 
 An image building DOLFINx, Basix, UFL and FFCx from source can be built using:
 
 ```bash
-cd docker
 docker build -f ./docker/Dockerfile -t local_lab_env .
 ```
 
