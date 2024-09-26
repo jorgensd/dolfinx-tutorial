@@ -252,7 +252,7 @@ bcp = [bcp_outlet]
 # where we have used the two previous time steps in the temporal derivative for the velocity, and compute the pressure staggered in time, at the time between the previous and current solution. The second step becomes
 #
 # $$
-# \nabla \phi = -\frac{\rho}{\delta t} \nabla \cdot u^* \qquad\text{in } \Omega,
+# \nabla^2 \phi = \frac{\rho}{\delta t} \nabla \cdot u^* \qquad\text{in } \Omega,
 # $$
 #
 # $$
