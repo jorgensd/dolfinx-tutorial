@@ -134,7 +134,7 @@ for n in range(num_steps):
     set_bc(b, [bc])
 
     # Solve linear problem
-    solver.solve(b, uh.vector)
+    solver.solve(b, uh.x.petsc_vec)
     uh.x.scatter_forward()
 
     # Update solution at previous time step (u_n)

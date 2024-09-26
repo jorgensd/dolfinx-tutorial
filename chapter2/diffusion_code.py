@@ -142,7 +142,7 @@ renderer = plotter.add_mesh(warped, show_edges=True, lighting=False,
 
 # ## Updating the solution and right hand side per time step
 # To be able to solve the variation problem at each time step, we have to assemble the right hand side and apply the boundary condition before calling
-# `solver.solve(b, uh.vector)`. We start by resetting the values in `b` as we are reusing the vector at every time step.
+# `solver.solve(b, uh.x.petsc_vec)`. We start by resetting the values in `b` as we are reusing the vector at every time step.
 # The next step is to assemble the vector calling `dolfinx.fem.petsc.assemble_vector(b, L)`, which means that we are assembling the linear form `L(v)` into the vector `b`. Note that we do not supply the boundary conditions for assembly, as opposed to the left hand side.
 # This is because we want to use lifting to apply the boundary condition, which preserves symmetry of the matrix $A$ in the bilinear form $a(u,v)=a(v,u)$ without Dirichlet boundary conditions.
 # When we have applied the boundary condition, we can solve the linear system and update values that are potentially shared between processors.
@@ -162,7 +162,7 @@ for i in range(num_steps):
     set_bc(b, [bc])
 
     # Solve linear problem
-    solver.solve(b, uh.vector)
+    solver.solve(b, uh.x.petsc_vec)
     uh.x.scatter_forward()
 
     # Update solution at previous time step (u_n)
