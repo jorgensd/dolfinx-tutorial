@@ -283,7 +283,7 @@ for i in range(num_steps):
     apply_lifting(b1, [a1], [bcu])
     b1.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
     set_bc(b1, bcu)
-    solver1.solve(b1, u_.vector)
+    solver1.solve(b1, u_.x.petsc_vec)
     u_.x.scatter_forward()
 
     # Step 2: Pressure corrrection step
@@ -293,7 +293,7 @@ for i in range(num_steps):
     apply_lifting(b2, [a2], [bcp])
     b2.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
     set_bc(b2, bcp)
-    solver2.solve(b2, p_.vector)
+    solver2.solve(b2, p_.x.petsc_vec)
     p_.x.scatter_forward()
 
     # Step 3: Velocity correction step
@@ -301,7 +301,7 @@ for i in range(num_steps):
         loc_3.set(0)
     assemble_vector(b3, L3)
     b3.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
-    solver3.solve(b3, u_.vector)
+    solver3.solve(b3, u_.x.petsc_vec)
     u_.x.scatter_forward()
     # Update variable with solution form this time step
     u_n.x.array[:] = u_.x.array[:]
@@ -313,7 +313,7 @@ for i in range(num_steps):
 
     # Compute error at current time-step
     error_L2 = np.sqrt(mesh.comm.allreduce(assemble_scalar(L2_error), op=MPI.SUM))
-    error_max = mesh.comm.allreduce(np.max(u_.vector.array - u_ex.vector.array), op=MPI.MAX)
+    error_max = mesh.comm.allreduce(np.max(u_.x.petsc_vec.array - u_ex.x.petsc_vec.array), op=MPI.MAX)
     # Print error only every 20th step and at the last step
     if (i % 20 == 0) or (i == num_steps - 1):
         print(f"Time {t:.2f}, L2-error {error_L2:.2e}, Max error {error_max:.2e}")
