@@ -345,6 +345,7 @@ function_grid["u"] = values
 glyphs = function_grid.glyph(orient="u", factor=0.2)
 
 # Create a pyvista-grid for the mesh
+mesh.topology.create_connectivity(mesh.topology.dim, mesh.topology.dim)
 grid = pyvista.UnstructuredGrid(*vtk_mesh(mesh, mesh.topology.dim))
 
 # Create plotter

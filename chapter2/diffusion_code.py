@@ -27,7 +27,6 @@
 
 # +
 import matplotlib as mpl
-import matplotlib.pyplot as plt
 import pyvista
 import ufl
 import numpy as np

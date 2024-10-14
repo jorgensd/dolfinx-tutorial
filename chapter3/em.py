@@ -212,8 +212,10 @@ with XDMFFile(MPI.COMM_WORLD, "mt.xdmf", "w") as xdmf:
 
 pyvista.start_xvfb()
 plotter = pyvista.Plotter()
-grid = pyvista.UnstructuredGrid(*vtk_mesh(mesh, mesh.topology.dim))
-num_local_cells = mesh.topology.index_map(mesh.topology.dim).size_local
+tdim = mesh.topology.dim
+mesh.topology.create_connectivity(tdim, tdim)
+grid = pyvista.UnstructuredGrid(*vtk_mesh(mesh, tdim))
+num_local_cells = mesh.topology.index_map(tdim).size_local
 grid.cell_data["Marker"] = ct.values[ct.indices < num_local_cells]
 grid.set_active_scalars("Marker")
 actor = plotter.add_mesh(grid, show_edges=True)
@@ -312,6 +314,7 @@ plotter.set_position([0, 0, 5])
 # We include ghosts cells as we access all degrees of freedom (including ghosts) on each process
 top_imap = mesh.topology.index_map(mesh.topology.dim)
 num_cells = top_imap.size_local + top_imap.num_ghosts
+mesh.topology.create_connectivity(mesh.topology.dim, mesh.topology.dim)
 midpoints = compute_midpoints(mesh, mesh.topology.dim, np.arange(num_cells, dtype=np.int32))
 
 num_dofs = W.dofmap.index_map.size_local + W.dofmap.index_map.num_ghosts

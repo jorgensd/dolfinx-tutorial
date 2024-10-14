@@ -106,13 +106,15 @@ problem = LinearProblem(a, L, bcs=bcs, petsc_options={"ksp_type": "preonly", "pc
 uh = problem.solve()
 
 # Filter out ghosted cells
-num_cells_local = mesh.topology.index_map(mesh.topology.dim).size_local
+tdim = mesh.topology.dim
+num_cells_local = mesh.topology.index_map(tdim).size_local
 marker = np.zeros(num_cells_local, dtype=np.int32)
 cells_0 = cells_0[cells_0 < num_cells_local]
 cells_1 = cells_1[cells_1 < num_cells_local]
 marker[cells_0] = 1
 marker[cells_1] = 2
-topology, cell_types, x = vtk_mesh(mesh, mesh.topology.dim, np.arange(num_cells_local, dtype=np.int32))
+mesh.topology.create_connectivity(tdim, tdim)
+topology, cell_types, x = vtk_mesh(mesh, tdim, np.arange(num_cells_local, dtype=np.int32))
 
 p = pyvista.Plotter(window_size=[800, 800])
 grid = pyvista.UnstructuredGrid(topology, cell_types, x)
@@ -277,9 +279,11 @@ uh = problem.solve()
 # As the dolfinx.MeshTag contains a value for every cell in the
 # geometry, we can attach it directly to the grid
 
-topology, cell_types, x = vtk_mesh(mesh, mesh.topology.dim)
+tdim = mesh.topology.dim
+mesh.topology.create_connectivity(tdim, tdim)
+topology, cell_types, x = vtk_mesh(mesh, tdim)
 grid = pyvista.UnstructuredGrid(topology, cell_types, x)
-num_local_cells = mesh.topology.index_map(mesh.topology.dim).size_local
+num_local_cells = mesh.topology.index_map(tdim).size_local
 grid.cell_data["Marker"] = ct.values[ct.indices < num_local_cells]
 grid.set_active_scalars("Marker")
 

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "DOLFINx_Tutorial"
-version = "0.7.2"
+version = "0.9.0"
 dependencies = [
     "jupyter-book",
     "meshio",
@@ -13,7 +13,7 @@ dependencies = [
     "pandas",
     "tqdm",
     "pyvista[all]>=0.43.0",
-    "fenics-dolfinx>=0.8.0",
+    "fenics-dolfinx>=0.9.0",
 ]
 
 [project.optional-dependencies]

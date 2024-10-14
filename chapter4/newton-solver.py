@@ -257,7 +257,7 @@ while i < max_iterations:
     L.scale(-1)
 
     # Compute b - J(u_D-u_(i-1))
-    dolfinx.fem.petsc.apply_lifting(L, [jacobian], [[bc]], x0=[uh.x.petsc_vec], scale=1)
+    dolfinx.fem.petsc.apply_lifting(L, [jacobian], [[bc]], x0=[uh.x.petsc_vec], alpha=1)
     # Set du|_bc = u_{i-1}-u_D
     dolfinx.fem.petsc.set_bc(L, [bc], uh.x.petsc_vec, 1.0)
     L.ghostUpdate(addv=PETSc.InsertMode.INSERT_VALUES, mode=PETSc.ScatterMode.FORWARD)
