@@ -3,7 +3,6 @@ FROM ghcr.io/jorgensd/dolfinx-tutorial:release
 # create user with a home directory
 ARG NB_USER=jovyan
 ARG NB_UID=1000
-RUN useradd -m ${NB_USER} -u ${NB_UID}
 ENV HOME /home/${NB_USER}
 
 # for binder: base image upgrades lab to require jupyter-server 2,
