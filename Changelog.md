@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.9.0
+
+- `scale` in `apply_lifting` has been renamed to `alpha`
+- Use `dolfinx.fem.Function.x.petsc_vec` as opposed to `dolfinx.fem.Function.vector`
+
 ## v0.8.0
 
 - Replace all `ufl.FiniteElement` and `ufl.VectorElement` with the appropriate `basix.ufl.element`

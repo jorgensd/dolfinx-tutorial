@@ -39,6 +39,9 @@ jobs:
       - name: Test building the book
         run: PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
 
+      - name: Test building the book
+        run: PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
+
       - name: Test complex notebooks in parallel
         working-directory: chapter1
         run: |
@@ -67,7 +70,6 @@ jobs:
           mpirun -n 2 python3 nonlinpoisson_code.py
           mpirun -n 2 python3 ns_code1.py
           mpirun -n 2 python3 ns_code2.py
-
       - name: Test chapter 3
         working-directory: chapter3
         run: |
@@ -77,7 +79,6 @@ jobs:
           mpirun -n 2 python3 robin_neumann_dirichlet.py
           mpirun -n 2 python3 component_bc.py
           mpirun -n 2 python3 em.py
-
       - name: Test chapter 4
         working-directory: chapter4
         run: |

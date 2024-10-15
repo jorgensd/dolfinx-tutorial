@@ -46,7 +46,7 @@ cache_dir = f"{str(Path.cwd())}/.cache"
 print(f"Directory to put C files in: {cache_dir}")
 # -
 
-# Next we generate a general function to assemble the mass matrix for a unit cube. Note that we use `dolfinx.fem.Form` to compile the variational form. For codes using `dolfinx.LinearProblem`, you can supply `jit_options` as a keyword argument.
+# Next we generate a general function to assemble the mass matrix for a unit cube. Note that we use `dolfinx.fem.form` to compile the variational form. For codes using `dolfinx.fem.petsc.LinearProblem`, you can supply `jit_options` as a keyword argument.
 
 # +
 
