@@ -1,7 +1,7 @@
 # The DOLFINx tutorial
 
-[![Test, build and publish](https://github.com/jorgensd/dolfinx-tutorial/actions/workflows/build-publish.yml/badge.svg)](https://github.com/jorgensd/dolfinx-tutorial/actions/workflows/build-publish.yml)
-[![Test release branch against DOLFINx nightly build](https://github.com/jorgensd/dolfinx-tutorial/actions/workflows/nightly.yml/badge.svg)](https://github.com/jorgensd/dolfinx-tutorial/actions/workflows/nightly.yml)
+[![Test, build and publish](https://github.com/jorgensd/dolfinx-tutorial/actions/workflows/deploy.yml/badge.svg)](https://github.com/jorgensd/dolfinx-tutorial/actions/workflows/deploy.yml)
+[![Test release branch against DOLFINx nightly build](https://github.com/jorgensd/dolfinx-tutorial/actions/workflows/test_nightly.yml/badge.svg)](https://github.com/jorgensd/dolfinx-tutorial/actions/workflows/test_nightly.yml)
 
 Author: Jørgen S. Dokken
 
@@ -25,6 +25,12 @@ python3 -m jupytext --sync  */*.ipynb
 ```
 
 Any code added to the tutorial should work in parallel.
+
+To strip notebook output, one can use pre-commit.
+
+```bash
+pre-commit run --all-files
+```
 
 ## Dependencies
 
@@ -55,3 +61,4 @@ from the root of this repository, and run
 ```
 
 from the main directory.
+
