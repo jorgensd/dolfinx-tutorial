@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.1
+#       jupytext_version: 1.16.4
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -252,7 +252,7 @@ bcp = [bcp_outlet]
 # where we have used the two previous time steps in the temporal derivative for the velocity, and compute the pressure staggered in time, at the time between the previous and current solution. The second step becomes
 #
 # $$
-# \nabla \phi = -\frac{\rho}{\delta t} \nabla \cdot u^* \qquad\text{in } \Omega,
+# \nabla^2 \phi = \frac{\rho}{\delta t} \nabla \cdot u^* \qquad\text{in } \Omega,
 # $$
 #
 # $$
@@ -418,7 +418,7 @@ for i in range(num_steps):
     apply_lifting(b1, [a1], [bcu])
     b1.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
     set_bc(b1, bcu)
-    solver1.solve(b1, u_s.vector)
+    solver1.solve(b1, u_s.x.petsc_vec)
     u_s.x.scatter_forward()
 
     # Step 2: Pressure corrrection step
@@ -428,10 +428,10 @@ for i in range(num_steps):
     apply_lifting(b2, [a2], [bcp])
     b2.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
     set_bc(b2, bcp)
-    solver2.solve(b2, phi.vector)
+    solver2.solve(b2, phi.x.petsc_vec)
     phi.x.scatter_forward()
 
-    p_.vector.axpy(1, phi.vector)
+    p_.x.petsc_vec.axpy(1, phi.x.petsc_vec)
     p_.x.scatter_forward()
 
     # Step 3: Velocity correction step
@@ -439,7 +439,7 @@ for i in range(num_steps):
         loc.set(0)
     assemble_vector(b3, L3)
     b3.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)
-    solver3.solve(b3, u_.vector)
+    solver3.solve(b3, u_.x.petsc_vec)
     u_.x.scatter_forward()
 
     # Write solutions to file
@@ -447,7 +447,7 @@ for i in range(num_steps):
     vtx_p.write(t)
 
     # Update variable with solution form this time step
-    with u_.vector.localForm() as loc_, u_n.vector.localForm() as loc_n, u_n1.vector.localForm() as loc_n1:
+    with u_.x.petsc_vec.localForm() as loc_, u_n.x.petsc_vec.localForm() as loc_n, u_n1.x.petsc_vec.localForm() as loc_n1:
         loc_n.copy(loc_n1)
         loc_.copy(loc_n)
 

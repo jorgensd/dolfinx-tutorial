@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.1
+#       jupytext_version: 1.16.4
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -157,7 +157,7 @@ stresses.interpolate(stress_expr)
 
 # In the previous sections, we have only visualized first order Lagrangian functions. However, the Von Mises stresses are piecewise constant on each cell. Therefore, we modify our plotting routine slightly. The first thing we notice is that we  now set values for each cell, which has a one to one correspondence with the degrees of freedom in the function space.
 
-warped.cell_data["VonMises"] = stresses.vector.array
+warped.cell_data["VonMises"] = stresses.x.petsc_vec.array
 warped.set_active_scalars("VonMises")
 p = pyvista.Plotter()
 p.add_mesh(warped)

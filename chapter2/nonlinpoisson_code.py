@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.1
+#       jupytext_version: 1.16.4
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -83,9 +83,12 @@ solver.report = True
 ksp = solver.krylov_solver
 opts = PETSc.Options()
 option_prefix = ksp.getOptionsPrefix()
-opts[f"{option_prefix}ksp_type"] = "cg"
-opts[f"{option_prefix}pc_type"] = "gamg"
-opts[f"{option_prefix}pc_factor_mat_solver_type"] = "mumps"
+opts[f"{option_prefix}ksp_type"] = "gmres"
+opts[f"{option_prefix}ksp_rtol"] = 1.0e-8
+opts[f"{option_prefix}pc_type"] = "hypre"
+opts[f"{option_prefix}pc_hypre_type"] = "boomeramg"
+opts[f"{option_prefix}pc_hypre_boomeramg_max_iter"] = 1
+opts[f"{option_prefix}pc_hypre_boomeramg_cycle_type"] = "v"
 ksp.setFromOptions()
 
 # We are now ready to solve the non-linear problem. We assert that the solver has converged and print the number of iterations.

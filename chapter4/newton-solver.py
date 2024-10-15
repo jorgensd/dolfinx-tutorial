@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.1
+#       jupytext_version: 1.16.4
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -129,14 +129,14 @@ while i < max_iterations:
     L.ghostUpdate(addv=PETSc.InsertMode.INSERT_VALUES, mode=PETSc.ScatterMode.FORWARD)
 
     # Solve linear problem
-    solver.solve(L, du.vector)
+    solver.solve(L, du.x.petsc_vec)
     du.x.scatter_forward()
     # Update u_{i+1} = u_i + delta u_i
     uh.x.array[:] += du.x.array
     i += 1
 
     # Compute norm of update
-    correction_norm = du.vector.norm(0)
+    correction_norm = du.x.petsc_vec.norm(0)
     print(f"Iteration {i}: Correction norm {correction_norm}")
     if correction_norm < 1e-10:
         break
@@ -257,13 +257,13 @@ while i < max_iterations:
     L.scale(-1)
 
     # Compute b - J(u_D-u_(i-1))
-    dolfinx.fem.petsc.apply_lifting(L, [jacobian], [[bc]], x0=[uh.vector], scale=1)
+    dolfinx.fem.petsc.apply_lifting(L, [jacobian], [[bc]], x0=[uh.x.petsc_vec], alpha=1)
     # Set du|_bc = u_{i-1}-u_D
-    dolfinx.fem.petsc.set_bc(L, [bc], uh.vector, 1.0)
+    dolfinx.fem.petsc.set_bc(L, [bc], uh.x.petsc_vec, 1.0)
     L.ghostUpdate(addv=PETSc.InsertMode.INSERT_VALUES, mode=PETSc.ScatterMode.FORWARD)
 
     # Solve linear problem
-    solver.solve(L, du.vector)
+    solver.solve(L, du.x.petsc_vec)
     du.x.scatter_forward()
 
     # Update u_{i+1} = u_i + delta u_i
@@ -271,7 +271,7 @@ while i < max_iterations:
     i += 1
 
     # Compute norm of update
-    correction_norm = du.vector.norm(0)
+    correction_norm = du.x.petsc_vec.norm(0)
 
     # Compute L2 error comparing to the analytical solution
     L2_error.append(np.sqrt(mesh.comm.allreduce(dolfinx.fem.assemble_scalar(error), op=MPI.SUM)))
