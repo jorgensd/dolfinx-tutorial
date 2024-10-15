@@ -17,7 +17,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pdbpp", "ipython", "jupytext", "ruff"]
+dev = ["pdbpp", "ipython", "jupytext", "ruff", "pre-commit"]
 
 [tool.setuptools]
 packages = []
