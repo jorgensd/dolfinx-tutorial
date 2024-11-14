@@ -478,6 +478,7 @@ for i in range(num_steps):
             if pressure is not None:
                 p_diff[i] -= pressure[0]
                 break
+progress.close()
 vtx_u.close()
 vtx_p.close()
 
