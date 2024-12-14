@@ -21,11 +21,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-<<<<<<< HEAD
 #       jupytext_version: 1.16.4
-=======
-#       jupytext_version: 1.14.5
->>>>>>> 6b2db88 (Dokken/update fspace and wmtgs (#127))
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
