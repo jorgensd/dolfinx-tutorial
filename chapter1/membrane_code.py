@@ -13,6 +13,25 @@
 #     name: python3
 # ---
 
+# ---
+# jupyter:
+#   jupytext:
+#     formats: ipynb,py:light
+#     text_representation:
+#       extension: .py
+#       format_name: light
+#       format_version: '1.5'
+<<<<<<< HEAD
+#       jupytext_version: 1.16.4
+=======
+#       jupytext_version: 1.14.5
+>>>>>>> 6b2db88 (Dokken/update fspace and wmtgs (#127))
+#   kernelspec:
+#     display_name: Python 3 (ipykernel)
+#     language: python
+#     name: python3
+# ---
+
 # # Implementation
 # Author: Jørgen S. Dokken
 #
@@ -50,7 +69,20 @@ gmsh.model.mesh.generate(gdim)
 
 # # Interfacing with GMSH in DOLFINx
 # We will import the GMSH-mesh directly from GMSH into DOLFINx via the `dolfinx.io.gmshio` interface.
-# As in this example, we have not specified which process we have created the `gmsh` model on, a model has been created on each mpi process. However, we would like to be able to use a mesh distributed over all processes. Therefore, we take the model generated on rank 0 of `MPI.COMM_WORLD`, and distribute it over all available ranks. We will also get two mesh tags, one for cells marked with physical groups in the mesh and one for facets marked with physical groups. As we did not add any physical groups of dimension `gdim-1`, there will be no entities in the `facet_markers`.
+# The `gmshio` module contains two functions
+# 1. `gmshio.model_to_mesh` which takes in a `gmsh.model` and returns a `dolfinx.io.gmshio.MeshData` object.
+# 2. `gmshio.read_from_msh` which takes in a path to a `.msh`-file and returns a `dolfinx.io.gmshio.MeshData` object.
+#
+# The `MeshData` object will contain a `dolfinx.mesh.Mesh`, under the attribute `mesh`.
+# This mesh will contain all GMSH Physical Groups of the highest topolgoical dimension.
+# ```note
+# If you do not use `gmsh.model.addPhysicalGroup` when creating the mesh with GMSH, it can not be read into DOLFINx.
+# ```
+# The `MeshData` object can also contain tags for all other `PhysicalGroups` that has been added to the mesh, that being `vertex_tags`, `edge_tags`, `facet_tags` and `cell_tags`.
+# To read either `gmsh.model` or a `.msh`-file, one has to distribute the mesh to all processes used by DOLFINx.
+# As GMSH does not support mesh creation with MPI, we currently have a `gmsh.model.mesh` on each process.
+# To distribute the mesh, we have to specify which process the mesh was created on, and which communicator rank should distribute the mesh.
+# The `model_to_mesh` will then load the mesh on the specified rank, and distribute it to the communicator using a mesh partitioner.
 
 # +
 from dolfinx.io import gmshio
@@ -59,13 +91,19 @@ from mpi4py import MPI
 
 gmsh_model_rank = 0
 mesh_comm = MPI.COMM_WORLD
-domain, cell_markers, facet_markers = gmshio.model_to_mesh(gmsh.model, mesh_comm, gmsh_model_rank, gdim=gdim)
+mesh_data = gmshio.model_to_mesh(gmsh.model, mesh_comm, gmsh_model_rank, gdim=gdim)
+assert mesh_data.cell_tags is not None
+cell_markers = mesh_data.cell_tags
 # -
 
 # We define the function space as in the previous tutorial
 
 from dolfinx import fem
+<<<<<<< HEAD
 V = fem.functionspace(domain, ("Lagrange", 1))
+=======
+V = fem.FunctionSpace(domain, ("Lagrange", 1))
+>>>>>>> 6b2db88 (Dokken/update fspace and wmtgs (#127))
 
 # ## Defining a spatially varying load
 # The right hand side pressure function is represented using `ufl.SpatialCoordinate` and two constants, one for $\beta$ and one for $R_0$.
@@ -109,7 +147,11 @@ uh = problem.solve()
 # As we previously defined the load `p` as a spatially varying function, we would like to interpolate this function into an appropriate function space for visualization. To do this we use the `dolfinx.Expression`. The expression takes in any `ufl`-expression, and a set of points on the reference element. We will use the interpolation points of the space we want to interpolate in to.
 # We choose a high order function space to represent the function `p`, as it is rapidly varying in space.
 
+<<<<<<< HEAD
 Q = fem.functionspace(domain, ("Lagrange", 5))
+=======
+Q = fem.FunctionSpace(domain, ("Lagrange", 5))
+>>>>>>> 6b2db88 (Dokken/update fspace and wmtgs (#127))
 expr = fem.Expression(p, Q.element.interpolation_points())
 pressure = fem.Function(Q)
 pressure.interpolate(expr)

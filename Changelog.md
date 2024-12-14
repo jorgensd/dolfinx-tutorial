@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.10.0
+
+- Change how one reads in GMSH data with `gmshio`. See [the membrane code](./chapter1/membrane_code.ipynb) for more details.
+
 ## v0.9.0
 
 - `scale` in `apply_lifting` has been renamed to `alpha`
