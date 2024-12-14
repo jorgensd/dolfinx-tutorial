@@ -90,6 +90,7 @@ mesh_comm = MPI.COMM_WORLD
 mesh_data = gmshio.model_to_mesh(gmsh.model, mesh_comm, gmsh_model_rank, gdim=gdim)
 assert mesh_data.cell_tags is not None
 cell_markers = mesh_data.cell_tags
+domain = mesh_data.mesh
 # -
 
 # We define the function space as in the previous tutorial
@@ -139,11 +140,7 @@ uh = problem.solve()
 # As we previously defined the load `p` as a spatially varying function, we would like to interpolate this function into an appropriate function space for visualization. To do this we use the `dolfinx.Expression`. The expression takes in any `ufl`-expression, and a set of points on the reference element. We will use the interpolation points of the space we want to interpolate in to.
 # We choose a high order function space to represent the function `p`, as it is rapidly varying in space.
 
-<<<<<<< HEAD
 Q = fem.functionspace(domain, ("Lagrange", 5))
-=======
-Q = fem.FunctionSpace(domain, ("Lagrange", 5))
->>>>>>> 6b2db88 (Dokken/update fspace and wmtgs (#127))
 expr = fem.Expression(p, Q.element.interpolation_points())
 pressure = fem.Function(Q)
 pressure.interpolate(expr)
