@@ -99,11 +99,7 @@ cell_markers = mesh_data.cell_tags
 # We define the function space as in the previous tutorial
 
 from dolfinx import fem
-<<<<<<< HEAD
 V = fem.functionspace(domain, ("Lagrange", 1))
-=======
-V = fem.FunctionSpace(domain, ("Lagrange", 1))
->>>>>>> 6b2db88 (Dokken/update fspace and wmtgs (#127))
 
 # ## Defining a spatially varying load
 # The right hand side pressure function is represented using `ufl.SpatialCoordinate` and two constants, one for $\beta$ and one for $R_0$.

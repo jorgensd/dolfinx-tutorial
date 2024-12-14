@@ -21,11 +21,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-<<<<<<< HEAD
 #       jupytext_version: 1.16.4
-=======
-#       jupytext_version: 1.14.5
->>>>>>> 6b2db88 (Dokken/update fspace and wmtgs (#127))
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -58,10 +54,7 @@
 # $$
 #
 # which has a maximum magnitude of $1.5$ at $y=0.41/2$. We do not use any scaling for this problem since all exact parameters are known.
-<<<<<<< HEAD
 #
-=======
->>>>>>> 6b2db88 (Dokken/update fspace and wmtgs (#127))
 # ## Mesh generation
 #
 # As in the [Deflection of a membrane](./../chapter1/membrane_code.ipynb) we use GMSH to generate the mesh. We fist create the rectangle and obstacle.
@@ -77,19 +70,7 @@ import tqdm.autonotebook
 from mpi4py import MPI
 from petsc4py import PETSc
 
-<<<<<<< HEAD
 from basix.ufl import element
-=======
-from dolfinx.cpp.mesh import to_type, cell_entity_type
-from dolfinx.fem import (Constant, Function, FunctionSpace,
-                         assemble_scalar, dirichletbc, form, locate_dofs_topological, set_bc)
-from dolfinx.fem.petsc import (apply_lifting, assemble_matrix, assemble_vector,
-                               create_vector, create_matrix, set_bc)
-from dolfinx.graph import create_adjacencylist
-from dolfinx.geometry import BoundingBoxTree, compute_collisions, compute_colliding_cells
-from dolfinx.io import (VTXWriter, distribute_entity_data, gmshio)
-from dolfinx.mesh import create_mesh, meshtags_from_entities
->>>>>>> 6b2db88 (Dokken/update fspace and wmtgs (#127))
 
 from dolfinx.fem import (Constant, Function, functionspace,
                          assemble_scalar, dirichletbc, form, locate_dofs_topological, set_bc)
@@ -232,17 +213,10 @@ rho = Constant(mesh, PETSc.ScalarType(1))     # Density
 #
 
 # +
-<<<<<<< HEAD
 v_cg2 = element("Lagrange", mesh.topology.cell_name(), 2, shape=(mesh.geometry.dim, ))
 s_cg1 = element("Lagrange", mesh.topology.cell_name(), 1)
 V = functionspace(mesh, v_cg2)
 Q = functionspace(mesh, s_cg1)
-=======
-v_cg2 = VectorElement("Lagrange", mesh.ufl_cell(), 2)
-s_cg1 = FiniteElement("Lagrange", mesh.ufl_cell(), 1)
-V = FunctionSpace(mesh, v_cg2)
-Q = FunctionSpace(mesh, s_cg1)
->>>>>>> 6b2db88 (Dokken/update fspace and wmtgs (#127))
 
 fdim = mesh.topology.dim - 1
 
@@ -310,11 +284,7 @@ bcp = [bcp_outlet]
 # Finally, the third step is
 #
 # $$
-<<<<<<< HEAD
 # \rho (u^{n+1}-u^{*}) = -\delta t \nabla\phi.
-=======
-# \rho (u^{n+1}-u^{*}) = -\delta t \phi.
->>>>>>> 6b2db88 (Dokken/update fspace and wmtgs (#127))
 # $$
 #
 # We start by defining all the variables used in the variational formulations.
@@ -398,10 +368,7 @@ pc3.setType(PETSc.PC.Type.SOR)
 # $$
 #     C_{\text{D}}(u,p,t,\partial\Omega_S) = \frac{2}{\rho L U_{mean}^2}\int_{\partial\Omega_S}\rho \nu n \cdot \nabla u_{t_S}(t)n_y -p(t)n_x~\mathrm{d} s,
 # $$
-<<<<<<< HEAD
 #
-=======
->>>>>>> 6b2db88 (Dokken/update fspace and wmtgs (#127))
 # $$
 #     C_{\text{L}}(u,p,t,\partial\Omega_S) = -\frac{2}{\rho L U_{mean}^2}\int_{\partial\Omega_S}\rho \nu n \cdot \nabla u_{t_S}(t)n_x + p(t)n_y~\mathrm{d} s,
 # $$
@@ -442,16 +409,11 @@ if mesh.comm.rank == 0:
 # As in the previous example, we create output files for the velocity and pressure and solve the time-dependent problem. As we are solving a time dependent problem with many time steps, we use the `tqdm`-package to visualize the progress. This package can be installed with `pip3`.
 #
 
-<<<<<<< HEAD
 from pathlib import Path
 folder = Path("results")
 folder.mkdir(exist_ok=True, parents=True)
-vtx_u = VTXWriter(mesh.comm, "dfg2D-3-u.bp", [u_], engine="BP4")
-vtx_p = VTXWriter(mesh.comm, "dfg2D-3-p.bp", [p_], engine="BP4")
-=======
-vtx_u = VTXWriter(mesh.comm, "dfg2D-3-u.bp", [u_])
-vtx_p = VTXWriter(mesh.comm, "dfg2D-3-p.bp", [p_])
->>>>>>> 6b2db88 (Dokken/update fspace and wmtgs (#127))
+vtx_u = VTXWriter(mesh.comm, folder / "dfg2D-3-u.bp", [u_], engine="BP4")
+vtx_p = VTXWriter(mesh.comm, folder / "dfg2D-3-p.bp", [p_], engine="BP4")
 vtx_u.write(t)
 vtx_p.write(t)
 progress = tqdm.autonotebook.tqdm(desc="Solving PDE", total=num_steps)
@@ -577,8 +539,3 @@ if mesh.comm.rank == 0:
     plt.grid()
     plt.legend()
     plt.savefig("figures/pressure_comparison.png")
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 6b2db88 (Dokken/update fspace and wmtgs (#127))
