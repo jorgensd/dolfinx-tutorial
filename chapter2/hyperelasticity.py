@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.4
+#       jupytext_version: 1.16.5
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -173,7 +173,7 @@ actor = plotter.add_mesh(warped, show_edges=True, lighting=False, clim=[0, 10])
 # Compute magnitude of displacement to visualize in GIF
 Vs = fem.functionspace(domain, ("Lagrange", 2))
 magnitude = fem.Function(Vs)
-us = fem.Expression(ufl.sqrt(sum([u[i]**2 for i in range(len(u))])), Vs.element.interpolation_points())
+us = fem.Expression(ufl.sqrt(sum([u[i]**2 for i in range(len(u))])), Vs.element.interpolation_points)
 magnitude.interpolate(us)
 warped["mag"] = magnitude.x.array
 # -

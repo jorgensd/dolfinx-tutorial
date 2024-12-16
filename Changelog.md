@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.10.0
+
+- Change how one reads in GMSH data with `gmshio`. See [the membrane code](./chapter1/membrane_code.ipynb) for more details.
+- `dolfinx.fem.FiniteElement.interpolation_points()` -> `dolfinx.fem.FiniteElement.interpolation_points`.
+
+## v0.9.0
+
+- `scale` in `apply_lifting` has been renamed to `alpha`
+- Use `dolfinx.fem.Function.x.petsc_vec` as opposed to `dolfinx.fem.Function.vector`
+
 ## v0.8.0
 
 - Replace all `ufl.FiniteElement` and `ufl.VectorElement` with the appropriate `basix.ufl.element`

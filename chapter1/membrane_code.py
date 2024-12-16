@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.4
+#       jupytext_version: 1.16.5
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -30,6 +30,7 @@
 # To create the computational geometry, we use the Python-API of [GMSH](https://gmsh.info/). We start by importing the gmsh-module and initializing it.
 
 import gmsh
+
 gmsh.initialize()
 
 # The next step is to create the membrane and start the computations by the GMSH CAD kernel, to generate the relevant underlying data structures. The first arguments of `addDisk` are the x, y and z coordinate of the center of the circle, while the two last arguments are the x-radius and y-radius.
@@ -50,7 +51,20 @@ gmsh.model.mesh.generate(gdim)
 
 # # Interfacing with GMSH in DOLFINx
 # We will import the GMSH-mesh directly from GMSH into DOLFINx via the `dolfinx.io.gmshio` interface.
-# As in this example, we have not specified which process we have created the `gmsh` model on, a model has been created on each mpi process. However, we would like to be able to use a mesh distributed over all processes. Therefore, we take the model generated on rank 0 of `MPI.COMM_WORLD`, and distribute it over all available ranks. We will also get two mesh tags, one for cells marked with physical groups in the mesh and one for facets marked with physical groups. As we did not add any physical groups of dimension `gdim-1`, there will be no entities in the `facet_markers`.
+# The `gmshio` module contains two functions
+# 1. `gmshio.model_to_mesh` which takes in a `gmsh.model` and returns a `dolfinx.io.gmshio.MeshData` object.
+# 2. `gmshio.read_from_msh` which takes in a path to a `.msh`-file and returns a `dolfinx.io.gmshio.MeshData` object.
+#
+# The `MeshData` object will contain a `dolfinx.mesh.Mesh`, under the attribute `mesh`.
+# This mesh will contain all GMSH Physical Groups of the highest topolgoical dimension.
+# ```{note}
+# If you do not use `gmsh.model.addPhysicalGroup` when creating the mesh with GMSH, it can not be read into DOLFINx.
+# ```
+# The `MeshData` object can also contain tags for all other `PhysicalGroups` that has been added to the mesh, that being `vertex_tags`, `edge_tags`, `facet_tags` and `cell_tags`.
+# To read either `gmsh.model` or a `.msh`-file, one has to distribute the mesh to all processes used by DOLFINx.
+# As GMSH does not support mesh creation with MPI, we currently have a `gmsh.model.mesh` on each process.
+# To distribute the mesh, we have to specify which process the mesh was created on, and which communicator rank should distribute the mesh.
+# The `model_to_mesh` will then load the mesh on the specified rank, and distribute it to the communicator using a mesh partitioner.
 
 # +
 from dolfinx.io import gmshio
@@ -59,12 +73,16 @@ from mpi4py import MPI
 
 gmsh_model_rank = 0
 mesh_comm = MPI.COMM_WORLD
-domain, cell_markers, facet_markers = gmshio.model_to_mesh(gmsh.model, mesh_comm, gmsh_model_rank, gdim=gdim)
+mesh_data = gmshio.model_to_mesh(gmsh.model, mesh_comm, gmsh_model_rank, gdim=gdim)
+assert mesh_data.cell_tags is not None
+cell_markers = mesh_data.cell_tags
+domain = mesh_data.mesh
 # -
 
 # We define the function space as in the previous tutorial
 
 from dolfinx import fem
+
 V = fem.functionspace(domain, ("Lagrange", 1))
 
 # ## Defining a spatially varying load
@@ -72,10 +90,11 @@ V = fem.functionspace(domain, ("Lagrange", 1))
 
 import ufl
 from dolfinx import default_scalar_type
+
 x = ufl.SpatialCoordinate(domain)
 beta = fem.Constant(domain, default_scalar_type(12))
 R0 = fem.Constant(domain, default_scalar_type(0.3))
-p = 4 * ufl.exp(-beta**2 * (x[0]**2 + (x[1] - R0)**2))
+p = 4 * ufl.exp(-(beta**2) * (x[0] ** 2 + (x[1] - R0) ** 2))
 
 # ## Create a Dirichlet boundary condition using geometrical conditions
 # The next step is to create the homogeneous boundary condition. As opposed to the [first tutorial](./fundamentals_code.ipynb) we will use `dolfinx.fem.locate_dofs_geometrical` to locate the degrees of freedom on the boundary. As we know that our domain is a circle with radius 1, we know that any degree of freedom should be located at a coordinate $(x,y)$ such that $\sqrt{x^2+y^2}=1$.
@@ -85,7 +104,7 @@ import numpy as np
 
 
 def on_boundary(x):
-    return np.isclose(np.sqrt(x[0]**2 + x[1]**2), 1)
+    return np.isclose(np.sqrt(x[0] ** 2 + x[1] ** 2), 1)
 
 
 boundary_dofs = fem.locate_dofs_geometrical(V, on_boundary)
@@ -102,7 +121,9 @@ u = ufl.TrialFunction(V)
 v = ufl.TestFunction(V)
 a = ufl.dot(ufl.grad(u), ufl.grad(v)) * ufl.dx
 L = p * v * ufl.dx
-problem = LinearProblem(a, L, bcs=[bc], petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
+problem = LinearProblem(
+    a, L, bcs=[bc], petsc_options={"ksp_type": "preonly", "pc_type": "lu"}
+)
 uh = problem.solve()
 
 # ## Interpolation of a `ufl`-expression
@@ -110,7 +131,7 @@ uh = problem.solve()
 # We choose a high order function space to represent the function `p`, as it is rapidly varying in space.
 
 Q = fem.functionspace(domain, ("Lagrange", 5))
-expr = fem.Expression(p, Q.element.interpolation_points())
+expr = fem.Expression(p, Q.element.interpolation_points)
 pressure = fem.Function(Q)
 pressure.interpolate(expr)
 
@@ -120,6 +141,7 @@ pressure.interpolate(expr)
 # +
 from dolfinx.plot import vtk_mesh
 import pyvista
+
 pyvista.start_xvfb()
 
 # Extract topology from mesh and create pyvista mesh
@@ -153,8 +175,8 @@ else:
     load_plotter.screenshot("load.png")
 
 # ## Making curve plots throughout the domain
-# Another way to compare the deflection and the load is to make a plot along the line $x=0$. 
-# This is just a matter of defining a set of points along the $y$-axis and evaluating the finite element functions $u$ and $p$ at these points. 
+# Another way to compare the deflection and the load is to make a plot along the line $x=0$.
+# This is just a matter of defining a set of points along the $y$-axis and evaluating the finite element functions $u$ and $p$ at these points.
 
 tol = 0.001  # Avoid hitting the outside of the domain
 y = np.linspace(-1 + tol, 1 - tol, 101)
@@ -164,10 +186,11 @@ u_values = []
 p_values = []
 
 # As a finite element function is the linear combination of all degrees of freedom, $u_h(x)=\sum_{i=1}^N c_i \phi_i(x)$ where $c_i$ are the coefficients of $u_h$ and $\phi_i$ is the $i$-th basis function, we can compute the exact solution at any point in $\Omega$.
-# However, as a mesh consists of a large set of degrees of freedom (i.e. $N$ is large), we want to reduce the number of evaluations of the basis function $\phi_i(x)$. We do this by identifying which cell of the mesh $x$ is in. 
+# However, as a mesh consists of a large set of degrees of freedom (i.e. $N$ is large), we want to reduce the number of evaluations of the basis function $\phi_i(x)$. We do this by identifying which cell of the mesh $x$ is in.
 # This is efficiently done by creating a bounding box tree of the cells of the mesh, allowing a quick recursive search through the mesh entities.
 
 from dolfinx import geometry
+
 bb_tree = geometry.bb_tree(domain, domain.topology.dim)
 
 # Now we can compute which cells the bounding box tree collides with using `dolfinx.geometry.compute_collisions_points`. This function returns a list of cells whose bounding box collide for each input point. As different points might have different number of cells, the data is stored in `dolfinx.cpp.graph.AdjacencyList_int32`, where one can access the cells for the `i`th point by calling `links(i)`.
@@ -198,8 +221,15 @@ p_values = pressure.eval(points_on_proc, cells)
 # As we now have an array of coordinates and two arrays of function values, we can use `matplotlib` to plot them
 
 import matplotlib.pyplot as plt
+
 fig = plt.figure()
-plt.plot(points_on_proc[:, 1], 50 * u_values, "k", linewidth=2, label="Deflection ($\\times 50$)")
+plt.plot(
+    points_on_proc[:, 1],
+    50 * u_values,
+    "k",
+    linewidth=2,
+    label="Deflection ($\\times 50$)",
+)
 plt.plot(points_on_proc[:, 1], p_values, "b--", linewidth=2, label="Load")
 plt.grid(True)
 plt.xlabel("y")
@@ -212,13 +242,16 @@ plt.savefig(f"membrane_rank{MPI.COMM_WORLD.rank:d}.png")
 
 import dolfinx.io
 from pathlib import Path
+
 pressure.name = "Load"
 uh.name = "Deflection"
 results_folder = Path("results")
 results_folder.mkdir(exist_ok=True, parents=True)
-with dolfinx.io.VTXWriter(MPI.COMM_WORLD, results_folder / "membrane_pressure.bp", [pressure], engine="BP4") as vtx:
+with dolfinx.io.VTXWriter(
+    MPI.COMM_WORLD, results_folder / "membrane_pressure.bp", [pressure], engine="BP4"
+) as vtx:
     vtx.write(0.0)
-with dolfinx.io.VTXWriter(MPI.COMM_WORLD, results_folder / "membrane_deflection.bp", [uh], engine="BP4") as vtx:
+with dolfinx.io.VTXWriter(
+    MPI.COMM_WORLD, results_folder / "membrane_deflection.bp", [uh], engine="BP4"
+) as vtx:
     vtx.write(0.0)
-
-

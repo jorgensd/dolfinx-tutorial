@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.4
+#       jupytext_version: 1.16.5
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -151,7 +151,7 @@ von_Mises = ufl.sqrt(3. / 2 * ufl.inner(s, s))
 # The `von_Mises` variable is now an expression that must be projected into an appropriate function space so that we can visualize it. As `uh` is a linear combination of first order piecewise continuous functions, the von Mises stresses will be a cell-wise constant function.
 
 V_von_mises = fem.functionspace(domain, ("DG", 0))
-stress_expr = fem.Expression(von_Mises, V_von_mises.element.interpolation_points())
+stress_expr = fem.Expression(von_Mises, V_von_mises.element.interpolation_points)
 stresses = fem.Function(V_von_mises)
 stresses.interpolate(stress_expr)
 
