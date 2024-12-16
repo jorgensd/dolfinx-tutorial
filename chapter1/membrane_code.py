@@ -57,7 +57,7 @@ gmsh.model.mesh.generate(gdim)
 #
 # The `MeshData` object will contain a `dolfinx.mesh.Mesh`, under the attribute `mesh`.
 # This mesh will contain all GMSH Physical Groups of the highest topolgoical dimension.
-# ```note
+# ```{note}
 # If you do not use `gmsh.model.addPhysicalGroup` when creating the mesh with GMSH, it can not be read into DOLFINx.
 # ```
 # The `MeshData` object can also contain tags for all other `PhysicalGroups` that has been added to the mesh, that being `vertex_tags`, `edge_tags`, `facet_tags` and `cell_tags`.
