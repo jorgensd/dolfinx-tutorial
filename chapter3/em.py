@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.4
+#       jupytext_version: 1.16.5
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -89,13 +89,7 @@
 
 # +
 from dolfinx import default_scalar_type
-from dolfinx.fem import (
-    dirichletbc,
-    Expression,
-    Function,
-    functionspace,
-    locate_dofs_topological,
-)
+from dolfinx.fem import (dirichletbc, Expression, Function, functionspace, locate_dofs_topological)
 from dolfinx.fem.petsc import LinearProblem
 from dolfinx.io import XDMFFile
 from dolfinx.io.gmshio import model_to_mesh
@@ -112,17 +106,18 @@ import pyvista
 rank = MPI.COMM_WORLD.rank
 
 gmsh.initialize()
-r = 0.1  # Radius of copper wires
-R = 5  # Radius of domain
-a = 1  # Radius of inner iron cylinder
-b = 1.2  # Radius of outer iron cylinder
-N = 8  # Number of windings
+r = 0.1   # Radius of copper wires
+R = 5     # Radius of domain
+a = 1     # Radius of inner iron cylinder
+b = 1.2   # Radius of outer iron cylinder
+N = 8     # Number of windings
 c_1 = 0.8  # Radius of inner copper wires
 c_2 = 1.4  # Radius of outer copper wires
 gdim = 2  # Geometric dimension of the mesh
 model_rank = 0
 mesh_comm = MPI.COMM_WORLD
 if mesh_comm.rank == model_rank:
+
     # Define geometry for iron cylinder
     outer_iron = gmsh.model.occ.addCircle(0, 0, 0, b)
     inner_iron = gmsh.model.occ.addCircle(0, 0, 0, a)
@@ -137,17 +132,11 @@ if mesh_comm.rank == model_rank:
 
     # Define the copper-wires inside iron cylinder
     angles_N = [i * 2 * np.pi / N for i in range(N)]
-    wires_N = [
-        (2, gmsh.model.occ.addDisk(c_1 * np.cos(v), c_1 * np.sin(v), 0, r, r))
-        for v in angles_N
-    ]
+    wires_N = [(2, gmsh.model.occ.addDisk(c_1 * np.cos(v), c_1 * np.sin(v), 0, r, r)) for v in angles_N]
 
     # Define the copper-wires outside the iron cylinder
     angles_S = [(i + 0.5) * 2 * np.pi / N for i in range(N)]
-    wires_S = [
-        (2, gmsh.model.occ.addDisk(c_2 * np.cos(v), c_2 * np.sin(v), 0, r, r))
-        for v in angles_S
-    ]
+    wires_S = [(2, gmsh.model.occ.addDisk(c_2 * np.cos(v), c_2 * np.sin(v), 0, r, r)) for v in angles_S]
     gmsh.model.occ.synchronize()
     # Resolve all boundaries of the different wires in the background domain
     all_surfaces = [(2, iron)]
@@ -292,7 +281,7 @@ problem.solve()
 
 # As we have computed the magnetic potential, we can now compute the magnetic field, by setting `B=curl(A_z)`. Note that as we have chosen a function space of first order piecewise linear function to describe our potential, the curl of a function in this space is a discontinous zeroth order function (a function of cell-wise constants). We use `dolfinx.fem.Expression` to interpolate the curl into `W`.
 
-W = functionspace(mesh, ("DG", 0, (mesh.geometry.dim,)))
+W = functionspace(mesh, ("DG", 0, (mesh.geometry.dim, )))
 B = Function(W)
 B_expr = Expression(as_vector((A_z.dx(1), -A_z.dx(0))), W.element.interpolation_points)
 B.interpolate(B_expr)
@@ -329,14 +318,12 @@ plotter.set_position([0, 0, 5])
 top_imap = mesh.topology.index_map(mesh.topology.dim)
 num_cells = top_imap.size_local + top_imap.num_ghosts
 mesh.topology.create_connectivity(mesh.topology.dim, mesh.topology.dim)
-midpoints = compute_midpoints(
-    mesh, mesh.topology.dim, np.arange(num_cells, dtype=np.int32)
-)
+midpoints = compute_midpoints(mesh, mesh.topology.dim, np.arange(num_cells, dtype=np.int32))
 
 num_dofs = W.dofmap.index_map.size_local + W.dofmap.index_map.num_ghosts
-assert num_cells == num_dofs
+assert (num_cells == num_dofs)
 values = np.zeros((num_dofs, 3), dtype=np.float64)
-values[:, : mesh.geometry.dim] = B.x.array.real.reshape(num_dofs, W.dofmap.index_map_bs)
+values[:, :mesh.geometry.dim] = B.x.array.real.reshape(num_dofs, W.dofmap.index_map_bs)
 cloud = pyvista.PolyData(midpoints)
 cloud["B"] = values
 glyphs = cloud.glyph("B", factor=2e6)
@@ -348,3 +335,5 @@ if not pyvista.OFF_SCREEN:
 else:
     B_fig = plotter.screenshot("B.png")
 # -
+
+

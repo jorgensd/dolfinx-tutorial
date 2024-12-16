@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.4
+#       jupytext_version: 1.16.5
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -26,18 +26,8 @@ from dolfinx import fem, mesh, plot, default_scalar_type
 from dolfinx.fem.petsc import LinearProblem
 import numpy
 from mpi4py import MPI
-from ufl import (
-    Circumradius,
-    FacetNormal,
-    SpatialCoordinate,
-    TrialFunction,
-    TestFunction,
-    div,
-    dx,
-    ds,
-    grad,
-    inner,
-)
+from ufl import (Circumradius, FacetNormal, SpatialCoordinate, TrialFunction, TestFunction,
+                 div, dx, ds, grad, inner)
 
 N = 8
 domain = mesh.create_unit_square(MPI.COMM_WORLD, N, N)
@@ -48,7 +38,7 @@ V = fem.functionspace(domain, ("Lagrange", 1))
 
 uD = fem.Function(V)
 x = SpatialCoordinate(domain)
-u_ex = 1 + x[0] ** 2 + 2 * x[1] ** 2
+u_ex =  1 + x[0]**2 + 2 * x[1]**2
 uD.interpolate(fem.Expression(u_ex, V.element.interpolation_points))
 f = -div(grad(u_ex))
 
@@ -76,9 +66,9 @@ n = FacetNormal(domain)
 h = 2 * Circumradius(domain)
 alpha = fem.Constant(domain, default_scalar_type(10))
 a = inner(grad(u), grad(v)) * dx - inner(n, grad(u)) * v * ds
-a += -inner(n, grad(v)) * u * ds + alpha / h * inner(u, v) * ds
-L = inner(f, v) * dx
-L += -inner(n, grad(v)) * uD * ds + alpha / h * inner(uD, v) * ds
+a += - inner(n, grad(v)) * u * ds + alpha / h * inner(u, v) * ds
+L = inner(f, v) * dx 
+L += - inner(n, grad(v)) * uD * ds + alpha / h * inner(uD, v) * ds
 
 # As we now have the variational form, we can solve the linear problem
 
@@ -87,18 +77,16 @@ uh = problem.solve()
 
 # We compute the error of the computation by comparing it to the analytical solution
 
-error_form = fem.form(inner(uh - uD, uh - uD) * dx)
+error_form = fem.form(inner(uh-uD, uh-uD) * dx)
 error_local = fem.assemble_scalar(error_form)
 errorL2 = numpy.sqrt(domain.comm.allreduce(error_local, op=MPI.SUM))
 if domain.comm.rank == 0:
-    print(rf"$L^2$-error: {errorL2:.2e}")
+    print(fr"$L^2$-error: {errorL2:.2e}")
 
 # We observe that the $L^2$-error is of the same magnitude as in the first tutorial.
 # As in the previous tutorial, we also compute the maximal error for all the degrees of freedom.
 
-error_max = domain.comm.allreduce(
-    numpy.max(numpy.abs(uD.x.array - uh.x.array)), op=MPI.MAX
-)
+error_max = domain.comm.allreduce(numpy.max(numpy.abs(uD.x.array-uh.x.array)), op=MPI.MAX)
 if domain.comm.rank == 0:
     print(f"Error_max : {error_max:.2e}")
 
@@ -106,7 +94,6 @@ if domain.comm.rank == 0:
 
 # +
 import pyvista
-
 pyvista.start_xvfb()
 
 grid = pyvista.UnstructuredGrid(*plot.vtk_mesh(V))
@@ -124,3 +111,5 @@ else:
 # ```{bibliography}
 #    :filter: cited and ({"chapter1/nitsche"} >= docnames)
 # ```
+
+

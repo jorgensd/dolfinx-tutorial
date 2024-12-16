@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.4
+#       jupytext_version: 1.16.5
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -32,7 +32,6 @@ from dolfinx.fem.petsc import LinearProblem
 from mpi4py import MPI
 import ufl
 import numpy as np
-
 L = 1
 W = 0.2
 mu = 1
@@ -47,18 +46,13 @@ g = gamma
 # As we want a vector element with three compoenets, we add `(3, )` or `(domain.geometry.dim, )` to the element tuple to make it a triplet
 # However, we also could have used `basix.ufl`s functionality, creating a vector element `element = basix.ufl.element("Lagrange", domain.topology.cell_name(), 1, shape=(domain.geometry.dim,))`, and intitializing the function space as `V = dolfinx.fem.functionspace(domain, element)`.
 
-domain = mesh.create_box(
-    MPI.COMM_WORLD,
-    [np.array([0, 0, 0]), np.array([L, W, W])],
-    [20, 6, 6],
-    cell_type=mesh.CellType.hexahedron,
-)
-V = fem.functionspace(domain, ("Lagrange", 1, (domain.geometry.dim,)))
+domain = mesh.create_box(MPI.COMM_WORLD, [np.array([0, 0, 0]), np.array([L, W, W])],
+                         [20, 6, 6], cell_type=mesh.CellType.hexahedron)
+V = fem.functionspace(domain, ("Lagrange", 1, (domain.geometry.dim, )))
 
 
 # ## Boundary conditions
 # As we would like to clamp the boundary at $x=0$, we do this by using a marker function, which locate the facets where $x$ is close to zero by machine precision.
-
 
 # +
 def clamped_boundary(x):
@@ -84,12 +78,9 @@ ds = ufl.Measure("ds", domain=domain)
 # ## Variational formulation
 # We are now ready to create our variational formulation in close to mathematical syntax, as for the previous problems.
 
-
 # +
 def epsilon(u):
-    return ufl.sym(
-        ufl.grad(u)
-    )  # Equivalent to 0.5*(ufl.nabla_grad(u) + ufl.nabla_grad(u).T)
+    return ufl.sym(ufl.grad(u))  # Equivalent to 0.5*(ufl.nabla_grad(u) + ufl.nabla_grad(u).T)
 
 
 def sigma(u):
@@ -115,9 +106,7 @@ L = ufl.dot(f, v) * ufl.dx + ufl.dot(T, v) * ds
 # ## Solve the linear variational problem
 # As in the previous demos, we assemble the matrix and right hand side vector and use PETSc to solve our variational problem
 
-problem = LinearProblem(
-    a, L, bcs=[bc], petsc_options={"ksp_type": "preonly", "pc_type": "lu"}
-)
+problem = LinearProblem(a, L, bcs=[bc], petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
 uh = problem.solve()
 
 # ## Visualization
@@ -156,8 +145,8 @@ with io.XDMFFile(domain.comm, "deformation.xdmf", "w") as xdmf:
 # ## Stress computation
 # As soon as the displacement is computed, we can compute various stress measures. We will compute the von Mises stress defined as $\sigma_m=\sqrt{\frac{3}{2}s:s}$ where $s$ is the deviatoric stress tensor $s(u)=\sigma(u)-\frac{1}{3}\mathrm{tr}(\sigma(u))I$.
 
-s = sigma(uh) - 1.0 / 3 * ufl.tr(sigma(uh)) * ufl.Identity(len(uh))
-von_Mises = ufl.sqrt(3.0 / 2 * ufl.inner(s, s))
+s = sigma(uh) - 1. / 3 * ufl.tr(sigma(uh)) * ufl.Identity(len(uh))
+von_Mises = ufl.sqrt(3. / 2 * ufl.inner(s, s))
 
 # The `von_Mises` variable is now an expression that must be projected into an appropriate function space so that we can visualize it. As `uh` is a linear combination of first order piecewise continuous functions, the von Mises stresses will be a cell-wise constant function.
 

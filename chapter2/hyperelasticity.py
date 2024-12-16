@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.4
+#       jupytext_version: 1.16.5
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -33,18 +33,14 @@ import ufl
 
 from mpi4py import MPI
 from dolfinx import fem, mesh, plot
-
 L = 20.0
-domain = mesh.create_box(
-    MPI.COMM_WORLD, [[0.0, 0.0, 0.0], [L, 1, 1]], [20, 5, 5], mesh.CellType.hexahedron
-)
-V = fem.functionspace(domain, ("Lagrange", 2, (domain.geometry.dim,)))
+domain = mesh.create_box(MPI.COMM_WORLD, [[0.0, 0.0, 0.0], [L, 1, 1]], [20, 5, 5], mesh.CellType.hexahedron)
+V = fem.functionspace(domain, ("Lagrange", 2, (domain.geometry.dim, )))
 
 
 # -
 
 # We create two python functions for determining the facets to apply boundary conditions to
-
 
 # +
 def left(x):
@@ -66,9 +62,7 @@ right_facets = mesh.locate_entities_boundary(domain, fdim, right)
 marked_facets = np.hstack([left_facets, right_facets])
 marked_values = np.hstack([np.full_like(left_facets, 1), np.full_like(right_facets, 2)])
 sorted_facets = np.argsort(marked_facets)
-facet_tag = mesh.meshtags(
-    domain, fdim, marked_facets[sorted_facets], marked_values[sorted_facets]
-)
+facet_tag = mesh.meshtags(domain, fdim, marked_facets[sorted_facets], marked_values[sorted_facets])
 
 # We then create a function for supplying the boundary condition on the left side, which is fixed.
 
@@ -117,7 +111,7 @@ nu = default_scalar_type(0.3)
 mu = fem.Constant(domain, E / (2 * (1 + nu)))
 lmbda = fem.Constant(domain, E * nu / ((1 + nu) * (1 - 2 * nu)))
 # Stored strain energy density (compressible neo-Hookean model)
-psi = (mu / 2) * (Ic - 3) - mu * ufl.ln(J) + (lmbda / 2) * (ufl.ln(J)) ** 2
+psi = (mu / 2) * (Ic - 3) - mu * ufl.ln(J) + (lmbda / 2) * (ufl.ln(J))**2
 # Stress
 # Hyper-elasticity
 P = ufl.diff(psi, F)
@@ -133,7 +127,7 @@ P = ufl.diff(psi, F)
 # Define the variational form with traction integral over all facets with value 2. We set the quadrature degree for the integrals to 4.
 
 metadata = {"quadrature_degree": 4}
-ds = ufl.Measure("ds", domain=domain, subdomain_data=facet_tag, metadata=metadata)
+ds = ufl.Measure('ds', domain=domain, subdomain_data=facet_tag, metadata=metadata)
 dx = ufl.Measure("dx", domain=domain, metadata=metadata)
 # Define form F (we want to find u such that F(u) = 0)
 F = ufl.inner(ufl.grad(v), P) * dx - ufl.inner(v, B) * dx - ufl.inner(v, T) * ds(2)
@@ -165,7 +159,7 @@ topology, cells, geometry = plot.vtk_mesh(u.function_space)
 function_grid = pyvista.UnstructuredGrid(topology, cells, geometry)
 
 values = np.zeros((geometry.shape[0], 3))
-values[:, : len(u)] = u.x.array.reshape(geometry.shape[0], len(u))
+values[:, :len(u)] = u.x.array.reshape(geometry.shape[0], len(u))
 function_grid["u"] = values
 function_grid.set_active_vectors("u")
 
@@ -179,9 +173,7 @@ actor = plotter.add_mesh(warped, show_edges=True, lighting=False, clim=[0, 10])
 # Compute magnitude of displacement to visualize in GIF
 Vs = fem.functionspace(domain, ("Lagrange", 2))
 magnitude = fem.Function(Vs)
-us = fem.Expression(
-    ufl.sqrt(sum([u[i] ** 2 for i in range(len(u))])), Vs.element.interpolation_points
-)
+us = fem.Expression(ufl.sqrt(sum([u[i]**2 for i in range(len(u))])), Vs.element.interpolation_points)
 magnitude.interpolate(us)
 warped["mag"] = magnitude.x.array
 # -
@@ -193,10 +185,10 @@ tval0 = -1.5
 for n in range(1, 10):
     T.value[2] = n * tval0
     num_its, converged = solver.solve(u)
-    assert converged
+    assert (converged)
     u.x.scatter_forward()
     print(f"Time step {n}, Number of iterations {num_its}, Load {T.value}")
-    function_grid["u"][:, : len(u)] = u.x.array.reshape(geometry.shape[0], len(u))
+    function_grid["u"][:, :len(u)] = u.x.array.reshape(geometry.shape[0], len(u))
     magnitude.interpolate(us)
     warped.set_active_scalars("mag")
     warped_n = function_grid.warp_by_vector(factor=1)
