@@ -16,19 +16,24 @@ where $k$ is the acoustic wavenumber, $\omega$ is the angular frequency, $j$ the
 
 This equation is coupled with the following boundary conditions: 
 
-- Dirichlet BC: 
+- Dirichlet BC:
+  
 $$
 \begin{align}
 p = \bar{p} \quad \quad \text{on  }  \partial\Omega_p
 \end{align}
 $$
-- Neumann BC: 
+
+- Neumann BC:
+  
 $$
 \begin{align}
 \frac{\partial p}{\partial n} = - j \omega \rho_0 \bar{v}_n\quad \quad \text{on  }  \partial\Omega_v
 \end{align}
 $$
+
 - Robin BC:
+  
 $$
 \begin{align}
 \frac{\partial p}{\partial n} = - \frac{j \omega \rho_0 }{\bar{Z}} p \quad \quad \text{on  }  \partial\Omega_Z
@@ -40,6 +45,7 @@ In general, any BC can also be frequency dependant, as it happens in real-world 
 
 ## The variational formulation
 Now we have to turn the equation in its weak formulation. The first step is to multiplicate the equation by a *test function* $v\in \hat V$, where $\hat V$ is the *test function space*, after which we integrate over the whole domain, $\Omega$:
+
 $$
 \begin{align}
 \int_{\Omega}\left(\nabla^2 p + k^2 p \right) v dx = -\int_{\Omega} j \omega \rho_0 q v dx
@@ -67,6 +73,7 @@ $$
 Since we are dealing with complex values, the inner product in the first equation is *sesquilinear*, meaning it is linear in one argument and conjugate-linear in the other, as explained in [The Poisson problem with complex numbers](../chapter1/complex_mode).
 
 The last term can be written using the Newmann and Robin BCs, that is: 
+
 $$
 \begin{align}
 \int_{\partial \Omega} \frac{\partial p}{\partial n} v ds = -\int_{\partial \Omega_v}  j \omega \rho_0  v ds - \int_{\partial \Omega_Z}  \frac{j \omega \rho_0 \bar{v}_n}{\bar{Z}} p v ds
@@ -82,6 +89,7 @@ $$
 $$
 
 Where the bilinear form $a(p,v)$ is
+
 $$
 \begin{align}
 a(p,v) = \int_{\Omega} \nabla p  \cdot \nabla v dx + \frac{j \omega }{\bar{Z}} \int_{\partial \Omega_Z}  \rho_0  p v ds- k^2 \int_{\Omega} p v dx 
@@ -89,6 +97,7 @@ a(p,v) = \int_{\Omega} \nabla p  \cdot \nabla v dx + \frac{j \omega }{\bar{Z}} \
 $$
 
 while the linear form $L(v)$ reads
+
 $$
 \begin{align}
 L(v) =  j \omega \int_{\Omega}\rho_0 q v dx - j \omega \int_{\partial \Omega_v}  \rho_0 \bar{v}_n v ds
