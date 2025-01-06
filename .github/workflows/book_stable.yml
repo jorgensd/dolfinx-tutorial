@@ -12,6 +12,7 @@ env:
   HDF5_DIR: "/usr/local/"
   DISPLAY: ":99.0"
   DEB_PYTHON_INSTALL_LAYOUT: deb_system
+  LIBGL_ALWAYS_SOFTWARE: 1
 
 jobs:
   build-book:
@@ -37,7 +38,7 @@ jobs:
         run: jupyter-book build . -W
 
       - uses: actions/upload-artifact@v4
-        if : always()
+        if: always()
         with:
           name: webpage
           path: ./_build/html
