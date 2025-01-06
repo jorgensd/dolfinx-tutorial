@@ -24,6 +24,7 @@ jobs:
       PYVISTA_OFF_SCREEN: true
       DISPLAY: ":99.0"
       PYVISTA_JUPYTER_BACKEND: html
+      LIBGL_ALWAYS_SOFTWARE: 1
 
     steps:
       - uses: actions/checkout@v4
