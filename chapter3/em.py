@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.4
+#       jupytext_version: 1.16.5
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -96,7 +96,7 @@ from dolfinx.io.gmshio import model_to_mesh
 from dolfinx.mesh import compute_midpoints, locate_entities_boundary
 from dolfinx.plot import vtk_mesh
 
-from ufl import TestFunction, TrialFunction, as_vector, dot, dx, grad, inner
+from ufl import TestFunction, TrialFunction, as_vector, dot, dx, grad
 from mpi4py import MPI
 
 import gmsh
@@ -199,7 +199,10 @@ if mesh_comm.rank == model_rank:
 
 # As in [the Navier-Stokes tutorial](../chapter2/ns_code2) we load the mesh directly into DOLFINx, without writing it to file.
 
-mesh, ct, _ = model_to_mesh(gmsh.model, mesh_comm, model_rank, gdim=2)
+mesh_data = model_to_mesh(gmsh.model, mesh_comm, model_rank, gdim=2)
+mesh = mesh_data.mesh
+assert mesh_data.cell_tags is not None
+ct = mesh_data.cell_tags
 gmsh.finalize()
 
 # To inspect the mesh, we use Paraview, and obtain the following mesh
@@ -280,7 +283,7 @@ problem.solve()
 
 W = functionspace(mesh, ("DG", 0, (mesh.geometry.dim, )))
 B = Function(W)
-B_expr = Expression(as_vector((A_z.dx(1), -A_z.dx(0))), W.element.interpolation_points())
+B_expr = Expression(as_vector((A_z.dx(1), -A_z.dx(0))), W.element.interpolation_points)
 B.interpolate(B_expr)
 
 # Note that we used `ufl.as_vector` to interpret the `Python`-tuple `(A_z.dx(1), -A_z.dx(0))` as a vector in the unified form language (UFL).
