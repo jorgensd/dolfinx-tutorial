@@ -71,7 +71,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.os}}
+          name: ${{ matrix.os}}.tar
           path: ${{ runner.temp }}/image.tar
           retention-days: 1
 
