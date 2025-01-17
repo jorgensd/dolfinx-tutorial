@@ -18,7 +18,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: ["ubuntu-latest", "ubuntu-24.04-arm"]
+        os: ["ubuntu-24.04", "ubuntu-24.04-arm"]
     runs-on: ${{ matrix.os }}
 
     permissions:
@@ -43,7 +43,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set architecture tag (amd64)
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: ${{ matrix.os == 'ubuntu-24.04' }}
         run: echo "ARCH_TAG=amd64" >> $GITHUB_ENV
 
       - name: Set architecture tag (arm64)
@@ -78,24 +78,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: Download (AMD) artifact
+      - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: "ubuntu-latest"
-          path: ${{ runner.temp }}
-
-      - name: Load image (amd)
-        run: |
-          docker load --input ${{ runner.temp }}/ubuntu-latest.tar
-          docker image ls -a
-
-      - name: Download (ARM) artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: "ubuntu-24.04-arm"
+          merge-multiple: true
+          name: "ubuntu-*.tar"
           path: ${{ runner.temp }}
 
       - name: Load image (arm)
         run: |
           docker load --input ${{ runner.temp }}/ubuntu-24.04-arm.tar
+          docker load --input ${{ runner.temp }}/ubuntu-24.04.tar
           docker image ls -a
