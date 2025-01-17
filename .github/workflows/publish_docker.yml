@@ -63,7 +63,7 @@ jobs:
           load: true
           push: false
           file: docker/Dockerfile
-          platforms: linux/amd64
+          platforms: linux/${{ env.ARCH_TAG }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=docker, dest=${{ runner.temp }}/image.tar
