@@ -73,6 +73,7 @@ jobs:
         with:
           name: ${{ matrix.os}}
           path: ${{ runner.temp }}/image.tar
+          retention-days: 1
 
   push:
     runs-on: ubuntu-latest
