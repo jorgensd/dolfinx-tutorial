@@ -83,7 +83,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           merge-multiple: true
-          name: "ubuntu-*.tar"
+          pattern: "ubuntu-*.tar"
           path: ${{ runner.temp }}
 
       - name: Load image (arm)
