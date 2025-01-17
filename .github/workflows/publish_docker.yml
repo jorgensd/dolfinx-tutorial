@@ -15,8 +15,12 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build-and-push-image:
-    runs-on: ubuntu-latest
+  build:
+    strategy:
+      matrix:
+        os: ["ubuntu-latest", "ubuntu-24.04-arm"]
+    runs-on: ${{ matrix.os }}
+
     permissions:
       contents: read
       packages: write
@@ -38,11 +42,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set architecture tag (amd64)
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: echo "ARCH_TAG=amd64" >> $GITHUB_ENV
+
+      - name: Set architecture tag (arm64)
+        if: ${{ contains(matrix.os, 'arm') }}
+        run: echo "ARCH_TAG=arm64" >> $GITHUB_ENV
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.os }}
 
       - name: Build Docker image
         uses: docker/build-push-action@v6
@@ -54,14 +66,36 @@ jobs:
           platforms: linux/amd64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=docker, dest=${{ runner.temp }}/image.tar
 
-      - name: Build (arm) and push (amd/arm) Docker image
-        uses: docker/build-push-action@v6
-        if: github.event_name == 'push'
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          context: .
-          push: true
-          file: docker/Dockerfile
-          platforms: linux/amd64,linux/arm64
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          name: ${{ matrix.os}}
+          path: ${{ runner.temp }}/image.tar
+
+  push:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download (AMD) artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: "ubuntu-latest"
+          path: ${{ runner.temp }}
+
+      - name: Load image (amd)
+        run: |
+          docker load --input ${{ runner.temp }}/ubuntu-latest.tar
+          docker image ls -a
+
+      - name: Download (ARM) artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: "ubuntu-24.04-arm"
+          path: ${{ runner.temp }}
+
+      - name: Load image (arm)
+        run: |
+          docker load --input ${{ runner.temp }}/ubuntu-24.04-arm.tar
+          docker image ls -a
