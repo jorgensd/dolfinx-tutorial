@@ -60,7 +60,7 @@ jobs:
         id: build
         uses: docker/build-push-action@v6
         with:
-          platforms: ${{ matrix.os }}
+          platforms: ${{ env.ARCH_TAG }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,"name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}",push-by-digest=true,name-canonical=true,push=true
 
@@ -73,7 +73,7 @@ jobs:
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
-          name: digests-${{ matrix.os }}
+          name: digests-${{ env.ARCH_TAG }}
           path: ${{ runner.temp }}/digests/*
           if-no-files-found: error
           retention-days: 1
