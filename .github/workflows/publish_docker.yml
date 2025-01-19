@@ -54,6 +54,7 @@ jobs:
           file: docker/Dockerfile
           platforms: ${{ env.ARCH_TAG }}
           labels: ${{ steps.meta.outputs.labels }}
+          push: false
           outputs: type=image,"name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}",push-by-digest=true,name-canonical=true,push=true
 
       - name: Export digest
