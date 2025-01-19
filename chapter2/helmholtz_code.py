@@ -62,9 +62,9 @@ gmsh.model.mesh.generate(3)
 # Then we import the gmsh mesh with the ```dolfinx.io.gmshio``` function.
 
 # +
+from mpi4py import MPI
 from dolfinx import fem, io, default_scalar_type, geometry
 from dolfinx.fem.petsc import LinearProblem
-from mpi4py import MPI
 import ufl
 import numpy as np
 import numpy.typing as npt
@@ -201,7 +201,7 @@ class MicrophonePressure:
         self._position = np.asarray(
             microphone_position, dtype=domain.geometry.x.dtype
         ).reshape(3, -1)
-        self._local_cells, self._local_posiiton = self.compute_local_microphones()
+        self._local_cells, self._local_position = self.compute_local_microphones()
 
     def compute_local_microphones(
         self,
@@ -234,14 +234,13 @@ class MicrophonePressure:
 
     def listen(
         self, recompute_collisions: bool = False
-    ) -> tuple[npt.NDArray[np.floating], npt.NDArray[np.complexfloating]]:
+    ) -> npt.NDArray[np.complexfloating]:
         if recompute_collisions:
             self._local_cells, self._local_position = self.compute_local_microphones()
-
-            p_values = p_a.eval(self._local_position, self._local_cells)
+        if len(self._local_cells) > 0:
+            return p_a.eval(self._local_position, self._local_cells)
         else:
-            p_values = None
-        return p_values
+            return np.zeros(0, dtype=default_scalar_type)
 
 
 # The pressure spectrum is initialized as a numpy array and the microphone location is assigned
@@ -274,7 +273,9 @@ for nf in range(0, len(freq)):
                 p_mic[nf] = pressure
 
 # ## SPL spectrum
-# After the computation, the pressure spectrum at the prescribed location is available. Such a spectrum is usually shown using the decibel (dB) scale to obtain the SPL, with the RMS pressure as input, defined as $p_{rms} = \frac{p}{\sqrt{2}}$.
+# After the computation, the pressure spectrum at the prescribed location is available.
+# Such a spectrum is usually shown using the decibel (dB) scale to obtain the SPL, with the RMS pressure as input,
+# defined as $p_{rms} = \frac{p}{\sqrt{2}}$.
 
 if domain.comm.rank == 0:
     import matplotlib.pyplot as plt
