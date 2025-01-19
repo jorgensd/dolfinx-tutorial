@@ -181,15 +181,15 @@ problem = LinearProblem(
 # -
 
 # ## Computing the pressure at a given location
-# Before starting our frequency loop, we can build a function that, given a microphone position, computes the sound pressure at its location.
+# Before starting our frequency loop, we can build a function that, given a microphone position,
+# computes the sound pressure at its location.
 # We will use the a similar method as in [Deflection of a membrane](../chapter1/membrane_code).
 # However, as the domain doesn't deform in time, we cache the collision detection
 
 
 class MicrophonePressure:
     def __init__(self, domain, microphone_position):
-        """
-        Initialize microphone(s)
+        """Initialize microphone(s).
 
         Args:
             domain: The domain to insert microphones on
@@ -268,9 +268,8 @@ for nf in range(0, len(freq)):
     p_f = domain.comm.gather(p_f, root=0)
 
     if domain.comm.rank == 0:
-        for pressure in p_f:
-            if pressure is not None:
-                p_mic[nf] = pressure
+        assert p_f is not None
+        p_mic[nf] = np.hstack(p_f)
 
 # ## SPL spectrum
 # After the computation, the pressure spectrum at the prescribed location is available.
