@@ -56,13 +56,6 @@ jobs:
         if: ${{ contains(matrix.os, 'arm') }}
         run: echo "ARCH_TAG=arm64" >> $GITHUB_ENV
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
-
       - name: Build and push by digest
         id: build
         uses: docker/build-push-action@v6
