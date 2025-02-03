@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.4
+#       jupytext_version: 1.16.6
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -95,7 +95,7 @@ L = ufl.dot(f, v) * ufl.dx + ufl.dot(T, v) * ds
 # -
 
 # ```{note}
-# Note that we used `nabla_grad` and optionally `nabla_div` for the variational formulation, as oposed to our previous usage of
+# Note that we used `nabla_grad` and optionally `nabla_div` for the variational formulation, as opposed to our previous usage of
 # `div` and `grad`. This is because for scalar functions $\nabla u$ has a clear meaning
 # $\nabla u = \left(\frac{\partial u}{\partial x}, \frac{\partial u}{\partial y}, \frac{\partial u}{\partial z} \right)$.
 #
