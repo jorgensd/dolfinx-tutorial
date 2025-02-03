@@ -63,16 +63,27 @@ gmsh.model.mesh.generate(3)
 
 # +
 from mpi4py import MPI
-from dolfinx import fem, io, default_scalar_type, geometry
+from dolfinx import (
+    fem,
+    io,
+    default_scalar_type,
+    geometry,
+    __version__ as dolfinx_version,
+)
 from dolfinx.fem.petsc import LinearProblem
 import ufl
 import numpy as np
 import numpy.typing as npt
+from packaging.version import Version
 
 mesh_data = io.gmshio.model_to_mesh(gmsh.model, MPI.COMM_WORLD, 0, gdim=3)
-domain = mesh_data.mesh
-assert mesh_data.facet_tags is not None
-facet_tags = mesh_data.facet_tags
+if Version(dolfinx_version) > Version("0.9.0"):
+    domain = mesh_data.mesh
+    assert mesh_data.facet_tags is not None
+    facet_tags = mesh_data.facet_tags
+else:
+    domain, _, facet_tags = mesh_data
+
 # -
 
 # We define the function space for our unknown $p$ and define the range of frequencies we want to solve the Helmholtz equation for.
