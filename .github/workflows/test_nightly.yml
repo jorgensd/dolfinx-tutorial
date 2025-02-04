@@ -40,6 +40,9 @@ jobs:
       - name: Test building the book
         run: PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
 
+      - name: Test building the book
+        run: PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
+
       - name: Test complex notebooks in parallel
         working-directory: chapter1
         run: |
