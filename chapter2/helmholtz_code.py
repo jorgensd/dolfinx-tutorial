@@ -24,7 +24,7 @@
 # ## Test problem
 # As an example, we will model a plane wave propagating in a tube.
 # While it is a basic test case, the code can be adapted to way more complex problems where velocity and impedance boundary conditions are needed.
-# We will apply a velocity boundary condition $v_n = 0.001$ to one end of the tube and an impedance $Z$ computed with the Delaney-Bazley model,
+# We will apply a velocity boundary condition $v_n = 0.001$ to one end of the tube (for the sake of simplicity, in this basic example, we are ignoring the point source, which can be applied with scifem) and an impedance $Z$ computed with the Delaney-Bazley model,
 # supposing that a layer of thickness $d = 0.02$ and flow resistivity $\sigma = 1e4$ is placed at the second end of the tube.
 # The choice of such impedance (the one of a plane wave propagating in free field) will give, as a result, a solution with no reflections.
 #
