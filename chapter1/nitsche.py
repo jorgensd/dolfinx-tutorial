@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.4
+#       jupytext_version: 1.16.5
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -39,7 +39,7 @@ V = fem.functionspace(domain, ("Lagrange", 1))
 uD = fem.Function(V)
 x = SpatialCoordinate(domain)
 u_ex =  1 + x[0]**2 + 2 * x[1]**2
-uD.interpolate(fem.Expression(u_ex, V.element.interpolation_points()))
+uD.interpolate(fem.Expression(u_ex, V.element.interpolation_points))
 f = -div(grad(u_ex))
 
 # As opposed to the first tutorial, we now have to have another look at the variational form.
