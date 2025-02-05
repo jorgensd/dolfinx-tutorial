@@ -43,8 +43,8 @@ lambda_ = beta
 g = gamma
 
 # We then create the mesh, which will consist of hexahedral elements, along with the function space.
-# As we want a vector element with three compoenets, we add `(3, )` or `(domain.geometry.dim, )` to the element tuple to make it a triplet
-# However, we also could have used `basix.ufl`s functionality, creating a vector element `element = basix.ufl.element("Lagrange", domain.topology.cell_name(), 1, shape=(domain.geometry.dim,))`, and intitializing the function space as `V = dolfinx.fem.functionspace(domain, element)`.
+# As we want a vector element with three components, we add `(3, )` or `(domain.geometry.dim, )` to the element tuple to make it a triplet
+# However, we also could have used `basix.ufl`s functionality, creating a vector element `element = basix.ufl.element("Lagrange", domain.topology.cell_name(), 1, shape=(domain.geometry.dim,))`, and initializing the function space as `V = dolfinx.fem.functionspace(domain, element)`.
 
 domain = mesh.create_box(MPI.COMM_WORLD, [np.array([0, 0, 0]), np.array([L, W, W])],
                          [20, 6, 6], cell_type=mesh.CellType.hexahedron)
@@ -52,7 +52,7 @@ V = fem.functionspace(domain, ("Lagrange", 1, (domain.geometry.dim, )))
 
 
 # ## Boundary conditions
-# As we would like to clamp the boundary at $x=0$, we do this by using a marker function, which locate the facets where $x$ is close to zero by machine precision.
+# As we would like to clamp the boundary at $x=0$, we do this by using a marker function, which locates the facets where $x$ is close to zero by machine precision.
 
 # +
 def clamped_boundary(x):
@@ -151,7 +151,7 @@ von_Mises = ufl.sqrt(3. / 2 * ufl.inner(s, s))
 # The `von_Mises` variable is now an expression that must be projected into an appropriate function space so that we can visualize it. As `uh` is a linear combination of first order piecewise continuous functions, the von Mises stresses will be a cell-wise constant function.
 
 V_von_mises = fem.functionspace(domain, ("DG", 0))
-stress_expr = fem.Expression(von_Mises, V_von_mises.element.interpolation_points())
+stress_expr = fem.Expression(von_Mises, V_von_mises.element.interpolation_points)
 stresses = fem.Function(V_von_mises)
 stresses.interpolate(stress_expr)
 
