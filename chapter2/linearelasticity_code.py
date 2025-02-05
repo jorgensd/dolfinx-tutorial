@@ -95,7 +95,7 @@ L = ufl.dot(f, v) * ufl.dx + ufl.dot(T, v) * ds
 # -
 
 # ```{note}
-# Note that we used `nabla_grad` and optionally `nabla_div` for the variational formulation, as oposed to our previous usage of
+# Note that we used `nabla_grad` and optionally `nabla_div` for the variational formulation, as opposed to our previous usage of
 # `div` and `grad`. This is because for scalar functions $\nabla u$ has a clear meaning
 # $\nabla u = \left(\frac{\partial u}{\partial x}, \frac{\partial u}{\partial y}, \frac{\partial u}{\partial z} \right)$.
 #
