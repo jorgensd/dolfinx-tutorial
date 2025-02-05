@@ -59,17 +59,41 @@ from petsc4py import PETSc
 
 from basix.ufl import element
 
-from dolfinx.cpp.mesh import to_type, cell_entity_type
-from dolfinx.fem import (Constant, Function, functionspace,
-                         assemble_scalar, dirichletbc, form, locate_dofs_topological, set_bc)
-from dolfinx.fem.petsc import (apply_lifting, assemble_matrix, assemble_vector,
-                               create_vector, create_matrix, set_bc)
-from dolfinx.graph import adjacencylist
+from dolfinx.fem import (
+    Constant,
+    Function,
+    functionspace,
+    assemble_scalar,
+    dirichletbc,
+    form,
+    locate_dofs_topological,
+    set_bc,
+)
+from dolfinx.fem.petsc import (
+    apply_lifting,
+    assemble_matrix,
+    assemble_vector,
+    create_vector,
+    create_matrix,
+    set_bc,
+)
 from dolfinx.geometry import bb_tree, compute_collisions_points, compute_colliding_cells
-from dolfinx.io import (VTXWriter, distribute_entity_data, gmshio)
-from dolfinx.mesh import create_mesh, meshtags_from_entities
-from ufl import (FacetNormal, Identity, Measure, TestFunction, TrialFunction,
-                 as_vector, div, dot, ds, dx, inner, lhs, grad, nabla_grad, rhs, sym, system)
+from dolfinx.io import VTXWriter, gmshio
+from ufl import (
+    FacetNormal,
+    Measure,
+    TestFunction,
+    TrialFunction,
+    as_vector,
+    div,
+    dot,
+    dx,
+    inner,
+    lhs,
+    grad,
+    nabla_grad,
+    rhs,
+)
 
 gmsh.initialize()
 
@@ -98,7 +122,7 @@ if mesh_comm.rank == model_rank:
 fluid_marker = 1
 if mesh_comm.rank == model_rank:
     volumes = gmsh.model.getEntities(dim=gdim)
-    assert (len(volumes) == 1)
+    assert len(volumes) == 1
     gmsh.model.addPhysicalGroup(volumes[0][0], [volumes[0][1]], fluid_marker)
     gmsh.model.setPhysicalName(volumes[0][0], fluid_marker, "Fluid")
 
@@ -115,7 +139,9 @@ if mesh_comm.rank == model_rank:
             inflow.append(boundary[1])
         elif np.allclose(center_of_mass, [L, H / 2, 0]):
             outflow.append(boundary[1])
-        elif np.allclose(center_of_mass, [L / 2, H, 0]) or np.allclose(center_of_mass, [L / 2, 0, 0]):
+        elif np.allclose(center_of_mass, [L / 2, H, 0]) or np.allclose(
+            center_of_mass, [L / 2, 0, 0]
+        ):
             walls.append(boundary[1])
         else:
             obstacle.append(boundary[1])
@@ -169,10 +195,14 @@ if mesh_comm.rank == model_rank:
 # ## Loading mesh and boundary markers
 #
 # As we have generated the mesh, we now need to load the mesh and corresponding facet markers into DOLFINx.
-# To load the mesh, we follow the same structure as in [Deflection of a membrane](./../chapter1/membrane_code.ipynb), with the difference being that we will load in facet markers as well. To learn more about the specifics of the function below, see [A GMSH tutorial for DOLFINx](https://jsdokken.com/src/tutorial_gmsh.html).
+# To load the mesh, we follow the same structure as in [Deflection of a membrane](./../chapter1/membrane_code.ipynb), with the difference being that we will load in facet markers as well.
+# To learn more about the specifics of the function below, see [A GMSH tutorial for DOLFINx](https://jsdokken.com/src/tutorial_gmsh.html).
 #
 
-mesh, _, ft = gmshio.model_to_mesh(gmsh.model, mesh_comm, model_rank, gdim=gdim)
+mesh_data = gmshio.model_to_mesh(gmsh.model, mesh_comm, model_rank, gdim=gdim)
+mesh = mesh_data.mesh
+assert mesh_data.facet_tags is not None
+ft = mesh_data.facet_tags
 ft.name = "Facet markers"
 
 # ## Physical and discretization parameters
@@ -181,12 +211,12 @@ ft.name = "Facet markers"
 #
 
 t = 0
-T = 8                       # Final time
-dt = 1 / 1600                 # Time step size
+T = 8  # Final time
+dt = 1 / 1600  # Time step size
 num_steps = int(T / dt)
 k = Constant(mesh, PETSc.ScalarType(dt))
 mu = Constant(mesh, PETSc.ScalarType(0.001))  # Dynamic viscosity
-rho = Constant(mesh, PETSc.ScalarType(1))     # Density
+rho = Constant(mesh, PETSc.ScalarType(1))  # Density
 
 # ```{admonition} Reduced end-time of problem
 # In the current demo, we have reduced the run time to one second to make it easier to illustrate the concepts of the benchmark. By increasing the end-time `T` to 8, the runtime in a notebook is approximately 25 minutes. If you convert the notebook to a python file and use `mpirun`, you can reduce the runtime of the problem.
@@ -198,7 +228,7 @@ rho = Constant(mesh, PETSc.ScalarType(1))     # Density
 #
 
 # +
-v_cg2 = element("Lagrange", mesh.topology.cell_name(), 2, shape=(mesh.geometry.dim, ))
+v_cg2 = element("Lagrange", mesh.topology.cell_name(), 2, shape=(mesh.geometry.dim,))
 s_cg1 = element("Lagrange", mesh.topology.cell_name(), 1)
 V = functionspace(mesh, v_cg2)
 Q = functionspace(mesh, s_cg1)
@@ -208,13 +238,15 @@ fdim = mesh.topology.dim - 1
 # Define boundary conditions
 
 
-class InletVelocity():
+class InletVelocity:
     def __init__(self, t):
         self.t = t
 
     def __call__(self, x):
         values = np.zeros((gdim, x.shape[1]), dtype=PETSc.ScalarType)
-        values[0] = 4 * 1.5 * np.sin(self.t * np.pi / 8) * x[1] * (0.41 - x[1]) / (0.41**2)
+        values[0] = (
+            4 * 1.5 * np.sin(self.t * np.pi / 8) * x[1] * (0.41 - x[1]) / (0.41**2)
+        )
         return values
 
 
@@ -222,15 +254,23 @@ class InletVelocity():
 u_inlet = Function(V)
 inlet_velocity = InletVelocity(t)
 u_inlet.interpolate(inlet_velocity)
-bcu_inflow = dirichletbc(u_inlet, locate_dofs_topological(V, fdim, ft.find(inlet_marker)))
+bcu_inflow = dirichletbc(
+    u_inlet, locate_dofs_topological(V, fdim, ft.find(inlet_marker))
+)
 # Walls
 u_nonslip = np.array((0,) * mesh.geometry.dim, dtype=PETSc.ScalarType)
-bcu_walls = dirichletbc(u_nonslip, locate_dofs_topological(V, fdim, ft.find(wall_marker)), V)
+bcu_walls = dirichletbc(
+    u_nonslip, locate_dofs_topological(V, fdim, ft.find(wall_marker)), V
+)
 # Obstacle
-bcu_obstacle = dirichletbc(u_nonslip, locate_dofs_topological(V, fdim, ft.find(obstacle_marker)), V)
+bcu_obstacle = dirichletbc(
+    u_nonslip, locate_dofs_topological(V, fdim, ft.find(obstacle_marker)), V
+)
 bcu = [bcu_inflow, bcu_obstacle, bcu_walls]
 # Outlet
-bcp_outlet = dirichletbc(PETSc.ScalarType(0), locate_dofs_topological(Q, fdim, ft.find(outlet_marker)), Q)
+bcp_outlet = dirichletbc(
+    PETSc.ScalarType(0), locate_dofs_topological(Q, fdim, ft.find(outlet_marker)), Q
+)
 bcp = [bcp_outlet]
 # -
 
@@ -395,10 +435,11 @@ if mesh.comm.rank == 0:
 #
 
 from pathlib import Path
+
 folder = Path("results")
 folder.mkdir(exist_ok=True, parents=True)
-vtx_u = VTXWriter(mesh.comm, "dfg2D-3-u.bp", [u_], engine="BP4")
-vtx_p = VTXWriter(mesh.comm, "dfg2D-3-p.bp", [p_], engine="BP4")
+vtx_u = VTXWriter(mesh.comm, folder / "dfg2D-3-u.bp", [u_], engine="BP4")
+vtx_p = VTXWriter(mesh.comm, folder / "dfg2D-3-p.bp", [p_], engine="BP4")
 vtx_u.write(t)
 vtx_p.write(t)
 progress = tqdm.autonotebook.tqdm(desc="Solving PDE", total=num_steps)
@@ -449,7 +490,11 @@ for i in range(num_steps):
     vtx_p.write(t)
 
     # Update variable with solution form this time step
-    with u_.x.petsc_vec.localForm() as loc_, u_n.x.petsc_vec.localForm() as loc_n, u_n1.x.petsc_vec.localForm() as loc_n1:
+    with (
+        u_.x.petsc_vec.localForm() as loc_,
+        u_n.x.petsc_vec.localForm() as loc_n,
+        u_n1.x.petsc_vec.localForm() as loc_n1,
+    ):
         loc_n.copy(loc_n1)
         loc_.copy(loc_n)
 
@@ -498,31 +543,64 @@ if mesh.comm.rank == 0:
     turek = np.loadtxt("bdforces_lv4")
     turek_p = np.loadtxt("pointvalues_lv4")
     fig = plt.figure(figsize=(25, 8))
-    l1 = plt.plot(t_u, C_D, label=r"FEniCSx  ({0:d} dofs)".format(num_velocity_dofs + num_pressure_dofs), linewidth=2)
-    l2 = plt.plot(turek[1:, 1], turek[1:, 3], marker="x", markevery=50,
-                  linestyle="", markersize=4, label="FEATFLOW (42016 dofs)")
+    l1 = plt.plot(
+        t_u,
+        C_D,
+        label=r"FEniCSx  ({0:d} dofs)".format(num_velocity_dofs + num_pressure_dofs),
+        linewidth=2,
+    )
+    l2 = plt.plot(
+        turek[1:, 1],
+        turek[1:, 3],
+        marker="x",
+        markevery=50,
+        linestyle="",
+        markersize=4,
+        label="FEATFLOW (42016 dofs)",
+    )
     plt.title("Drag coefficient")
     plt.grid()
     plt.legend()
     plt.savefig("figures/drag_comparison.png")
 
     fig = plt.figure(figsize=(25, 8))
-    l1 = plt.plot(t_u, C_L, label=r"FEniCSx  ({0:d} dofs)".format(
-        num_velocity_dofs + num_pressure_dofs), linewidth=2)
-    l2 = plt.plot(turek[1:, 1], turek[1:, 4], marker="x", markevery=50,
-                  linestyle="", markersize=4, label="FEATFLOW (42016 dofs)")
+    l1 = plt.plot(
+        t_u,
+        C_L,
+        label=r"FEniCSx  ({0:d} dofs)".format(num_velocity_dofs + num_pressure_dofs),
+        linewidth=2,
+    )
+    l2 = plt.plot(
+        turek[1:, 1],
+        turek[1:, 4],
+        marker="x",
+        markevery=50,
+        linestyle="",
+        markersize=4,
+        label="FEATFLOW (42016 dofs)",
+    )
     plt.title("Lift coefficient")
     plt.grid()
     plt.legend()
     plt.savefig("figures/lift_comparison.png")
 
     fig = plt.figure(figsize=(25, 8))
-    l1 = plt.plot(t_p, p_diff, label=r"FEniCSx ({0:d} dofs)".format(num_velocity_dofs + num_pressure_dofs), linewidth=2)
-    l2 = plt.plot(turek[1:, 1], turek_p[1:, 6] - turek_p[1:, -1], marker="x", markevery=50,
-                  linestyle="", markersize=4, label="FEATFLOW (42016 dofs)")
+    l1 = plt.plot(
+        t_p,
+        p_diff,
+        label=r"FEniCSx ({0:d} dofs)".format(num_velocity_dofs + num_pressure_dofs),
+        linewidth=2,
+    )
+    l2 = plt.plot(
+        turek[1:, 1],
+        turek_p[1:, 6] - turek_p[1:, -1],
+        marker="x",
+        markevery=50,
+        linestyle="",
+        markersize=4,
+        label="FEATFLOW (42016 dofs)",
+    )
     plt.title("Pressure difference")
     plt.grid()
     plt.legend()
     plt.savefig("figures/pressure_comparison.png")
-
-
