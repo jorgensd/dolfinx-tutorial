@@ -59,7 +59,7 @@ $\langle -\nabla \cdot \sigma, v\rangle$. Just as for the [linear elasticity pro
 where $T=\sigma \cdot n$ is the boundary traction. If we solve a problem with a free boundary, we can take $T=0$ on the boundary. However, if we compute the flow through a channel or a pipe and want to model flow that continues into an "imaginary channel" at the outflow, we need to treat this term with some care. 
 The assumption we then can make is that the derivative of the velocity in the direction of the channel is zero at the outflow, corresponding to that the flow is "fully developed" or doesn't change significantly downstream at the outflow.
 Doing so, the remaining boundary term at the outflow becomes 
-$pn - \mu \nabla u \cdot n$, which is the term appearing in the variational problem [](ipcs-one). Note that this argument and the implementation depends exact on the definition of $\nabla u$, as either the  matrix with components $\frac{\partial u_i}{\partial x_j}$ or $\frac{\partial u_j}{\partial x_i}$.
+$pn - \mu \nabla u \cdot n$, which is the term appearing in the variational problem [](ipcs-one). Note that this argument and the implementation depend exactly on the definition of $\nabla u$, as either the  matrix with components $\frac{\partial u_i}{\partial x_j}$ or $\frac{\partial u_j}{\partial x_i}$.
 We here choose the  latter, $\frac{\partial u_j}{\partial x_i}$,
 which means that we must use the UFL-operator `nabla_grad`. If we use the operator `grad` and the definition $\frac{\partial u_i}{\partial x_j}$, we must instead keep the terms $pn-\mu(\nabla u)^T \cdot n$.
 
