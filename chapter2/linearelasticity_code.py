@@ -43,7 +43,7 @@ lambda_ = beta
 g = gamma
 
 # We then create the mesh, which will consist of hexahedral elements, along with the function space.
-# As we want a vector element with three compoenets, we add `(3, )` or `(domain.geometry.dim, )` to the element tuple to make it a triplet
+# As we want a vector element with three components, we add `(3, )` or `(domain.geometry.dim, )` to the element tuple to make it a triplet
 # However, we also could have used `basix.ufl`s functionality, creating a vector element `element = basix.ufl.element("Lagrange", domain.topology.cell_name(), 1, shape=(domain.geometry.dim,))`, and initializing the function space as `V = dolfinx.fem.functionspace(domain, element)`.
 
 domain = mesh.create_box(MPI.COMM_WORLD, [np.array([0, 0, 0]), np.array([L, W, W])],
