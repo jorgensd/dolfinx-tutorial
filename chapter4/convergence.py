@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.4
+#       jupytext_version: 1.16.5
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -104,7 +104,7 @@ def error_L2(uh, u_ex, degree_raise=3):
     # is a ufl expression or a python lambda function
     u_ex_W = Function(W)
     if isinstance(u_ex, ufl.core.expr.Expr):
-        u_expr = Expression(u_ex, W.element.interpolation_points())
+        u_expr = Expression(u_ex, W.element.interpolation_points)
         u_ex_W.interpolate(u_expr)
     else:
         u_ex_W.interpolate(u_ex)
@@ -174,7 +174,7 @@ def error_infinity(u_h, u_ex):
     comm = u_h.function_space.mesh.comm
     u_ex_V = Function(u_h.function_space)
     if isinstance(u_ex, ufl.core.expr.Expr):
-        u_expr = Expression(u_ex, u_h.function_space.element.interpolation_points())
+        u_expr = Expression(u_ex, u_h.function_space.element.interpolation_points)
         u_ex_V.interpolate(u_expr)
     else:
         u_ex_V.interpolate(u_ex)

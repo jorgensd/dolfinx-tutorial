@@ -52,7 +52,7 @@ V = fem.functionspace(domain, ("Lagrange", 1, (domain.geometry.dim, )))
 
 
 # ## Boundary conditions
-# As we would like to clamp the boundary at $x=0$, we do this by using a marker function, which locate the facets where $x$ is close to zero by machine precision.
+# As we would like to clamp the boundary at $x=0$, we do this by using a marker function, which locates the facets where $x$ is close to zero by machine precision.
 
 # +
 def clamped_boundary(x):
@@ -151,7 +151,7 @@ von_Mises = ufl.sqrt(3. / 2 * ufl.inner(s, s))
 # The `von_Mises` variable is now an expression that must be projected into an appropriate function space so that we can visualize it. As `uh` is a linear combination of first order piecewise continuous functions, the von Mises stresses will be a cell-wise constant function.
 
 V_von_mises = fem.functionspace(domain, ("DG", 0))
-stress_expr = fem.Expression(von_Mises, V_von_mises.element.interpolation_points())
+stress_expr = fem.Expression(von_Mises, V_von_mises.element.interpolation_points)
 stresses = fem.Function(V_von_mises)
 stresses.interpolate(stress_expr)
 
