@@ -21,7 +21,7 @@ Alternatively, if you want to add a separate chapter, a Jupyter notebook can be 
 Any code added to the tutorial should work in parallel. If any changes are made to `ipynb` files, please ensure that these changes are reflected in the corresponding `py` files by using [`jupytext`](https://jupytext.readthedocs.io/en/latest/faq.html#can-i-use-jupytext-with-jupyterhub-binder-nteract-colab-saturn-or-azure):
 
 ```bash
-python3 -m jupytext --sync  */*.ipynb
+python3 -m jupytext --sync  */*.ipynb --set-formats ipynb,py:light
 ```
 
 Any code added to the tutorial should work in parallel.
@@ -61,4 +61,3 @@ from the root of this repository, and run
 ```
 
 from the main directory.
-
