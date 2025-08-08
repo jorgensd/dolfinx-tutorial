@@ -2,6 +2,7 @@
 
 ## v0.10.0
 
+- `dolfinx.fem.petsc.LinearProblem` now requires an additional argument, `petsc_options_prefix`. This should be a unique string identifier for each `LinearProblem` that is created.
 - Change how one reads in GMSH data with `gmshio`. See [the membrane code](./chapter1/membrane_code.ipynb) for more details.
 - `dolfinx.fem.FiniteElement.interpolation_points()` -> `dolfinx.fem.FiniteElement.interpolation_points`.
 
