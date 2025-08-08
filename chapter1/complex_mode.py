@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.5
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (DOLFINx complex)
 #     language: python
@@ -19,7 +19,7 @@
 #
 # Many PDEs, such as the [Helmholtz equation](https://docs.fenicsproject.org/dolfinx/v0.4.1/python/demos/demo_helmholtz.html) require complex-valued fields.
 #
-# For simplicity, let us consider a Poisson equation of the form: 
+# For simplicity, let us consider a Poisson equation of the form:
 #
 # $$-\Delta u = f \text{ in } \Omega,$$
 # $$ f = -1 - 2j \text{ in } \Omega,$$
@@ -45,17 +45,20 @@
 # FEniCSx supports both real and complex numbers, so we can create a function space with real valued or complex valued coefficients.
 #
 
+# +
 from mpi4py import MPI
 import dolfinx
 import numpy as np
+
 mesh = dolfinx.mesh.create_unit_square(MPI.COMM_WORLD, 10, 10)
 V = dolfinx.fem.functionspace(mesh, ("Lagrange", 1))
-u_r = dolfinx.fem.Function(V, dtype=np.float64) 
+u_r = dolfinx.fem.Function(V, dtype=np.float64)
 u_r.interpolate(lambda x: x[0])
 u_c = dolfinx.fem.Function(V, dtype=np.complex128)
-u_c.interpolate(lambda x:0.5*x[0]**2 + 1j*x[1]**2)
+u_c.interpolate(lambda x: 0.5 * x[0] ** 2 + 1j * x[1] ** 2)
 print(u_r.x.array.dtype)
 print(u_c.x.array.dtype)
+# -
 
 # However, as we would like to solve linear algebra problems of the form $Ax=b$, we need to be able to use matrices and vectors that support real and complex numbers. As [PETSc](https://petsc.org/release/) is one of the most popular interfaces to linear algebra packages, we need to be able to work with their matrix and vector structures.
 #
@@ -63,20 +66,26 @@ print(u_c.x.array.dtype)
 #
 # We check that we are using the correct installation of PETSc by inspecting the scalar type.
 
+# +
 from petsc4py import PETSc
 from dolfinx.fem.petsc import assemble_vector
+
 print(PETSc.ScalarType)
-assert np.dtype(PETSc.ScalarType).kind == 'c'
+assert np.dtype(PETSc.ScalarType).kind == "c"
+# -
 
 # ## Variational problem
 # We are now ready to define our variational problem
 
+# +
 import ufl
+
 u = ufl.TrialFunction(V)
 v = ufl.TestFunction(V)
 f = dolfinx.fem.Constant(mesh, PETSc.ScalarType(-1 - 2j))
 a = ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx
 L = ufl.inner(f, v) * ufl.dx
+# -
 
 # Note that we have used the `PETSc.ScalarType` to wrap the constant source on the right hand side. This is because we want the integration kernels to assemble into the correct floating type.
 #
@@ -99,11 +108,15 @@ print(residual.array)
 # We define our Dirichlet condition and setup and solve the variational problem.
 # ## Solve variational problem
 
-mesh.topology.create_connectivity(mesh.topology.dim-1, mesh.topology.dim)
+mesh.topology.create_connectivity(mesh.topology.dim - 1, mesh.topology.dim)
 boundary_facets = dolfinx.mesh.exterior_facet_indices(mesh.topology)
-boundary_dofs = dolfinx.fem.locate_dofs_topological(V, mesh.topology.dim-1, boundary_facets)
+boundary_dofs = dolfinx.fem.locate_dofs_topological(
+    V, mesh.topology.dim - 1, boundary_facets
+)
 bc = dolfinx.fem.dirichletbc(u_c, boundary_dofs)
-problem = dolfinx.fem.petsc.LinearProblem(a, L, bcs=[bc])
+problem = dolfinx.fem.petsc.LinearProblem(
+    a, L, bcs=[bc], petsc_options_prefix="complex_poisson"
+)
 uh = problem.solve()
 
 # We compute the $L^2$ error and the max error.
@@ -112,11 +125,13 @@ uh = problem.solve()
 #
 
 x = ufl.SpatialCoordinate(mesh)
-u_ex = 0.5 * x[0]**2 + 1j*x[1]**2
-L2_error = dolfinx.fem.form(ufl.dot(uh-u_ex, uh-u_ex) * ufl.dx(metadata={"quadrature_degree": 5}))
+u_ex = 0.5 * x[0] ** 2 + 1j * x[1] ** 2
+L2_error = dolfinx.fem.form(
+    ufl.dot(uh - u_ex, uh - u_ex) * ufl.dx(metadata={"quadrature_degree": 5})
+)
 local_error = dolfinx.fem.assemble_scalar(L2_error)
 global_error = np.sqrt(mesh.comm.allreduce(local_error, op=MPI.SUM))
-max_error = mesh.comm.allreduce(np.max(np.abs(u_c.x.array-uh.x.array)))
+max_error = mesh.comm.allreduce(np.max(np.abs(u_c.x.array - uh.x.array)))
 print(global_error, max_error)
 
 # ## Plotting
@@ -124,8 +139,10 @@ print(global_error, max_error)
 # Finally, we plot the real and imaginary solutions.
 #
 
+# +
 import pyvista
-pyvista.start_xvfb()
+
+pyvista.start_xvfb(0.1)
 mesh.topology.create_connectivity(mesh.topology.dim, mesh.topology.dim)
 p_mesh = pyvista.UnstructuredGrid(*dolfinx.plot.vtk_mesh(mesh, mesh.topology.dim))
 pyvista_cells, cell_types, geometry = dolfinx.plot.vtk_mesh(V)
@@ -148,5 +165,3 @@ p_imag.add_mesh(grid, show_edges=True)
 p_imag.view_xy()
 if not pyvista.OFF_SCREEN:
     p_imag.show()
-
-

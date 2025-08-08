@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.5
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -26,21 +26,24 @@
 # +
 from dolfinx import log, default_scalar_type
 from dolfinx.fem.petsc import NonlinearProblem
-from dolfinx.nls.petsc import NewtonSolver
 import pyvista
 import numpy as np
 import ufl
 
 from mpi4py import MPI
 from dolfinx import fem, mesh, plot
+
 L = 20.0
-domain = mesh.create_box(MPI.COMM_WORLD, [[0.0, 0.0, 0.0], [L, 1, 1]], [20, 5, 5], mesh.CellType.hexahedron)
-V = fem.functionspace(domain, ("Lagrange", 2, (domain.geometry.dim, )))
+domain = mesh.create_box(
+    MPI.COMM_WORLD, [[0.0, 0.0, 0.0], [L, 1, 1]], [20, 5, 5], mesh.CellType.hexahedron
+)
+V = fem.functionspace(domain, ("Lagrange", 2, (domain.geometry.dim,)))
 
 
 # -
 
 # We create two python functions for determining the facets to apply boundary conditions to
+
 
 # +
 def left(x):
@@ -59,10 +62,13 @@ right_facets = mesh.locate_entities_boundary(domain, fdim, right)
 # Next, we create a  marker based on these two functions
 
 # Concatenate and sort the arrays based on facet indices. Left facets marked with 1, right facets with two
+
 marked_facets = np.hstack([left_facets, right_facets])
 marked_values = np.hstack([np.full_like(left_facets, 1), np.full_like(right_facets, 2)])
 sorted_facets = np.argsort(marked_facets)
-facet_tag = mesh.meshtags(domain, fdim, marked_facets[sorted_facets], marked_values[sorted_facets])
+facet_tag = mesh.meshtags(
+    domain, fdim, marked_facets[sorted_facets], marked_values[sorted_facets]
+)
 
 # We then create a function for supplying the boundary condition on the left side, which is fixed.
 
@@ -103,55 +109,66 @@ Ic = ufl.variable(ufl.tr(C))
 J = ufl.variable(ufl.det(F))
 # -
 
-# Define the elasticity model via a stored strain energy density function $\psi$, and create the expression for the first Piola-Kirchhoff stress:
+# Define the elasticity model via a stored strain energy density function $\psi$,
+# and create the expression for the first Piola-Kirchhoff stress:
 
 # Elasticity parameters
+
 E = default_scalar_type(1.0e4)
 nu = default_scalar_type(0.3)
 mu = fem.Constant(domain, E / (2 * (1 + nu)))
 lmbda = fem.Constant(domain, E * nu / ((1 + nu) * (1 - 2 * nu)))
+
 # Stored strain energy density (compressible neo-Hookean model)
-psi = (mu / 2) * (Ic - 3) - mu * ufl.ln(J) + (lmbda / 2) * (ufl.ln(J))**2
-# Stress
+
+psi = (mu / 2) * (Ic - 3) - mu * ufl.ln(J) + (lmbda / 2) * (ufl.ln(J)) ** 2
+
 # Hyper-elasticity
+
 P = ufl.diff(psi, F)
 
 # ```{admonition} Comparison to linear elasticity
-# To illustrate the difference between linear and hyperelasticity, the following lines can be uncommented to solve the linear elasticity problem.
+# To illustrate the difference between linear and hyperelasticity,
+# the following lines can be uncommented to solve the linear elasticity problem.
 # ```
 
 # +
 # P = 2.0 * mu * ufl.sym(ufl.grad(u)) + lmbda * ufl.tr(ufl.sym(ufl.grad(u))) * I
 # -
 
-# Define the variational form with traction integral over all facets with value 2. We set the quadrature degree for the integrals to 4.
+# Define the variational form with traction integral over all facets with value 2.
+# We set the quadrature degree for the integrals to 4.
 
 metadata = {"quadrature_degree": 4}
-ds = ufl.Measure('ds', domain=domain, subdomain_data=facet_tag, metadata=metadata)
+ds = ufl.Measure("ds", domain=domain, subdomain_data=facet_tag, metadata=metadata)
 dx = ufl.Measure("dx", domain=domain, metadata=metadata)
+
 # Define form F (we want to find u such that F(u) = 0)
+
 F = ufl.inner(ufl.grad(v), P) * dx - ufl.inner(v, B) * dx - ufl.inner(v, T) * ds(2)
 
-# As the varitional form is non-linear and written on residual form, we use the non-linear problem class from DOLFINx to set up required structures to use a Newton solver.
+# As the varitional form is non-linear and written on residual form,
+# we use the non-linear problem class from DOLFINx to set up required structures to use a Newton solver.
 
-problem = NonlinearProblem(F, u, bcs)
-
-# and then create and customize the Newton solver
-
-# +
-solver = NewtonSolver(domain.comm, problem)
-
-# Set Newton solver options
-solver.atol = 1e-8
-solver.rtol = 1e-8
-solver.convergence_criterion = "incremental"
-
-# -
+petsc_options = {
+    "snes_type": "newtonls",
+    "snes_linesearch_type": "none",
+    "snes_monitor": None,
+    "snes_atol": 1e-8,
+    "snes_rtol": 1e-8,
+    "snes_stol": 1e-8,
+    "ksp_type": "preonly",
+    "pc_type": "lu",
+    "pc_factor_mat_solver_type": "mumps",
+}
+problem = NonlinearProblem(
+    F, u, bcs=bcs, petsc_options=petsc_options, petsc_options_prefix="hyperelasticity"
+)
 
 # We create a function to plot the solution at each time step.
 
 # +
-pyvista.start_xvfb()
+pyvista.start_xvfb(1.0)
 plotter = pyvista.Plotter()
 plotter.open_gif("deformation.gif", fps=3)
 
@@ -159,7 +176,7 @@ topology, cells, geometry = plot.vtk_mesh(u.function_space)
 function_grid = pyvista.UnstructuredGrid(topology, cells, geometry)
 
 values = np.zeros((geometry.shape[0], 3))
-values[:, :len(u)] = u.x.array.reshape(geometry.shape[0], len(u))
+values[:, : len(u)] = u.x.array.reshape(geometry.shape[0], len(u))
 function_grid["u"] = values
 function_grid.set_active_vectors("u")
 
@@ -173,7 +190,9 @@ actor = plotter.add_mesh(warped, show_edges=True, lighting=False, clim=[0, 10])
 # Compute magnitude of displacement to visualize in GIF
 Vs = fem.functionspace(domain, ("Lagrange", 2))
 magnitude = fem.Function(Vs)
-us = fem.Expression(ufl.sqrt(sum([u[i]**2 for i in range(len(u))])), Vs.element.interpolation_points)
+us = fem.Expression(
+    ufl.sqrt(sum([u[i] ** 2 for i in range(len(u))])), Vs.element.interpolation_points
+)
 magnitude.interpolate(us)
 warped["mag"] = magnitude.x.array
 # -
@@ -184,11 +203,13 @@ log.set_log_level(log.LogLevel.INFO)
 tval0 = -1.5
 for n in range(1, 10):
     T.value[2] = n * tval0
-    num_its, converged = solver.solve(u)
-    assert (converged)
-    u.x.scatter_forward()
+    problem.solve()
+    converged = problem.solver.getConvergedReason() > 0
+    num_its = problem.solver.getIterationNumber()
+    assert converged > 0, f"Solver did not converge with reason {converged}."
+
     print(f"Time step {n}, Number of iterations {num_its}, Load {T.value}")
-    function_grid["u"][:, :len(u)] = u.x.array.reshape(geometry.shape[0], len(u))
+    function_grid["u"][:, : len(u)] = u.x.array.reshape(geometry.shape[0], len(u))
     magnitude.interpolate(us)
     warped.set_active_scalars("mag")
     warped_n = function_grid.warp_by_vector(factor=1)

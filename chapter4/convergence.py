@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.5
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -26,13 +26,29 @@
 
 # +
 from dolfinx import default_scalar_type
-from dolfinx.fem import (Expression, Function, functionspace,
-                         assemble_scalar, dirichletbc, form, locate_dofs_topological)
+from dolfinx.fem import (
+    Expression,
+    Function,
+    functionspace,
+    assemble_scalar,
+    dirichletbc,
+    form,
+    locate_dofs_topological,
+)
 from dolfinx.fem.petsc import LinearProblem
 from dolfinx.mesh import create_unit_square, locate_entities_boundary
 
 from mpi4py import MPI
-from ufl import SpatialCoordinate, TestFunction, TrialFunction, div, dot, dx, grad, inner
+from ufl import (
+    SpatialCoordinate,
+    TestFunction,
+    TrialFunction,
+    div,
+    dot,
+    dx,
+    grad,
+    inner,
+)
 
 import ufl
 import numpy as np
@@ -47,7 +63,6 @@ u_ufl = u_ex(ufl)
 
 
 def solve_poisson(N=10, degree=1):
-
     mesh = create_unit_square(MPI.COMM_WORLD, N, N)
     x = SpatialCoordinate(mesh)
     f = -div(grad(u_ufl(x)))
@@ -58,10 +73,18 @@ def solve_poisson(N=10, degree=1):
     L = f * v * dx
     u_bc = Function(V)
     u_bc.interpolate(u_numpy)
-    facets = locate_entities_boundary(mesh, mesh.topology.dim - 1, lambda x: np.full(x.shape[1], True))
+    facets = locate_entities_boundary(
+        mesh, mesh.topology.dim - 1, lambda x: np.full(x.shape[1], True)
+    )
     dofs = locate_dofs_topological(V, mesh.topology.dim - 1, facets)
     bcs = [dirichletbc(u_bc, dofs)]
-    default_problem = LinearProblem(a, L, bcs=bcs, petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
+    default_problem = LinearProblem(
+        a,
+        L,
+        bcs=bcs,
+        petsc_options={"ksp_type": "preonly", "pc_type": "lu"},
+        petsc_options_prefix="poisson_convergence_",
+    )
     return default_problem.solve(), u_ufl(x)
 
 
@@ -71,7 +94,7 @@ def solve_poisson(N=10, degree=1):
 
 uh, u_ex = solve_poisson(10)
 comm = uh.function_space.mesh.comm
-error = form((uh - u_ex)**2 * ufl.dx)
+error = form((uh - u_ex) ** 2 * ufl.dx)
 E = np.sqrt(comm.allreduce(assemble_scalar(error), MPI.SUM))
 if comm.rank == 0:
     print(f"L2-error: {E:.2e}")
@@ -89,6 +112,7 @@ if comm.rank == 0:
 # However, as this gets expanded to `u_ex**2 + uh**2 - 2*u_ex*uh`. If the error is small, (and the solution itself is of moderate size), this calculation will correspond to subtract two positive numbers `u_ex**2 + uh**2`$\sim 1$ and `2*u_ex*u`$\sim 1$ yielding a small number, prone to round-off errors.
 #
 # To avoid this issue, we interpolate the approximate and exact solution into a higher order function space. Then we subtract the degrees of freedom from the interpolated functions to create a new error function. Then, finally, we assemble/integrate the square difference and take the square root to get the L2 norm.
+
 
 def error_L2(uh, u_ex, degree_raise=3):
     # Create higher order function space
@@ -133,7 +157,7 @@ for i, N in enumerate(Ns):
     # For L2 error estimations it is reccommended to send in u_numpy
     # as no JIT compilation is required
     Es[i] = error_L2(uh, u_numpy)
-    hs[i] = 1. / Ns[i]
+    hs[i] = 1.0 / Ns[i]
     if comm.rank == 0:
         print(f"h: {hs[i]:.2e} Error: {Es[i]:.2e}")
 
@@ -157,7 +181,7 @@ for degree in degrees:
         uh, u_ex = solve_poisson(N, degree=degree)
         comm = uh.function_space.mesh.comm
         Es[i] = error_L2(uh, u_numpy, degree_raise=3)
-        hs[i] = 1. / Ns[i]
+        hs[i] = 1.0 / Ns[i]
         if comm.rank == 0:
             print(f"h: {hs[i]:.2e} Error: {Es[i]:.2e}")
     rates = np.log(Es[1:] / Es[:-1]) / np.log(hs[1:] / hs[:-1])
@@ -167,6 +191,7 @@ for degree in degrees:
 
 # ### Infinity norm estimates
 # We start by creating a function to compute the infinity norm, the max difference between the approximate and exact solution.
+
 
 def error_infinity(u_h, u_ex):
     # Interpolate exact solution, special handling if exact solution
@@ -194,7 +219,7 @@ for degree in degrees:
         uh, u_ex = solve_poisson(N, degree=degree)
         comm = uh.function_space.mesh.comm
         Es[i] = error_infinity(uh, u_numpy)
-        hs[i] = 1. / Ns[i]
+        hs[i] = 1.0 / Ns[i]
         if comm.rank == 0:
             print(f"h: {hs[i]:.2e} Error: {Es[i]:.2e}")
     rates = np.log(Es[1:] / Es[:-1]) / np.log(hs[1:] / hs[:-1])

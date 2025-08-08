@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.5
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -46,7 +46,7 @@ import gmsh
 import numpy as np
 import pyvista
 
-pyvista.start_xvfb()
+pyvista.start_xvfb(1.0)
 
 mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
 Q = functionspace(mesh, ("DG", 0))
@@ -111,7 +111,11 @@ bcs = [dirichletbc(default_scalar_type(1), dofs, V)]
 
 # +
 problem = LinearProblem(
-    a, L, bcs=bcs, petsc_options={"ksp_type": "preonly", "pc_type": "lu"}
+    a,
+    L,
+    bcs=bcs,
+    petsc_options={"ksp_type": "preonly", "pc_type": "lu"},
+    petsc_options_prefix="subdomains_structured_",
 )
 uh = problem.solve()
 
@@ -296,7 +300,11 @@ x = SpatialCoordinate(mesh)
 L = Constant(mesh, default_scalar_type(1)) * v * dx
 
 problem = LinearProblem(
-    a, L, bcs=bcs, petsc_options={"ksp_type": "preonly", "pc_type": "lu"}
+    a,
+    L,
+    bcs=bcs,
+    petsc_options={"ksp_type": "preonly", "pc_type": "lu"},
+    petsc_options_prefix="subdomains_unstructured_",
 )
 uh = problem.solve()
 

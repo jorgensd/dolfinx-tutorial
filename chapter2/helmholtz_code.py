@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.6
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (DOLFINx complex)
 #     language: python
@@ -23,12 +23,18 @@
 #
 # ## Test problem
 # As an example, we will model a plane wave propagating in a tube.
-# While it is a basic test case, the code can be adapted to way more complex problems where velocity and impedance boundary conditions are needed.
-# We will apply a velocity boundary condition $v_n = 0.001$ to one end of the tube (for the sake of simplicity, in this basic example, we are ignoring the point source, which can be applied with scifem) and an impedance $Z$ computed with the Delaney-Bazley model,
-# supposing that a layer of thickness $d = 0.02$ and flow resistivity $\sigma = 1e4$ is placed at the second end of the tube.
-# The choice of such impedance (the one of a plane wave propagating in free field) will give, as a result, a solution with no reflections.
+# While it is a basic test case, the code can be adapted to way more complex problems where
+# velocity and impedance boundary conditions are needed.
+# We will apply a velocity boundary condition $v_n = 0.001$ to one end of the tube
+# (for the sake of simplicity, in this basic example, we are ignoring the point source, which can be applied with scifem)
+# and an impedance $Z$ computed with the Delaney-Bazley model,
+# supposing that a layer of thickness $d = 0.02$ and flow resistivity $\sigma = 1e4$ is
+# placed at the second end of the tube.
+# The choice of such impedance (the one of a plane wave propagating in free field) will give, as a result,
+# a solution with no reflections.
 #
-# First, we create the mesh with gmsh, also setting the physical group for velocity and impedance boundary conditions and the respective tags.
+# First, we create the mesh with gmsh, also setting the physical group for velocity and impedance boundary
+# conditions and the respective tags.
 
 # +
 import gmsh
@@ -106,20 +112,17 @@ c = 340  # m/s
 # The Delaney-Bazley model is used to compute the characteristic impedance and wavenumber of the porous layer,
 # treated as an equivalent fluid with complex valued properties
 #
-# $$
 # \begin{align}
 # Z_c(\omega) &= \rho_0 c_0 \left[1 + 0.0571 X^{-0.754} - j 0.087 X^{-0.732}\right],\\
 # k_c(\omega) &= \frac{\omega}{c_0} \left[1 + 0.0978 X^{-0.700} - j 0.189 X^{-0.595}\right],\\
 # \end{align}
-# $$
 #
 # where $X = \frac{\rho_0 f}{\sigma}$.
 #
 # With these, we can compute the surface impedance, that in the case of a rigid passive absorber placed on a rigid wall is given by the formula
+#
 # $$
-# \begin{align}
 # Z_s = -j Z_c cot(k_c d).
-# \end{align}
 # $$
 #
 # Let's create a function to compute it.
@@ -142,7 +145,8 @@ d = 0.01
 Z_s = delany_bazley_layer(freq, rho0, c, sigma)
 # -
 
-# Since we are going to compute a sound pressure spectrum, all the variables that depend on frequency (that are $\omega$, $k$ and $Z$) need to be updated in the frequency loop.
+# Since we are going to compute a sound pressure spectrum, all the variables that depend on frequency
+# ($\omega$, $k$ and $Z$) need to be updated in the frequency loop.
 # To make this possible, we will initialize them as dolfinx constants.
 # Then, we define the value for the normal velocity on the first end of the tube
 
@@ -151,7 +155,7 @@ k = fem.Constant(domain, default_scalar_type(0))
 Z = fem.Constant(domain, default_scalar_type(0))
 v_n = 1e-5
 
-# We also need to specify the integration measure $ds$, by using ```ufl```, and its built in integration measures
+# We also need to specify the integration measure $ds$, by using `ufl`, and its built in integration measures
 
 ds = ufl.Measure("ds", domain=domain, subdomain_data=facet_tags)
 
@@ -186,6 +190,7 @@ problem = LinearProblem(
         "pc_type": "lu",
         "pc_factor_mat_solver_type": "mumps",
     },
+    petsc_options_prefix="helmholtz",
 )
 
 

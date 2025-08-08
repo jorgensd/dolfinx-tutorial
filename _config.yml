@@ -68,3 +68,4 @@ html:
     </div>
 
 exclude_patterns: [README.md, chapter2/advdiffreac.md]
+only_build_toc_files: true
