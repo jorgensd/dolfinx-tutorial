@@ -2,6 +2,7 @@
 
 ## v0.10.0
 
+- Full refactoring of `dolfinx.fem.petsc.NonlinearProblem`, which now uses the PETSc SNES backend. See [the non-linear poisson demo](./chapter2/nonlinpoisson_code.ipynb) for details.
 - `dolfinx.fem.petsc.LinearProblem` now requires an additional argument, `petsc_options_prefix`. This should be a unique string identifier for each `LinearProblem` that is created.
 - Change how one reads in GMSH data with `gmshio`. See [the membrane code](./chapter1/membrane_code.ipynb) for more details.
 - `dolfinx.fem.FiniteElement.interpolation_points()` -> `dolfinx.fem.FiniteElement.interpolation_points`.

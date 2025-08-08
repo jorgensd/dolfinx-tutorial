@@ -217,7 +217,7 @@ def inflow(x):
 
 inflow_dofs = locate_dofs_geometrical(Q, inflow)
 bc_inflow = dirichletbc(PETSc.ScalarType(8), inflow_dofs, Q)
-# _
+# -
 
 # And finally, $p=0$ at the outflow ($x=1$).
 # This will result in a pressure gradient that will accelerate the flow from the initial state with zero velocity.
@@ -456,6 +456,7 @@ solver3.destroy()
 
 # +
 pyvista.start_xvfb(1.0)
+
 topology, cell_types, geometry = vtk_mesh(V)
 values = np.zeros((geometry.shape[0], 3), dtype=np.float64)
 values[:, : len(u_n)] = u_n.x.array.real.reshape((geometry.shape[0], len(u_n)))
@@ -466,14 +467,16 @@ function_grid["u"] = values
 glyphs = function_grid.glyph(orient="u", factor=0.2)
 
 # Create a pyvista-grid for the mesh
-mesh.topology.create_connectivity(mesh.topology.dim, mesh.topology.dim)
-grid = pyvista.UnstructuredGrid(*vtk_mesh(mesh, mesh.topology.dim))
+tdim = mesh.topology.dim
+mesh.topology.create_connectivity(tdim, tdim)
+grid = pyvista.UnstructuredGrid(*vtk_mesh(mesh, tdim))
 
 # Create plotter
 plotter = pyvista.Plotter()
 plotter.add_mesh(grid, style="wireframe", color="k")
 plotter.add_mesh(glyphs)
 plotter.view_xy()
+
 if not pyvista.OFF_SCREEN:
     plotter.show()
 else:
