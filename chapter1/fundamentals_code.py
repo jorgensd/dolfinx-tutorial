@@ -173,7 +173,8 @@ L = f * v * ufl.dx
 # The inner product $\int_\Omega \nabla u \cdot \nabla v ~\mathrm{d} x$ can be expressed in various ways in UFL. We have used the notation `ufl.dot(ufl.grad(u), ufl.grad(v))*ufl.dx`.
 # The dot product in UFL computes the sum (contraction) over the last index of the first factor and first index of the second factor.
 # In this case, both factors are tensors of rank one (vectors) and so the sum is just over the single index of both $\nabla u$ and $\nabla v$.
-# To compute an inner product of matrices (with two indices), one must instead of `ufl.dot` use the function `ufl.inner`. For vectors, `ufl.dot` and `ufl.inner` are equivalent.
+# To compute an inner product of matrices (with two indices), on must use use the function `ufl.inner` instead of `ufl.dot`.
+# For vectors, `ufl.dot` and `ufl.inner` are equivalent.
 #
 # ```{admonition} Complex numbers
 # In DOLFINx, one can solve complex number problems by using an installation of PETSc using complex numbers.
