@@ -143,7 +143,7 @@ u = ufl.TrialFunction(V)
 v = ufl.TestFunction(V)
 # -
 # ## Defining the source term
-# As the source term is constant over the domain, we use `dolfinx.Constant`
+# As the source term is constant over the domain, we use `dolfinx.fem.Constant`
 
 # +
 from dolfinx import default_scalar_type
@@ -152,9 +152,9 @@ f = fem.Constant(domain, default_scalar_type(-6))
 # -
 
 # ```{admonition} Compilation speed-up
-# Instead of wrapping $-6$ in a `dolfinx.Constant`, we could simply define $f$ as `f=-6`.
+# Instead of wrapping $-6$ in a `dolfinx.fem.Constant`, we could simply define $f$ as `f=-6`.
 # However, if we would like to change this parameter later in the simulation, we would have to redefine our variational formulation.
-# The `dolfinx.Constant` allows us to update the value in $f$ by using `f.value=5`.
+# The `dolfinx.fem.Constant` allows us to update the value in $f$ by using `f.value=5`.
 # Additionally, by indicating that $f$ is a constant, we speed of compilation of the variational formulations required for the created linear system.
 # ```
 # ## Defining the variational problem

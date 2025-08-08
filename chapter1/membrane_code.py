@@ -22,7 +22,7 @@
 # - Create constant boundary conditions using a geometrical identifier
 # - Use `ufl.SpatialCoordinate` to create a spatially varying function
 # - Interpolate a `ufl.Expression` into an appropriate function space
-# - Evaluate a `dolfinx.Function` at any point $x$
+# - Evaluate a `dolfinx.fem.Function` at any point $x$
 # - Use Paraview to visualize the solution of a PDE
 #
 # ## Creating the mesh
