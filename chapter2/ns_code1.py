@@ -147,8 +147,8 @@ dt = T / num_steps
 
 # As opposed to the previous demos, we will create our two function spaces using the `ufl` element definitions as input
 
-v_cg2 = element("Lagrange", mesh.topology.cell_name(), 2, shape=(mesh.geometry.dim,))
-s_cg1 = element("Lagrange", mesh.topology.cell_name(), 1)
+v_cg2 = element("Lagrange", mesh.basix_cell(), 2, shape=(mesh.geometry.dim,))
+s_cg1 = element("Lagrange", mesh.basix_cell(), 1)
 V = functionspace(mesh, v_cg2)
 Q = functionspace(mesh, s_cg1)
 
@@ -158,15 +158,15 @@ Q = functionspace(mesh, s_cg1)
 # One can easily create vector-valued function spaces with other dimensions by replacing
 # `shape=(mesh.geometry.dim, )` with something else, like
 # ```
-# v_cg  basix.ufl.element("Lagrange", mesh.topology.cell_name(), 2, shape=(10,))
+# v_cg  basix.ufl.element("Lagrange", mesh.basix_cell(), 2, shape=(10,))
 # ```
 # or
 # ```
-# tensor_element = basix.ufl.element("Lagrange", mesh.topology.cell_name(), 2, shape=(3, 3))
+# tensor_element = basix.ufl.element("Lagrange", mesh.basix_cell(), 2, shape=(3, 3))
 # ```
 # or
 # ```
-# tensor_element = basix.ufl.element("Lagrange", mesh.topology.cell_name(), 2, shape=(3, 2, 4))
+# tensor_element = basix.ufl.element("Lagrange", mesh.basix_cell(), 2, shape=(3, 2, 4))
 # ```
 #
 #
