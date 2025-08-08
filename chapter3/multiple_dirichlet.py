@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.5
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -39,8 +39,15 @@
 
 # +
 from dolfinx import default_scalar_type
-from dolfinx.fem import (Constant, Function, functionspace,
-                         assemble_scalar, dirichletbc, form, locate_dofs_geometrical)
+from dolfinx.fem import (
+    Constant,
+    Function,
+    functionspace,
+    assemble_scalar,
+    dirichletbc,
+    form,
+    locate_dofs_geometrical,
+)
 from dolfinx.fem.petsc import LinearProblem
 from dolfinx.mesh import create_unit_square
 from dolfinx.plot import vtk_mesh
@@ -53,7 +60,7 @@ import pyvista
 
 
 def u_exact(x):
-    return 1 + x[0]**2 + 2 * x[1]**2
+    return 1 + x[0] ** 2 + 2 * x[1] ** 2
 
 
 mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
@@ -62,7 +69,7 @@ u = TrialFunction(V)
 v = TestFunction(V)
 a = dot(grad(u), grad(v)) * dx
 x = SpatialCoordinate(mesh)
-g = - 4 * x[1]
+g = -4 * x[1]
 f = Constant(mesh, default_scalar_type(-6))
 L = f * v * dx - g * v * ds
 # -
@@ -71,27 +78,33 @@ L = f * v * dx - g * v * ds
 
 dofs_L = locate_dofs_geometrical(V, lambda x: np.isclose(x[0], 0))
 u_L = Function(V)
-u_L.interpolate(lambda x: 1 + 2 * x[1]**2)
+u_L.interpolate(lambda x: 1 + 2 * x[1] ** 2)
 bc_L = dirichletbc(u_L, dofs_L)
 
 # Note that we have used `lambda`-functions to compactly define the functions returning the subdomain evaluation and function evaluation. We can use a similar procedure for the right boundary condition, and gather both boundary conditions in a vector `bcs`.
 
 dofs_R = locate_dofs_geometrical(V, lambda x: np.isclose(x[0], 1))
 u_R = Function(V)
-u_R.interpolate(lambda x: 2 + 2 * x[1]**2)
+u_R.interpolate(lambda x: 2 + 2 * x[1] ** 2)
 bc_R = dirichletbc(u_R, dofs_R)
 bcs = [bc_R, bc_L]
 
 # We are now ready to again solve the problem, and check the $L^2$ and max error at the mesh vertices.
 
 # +
-problem = LinearProblem(a, L, bcs=bcs, petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
+problem = LinearProblem(
+    a,
+    L,
+    bcs=bcs,
+    petsc_options={"ksp_type": "preonly", "pc_type": "lu"},
+    petsc_options_prefix="multiple_dirichlet_",
+)
 uh = problem.solve()
 
 V2 = functionspace(mesh, ("Lagrange", 2))
 uex = Function(V2)
 uex.interpolate(u_exact)
-error_L2 = assemble_scalar(form((uh - uex)**2 * dx))
+error_L2 = assemble_scalar(form((uh - uex) ** 2 * dx))
 error_L2 = np.sqrt(MPI.COMM_WORLD.allreduce(error_L2, op=MPI.SUM))
 
 u_vertex_values = uh.x.array
@@ -108,7 +121,7 @@ print(f"Error_max : {error_max:.2e}")
 # To visualize the solution, run the script with in a Jupyter notebook with `off_screen=False` or as a python script with `off_screen=True`.
 
 # +
-pyvista.start_xvfb()
+pyvista.start_xvfb(1.0)
 pyvista_cells, cell_types, geometry = vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(pyvista_cells, cell_types, geometry)
 grid.point_data["u"] = uh.x.array

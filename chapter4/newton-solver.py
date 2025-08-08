@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.5
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -55,6 +55,7 @@ from petsc4py import PETSc
 # For this problem, we have two solutions, $u=-x-1$, $u=x+3$.
 # We define these roots as python functions, and create an appropriate spacing for plotting these soultions.
 
+
 # +
 def root_0(x):
     return 3 + x[0]
@@ -81,7 +82,7 @@ uh = dolfinx.fem.Function(V)
 
 v = ufl.TestFunction(V)
 x = ufl.SpatialCoordinate(mesh)
-F = uh**2 * v * ufl.dx - 2 * uh * v * ufl.dx - (x[0]**2 + 4 * x[0] + 3) * v * ufl.dx
+F = uh**2 * v * ufl.dx - 2 * uh * v * ufl.dx - (x[0] ** 2 + 4 * x[0] + 3) * v * ufl.dx
 residual = dolfinx.fem.form(F)
 
 # Next, we can define the jacobian $J_F$, by using `ufl.derivative`.
@@ -110,7 +111,8 @@ max_iterations = 25
 solutions = np.zeros((max_iterations + 1, len(coords)))
 solutions[0] = uh.x.array[sort_order]
 
-# We are now ready to solve the linear problem. At each iteration, we reassemble the Jacobian and residual, and use the norm of the magnitude of the update (`dx`) as a termination criteria.
+# We are now ready to solve the linear problem.
+# At each iteration, we reassemble the Jacobian and residual, and use the norm of the magnitude of the update (`dx`) as a termination criteria.
 # ## The Newton iterations
 
 i = 0
@@ -146,6 +148,9 @@ while i < max_iterations:
 
 dolfinx.fem.petsc.assemble_vector(L, residual)
 print(f"Final residual {L.norm(0)}")
+A.destroy()
+L.destroy()
+solver.destroy()
 
 # ## Visualization of Newton iterations
 # We next look at the evolution of the solution and the error of the solution when compared to the two exact roots of the problem.
@@ -177,6 +182,7 @@ plt.legend()
 # For this example, we will consider the [non-linear Poisson](./../chapter2/nonlinpoisson)-problem.
 # We start by defining the mesh, the analytical solution and the forcing term $f$.
 
+
 # +
 def q(u):
     return 1 + u**2
@@ -185,7 +191,7 @@ def q(u):
 domain = dolfinx.mesh.create_unit_square(MPI.COMM_WORLD, 10, 10)
 x = ufl.SpatialCoordinate(domain)
 u_ufl = 1 + x[0] + 2 * x[1]
-f = - ufl.div(q(u_ufl) * ufl.grad(u_ufl))
+f = -ufl.div(q(u_ufl) * ufl.grad(u_ufl))
 
 
 def u_exact(x):
@@ -203,7 +209,9 @@ u_D.interpolate(u_exact)
 fdim = domain.topology.dim - 1
 domain.topology.create_connectivity(fdim, fdim + 1)
 boundary_facets = dolfinx.mesh.exterior_facet_indices(domain.topology)
-bc = dolfinx.fem.dirichletbc(u_D, dolfinx.fem.locate_dofs_topological(V, fdim, boundary_facets))
+bc = dolfinx.fem.dirichletbc(
+    u_D, dolfinx.fem.locate_dofs_topological(V, fdim, boundary_facets)
+)
 
 uh = dolfinx.fem.Function(V)
 v = ufl.TestFunction(V)
@@ -242,7 +250,9 @@ solver.setOperators(A)
 
 
 i = 0
-error = dolfinx.fem.form(ufl.inner(uh - u_ufl, uh - u_ufl) * ufl.dx(metadata={"quadrature_degree": 4}))
+error = dolfinx.fem.form(
+    ufl.inner(uh - u_ufl, uh - u_ufl) * ufl.dx(metadata={"quadrature_degree": 4})
+)
 L2_error = []
 du_norm = []
 while i < max_iterations:
@@ -274,7 +284,9 @@ while i < max_iterations:
     correction_norm = du.x.petsc_vec.norm(0)
 
     # Compute L2 error comparing to the analytical solution
-    L2_error.append(np.sqrt(mesh.comm.allreduce(dolfinx.fem.assemble_scalar(error), op=MPI.SUM)))
+    L2_error.append(
+        np.sqrt(mesh.comm.allreduce(dolfinx.fem.assemble_scalar(error), op=MPI.SUM))
+    )
     du_norm.append(correction_norm)
 
     print(f"Iteration {i}: Correction norm {correction_norm}, L2 error: {L2_error[-1]}")
@@ -288,7 +300,7 @@ plt.subplot(121)
 plt.plot(np.arange(i), L2_error)
 plt.title(r"$L^2(\Omega)$-error of $u_h$")
 ax = plt.gca()
-ax.set_yscale('log')
+ax.set_yscale("log")
 plt.xlabel("Iterations")
 plt.ylabel(r"$L^2$-error")
 plt.grid()
@@ -296,7 +308,7 @@ plt.subplot(122)
 plt.title(r"Residual of $\vert\vert\delta u_i\vert\vert$")
 plt.plot(np.arange(i), du_norm)
 ax = plt.gca()
-ax.set_yscale('log')
+ax.set_yscale("log")
 plt.xlabel("Iterations")
 plt.ylabel(r"$\vert\vert \delta u\vert\vert$")
 plt.grid()
@@ -307,7 +319,7 @@ error_max = domain.comm.allreduce(np.max(np.abs(uh.x.array - u_D.x.array)), op=M
 if domain.comm.rank == 0:
     print(f"Error_max: {error_max:.2e}")
 
-pyvista.start_xvfb()
+pyvista.start_xvfb(1.0)
 u_topology, u_cell_types, u_geometry = dolfinx.plot.vtk_mesh(V)
 u_grid = pyvista.UnstructuredGrid(u_topology, u_cell_types, u_geometry)
 u_grid.point_data["u"] = uh.x.array.real
@@ -317,5 +329,3 @@ u_plotter.add_mesh(u_grid, show_edges=True)
 u_plotter.view_xy()
 if not pyvista.OFF_SCREEN:
     u_plotter.show()
-
-

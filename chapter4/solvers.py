@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.5
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -66,14 +66,21 @@ a = inner(grad(u), grad(v)) * dx
 L = f * v * dx
 u_bc = Function(V)
 u_bc.interpolate(u_numpy)
-facets = locate_entities_boundary(mesh, mesh.topology.dim - 1, lambda x: numpy.full(x.shape[1], True))
+facets = locate_entities_boundary(
+    mesh, mesh.topology.dim - 1, lambda x: numpy.full(x.shape[1], True)
+)
 dofs = locate_dofs_topological(V, mesh.topology.dim - 1, facets)
 bcs = [dirichletbc(u_bc, dofs)]
 
 # We start by solving the problem with an LU factorization, a direct solver method (similar to Gaussian elimination).
 
-default_problem = LinearProblem(a, L, bcs=bcs,
-                                petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
+default_problem = LinearProblem(
+    a,
+    L,
+    bcs=bcs,
+    petsc_options={"ksp_type": "preonly", "pc_type": "lu"},
+    petsc_options_prefix="poisson_l",
+)
 uh = default_problem.solve()
 
 # We now look at the solver process by inspecting the `PETSc`-solver. As the view-options in PETSc are not adjusted for notebooks (`solver.view()` will print output to the terminal if used in a `.py` file), we write the solver output to file and read it in and print the output.
@@ -92,8 +99,18 @@ for line in solver_output.readlines():
 # As the Poisson equation results in a symmetric, positive definite system matrix, the optimal Krylov solver is the conjugate gradient (Lagrange) method. The default preconditioner is the incomplete LU factorization (ILU), which is a popular and robust overall preconditioner. We can change the preconditioner by setting `"pc_type"` to some of the other preconditioners in petsc, which you can find at [PETSc KSP solvers](https://petsc.org/release/manual/ksp/#tab-kspdefaults) and [PETSc preconditioners](https://petsc.org/release/manual/ksp/#tab-pcdefaults).
 # You can set any option in `PETSc` through the `petsc_options` input, such as the absolute tolerance (`"ksp_atol"`), relative tolerance (`"ksp_rtol"`) and maximum number of iterations (`"ksp_max_it"`).
 
-cg_problem = LinearProblem(a, L, bcs=bcs,
-                           petsc_options={"ksp_type": "cg", "ksp_rtol": 1e-6, "ksp_atol": 1e-10, "ksp_max_it": 1000})
+cg_problem = LinearProblem(
+    a,
+    L,
+    bcs=bcs,
+    petsc_options={
+        "ksp_type": "cg",
+        "ksp_rtol": 1e-6,
+        "ksp_atol": 1e-10,
+        "ksp_max_it": 1000,
+    },
+    petsc_options_prefix="poisson_cg_",
+)
 uh = cg_problem.solve()
 cg_solver = cg_problem.solver
 viewer = PETSc.Viewer().createASCII("cg_output.txt")
@@ -104,8 +121,19 @@ for line in solver_output.readlines():
 
 # For non-symmetric problems, a Krylov solver for non-symmetric systems, such as GMRES is better.
 
-gmres_problem = LinearProblem(a, L, bcs=bcs,
-                              petsc_options={"ksp_type": "gmres", "ksp_rtol": 1e-6, "ksp_atol": 1e-10, "ksp_max_it": 1000, "pc_type": "none"})
+gmres_problem = LinearProblem(
+    a,
+    L,
+    bcs=bcs,
+    petsc_options={
+        "ksp_type": "gmres",
+        "ksp_rtol": 1e-6,
+        "ksp_atol": 1e-10,
+        "ksp_max_it": 1000,
+        "pc_type": "none",
+    },
+    petsc_options_prefix="poisson_gmres_",
+)
 uh = gmres_problem.solve()
 gmres_solver = gmres_problem.solver
 viewer = PETSc.Viewer().createASCII("gmres_output.txt")

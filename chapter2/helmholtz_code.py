@@ -112,20 +112,17 @@ c = 340  # m/s
 # The Delaney-Bazley model is used to compute the characteristic impedance and wavenumber of the porous layer,
 # treated as an equivalent fluid with complex valued properties
 #
-# $$
 # \begin{align}
 # Z_c(\omega) &= \rho_0 c_0 \left[1 + 0.0571 X^{-0.754} - j 0.087 X^{-0.732}\right],\\
 # k_c(\omega) &= \frac{\omega}{c_0} \left[1 + 0.0978 X^{-0.700} - j 0.189 X^{-0.595}\right],\\
 # \end{align}
-# $$
 #
 # where $X = \frac{\rho_0 f}{\sigma}$.
 #
 # With these, we can compute the surface impedance, that in the case of a rigid passive absorber placed on a rigid wall is given by the formula
+#
 # $$
-# \begin{align}
 # Z_s = -j Z_c cot(k_c d).
-# \end{align}
 # $$
 #
 # Let's create a function to compute it.
