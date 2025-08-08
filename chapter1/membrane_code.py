@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.5
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -29,9 +29,11 @@
 #
 # To create the computational geometry, we use the Python-API of [GMSH](https://gmsh.info/). We start by importing the gmsh-module and initializing it.
 
+# +
 import gmsh
 
 gmsh.initialize()
+# -
 
 # The next step is to create the membrane and start the computations by the GMSH CAD kernel, to generate the relevant underlying data structures. The first arguments of `addDisk` are the x, y and z coordinate of the center of the circle, while the two last arguments are the x-radius and y-radius.
 
@@ -60,11 +62,14 @@ gmsh.model.mesh.generate(gdim)
 # ```{note}
 # If you do not use `gmsh.model.addPhysicalGroup` when creating the mesh with GMSH, it can not be read into DOLFINx.
 # ```
-# The `MeshData` object can also contain tags for all other `PhysicalGroups` that has been added to the mesh, that being `vertex_tags`, `edge_tags`, `facet_tags` and `cell_tags`.
+# The `MeshData` object can also contain tags for all other `PhysicalGroups` that has been added to the mesh,
+# that being `vertex_tags`, `edge_tags`, `facet_tags` and `cell_tags`.
 # To read either `gmsh.model` or a `.msh`-file, one has to distribute the mesh to all processes used by DOLFINx.
 # As GMSH does not support mesh creation with MPI, we currently have a `gmsh.model.mesh` on each process.
-# To distribute the mesh, we have to specify which process the mesh was created on, and which communicator rank should distribute the mesh.
-# The `model_to_mesh` will then load the mesh on the specified rank, and distribute it to the communicator using a mesh partitioner.
+# To distribute the mesh, we have to specify which process the mesh was created on,
+# and which communicator rank should distribute the mesh.
+# The `model_to_mesh` will then load the mesh on the specified rank,
+# and distribute it to the communicator using a mesh partitioner.
 
 # +
 from dolfinx.io import gmshio
@@ -81,9 +86,11 @@ domain = mesh_data.mesh
 
 # We define the function space as in the previous tutorial
 
+# +
 from dolfinx import fem
 
 V = fem.functionspace(domain, ("Lagrange", 1))
+# -
 
 # ## Defining a spatially varying load
 # The right hand side pressure function is represented using `ufl.SpatialCoordinate` and two constants, one for $\beta$ and one for $R_0$.
@@ -122,7 +129,11 @@ v = ufl.TestFunction(V)
 a = ufl.dot(ufl.grad(u), ufl.grad(v)) * ufl.dx
 L = p * v * ufl.dx
 problem = LinearProblem(
-    a, L, bcs=[bc], petsc_options={"ksp_type": "preonly", "pc_type": "lu"}
+    a,
+    L,
+    bcs=[bc],
+    petsc_options={"ksp_type": "preonly", "pc_type": "lu"},
+    petsc_options_prefix="membrane_",
 )
 uh = problem.solve()
 
@@ -142,13 +153,17 @@ pressure.interpolate(expr)
 from dolfinx.plot import vtk_mesh
 import pyvista
 
-pyvista.start_xvfb()
+pyvista.start_xvfb(0.1)
+# -
 
 # Extract topology from mesh and create pyvista mesh
+
 topology, cell_types, x = vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(topology, cell_types, x)
 
 # Set deflection values and add it to plotter
+
+# +
 grid.point_data["u"] = uh.x.array
 warped = grid.warp_by_scalar("u", factor=25)
 
@@ -189,9 +204,11 @@ p_values = []
 # However, as a mesh consists of a large set of degrees of freedom (i.e. $N$ is large), we want to reduce the number of evaluations of the basis function $\phi_i(x)$. We do this by identifying which cell of the mesh $x$ is in.
 # This is efficiently done by creating a bounding box tree of the cells of the mesh, allowing a quick recursive search through the mesh entities.
 
+# +
 from dolfinx import geometry
 
 bb_tree = geometry.bb_tree(domain, domain.topology.dim)
+# -
 
 # Now we can compute which cells the bounding box tree collides with using `dolfinx.geometry.compute_collisions_points`. This function returns a list of cells whose bounding box collide for each input point. As different points might have different number of cells, the data is stored in `dolfinx.cpp.graph.AdjacencyList_int32`, where one can access the cells for the `i`th point by calling `links(i)`.
 # However, as the bounding box of a cell spans more of $\mathbb{R}^n$ than the actual cell, we check that the actual cell collides with the input point
@@ -220,6 +237,7 @@ p_values = pressure.eval(points_on_proc, cells)
 
 # As we now have an array of coordinates and two arrays of function values, we can use `matplotlib` to plot them
 
+# +
 import matplotlib.pyplot as plt
 
 fig = plt.figure()
@@ -234,12 +252,16 @@ plt.plot(points_on_proc[:, 1], p_values, "b--", linewidth=2, label="Load")
 plt.grid(True)
 plt.xlabel("y")
 plt.legend()
-# If run in parallel as a python file, we save a plot per processor
+# -
+
+# If executed in parallel as a python file, we save a plot per processor
+
 plt.savefig(f"membrane_rank{MPI.COMM_WORLD.rank:d}.png")
 
 # ## Saving functions to file
 # As mentioned in the previous section, we can also use Paraview to visualize the solution.
 
+# +
 import dolfinx.io
 from pathlib import Path
 
