@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.5
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -31,40 +31,48 @@ from petsc4py import PETSc
 from mpi4py import MPI
 import ufl
 from dolfinx import mesh, fem
-from dolfinx.fem.petsc import assemble_matrix, assemble_vector, apply_lifting, create_vector, set_bc
+from dolfinx.fem.petsc import (
+    assemble_matrix,
+    assemble_vector,
+    apply_lifting,
+    create_vector,
+    set_bc,
+)
 import numpy
-t = 0  # Start time
-T = 2  # End time
+import numpy.typing as npt
+
+# We define the problem specific parameters
+
+t = 0.0  # Start time
+T = 2.0  # End time
 num_steps = 20  # Number of time steps
 dt = (T - t) / num_steps  # Time step size
-alpha = 3
+alpha = 3.0
 beta = 1.2
 
 # As for the previous problem, we define the mesh and appropriate function spaces.
-
-# +
 
 nx, ny = 5, 5
 domain = mesh.create_unit_square(MPI.COMM_WORLD, nx, ny, mesh.CellType.triangle)
 V = fem.functionspace(domain, ("Lagrange", 1))
 
-
-# -
-
 # ## Defining the exact solution
 # As in the membrane problem, we create a Python-class to resemble the exact solution
 
-class exact_solution():
-    def __init__(self, alpha, beta, t):
+
+# +
+class ExactSolution:
+    def __init__(self, alpha: float, beta: float, t: float):
         self.alpha = alpha
         self.beta = beta
         self.t = t
 
-    def __call__(self, x):
-        return 1 + x[0]**2 + self.alpha * x[1]**2 + self.beta * self.t
+    def __call__(self, x: npt.NDArray[numpy.floating]) -> npt.NDArray[numpy.floating]:
+        return 1 + x[0] ** 2 + self.alpha * x[1] ** 2 + self.beta * self.t
 
 
-u_exact = exact_solution(alpha, beta, t)
+u_exact = ExactSolution(alpha, beta, t)
+# -
 
 # ## Defining the boundary condition
 # As in the previous chapters, we define a Dirichlet boundary condition over the whole boundary
@@ -90,7 +98,11 @@ f = fem.Constant(domain, beta - 2 - 2 * alpha)
 # We can now create our variational formulation, with the bilinear form `a` and  linear form `L`.
 
 u, v = ufl.TrialFunction(V), ufl.TestFunction(V)
-F = u * v * ufl.dx + dt * ufl.dot(ufl.grad(u), ufl.grad(v)) * ufl.dx - (u_n + dt * f) * v * ufl.dx
+F = (
+    u * v * ufl.dx
+    + dt * ufl.dot(ufl.grad(u), ufl.grad(v)) * ufl.dx
+    - (u_n + dt * f) * v * ufl.dx
+)
 a = fem.form(ufl.lhs(F))
 L = fem.form(ufl.rhs(F))
 
@@ -140,6 +152,12 @@ for n in range(num_steps):
     # Update solution at previous time step (u_n)
     u_n.x.array[:] = uh.x.array
 
+# We free the PETSc object to avoid memory leaks.
+
+A.destroy()
+b.destroy()
+solver.destroy()
+
 # ## Verifying the numerical solution
 # As in the first chapter, we compute the L2-error and the error at the mesh vertices for the last time step.
 # to verify our implementation.
@@ -149,11 +167,17 @@ for n in range(num_steps):
 V_ex = fem.functionspace(domain, ("Lagrange", 2))
 u_ex = fem.Function(V_ex)
 u_ex.interpolate(u_exact)
-error_L2 = numpy.sqrt(domain.comm.allreduce(fem.assemble_scalar(fem.form((uh - u_ex)**2 * ufl.dx)), op=MPI.SUM))
+error_L2 = numpy.sqrt(
+    domain.comm.allreduce(
+        fem.assemble_scalar(fem.form((uh - u_ex) ** 2 * ufl.dx)), op=MPI.SUM
+    )
+)
 if domain.comm.rank == 0:
     print(f"L2-error: {error_L2:.2e}")
 
 # Compute values at mesh vertices
-error_max = domain.comm.allreduce(numpy.max(numpy.abs(uh.x.array - u_D.x.array)), op=MPI.MAX)
+error_max = domain.comm.allreduce(
+    numpy.max(numpy.abs(uh.x.array - u_D.x.array)), op=MPI.MAX
+)
 if domain.comm.rank == 0:
     print(f"Error_max: {error_max:.2e}")

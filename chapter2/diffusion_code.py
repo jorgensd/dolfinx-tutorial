@@ -206,6 +206,12 @@ for i in range(num_steps):
 plotter.close()
 xdmf.close()
 
+# We destroy the PETSc objects to avoid memory leaks.
+
+A.destroy()
+b.destroy()
+solver.destroy()
+
 # <img src="./u_time.gif" alt="gif" class="bg-primary mb-1" width="800px">
 
 # ## Animation with Paraview
