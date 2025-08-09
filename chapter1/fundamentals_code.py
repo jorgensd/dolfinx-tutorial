@@ -86,7 +86,13 @@ domain = mesh.create_unit_square(MPI.COMM_WORLD, 8, 8, mesh.CellType.quadrilater
 #
 # ## Defining the finite element function space
 #  Once the mesh has been created, we can create the finite element function space $V$.
-#  We import the function space initializer from the `dolfinx.fem` module.
+# The finite element function space does not need to be the same as the one used to describe the mesh.
+# DOLFINx supports a wide range of arbitrary order finite element function spaces, see:
+# [Supported elements in DOLFINx](https://defelement.org/lists/implementations/basix.ufl.html)
+# for an extensive list.
+# To create a function space, we need to specify what mesh the space is defined on,
+# what element famil the space is based on, and the degree of the element.
+# These can for instance be defned through a tuple `("family", degree)`, as shown below
 
 # +
 from dolfinx import fem
