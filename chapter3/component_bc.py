@@ -47,6 +47,7 @@
 # +
 import pyvista
 import numpy as np
+import sys
 from mpi4py import MPI
 from ufl import (
     Identity,
@@ -176,7 +177,8 @@ uh = problem.solve()
 # ## Visualization
 
 # +
-pyvista.start_xvfb(1.0)
+if sys.platform == "linux" and pyvista.OFF_SCREEN:
+    pyvista.start_xvfb(1.0)
 
 # Create plotter and pyvista grid
 p = pyvista.Plotter()

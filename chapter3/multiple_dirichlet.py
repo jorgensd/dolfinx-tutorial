@@ -57,6 +57,7 @@ from ufl import SpatialCoordinate, TestFunction, TrialFunction, dot, dx, ds, gra
 
 import numpy as np
 import pyvista
+import sys
 
 
 def u_exact(x):
@@ -121,7 +122,8 @@ print(f"Error_max : {error_max:.2e}")
 # To visualize the solution, run the script with in a Jupyter notebook with `off_screen=False` or as a python script with `off_screen=True`.
 
 # +
-pyvista.start_xvfb(1.0)
+if sys.platform == "linux" and pyvista.OFF_SCREEN:
+    pyvista.start_xvfb(1.0)
 pyvista_cells, cell_types, geometry = vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(pyvista_cells, cell_types, geometry)
 grid.point_data["u"] = uh.x.array

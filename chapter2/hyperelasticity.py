@@ -29,6 +29,7 @@ from dolfinx.fem.petsc import NonlinearProblem
 import pyvista
 import numpy as np
 import ufl
+import sys
 
 from mpi4py import MPI
 from dolfinx import fem, mesh, plot
@@ -174,7 +175,8 @@ problem = NonlinearProblem(
 # We create a function to plot the solution at each time step.
 
 # +
-pyvista.start_xvfb(1.0)
+if sys.platform == "linux" and pyvista.OFF_SCREEN:
+    pyvista.start_xvfb(1.0)
 plotter = pyvista.Plotter()
 plotter.open_gif("deformation.gif", fps=3)
 
