@@ -284,6 +284,7 @@ bc_sigma = dolfinx.fem.dirichletbc(
     dolfinx.fem.locate_dofs_topological(Q, mesh.topology.dim - 1, sigma_facets),
 )
 assert len(sigma_facets) == 0
+
 # Now that we have created the bilinear and linear form, and the boundary conditions,
 # we turn to solving the problem. For this we use the `dolfinx.fem.petsc.LinearProblem` class.
 # As opposed to the previous examples, we now have an explicit block structure, which we would like to
