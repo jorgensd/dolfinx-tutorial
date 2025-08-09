@@ -143,9 +143,11 @@ metadata = {"quadrature_degree": 4}
 ds = ufl.Measure("ds", domain=domain, subdomain_data=facet_tag, metadata=metadata)
 dx = ufl.Measure("dx", domain=domain, metadata=metadata)
 
-# Define form F (we want to find u such that F(u) = 0)
+# Define the residual of the equation (we want to find u such that residual(u) = 0)
 
-F = ufl.inner(ufl.grad(v), P) * dx - ufl.inner(v, B) * dx - ufl.inner(v, T) * ds(2)
+residual = (
+    ufl.inner(ufl.grad(v), P) * dx - ufl.inner(v, B) * dx - ufl.inner(v, T) * ds(2)
+)
 
 # As the varitional form is non-linear and written on residual form,
 # we use the non-linear problem class from DOLFINx to set up required structures to use a Newton solver.
@@ -162,7 +164,11 @@ petsc_options = {
     "pc_factor_mat_solver_type": "mumps",
 }
 problem = NonlinearProblem(
-    F, u, bcs=bcs, petsc_options=petsc_options, petsc_options_prefix="hyperelasticity"
+    residual,
+    u,
+    bcs=bcs,
+    petsc_options=petsc_options,
+    petsc_options_prefix="hyperelasticity",
 )
 
 # We create a function to plot the solution at each time step.
