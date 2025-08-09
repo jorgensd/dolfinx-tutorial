@@ -39,9 +39,11 @@ def u_ex(mod, x):
 
 # +
 from mpi4py import MPI
+from petsc4py import PETSc
 import dolfinx
 
-mesh = dolfinx.mesh.create_unit_square(MPI.COMM_WORLD, 50, 50)
+N = 400
+mesh = dolfinx.mesh.create_unit_square(MPI.COMM_WORLD, N, N)
 # -
 
 # where $\Gamma_D = \{(x, 0) \vert x \in [0, 1]\}\cup\{ (x, 1) \vert x \in [0, 1]\}$
@@ -137,7 +139,7 @@ a += u * ufl.div(tau) * ufl.dx
 a += ufl.inner(ufl.div(sigma), v) * ufl.dx
 
 # This can be split into a saddle point problem, with discretized matrices $A$ and $B$ and discretized
-# right-hand side $\tilde f$.
+# right-hand side $\mathbf{b}$.
 # \begin{align}
 # \begin{pmatrix}
 # A & B^T\\
@@ -145,11 +147,12 @@ a += ufl.inner(ufl.div(sigma), v) * ufl.dx
 # \end{pmatrix}
 # \begin{pmatrix}
 # u_h\\
-# sigma_h
+# \sigma_h
 # \end{pmatrix}
 # = \begin{pmatrix}
-# 0\\
-# \tilde f
+# b_0\\
+# b_1
+# \end{pmatrix}
 # \end{align}
 # We can extract the block structure of the bilinear form using `ufl.extract_blocks`, which returns a nested list of bilinear forms.
 # You can also build this nested list by hand if you want to, but it is usually more error-prone.
@@ -166,9 +169,12 @@ L_blocked = ufl.extract_blocks(L)
 # -
 
 # Next we create the Dirichlet boundary condition for $\sigma$.
-# For `sigma`, we have a manufactured solution that depends on the normal vector on the boundary,
-# which makes it slightly more complicated to implement.
-
+# As we are using manufactured solutions for this problem, we could manually derive the explicit expression
+# for $\sigma$ on the boundary $\Gamma_N$.
+# However, in general this is not possible (especially for curved boundaries), and we have to use a more generic approach.
+# For this we will use the `dolfinx.fem.Expression` class to interpolate the expression into the function space $Q$.
+# This is done by evaluating the expression at the physical interpolation points of the mesh.
+# A convenience function for this is provided in the `interpolate_facet_expression` function below.
 
 import numpy.typing as npt
 import basix.ufl
@@ -307,25 +313,145 @@ problem = dolfinx.fem.petsc.LinearProblem(
 # Note that we have specified `kind="mpi"` in the initialization of the `LinearProblem`.
 # This is to inform DOLFINx that we wan to preserve the block structure of the problem when assembling.
 
+import time
+
+start = time.perf_counter()
 (sigma_h, u_h) = problem.solve()
+end = time.perf_counter()
+print(f"Direct solver took {end - start:.2f} seconds.")
 
 L2_u = dolfinx.fem.form(ufl.inner(u_h - u_exact, u_h - u_exact) * ufl.dx)
-L2_sigma = dolfinx.fem.form(
-    ufl.inner(sigma_h - ufl.grad(u_exact), sigma_h - ufl.grad(u_exact)) * ufl.dx
+Hdiv_sigma = dolfinx.fem.form(
+    ufl.inner(
+        ufl.div(sigma_h) - ufl.div(ufl.grad(u_exact)),
+        ufl.div(sigma_h) - ufl.div(ufl.grad(u_exact)),
+    )
+    * ufl.dx
 )
 local_u_error = dolfinx.fem.assemble_scalar(L2_u)
-local_sigma_error = dolfinx.fem.assemble_scalar(L2_sigma)
+local_sigma_error = dolfinx.fem.assemble_scalar(Hdiv_sigma)
 u_error = np.sqrt(mesh.comm.allreduce(local_u_error, op=MPI.SUM))
 sigma_error = np.sqrt(mesh.comm.allreduce(local_sigma_error, op=MPI.SUM))
 
+print(f"Direct solver, L2(u): {u_error:.2e}, H(div)(sigma): {sigma_error:.2e}")
 
-print(f"u error: {u_error:.3e}")
-print(f"sigma error: {sigma_error:.3e}")
-u_D.name = "u_ex"
-with dolfinx.io.XDMFFile(mesh.comm, "mixed_poisson.xdmf", "w") as xdmf:
-    xdmf.write_mesh(mesh)
-    xdmf.write_function(u_h, 0.0)
-    xdmf.write_function(u_D, 0.0)
+# ## Iterative solver with Schur complement preconditioner
+# As mentioned earlier, there are more efficient ways of solving this problem, than using a direct solver.
+# Especially with the saddle point structure of the problem, we can use a Schur complement preconditioner.
+# As described in [FEniCSx PCTools: Mixed Poisson](https://rafinex-external-rifle.gitlab.io/fenicsx-pctools/demo/demo_mixed-poisson.html),
+# Instead of wrapping the matrices in a custom wrapper, we can use `dolfinx.fem.petsc.LinearProblem` to solve the problem.
+
+# We start by defining the $S$ matrix in the Schur complement (see the aforementioned link for details on the variational formulation).
+
+# +
+alpha = dolfinx.fem.Constant(mesh, 4.0)
+gamma = dolfinx.fem.Constant(mesh, 9.0)
+h = ufl.CellDiameter(mesh)
+s = -(
+    ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx
+    - ufl.inner(ufl.avg(ufl.grad(v)), ufl.jump(u, n)) * ufl.dS
+    - ufl.inner(ufl.jump(u, n), ufl.avg(ufl.grad(v))) * ufl.dS
+    + (alpha / ufl.avg(h)) * ufl.inner(ufl.jump(u, n), ufl.jump(v, n)) * ufl.dS
+    - ufl.inner(ufl.grad(u), v * n) * dGammaD
+    - ufl.inner(u * n, ufl.grad(v)) * dGammaD
+    + (gamma / h) * u * v * dGammaD
+)
+
+S = dolfinx.fem.petsc.assemble_matrix(dolfinx.fem.form(s))
+S.assemble()
+
+
+class SchurInv:
+    def setUp(self, pc):
+        self.ksp = PETSc.KSP().create(mesh.comm)
+        self.ksp.setOptionsPrefix(pc.getOptionsPrefix() + "SchurInv_")
+        self.ksp.setOperators(S)
+        self.ksp.setTolerances(atol=1e-10, rtol=1e-10)
+        self.ksp.setFromOptions()
+
+    def apply(self, pc, x, y):
+        self.ksp.solve(x, y)
+
+    def __del__(self):
+        self.ksp.destroy()
+
+
+# -
+
+# Next we can create the linear problem instance with all the required options
+
+u_it = dolfinx.fem.Function(V, name="u_it")
+sigma_it = dolfinx.fem.Function(Q, name="sigma_it")
+petsc_options = {
+    "ksp_error_if_not_converged": True,
+    "ksp_type": "gmres",
+    "ksp_rtol": 1e-10,
+    "ksp_atol": 1e-10,
+    "pc_type": "fieldsplit",
+    "pc_fieldsplit_type": "schur",
+    "pc_fieldsplit_schur_fact_type": "upper",
+    "pc_fieldsplit_schur_precondition": "user",
+    f"fieldsplit_{sigma_it.name}_0_ksp_type": "preonly",
+    f"fieldsplit_{sigma_it.name}_0_pc_type": "bjacobi",
+    f"fieldsplit_{u_it.name}_1_ksp_type": "preonly",
+    f"fieldsplit_{u_it.name}_1_pc_type": "python",
+    f"fieldsplit_{u_it.name}_1_pc_python_type": __name__ + ".SchurInv",
+    f"fieldsplit_{u_it.name}_1_SchurInv_ksp_type": "preonly",
+    f"fieldsplit_{u_it.name}_1_SchurInv_pc_type": "hypre",
+}
+w_it = (sigma_it, u_it)
+problem = dolfinx.fem.petsc.LinearProblem(
+    a_blocked,
+    L_blocked,
+    u=w_it,
+    bcs=[bc_sigma],
+    petsc_options=petsc_options,
+    petsc_options_prefix="mp_",
+    kind="nest",
+)
+
+# ```{admonition} NEST matrices
+# Note that instead of using `kind="mpi"` we use `kind="nest"` to indicate that we want to use a nested matrix structure
+# and employ the power of [PETSc fieldsplit](https://petsc.org/release/manual/ksp/#solving-block-matrices-with-pcfieldsplit).
+# ```
+# The only modification required to linear problem is to attach the correct fieldsplit indexset.
+
+nest_IS = problem.A.getNestISs()
+fieldsplit_IS = tuple(
+    [
+        (f"{u.name + '_' if u.name != 'f' else ''}{i}", IS)
+        for i, (u, IS) in enumerate(zip(problem.u, nest_IS[0]))
+    ]
+)
+problem.solver.getPC().setFieldSplitIS(*fieldsplit_IS)
+start_it = time.perf_counter()
+problem.solve()
+end_it = time.perf_counter()
+print(
+    f"Iterative solver took {end_it - start_it:.2f} seconds"
+    + f" in {problem.solver.getIterationNumber()} iterations"
+)
+
+# We compute the error norms for the iterative solution
+
+L2_u_it = dolfinx.fem.form(ufl.inner(u_it - u_exact, u_it - u_exact) * ufl.dx)
+Hdiv_sigma_it = dolfinx.fem.form(
+    ufl.inner(
+        ufl.div(sigma_it) - ufl.div(ufl.grad(u_exact)),
+        ufl.div(sigma_it) - ufl.div(ufl.grad(u_exact)),
+    )
+    * ufl.dx
+)
+local_u_error_it = dolfinx.fem.assemble_scalar(L2_u_it)
+local_sigma_error_it = dolfinx.fem.assemble_scalar(Hdiv_sigma_it)
+u_error_it = np.sqrt(mesh.comm.allreduce(local_u_error_it, op=MPI.SUM))
+sigma_error_it = np.sqrt(mesh.comm.allreduce(local_sigma_error_it, op=MPI.SUM))
+
+print(f"Iterative solver, L2(u): {u_error_it:.2e}, H(div)(sigma): {sigma_error_it:.2e}")
+
+np.testing.assert_allclose(u_h.x.array, u_it.x.array, rtol=1e-7, atol=1e-7)
+np.testing.assert_allclose(sigma_h.x.array, sigma_it.x.array, rtol=1e-7, atol=1e-7)
+
 
 # ```{bibliography}
 #    :filter: cited and ({"chapter4/mixed_poisson"} >= docnames)
