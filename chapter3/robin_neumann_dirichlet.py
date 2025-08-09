@@ -55,16 +55,17 @@
 # -\int_{\Omega}\nabla \cdot (\kappa \nabla u)v ~\mathrm{d} x = \int_{\Omega}\kappa \nabla u\cdot \nabla v~\mathrm{d} x - \int_{\partial\Omega}\kappa \frac{\partial u}{\partial n} v ~\mathrm{d} s.
 # $$
 #
-# On the Dirichlet part ($\Gamma_D^i$), the boundary integral vanishes since $v=0$. On the remaining part of the boundary, we split the boundary into contributions from the Neumann parts ($\Gamma_N^i$) and Robin parts ($\Gamma_R^i$). Inserting the boundary conditions, we obtain
+# On the Dirichlet part ($\Gamma_D^i$), the boundary integral vanishes since $v=0$. On the remaining part of the boundary, we split the boundary into contributions from the Neumann parts ($\Gamma_N^i$) and Robin parts ($\Gamma_R^i$).
+# Inserting the boundary conditions, we obtain
 #
 # $$
-# -\int_{\Omega}\kappa\frac{\partial u }{\partial n }v~\mathrm{d} s=\sum_i \int_{\Gamma_N^i} g_i~\mathrm{d} s + \sum_i\int_{\Gamma_R^i}r_i(u-s_i)~\mathrm{d}s.
+# -\int_{\partial\Omega}\kappa\frac{\partial u }{\partial n }v~\mathrm{d} s=\sum_i \int_{\Gamma_N^i} g_iv~\mathrm{d} s + \sum_i\int_{\Gamma_R^i}r_i(u-s_i)v~\mathrm{d}s.
 # $$
 #
 # Thus we have the following variational problem
 #
 # $$
-# F(u, v)=\int_\Omega \kappa \nabla u \cdot \nabla v~\mathrm{d} x + \sum_i\int_{\Gamma_N^i}g_i v~\mathrm{d}s +\sum_i\int_{\Gamma_R^i}r_i(u-s_i)~\mathrm{d}s - \int_\Omega fv~\mathrm{d} x = 0.
+# F(u, v)=\int_\Omega \kappa \nabla u \cdot \nabla v~\mathrm{d} x + \sum_i\int_{\Gamma_N^i}g_i v~\mathrm{d}s +\sum_i\int_{\Gamma_R^i}r_i(u-s_i)v~\mathrm{d}s - \int_\Omega fv~\mathrm{d} x = 0.
 # $$
 #
 # We have been used to writing the variational formulation as $a(u,v)=L(v)$, which requires that we identify the integrals dependent on the trial function $u$ and collect these in $a(u,v)$, while the remaining terms form $L(v)$. We note that the Robin condition has a contribution to both $a(u,v)$ and $L(v)$. 
