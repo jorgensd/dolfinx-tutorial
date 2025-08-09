@@ -87,7 +87,15 @@ bc = dirichletbc(u_zero, locate_dofs_geometrical(V, clamped_boundary), V)
 # Next we would like to constrain the $x$-component of our solution at $x=L$ to $0$. We start by creating the sub space only containing the $x$
 # -component.
 
-# Next, we locate the degrees of freedom on the top boundary. However, as the boundary condition is in a sub space of our solution, we need to supply both the parent space $V$ and the sub space $V_0$ to `dolfinx.locate_dofs_topological`.
+# Next, we locate the degrees of freedom on the top boundary.
+# However, as the boundary condition is in a sub space of our solution,
+# we have to carefully decide whoe to locate the degrees of freedom.
+# In the example below, we will use a constant value as the prescribed value.
+# This means that we can use `dolfinx.fem.locate_dofs_topological`
+# on the (un-collapsed) sub space to locate the degrees of freedom on the boundary.
+# If you want to use a spatially dependent function, see
+# [FEniCS Workshop: Dirichlet conditions in mixed spaces](https://jsdokken.com/FEniCS-workshop/src/deep_dive/mixed_problems.html#dirichlet-conditions-in-mixed-spaces)
+# for a detailed discussion.
 
 def right(x):
     return np.logical_and(np.isclose(x[0], L), x[1] < H)
@@ -157,4 +165,4 @@ p.view_xy()
 if not pyvista.OFF_SCREEN:
     p.show()
 else:
-    fig_array = p.screenshot(f"component.png")
+    fig_array = p.screenshot("component.png")
