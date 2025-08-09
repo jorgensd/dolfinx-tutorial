@@ -105,10 +105,10 @@ if domain.comm.rank == 0:
 # We observe that as we weakly impose the boundary condition, we no longer fullfill the equation to machine precision at the mesh vertices. We also plot the solution using `pyvista`
 
 # +
-import pyvista
+import pyvista, sys
 
-pyvista.start_xvfb(1.0)
-
+if sys.platform == "linux" and pyvista.OFF_SCREEN:
+    pyvista.start_xvfb(1.0)
 grid = pyvista.UnstructuredGrid(*plot.vtk_mesh(V))
 grid.point_data["u"] = uh.x.array.real
 grid.set_active_scalars("u")

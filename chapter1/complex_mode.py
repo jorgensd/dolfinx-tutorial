@@ -46,6 +46,7 @@
 #
 
 # +
+import os
 from mpi4py import MPI
 import dolfinx
 import numpy as np
@@ -140,9 +141,11 @@ print(global_error, max_error)
 #
 
 # +
-import pyvista
+import pyvista, sys
 
-pyvista.start_xvfb(0.1)
+if sys.platform == "linux" and pyvista.OFF_SCREEN:
+    pyvista.start_xvfb(1.0)
+
 mesh.topology.create_connectivity(mesh.topology.dim, mesh.topology.dim)
 p_mesh = pyvista.UnstructuredGrid(*dolfinx.plot.vtk_mesh(mesh, mesh.topology.dim))
 pyvista_cells, cell_types, geometry = dolfinx.plot.vtk_mesh(V)

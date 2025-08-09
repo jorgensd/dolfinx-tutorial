@@ -151,9 +151,10 @@ pressure.interpolate(expr)
 
 # +
 from dolfinx.plot import vtk_mesh
-import pyvista
+import pyvista, sys
 
-pyvista.start_xvfb(0.1)
+if sys.platform == "linux" and pyvista.OFF_SCREEN:
+    pyvista.start_xvfb(1.0)
 # -
 
 # Extract topology from mesh and create pyvista mesh

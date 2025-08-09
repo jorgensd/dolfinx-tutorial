@@ -101,6 +101,7 @@ from mpi4py import MPI
 from petsc4py import PETSc
 import numpy as np
 import pyvista
+import sys
 
 from dolfinx.fem import (
     Constant,
@@ -455,7 +456,8 @@ solver3.destroy()
 # In this section we will look at how to visualize vector functions with glyphs, instead of warping the mesh.
 
 # +
-pyvista.start_xvfb(1.0)
+if sys.platform == "linux" and pyvista.OFF_SCREEN:
+    pyvista.start_xvfb(1.0)
 
 topology, cell_types, geometry = vtk_mesh(V)
 values = np.zeros((geometry.shape[0], 3), dtype=np.float64)

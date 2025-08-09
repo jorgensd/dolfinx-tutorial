@@ -121,6 +121,7 @@ from ufl import SpatialCoordinate, TestFunction, TrialFunction, dot, ds, dx, gra
 
 import numpy as np
 import pyvista
+import sys
 
 mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
 V = functionspace(mesh, ("Lagrange", 1))
@@ -185,7 +186,8 @@ print(f"Error_max : {error_max:.2e}")
 # ## Visualization
 # To look at the actual solution, run the script as a python script with `off_screen=True` or as a Jupyter notebook with `off_screen=False`
 
-pyvista.start_xvfb(1.0)
+if sys.platform == "linux" and pyvista.OFF_SCREEN:
+    pyvista.start_xvfb(1.0)
 
 # +
 pyvista_cells, cell_types, geometry = vtk_mesh(V)

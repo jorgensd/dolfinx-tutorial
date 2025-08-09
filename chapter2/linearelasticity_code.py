@@ -37,6 +37,7 @@ from dolfinx.fem.petsc import LinearProblem
 from mpi4py import MPI
 import ufl
 import numpy as np
+import sys
 
 L = 1.0
 W = 0.2
@@ -144,7 +145,8 @@ uh = problem.solve()
 # In previous tutorials, we have considered scalar values, while the following section considers vectors.
 
 # +
-pyvista.start_xvfb(1.0)
+if sys.platform == "linux" and pyvista.OFF_SCREEN:
+    pyvista.start_xvfb(1.0)
 
 # Create plotter and pyvista grid
 p = pyvista.Plotter()

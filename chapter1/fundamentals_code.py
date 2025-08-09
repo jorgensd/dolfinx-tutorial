@@ -247,10 +247,11 @@ if domain.comm.rank == 0:
 # We need to start a virtual framebuffer for plotting through docker containers. You can print the current backend and change it with `pyvista.set_jupyter_backend(backend)`
 
 # +
-import pyvista
+import pyvista, sys
 
 print(pyvista.global_theme.jupyter_backend)
-pyvista.start_xvfb(0.1)
+if sys.platform == "linux" and pyvista.OFF_SCREEN:
+    pyvista.start_xvfb(1.0)
 
 # +
 from dolfinx import plot

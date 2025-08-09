@@ -45,6 +45,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pyvista
 import ufl
+import sys
 from mpi4py import MPI
 from petsc4py import PETSc
 
@@ -319,7 +320,8 @@ error_max = domain.comm.allreduce(np.max(np.abs(uh.x.array - u_D.x.array)), op=M
 if domain.comm.rank == 0:
     print(f"Error_max: {error_max:.2e}")
 
-pyvista.start_xvfb(1.0)
+if sys.platform == "linux" and pyvista.OFF_SCREEN:
+    pyvista.start_xvfb(1.0)
 u_topology, u_cell_types, u_geometry = dolfinx.plot.vtk_mesh(V)
 u_grid = pyvista.UnstructuredGrid(u_topology, u_cell_types, u_geometry)
 u_grid.point_data["u"] = uh.x.array.real

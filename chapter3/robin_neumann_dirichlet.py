@@ -117,6 +117,7 @@ from ufl import (
 
 import numpy as np
 import pyvista
+import sys
 
 mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
 # -
@@ -268,7 +269,8 @@ problem = LinearProblem(
 uh = problem.solve()
 
 # Visualize solution
-pyvista.start_xvfb(1.0)
+if sys.platform == "linux" and pyvista.OFF_SCREEN:
+    pyvista.start_xvfb(1.0)
 pyvista_cells, cell_types, geometry = vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(pyvista_cells, cell_types, geometry)
 grid.point_data["u"] = uh.x.array
