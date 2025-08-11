@@ -53,7 +53,6 @@
 
 # +
 import gmsh
-import os
 import numpy as np
 import matplotlib.pyplot as plt
 import tqdm.autonotebook
@@ -567,8 +566,7 @@ solver3.destroy()
 # we compare our numerical data with the data provided using `matplotlib`.
 
 if mesh.comm.rank == 0:
-    if not os.path.exists("figures"):
-        os.mkdir("figures")
+    figure_dir = Path("figures").mkdir(exist_ok=True, parents=True):
     num_velocity_dofs = V.dofmap.index_map_bs * V.dofmap.index_map.size_global
     num_pressure_dofs = Q.dofmap.index_map_bs * V.dofmap.index_map.size_global
 
@@ -593,7 +591,7 @@ if mesh.comm.rank == 0:
     plt.title("Drag coefficient")
     plt.grid()
     plt.legend()
-    plt.savefig("figures/drag_comparison.png")
+    plt.savefig(figure_dir / "drag_comparison.png")
 
     fig = plt.figure(figsize=(25, 8))
     l1 = plt.plot(
@@ -614,7 +612,7 @@ if mesh.comm.rank == 0:
     plt.title("Lift coefficient")
     plt.grid()
     plt.legend()
-    plt.savefig("figures/lift_comparison.png")
+    plt.savefig(figure_dir / "lift_comparison.png")
 
     fig = plt.figure(figsize=(25, 8))
     l1 = plt.plot(
@@ -635,4 +633,4 @@ if mesh.comm.rank == 0:
     plt.title("Pressure difference")
     plt.grid()
     plt.legend()
-    plt.savefig("figures/pressure_comparison.png")
+    plt.savefig(figure_dir / "pressure_comparison.png")

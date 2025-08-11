@@ -110,6 +110,7 @@ from mpi4py import MPI
 import gmsh
 import numpy as np
 import pyvista
+import sys
 
 rank = MPI.COMM_WORLD.rank
 
@@ -226,7 +227,8 @@ with XDMFFile(MPI.COMM_WORLD, "mt.xdmf", "w") as xdmf:
 
 # We can also visualize the subdommains using pyvista
 
-pyvista.start_xvfb(1.0)
+if sys.platform == "linux" and pyvista.OFF_SCREEN:
+    pyvista.start_xvfb(1.0)
 plotter = pyvista.Plotter()
 tdim = mesh.topology.dim
 mesh.topology.create_connectivity(tdim, tdim)

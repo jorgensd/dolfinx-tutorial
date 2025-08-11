@@ -45,8 +45,10 @@ import meshio
 import gmsh
 import numpy as np
 import pyvista
+import sys
 
-pyvista.start_xvfb(1.0)
+if sys.platform == "linux" and pyvista.OFF_SCREEN:
+    pyvista.start_xvfb(1.0)
 
 mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
 Q = functionspace(mesh, ("DG", 0))
