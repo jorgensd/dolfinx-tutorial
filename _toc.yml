@@ -50,6 +50,7 @@ parts:
       - file: chapter3/em
   - caption: Improving your FEniCSx code
     chapters:
+      - file: chapter4/mixed_poisson
       - file: chapter4/solvers
       - file: chapter4/compiler_parameters
       - file: chapter4/convergence
