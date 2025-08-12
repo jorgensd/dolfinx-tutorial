@@ -415,16 +415,6 @@ problem = dolfinx.fem.petsc.LinearProblem(
 # Note that instead of using `kind="mpi"` we use `kind="nest"` to indicate that we want to use a nested matrix structure
 # and employ the power of [PETSc fieldsplit](https://petsc.org/release/manual/ksp/#solving-block-matrices-with-pcfieldsplit).
 # ```
-# The only modification required to linear problem is to attach the correct fieldsplit indexset.
-
-nest_IS = problem.A.getNestISs()
-fieldsplit_IS = tuple(
-    [
-        (f"{u.name + '_' if u.name != 'f' else ''}{i}", IS)
-        for i, (u, IS) in enumerate(zip(problem.u, nest_IS[0]))
-    ]
-)
-problem.solver.getPC().setFieldSplitIS(*fieldsplit_IS)
 start_it = time.perf_counter()
 problem.solve()
 end_it = time.perf_counter()
