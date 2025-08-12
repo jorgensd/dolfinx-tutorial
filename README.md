@@ -23,6 +23,10 @@ Any code added to the tutorial should work in parallel. If any changes are made 
 ```bash
 python3 -m jupytext --sync  */*.ipynb
 ```
+or
+```bash
+python3 -m jupytext --sync  */*.py --set-formats ipynb,py:light
+```
 
 Any code added to the tutorial should work in parallel.
 
