@@ -14,6 +14,7 @@ dependencies = [
     "tqdm",
     "pyvista[all]>=0.43.0",
     "fenics-dolfinx>=0.9.0",
+    "ngsPETSc@git+https://github.com/NGSolve/ngsPETSc.git"
 ]
 
 [project.optional-dependencies]
