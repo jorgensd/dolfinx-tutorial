@@ -29,7 +29,8 @@ jobs:
 
       - name: Install additional deps
         run: |
-          python3 -m pip install --no-binary=h5py .
+        python3 -m pip install -U pip setuptools pkgconfig poetry-core
+        python3 -m pip install --no-binary=h5py .
 
       - name: Test complex notebooks in parallel
         working-directory: chapter1
