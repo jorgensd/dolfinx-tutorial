@@ -17,18 +17,10 @@ RUN curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh && \
     apt -y install nodejs
 
 # Upgrade setuptools and pip
-RUN python3 -m pip install -U setuptools pip pkgconfig
+RUN python3 -m pip install -U setuptools pip pkgconfig poetry-core
 
-# BUILD VTK
-# ENV VTK_VERSION="v9.2.6"
-# RUN git clone --recursive --branch ${VTK_VERSION} --single-branch https://gitlab.kitware.com/vtk/vtk.git vtk && \
-#     cmake -G Ninja -DVTK_WHEEL_BUILD=ON -DVTK_WRAP_PYTHON=ON vtk/ && \
-#     ninja && \
-#     python3 setup.py bdist_wheela
 
-RUN echo ${TARGETPLATFORM}
-RUN if [ "$TARGETPLATFORM" = "linux/arm64" ]; then python3 -m pip install "https://github.com/finsberg/vtk-aarch64/releases/download/vtk-9.3.0-cp312/vtk-9.3.0.dev0-cp312-cp312-linux_aarch64.whl"; fi
-RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then python3 -m pip install vtk; fi
+RUN python3 -m pip install vtk
 
 ADD pyproject.toml /tmp/pyproject.toml
 RUN python3 -m pip install --no-cache-dir --no-binary=h5py -v .
