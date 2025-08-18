@@ -192,10 +192,10 @@ def solve(
 
 # ## Error-indicator
 # In this example, we will use an error-indicator $\eta$ to decide what cells should be refined.
-# Specifically, the estimator is:
+# Specifically, the estimator $\eta$ is defined as:
 #
 # \begin{align*}
-#  \eta = \sum_{K\in \mathcal{T}_h(\Omega)}\left(h^2\int_K \vert \lambda u_h + \Delta u_h\vert^2~\mathrm{d}x\right)
+#  \eta^2 = \sum_{K\in \mathcal{T}_h(\Omega)}\left(h^2\int_K \vert \lambda u_h + \Delta u_h\vert^2~\mathrm{d}x\right)
 # + \sum_{E\in\mathcal{F}_i}\frac{h}{2} \vert [\nabla \cdot \mathbf{n}_E ]\vert^2~\mathrm{d}s
 # \end{align*}
 #
@@ -206,7 +206,7 @@ def mark_cells(uh_r: dolfinx.fem.Function, lam: float):
     mesh = uh_r.function_space.mesh
     W = dolfinx.fem.functionspace(mesh, ("DG", 0))
     w = ufl.TestFunction(W)
-    eta = dolfinx.fem.Function(W)
+    eta_squared = dolfinx.fem.Function(W)
     f = dolfinx.fem.Constant(mesh, 1.0)
     h = dolfinx.fem.Function(W)
     h.x.array[:] = mesh.h(mesh.topology.dim, np.arange(len(h.x.array), dtype=np.int32))
@@ -217,14 +217,14 @@ def mark_cells(uh_r: dolfinx.fem.Function, lam: float):
         + ufl.inner(h("+") / 2 * ufl.jump(ufl.grad(uh_r), n) ** 2, w("+")) * ufl.dS
         + ufl.inner(h("-") / 2 * ufl.jump(ufl.grad(uh_r), n) ** 2, w("-")) * ufl.dS
     )
-    dolfinx.fem.petsc.assemble_vector(eta.x.petsc_vec, dolfinx.fem.form(G))
-    sqrt_eta = dolfinx.fem.Function(W)
-    sqrt_eta.x.array[:] = np.sqrt(eta.x.array[:])
+    dolfinx.fem.petsc.assemble_vector(eta_squared.x.petsc_vec, dolfinx.fem.form(G))
+    eta = dolfinx.fem.Function(W)
+    eta.x.array[:] = np.sqrt(eta_squared.x.array[:])
 
-    sqrt_eta_max = sqrt_eta.x.petsc_vec.max()[1]
+    eta_max = eta.x.petsc_vec.max()[1]
 
     theta = 0.5
-    should_refine = ufl.conditional(ufl.gt(sqrt_eta, theta * sqrt_eta_max), 1, 0)
+    should_refine = ufl.conditional(ufl.gt(eta, theta * eta_max), 1, 0)
     markers = dolfinx.fem.Function(W)
     ip = W.element.interpolation_points
     if Version(dolfinx.__version__) < Version("0.10.0"):
