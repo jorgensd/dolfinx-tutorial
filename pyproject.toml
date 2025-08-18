@@ -18,7 +18,9 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pdbpp", "ipython", "jupytext", "ruff", "pre-commit"]
-netgen = ["ngsPETSc@git+https://github.com/NGSolve/ngsPETSc.git"] # Has to be optional as we cant get netgen on linux/arm64
+netgen = [
+    "ngsPETSc@git+https://github.com/NGSolve/ngsPETSc.git",
+] # Has to be optional as we cant get netgen on linux/arm64
 
 [tool.setuptools]
 packages = []
