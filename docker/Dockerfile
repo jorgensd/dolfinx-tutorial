@@ -16,13 +16,14 @@ RUN curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh && \
     bash nodesource_setup.sh && \
     apt -y install nodejs
 
-# Upgrade setuptools and pip
-RUN python3 -m pip install -U setuptools pip pkgconfig poetry-core
-
-
+# Install vtk
 RUN python3 -m pip install vtk
 
 ADD pyproject.toml /tmp/pyproject.toml
+
+RUN if [ "$TARGETPLATFORM" = "linux/arm64" ]; then python3 -m pip install --no-cache-dir --no-binary=h5py -v .; fi
+RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then python3 -m pip install --no-cache-dir --no-binary=h5py -v .[netgen]; fi
+
 RUN python3 -m pip install --no-cache-dir --no-binary=h5py -v .
 RUN python3 -m pip cache purge
 

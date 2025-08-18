@@ -13,6 +13,11 @@
 # # Adaptive mesh refinement with NetGen and DOLFINx
 #
 # Author: Jørgen S. Dokken
+#
+# ```{admonition} NetGen and linux/arm64
+# NetGen is not available on linux/arm64, so this tutorial will not work on that platform.
+# If you are on such a platform, one can use the AMD docker images, with a performance penalty due to emulation.
+# ```
 
 # In this tutorial, we will consider an adaptive mesh refinement method, applied to
 # the Laplace eigenvalue problem.
