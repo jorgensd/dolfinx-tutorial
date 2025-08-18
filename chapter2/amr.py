@@ -199,7 +199,8 @@ def solve(
 # + \sum_{E\in\mathcal{F}_i}\frac{h}{2} \vert [\nabla \cdot \mathbf{n}_E ]\vert^2~\mathrm{d}s
 # \end{align*}
 #
-# where $\mathcal{T}_h$ is the collection of cells in the mesh, $\mathcal{F}_i$ the collection
+# where $\mathcal{T}_h$ is the collection of cells in the mesh, $\mathcal{F}_i$ the collection of interior facets
+# (those connected to two cells).
 
 
 def mark_cells(uh_r: dolfinx.fem.Function, lam: float):
