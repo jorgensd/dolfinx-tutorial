@@ -16,22 +16,32 @@ RUN curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh && \
     bash nodesource_setup.sh && \
     apt -y install nodejs
 
-# Upgrade setuptools and pip
-RUN python3 -m pip install -U setuptools pip pkgconfig
+# Install netgen from source
+RUN  apt-get update && \
+ apt-get -y install python3 python3-tk libpython3-dev libxmu-dev tk-dev tcl-dev cmake git g++ libglu1-mesa-dev liblapacke-dev libocct-data-exchange-dev libocct-draw-dev occt-misc libtbb-dev libxi-dev
+WORKDIR /ngsuite
+RUN git clone --branch=v6.2.2505 --single-branch https://github.com/NGSolve/netgen.git netgen-src
+WORKDIR /ngsuite/netgen-src
+RUN git submodule update --init --recursive
+WORKDIR /ngsuite
+RUN mkdir netgen-build
+RUN mkdir netgen-install
+RUN cmake -DCMAKE="-cxx-flags=-flax-vector-conversions" -DCMAKE_INSTALL_PREFIX=/ngsuite/netgen-install /ngsuite/netgen-src
+RUN make
+RUN make install
+ENV NETGENDIR=/ngsuite/netgen-install/bin
+ENV PATH=$NETGENDIR:$PATH
+ENV PYTHONPATH=$NETGENDIR/../lib/python3.12/site-packages:${PYTHONPATH}:${PYTHONPATH}:$PATH
 
-# BUILD VTK
-# ENV VTK_VERSION="v9.2.6"
-# RUN git clone --recursive --branch ${VTK_VERSION} --single-branch https://gitlab.kitware.com/vtk/vtk.git vtk && \
-#     cmake -G Ninja -DVTK_WHEEL_BUILD=ON -DVTK_WRAP_PYTHON=ON vtk/ && \
-#     ninja && \
-#     python3 setup.py bdist_wheela
-
-RUN echo ${TARGETPLATFORM}
-RUN if [ "$TARGETPLATFORM" = "linux/arm64" ]; then python3 -m pip install "https://github.com/finsberg/vtk-aarch64/releases/download/vtk-9.3.0-cp312/vtk-9.3.0.dev0-cp312-cp312-linux_aarch64.whl"; fi
-RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then python3 -m pip install vtk; fi
+# Install vtk
+RUN python3 -m pip install vtk
 
 ADD pyproject.toml /tmp/pyproject.toml
-RUN python3 -m pip install --no-cache-dir --no-binary=h5py -v .
+WORKDIR /tmp
+RUN if [ "$TARGETPLATFORM" = "linux/arm64" ]; then python3 -m pip install --no-cache-dir --no-binary=h5py -v .; fi
+RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then python3 -m pip install --no-cache-dir --no-binary=h5py -v .[netgen]; fi
+
+RUN python3 -m pip install -v ngsPETSc@git+https://github.com/NGSolve/ngsPETSc.git scipy --no-deps
 RUN python3 -m pip cache purge
 
 ENTRYPOINT ["jupyter", "lab", "--ip", "0.0.0.0", "--no-browser", "--allow-root"]

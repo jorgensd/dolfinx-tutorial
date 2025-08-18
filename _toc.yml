@@ -16,6 +16,7 @@ parts:
         sections:
           - file: chapter1/membrane_code
           - file: chapter1/membrane_paraview
+
   - caption: A Gallery of finite element solvers
     chapters:
       - file: chapter2/intro
@@ -39,6 +40,7 @@ parts:
       - file: chapter2/helmholtz
         sections:
           - file: chapter2/helmholtz_code
+      - file: chapter2/amr
 
   - caption: Subdomains and boundary conditions
     chapters:

@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=64.4.0", "wheel", "pip>=22.3"]
+requires = ["setuptools>=64.4.0", "wheel", "pip>=22.3", "poetry-core"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -18,6 +18,9 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pdbpp", "ipython", "jupytext", "ruff", "pre-commit"]
+netgen = [
+    "ngsPETSc@git+https://github.com/NGSolve/ngsPETSc.git",
+] # Has to be optional as we cant get netgen on linux/arm64
 
 [tool.setuptools]
 packages = []
