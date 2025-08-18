@@ -15,8 +15,9 @@
 # Author: Jørgen S. Dokken
 #
 # ```{admonition} NetGen and linux/arm64
-# NetGen is not available on linux/arm64, so this tutorial will not work on that platform.
-# If you are on such a platform, one can use the AMD docker images, with a performance penalty due to emulation.
+# NetGen is not available on PyPi on linux/arm64, so to run this tutorial on such machine, please use the
+# docker image [ghcr.io/jorgensd/dolfinx-tutorial:release](https://github.com/jorgensd/dolfinx-tutorial/pkgs/container/dolfinx-tutorial/489387776?tag=release).
+# You can also install NetGen from source. See the [Dockerfile](https://github.com/jorgensd/dolfinx-tutorial/blob/main/docker/Dockerfile) for instructions.
 # ```
 
 # In this tutorial, we will consider an adaptive mesh refinement method, applied to
