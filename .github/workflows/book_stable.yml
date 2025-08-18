@@ -26,7 +26,7 @@ jobs:
       PYVISTA_JUPYTER_BACKEND: "html"
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install common packages
         uses: ./.github/actions/install-dependencies
