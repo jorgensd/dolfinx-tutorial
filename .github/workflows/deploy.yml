@@ -47,7 +47,7 @@ jobs:
           path: "./public"
 
       - name: Upload page artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: "./public"
 
