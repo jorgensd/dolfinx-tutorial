@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.17.3
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -105,6 +105,7 @@ import pyvista
 from dolfinx.fem import (
     Constant,
     Function,
+    extract_function_spaces,
     functionspace,
     assemble_scalar,
     dirichletbc,
@@ -297,7 +298,7 @@ L1 = form(rhs(F1))
 
 A1 = assemble_matrix(a1, bcs=bcu)
 A1.assemble()
-b1 = create_vector(L1)
+b1 = create_vector(extract_function_spaces(L1))
 
 # We now set up similar variational formulations and structures for the second and third step
 
@@ -308,7 +309,7 @@ a2 = form(dot(nabla_grad(p), nabla_grad(q)) * dx)
 L2 = form(dot(nabla_grad(p_n), nabla_grad(q)) * dx - (rho / k) * div(u_) * q * dx)
 A2 = assemble_matrix(a2, bcs=bcp)
 A2.assemble()
-b2 = create_vector(L2)
+b2 = create_vector(extract_function_spaces(L2))
 
 # Define variational problem for step 3
 p_ = Function(Q)
@@ -316,7 +317,7 @@ a3 = form(rho * dot(u, v) * dx)
 L3 = form(rho * dot(u_, v) * dx - k * dot(nabla_grad(p_ - p_n), v) * dx)
 A3 = assemble_matrix(a3)
 A3.assemble()
-b3 = create_vector(L3)
+b3 = create_vector(extract_function_spaces(L3))
 # -
 
 # As we have create all the linear structures for the problem, we can now create a solver for each of them using PETSc.

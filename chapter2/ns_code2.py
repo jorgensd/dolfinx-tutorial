@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.17.3
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -69,6 +69,7 @@ from dolfinx.fem import (
     functionspace,
     assemble_scalar,
     dirichletbc,
+    extract_function_spaces,
     form,
     locate_dofs_topological,
     set_bc,
@@ -82,7 +83,7 @@ from dolfinx.fem.petsc import (
     set_bc,
 )
 from dolfinx.geometry import bb_tree, compute_collisions_points, compute_colliding_cells
-from dolfinx.io import VTXWriter, gmshio
+from dolfinx.io import VTXWriter, gmsh as gmshio
 from ufl import (
     FacetNormal,
     Measure,
@@ -353,7 +354,7 @@ F1 += dot(f, v) * dx
 a1 = form(lhs(F1))
 L1 = form(rhs(F1))
 A1 = create_matrix(a1)
-b1 = create_vector(L1)
+b1 = create_vector(extract_function_spaces(L1))
 
 # Next we define the second step
 
@@ -361,7 +362,7 @@ a2 = form(dot(grad(p), grad(q)) * dx)
 L2 = form(-rho / k * dot(div(u_s), q) * dx)
 A2 = assemble_matrix(a2, bcs=bcp)
 A2.assemble()
-b2 = create_vector(L2)
+b2 = create_vector(extract_function_spaces(L2))
 
 # We finally create the last step
 
@@ -369,7 +370,7 @@ a3 = form(rho * dot(u, v) * dx)
 L3 = form(rho * dot(u_s, v) * dx - k * dot(nabla_grad(phi), v) * dx)
 A3 = assemble_matrix(a3)
 A3.assemble()
-b3 = create_vector(L3)
+b3 = create_vector(extract_function_spaces(L3))
 
 # As in the previous tutorials, we use PETSc as a linear algebra backend.
 #
