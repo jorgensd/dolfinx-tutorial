@@ -11,13 +11,13 @@
 
 ## v0.9.0
 
-- `scale` in `apply_lifting` has been renamed to `alpha`
+- `scale` in {py:func}`apply_lifting<dolfinx.fem.petsc.apply_lifting>` has been renamed to `alpha`
 - Use `dolfinx.fem.Function.x.petsc_vec` as opposed to `dolfinx.fem.Function.vector`
 
 ## v0.8.0
 
-- Replace all `ufl.FiniteElement` and `ufl.VectorElement` with the appropriate `basix.ufl.element`
-- Replace `dolfinx.fem.FunctionSpace` with `dolfinx.fem.functionspace`
+- Replace all `ufl.FiniteElement` and `ufl.VectorElement` with the appropriate {py:func}`basix.ufl.element`
+- Replace {py:class}`dolfinx.fem.FunctionSpace` with {py:func}`dolfinx.fem.functionspace`
 
 ## v0.7.2
 
@@ -31,12 +31,13 @@
 
 ## v0.7.0
 
-- Renamed `dolfinx.graph.create_adjacencylist` to `dolfinx.graph.adjacencylist`
-- Renamed `dolfinx.plot.create_vtk_mesh` to `dolfinx.plot.vtk_mesh`
-- `dolfinx.geometry.BoundingBoxTree` has been changed to `dolfinx.geometry.bb_tree`
+- Renamed `dolfinx.graph.create_adjacencylist` to {py:func}`dolfinx.graph.adjacencylist`
+- Renamed `dolfinx.plot.create_vtk_mesh` to {py:func}`dolfinx.plot.vtk_mesh`
+- Initialization of {py:class}`dolfinx.geometry.BoundingBoxTree` has been changed to {py:func}`dolfinx.geometry.bb_tree`
 - `create_mesh` with Meshio has been modified. Note that you now need to pass dtype `np.int32` to the cell_data.
-- Update dolfinx petsc API. Now one needs to explicitly import `dolfinx.fem.petsc` and `dolfinx.fem.nls`, as PETSc is no longer a strict requirement. Replace `petsc4py.PETSc.ScalarType` with `dolfinx.default_scalar_type` in demos where we do not use `petsc4py` explicitly.
-
+- Update dolfinx petsc API. Now one needs to explicitly import {py:mod}`dolfinx.fem.petsc` and {py:mod}`dolfinx.fem.nls`, as PETSc is no longer a strict requirement.
+  Replace `petsc4py.PETSc.ScalarType` with `dolfinx.default_scalar_type` in demos where we do not use {py:mod}`petsc4py` explicitly.
+  
 ## v0.6.0
 
 - Remove `ipygany` and `pythreejs` as plotting backends. Using `panel`.
@@ -50,7 +51,8 @@
 
 - Using new GMSH interface in DOLFINx (`dolfinx.io.gmshio`) in all demos using GMSH
 - Added a section on custom Newton-solvers, see [chapter4/newton-solver].
-- Various minor DOLFINx API updates. `dolfinx.mesh.compute_boundary_facets` -> `dolfinx.mesh.exterior_facet_indices` with slightly different functionality. Use `dolfinx.mesh.MeshTagsMetaClass.find` instead of `mt.indices[mt.values==value]`.
+- Various minor DOLFINx API updates. `dolfinx.mesh.compute_boundary_facets` -> {py:func}`dolfinx.mesh.exterior_facet_indices` with slightly different functionality.
+  Use `dolfinx.mesh.MeshTagsMetaClass.find` instead of `mt.indices[mt.values==value]`.
 - Various numpy updates, use `np.full_like`.
 - Change all notebooks to use [jupytext](https://jupytext.readthedocs.io/en/latest/install.html) to automatically sync `.ipynb` with `.py` files.
 - Add example of how to use `DOLFINx` in complex mode, see [chapter1/complex_mode].
@@ -62,11 +64,13 @@
 ## 0.4.0 (05.02.2021)
 
 - All `pyvista` plotting has been rewritten to use `ipygany` and `pythreejs` as well as using a cleaner interface.
-- `dolfinx.plot.create_vtk_topology` has been renamed to `dolfinx.plot.create_vtk_mesh` and can now be directly used as input to `pyvista.UnstructuredGrid`.
+- `dolfinx.plot.create_vtk_topology` has been renamed to `dolfinx.plot.create_vtk_mesh` and can now be directly used as input
+  to {py:class}`pyvista.UnstructuredGrid`.
 - `dolfinx.fem.Function.compute_point_values` has been deprecated. Interpolation into a CG-1 is now the way of getting vertex values.
-- API updates wrt. DOLFINx. `Form`->`form`, `DirichletBC`->`dirichletbc`.
+- Instead of initializing class with {py:class}`Form<dolfinx.fem.Form>`, use {py:func}`form<dolfinx.fem.form>`.
+- Instead of initializing class with {py:class}`DirichletBC<dolfinx.fem.DirichletBC>` use  {py:func}`dirichletbc<dolfinx.fem.dirichletbc>`.
 - Updates on error computations in [Error control: Computing convergence rates](chapter4/convergence).
-- Added tutorial on interpolation of `ufl.Expression` in [Deflection of a membrane](chapter1/membrane_code).
+- Added tutorial on interpolation of {py:class}`ufl.core.expr.Expr` in [Deflection of a membrane](chapter1/membrane_code).
 - Added tutorial on how to apply constant-valued Dirichlet conditions in [Deflection of a membrane](chapter1/membrane_code).
 - Various API changes relating to the import structure of DOLFINx
 
