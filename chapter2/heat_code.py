@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.17.3
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -111,7 +111,7 @@ L = fem.form(ufl.rhs(F))
 
 A = assemble_matrix(a, bcs=[bc])
 A.assemble()
-b = create_vector(L)
+b = create_vector(fem.extract_function_spaces(L))
 uh = fem.Function(V)
 
 # ## Define a linear variational solver

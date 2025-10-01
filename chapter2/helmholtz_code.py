@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.17.3
 #   kernelspec:
 #     display_name: Python 3 (DOLFINx complex)
 #     language: python
@@ -65,24 +65,24 @@ gmsh.model.addPhysicalGroup(2, [2], Z_bc_tag, "impedance")
 gmsh.model.mesh.generate(3)
 # -
 
-# Then we import the gmsh mesh with the ```dolfinx.io.gmshio``` function.
+# Then we import the gmsh mesh with the {py:mod}`dolfinx.io.gmsh` module.
 
 # +
 from mpi4py import MPI
 from dolfinx import (
     fem,
-    io,
     default_scalar_type,
     geometry,
     __version__ as dolfinx_version,
 )
+from dolfinx.io import gmsh as gmshio
 from dolfinx.fem.petsc import LinearProblem
 import ufl
 import numpy as np
 import numpy.typing as npt
 from packaging.version import Version
 
-mesh_data = io.gmshio.model_to_mesh(gmsh.model, MPI.COMM_WORLD, 0, gdim=3)
+mesh_data = gmshio.model_to_mesh(gmsh.model, MPI.COMM_WORLD, 0, gdim=3)
 if Version(dolfinx_version) > Version("0.9.0"):
     domain = mesh_data.mesh
     assert mesh_data.facet_tags is not None

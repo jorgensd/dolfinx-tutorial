@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.17.3
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -122,7 +122,7 @@ linear_form = fem.form(L)
 
 A = assemble_matrix(bilinear_form, bcs=[bc])
 A.assemble()
-b = create_vector(linear_form)
+b = create_vector(fem.extract_function_spaces(linear_form))
 
 # ## Using petsc4py to create a linear solver
 # As we have already assembled `a` into the matrix `A`, we can no longer use the `dolfinx.fem.petsc.LinearProblem` class to solve the problem. Therefore, we create a linear algebra solver using PETSc, assign the matrix `A` to the solver, and choose the solution strategy.

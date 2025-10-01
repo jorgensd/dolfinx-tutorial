@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.17.3
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -33,7 +33,7 @@ from dolfinx.fem import (
     locate_dofs_topological,
 )
 from dolfinx.fem.petsc import LinearProblem
-from dolfinx.io import XDMFFile, gmshio
+from dolfinx.io import XDMFFile, gmsh as gmshio
 from dolfinx.mesh import create_unit_square, locate_entities
 from dolfinx.plot import vtk_mesh
 
