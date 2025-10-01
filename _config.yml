@@ -40,6 +40,23 @@ sphinx:
     # https://github.com/pydata/pydata-sphinx-theme/issues/1492
     # html_theme_options:
     #   navigation_with_keys: false
+    codeautolink_concat_default: True
+    intersphinx_mapping:
+        basix : ["https://docs.fenicsproject.org/basix/main/python/", null]
+        ffcx : ["https://docs.fenicsproject.org/ffcx/main/", null]
+        ufl : ["https://docs.fenicsproject.org/ufl/main/", null]
+        dolfinx : ["https://docs.fenicsproject.org/dolfinx/main/python", null]
+        petsc4py: ["https://petsc.org/release/petsc4py", null]
+        mpi4py: ["https://mpi4py.readthedocs.io/en/stable", null]
+        numpy: ["https://numpy.org/doc/stable/", null]
+        pyvista: ["https://docs.pyvista.org/", null]
+        packaging: ["https://packaging.pypa.io/en/stable/", null]
+
+  extra_extensions:
+    - 'sphinx.ext.autodoc'
+    - 'sphinx.ext.intersphinx'
+    - "sphinx_codeautolink"
+
 parse:
   myst_enable_extensions:
     - "amsmath"
