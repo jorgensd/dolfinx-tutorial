@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.17.3
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -100,7 +100,7 @@ from dolfinx.fem import (
 )
 from dolfinx.fem.petsc import LinearProblem
 from dolfinx.io import XDMFFile
-from dolfinx.io.gmshio import model_to_mesh
+from dolfinx.io import gmsh as gmshio
 from dolfinx.mesh import compute_midpoints, locate_entities_boundary
 from dolfinx.plot import vtk_mesh
 
@@ -212,7 +212,7 @@ if mesh_comm.rank == model_rank:
 
 # As in [the Navier-Stokes tutorial](../chapter2/ns_code2) we load the mesh directly into DOLFINx, without writing it to file.
 
-mesh_data = model_to_mesh(gmsh.model, mesh_comm, model_rank, gdim=2)
+mesh_data = gmshio.model_to_mesh(gmsh.model, mesh_comm, model_rank, gdim=2)
 mesh = mesh_data.mesh
 assert mesh_data.cell_tags is not None
 ct = mesh_data.cell_tags

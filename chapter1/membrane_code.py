@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.17.3
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -52,13 +52,15 @@ gmsh.option.setNumber("Mesh.CharacteristicLengthMax", 0.05)
 gmsh.model.mesh.generate(gdim)
 
 # # Interfacing with GMSH in DOLFINx
-# We will import the GMSH-mesh directly from GMSH into DOLFINx via the `dolfinx.io.gmshio` interface.
-# The `gmshio` module contains two functions
-# 1. `gmshio.model_to_mesh` which takes in a `gmsh.model` and returns a `dolfinx.io.gmshio.MeshData` object.
-# 2. `gmshio.read_from_msh` which takes in a path to a `.msh`-file and returns a `dolfinx.io.gmshio.MeshData` object.
+# We will import the GMSH-mesh directly from GMSH into DOLFINx via the `dolfinx.io.gmsh` interface.
+# The {py:mod}`dolfinx.io.gmsh` module contains two functions
+# 1. {py:func}`model_to_mesh<dolfinx.io.gmsh.model_to_mesh>` which takes in a `gmsh.model`
+#   and returns a {py:class}`dolfinx.io.gmsh.MeshData` object.
+# 2. {py:func}`read_from_msh<dolfinx.io.gmsh.read_from_msh>` which takes in a path to a `.msh`-file
+#  and returns a {py:class}`dolfinx.io.gmsh.MeshData` object.
 #
 # The `MeshData` object will contain a `dolfinx.mesh.Mesh`, under the attribute `mesh`.
-# This mesh will contain all GMSH Physical Groups of the highest topolgoical dimension.
+# This mesh will contain all GMSH Physical Groups of the highest topological dimension.
 # ```{note}
 # If you do not use `gmsh.model.addPhysicalGroup` when creating the mesh with GMSH, it can not be read into DOLFINx.
 # ```
@@ -72,7 +74,7 @@ gmsh.model.mesh.generate(gdim)
 # and distribute it to the communicator using a mesh partitioner.
 
 # +
-from dolfinx.io import gmshio
+from dolfinx.io import gmsh as gmshio
 from dolfinx.fem.petsc import LinearProblem
 from mpi4py import MPI
 

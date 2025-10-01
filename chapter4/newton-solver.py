@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.17.3
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -94,7 +94,7 @@ jacobian = dolfinx.fem.form(J)
 # ## Setup of iteration-independent structures
 
 A = dolfinx.fem.petsc.create_matrix(jacobian)
-L = dolfinx.fem.petsc.create_vector(residual)
+L = dolfinx.fem.petsc.create_vector(dolfinx.fem.extract_function_spaces(residual))
 
 # Next, we create the linear solver and the vector to hold `du`.
 
@@ -225,7 +225,7 @@ jacobian = dolfinx.fem.form(J)
 
 du = dolfinx.fem.Function(V)
 A = dolfinx.fem.petsc.create_matrix(jacobian)
-L = dolfinx.fem.petsc.create_vector(residual)
+L = dolfinx.fem.petsc.create_vector(dolfinx.fem.extract_function_spaces(residual))
 solver = PETSc.KSP().create(mesh.comm)
 solver.setOperators(A)
 
