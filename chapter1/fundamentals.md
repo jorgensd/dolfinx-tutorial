@@ -5,7 +5,9 @@ Authors: Hans Petter Langtangen, Anders Logg
 Adapted to FEniCSx by Jørgen S. Dokken
 
 The goal of this tutorial is to solve one of the most basic PDEs, the Poisson equation, with a few lines of code in FEniCSx.
-We start by introducing some fundamental FEniCSx objects, such as `Function`, `functionspace`, `TrialFunction` and `TestFunction`, and learn how to write a basic PDE solver.
+We start by introducing some fundamental FEniCSx objects, such as {py:class}`Function<dolfinx.fem.Function>`,
+{py:func}`functionspace<dolfinx.fem.functionspace>`, {py:func}`TrialFunction<ufl.TrialFunction>` and {py:func}`TestFunction<ufl.TestFunction>`,
+and learn how to write a basic PDE solver.
 This will include:
 
 - How to formulate a mathematical variational problem

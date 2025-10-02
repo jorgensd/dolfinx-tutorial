@@ -17,33 +17,58 @@
 #
 # Author: Jørgen S. Dokken
 #
-# Many PDEs, such as the [Helmholtz equation](https://docs.fenicsproject.org/dolfinx/v0.4.1/python/demos/demo_helmholtz.html) require complex-valued fields.
+# Many PDEs, such as the [Helmholtz equation](https://docs.fenicsproject.org/dolfinx/main/python/demos/demo_helmholtz.html)
+# require complex-valued fields.
 #
 # For simplicity, let us consider a Poisson equation of the form:
 #
-# $$-\Delta u = f \text{ in } \Omega,$$
-# $$ f = -1 - 2j \text{ in } \Omega,$$
-# $$ u = u_{exact} \text{ on } \partial\Omega,$$
-# $$u_{exact}(x, y) = \frac{1}{2}x^2 + 1j\cdot y^2,$$
+# $$
+# \begin{align}
+# -\Delta u &= f &&\text{in } \Omega,\\
+# f &= -1 - 2j &&\text{in } \Omega,\\
+# u &= u_{exact} &&\text{on } \partial\Omega,\\
+# u_{exact}(x, y) &= \frac{1}{2}x^2 + 1j\cdot y^2,
+# \end{align}
+# $$
 #
-# As in [Solving the Poisson equation](./fundamentals) we want to express our partial differential equation as a weak formulation.
+# As in [Solving the Poisson equation](./fundamentals) we want to express our partial differential equation
+# as a weak formulation.
 #
-# We start by defining our discrete function space $V_h$, such that $u_h\in V_h$ and $u_h = \sum_{i=1}^N c_i \phi_i(x, y)$ where $\phi_i$ are **real valued** global basis functions of our space $V_h$, and $c_i \in \mathcal{C}$ are the **complex valued** degrees of freedom.
+# We start by defining our discrete function space $V_h$, such that $u_h\in V_h$ and
+# $u_h = \sum_{i=1}^N c_i \phi_i(x, y)$ where $\phi_i$ are **real valued** global basis
+# functions of our space $V_h$, and $c_i \in \mathcal{C}$ are the **complex valued** degrees of freedom.
 #
-# Next, we choose a test function $v\in \hat V_h$ where $\hat V_h\subset V_h$ such that $v\vert_{\partial\Omega}=0$, as done in the first tutorial.
-# We now need to define our inner product space. We choose the $L^2$ inner product spaces, which is a _[sesquilinear](https://en.wikipedia.org/wiki/Sesquilinear_form) 2-form_, meaning that $\langle u, v\rangle$ is a map from $V_h\times V_h\mapsto K$, and $\langle u, v \rangle = \int_\Omega u \cdot \bar v ~\mathrm{d} x$. As it is sesquilinear, we have the following properties:
+# Next, we choose a test function $v\in \hat V_h$ where $\hat V_h\subset V_h$ such that $v\vert_{\partial\Omega}=0$, as done in the [first tutorial](./fundamentals).
+# We now need to define our inner product space.
+# We choose the $L^2$ inner product spaces, which is a _[sesquilinear](https://en.wikipedia.org/wiki/Sesquilinear_form) 2-form_,
+# meaning that $\langle u, v\rangle$ is a map from $V_h\times V_h\mapsto K$, and
+# $\langle u, v \rangle = \int_\Omega u \cdot \bar v ~\mathrm{d} x$. As it is sesquilinear, we have the following properties:
 #
-# $$\langle u , v \rangle = \overline{\langle v, u \rangle},$$
-# $$\langle u , u \rangle \geq 0.$$
+# $$
+# \begin{align}
+# \langle u , v \rangle &= \overline{\langle v, u \rangle},\\
+# \langle u , u \rangle &\geq 0.
+# \end{align}
+# $$
 #
 # We can now use this inner product space to do integration by parts
 #
-# $$\int_\Omega \nabla u_h \cdot \nabla \overline{v}~ \mathrm{dx} = \int_{\Omega} f \cdot \overline{v} ~\mathrm{d} s \qquad \forall v \in \hat{V}_h.$$
+# $$
+# \int_\Omega \nabla u_h \cdot \nabla \overline{v}~\mathrm{dx} =
+# \int_{\Omega} f \cdot \overline{v} ~\mathrm{d} s \qquad \forall v \in \hat{V}_h.
+# $$
 #
 # ## Installation of FEniCSx with complex number support
 #
-# FEniCSx supports both real and complex numbers, so we can create a function space with real valued or complex valued coefficients.
-#
+# FEniCSx supports both real and complex numbers, so we can create a {py:class}`function space <dolfinx.fem.FunctionSpace>`
+# with either real valued or complex valued coefficients.
+# ```{admonition} Function or Coefficient
+# In FEniCSx, the term *function* and *coefficient* are used interchangeably.
+# A function is a linear combination of basis functions with coefficients, and the coefficients can be real or complex numbers.
+# In {py:mod}`ufl`, the term {py:class}`Coefficient <ufl.Coefficient>`, while in {py:mod}`dolfinx` we use {py:class}`Function<dolfinx.fem.Function>`
+# to represent the same concept (through inheritance). This is because most people think of finding the **unknown** function that solves a PDE,
+# while the coefficients are the set of values that define the function.
+# ```
 
 # +
 from mpi4py import MPI
@@ -60,9 +85,16 @@ print(u_r.x.array.dtype)
 print(u_c.x.array.dtype)
 # -
 
-# However, as we would like to solve linear algebra problems of the form $Ax=b$, we need to be able to use matrices and vectors that support real and complex numbers. As [PETSc](https://petsc.org/release/) is one of the most popular interfaces to linear algebra packages, we need to be able to work with their matrix and vector structures.
+# However, as we would like to solve linear algebra problems of the form $Ax=b$, we need to be able to use matrices and vectors that support real and complex numbers.
+# As {[PETSc](https://petsc.org/release/)} is the most popular interfaces to linear algebra packages, we need to be able to work with their matrix and vector structures.
 #
-# Unfortunately, PETSc only supports one floating type in their matrices, thus we need to install two versions of PETSc, one that supports `float64` and one that supports `complex128`. In the [docker images](https://hub.docker.com/r/dolfinx/dolfinx) for DOLFINx, both versions are installed, and one can switch between them by calling `source dolfinx-real-mode` or `source dolfinx-complex-mode`. For the `dolfinx/lab` images, one can change the Python kernel to be either the real or complex mode, by going to `Kernel->Change Kernel...` and choosing `Python3 (ipykernel)` (for real mode) or `Python3 (DOLFINx complex)` (for complex mode).
+# Unfortunately, PETSc only supports one floating type in their matrices, thus we need to install two versions of PETSc,
+# one that supports `float64` and one that supports `complex128`.
+# In the [Docker images]https://github.com/orgs/FEniCS/packages/container/package/dolfinx%2Fdolfinx) for DOLFINx, both versions are installed,
+# and one can switch between them by calling `source dolfinx-real-mode` or `source dolfinx-complex-mode`.
+# For the [dolfinx/lab](https://github.com/FEniCS/dolfinx/pkgs/container/dolfinx%2Flab) images,
+# one can change the Python kernel to be either the real or complex mode, by going to
+# `Kernel->Change Kernel...` and choosing `Python3 (ipykernel)` (for real mode) or `Python3 (DOLFINx complex)` (for complex mode).
 #
 # We check that we are using the correct installation of PETSc by inspecting the scalar type.
 
@@ -87,9 +119,14 @@ a = ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx
 L = ufl.inner(f, v) * ufl.dx
 # -
 
-# Note that we have used the `PETSc.ScalarType` to wrap the constant source on the right hand side. This is because we want the integration kernels to assemble into the correct floating type.
+# Note that we have used the `PETSc.ScalarType` to wrap the constant source on the right hand side.
+# This is because we want the integration kernels to assemble into the correct floating type.
 #
-# Secondly, note that we are using `ufl.inner` to describe multiplication of $f$ and $v$, even if they are scalar values. This is because `ufl.inner` takes the conjugate of the second argument, as decribed by the $L^2$ inner product. One could alternatively write this out explicitly
+# Secondly, note that we are using {py:func}`ufl.inner` to describe multiplication of $f$ and $v$,
+# even if they are scalar values.
+# This is because {py:func}`ufl.inner` takes the conjugate of the second argument,
+# as decribed by the $L^2$ inner product.
+# One could alternatively write this out explicitly
 #
 # ### Inner-products and derivatives
 
@@ -97,8 +134,10 @@ L2 = f * ufl.conj(v) * ufl.dx
 print(L)
 print(L2)
 
-# Similarly, if we want to use the function `ufl.derivative` to take derivatives of functionals, we need to take some special care. As `ufl.derivative` inserts a `ufl.TestFunction` to represent the variation, we need to take the conjugate of this to be able to use it to assemble vectors.
-#
+# Similarly, if we want to use the function {py:func}`ufl.derivative` to take derivatives of functionals,
+# we need to take some special care.
+# As {py:func}`ufl.derivative` inserts a {py:func}`ufl.TestFunction` to represent the variation,
+# we need to take the conjugate of this to be able to use it to assemble vectors.
 
 J = u_c**2 * ufl.dx
 F = ufl.derivative(J, u_c, ufl.conj(v))

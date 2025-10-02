@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "DOLFINx_Tutorial"
-version = "0.9.0"
+version = "0.10.0.dev0"
 dependencies = [
     "jupyter-book",
     "meshio",
@@ -13,14 +13,14 @@ dependencies = [
     "pandas",
     "tqdm",
     "pyvista[all]>=0.43.0",
-    "fenics-dolfinx>=0.9.0",
+    "fenics-dolfinx>0.9.0",
     "sphinx-codeautolink",
 ]
 
 [project.optional-dependencies]
 dev = ["pdbpp", "ipython", "jupytext", "ruff", "pre-commit"]
 netgen = [
-    "ngsPETSc@git+https://github.com/NGSolve/ngsPETSc.git@dokken/gmshio-dolfinx",
+    "ngsPETSc@git+https://github.com/NGSolve/ngsPETSc.git",
 ] # Has to be optional as we cant get netgen on linux/arm64
 
 [tool.setuptools]
