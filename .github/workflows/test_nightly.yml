@@ -53,7 +53,6 @@ jobs:
       - name: Test chapter 1
         working-directory: chapter1
         run: |
-          python3 -c "from pyvista import start_xvfb; start_xvfb(0.1)"
           mpirun -n 2 python3 fundamentals_code.py
           mpirun -n 2 python3 nitsche.py
           mpirun -n 2 python3 membrane_code.py

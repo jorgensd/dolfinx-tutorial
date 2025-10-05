@@ -1,6 +1,7 @@
 # Execute from root of repo as: docker buildx build --platform=linux/arm64,linux/amd64 -f docker/Dockerfile . --progress=plain
 
 FROM ghcr.io/fenics/dolfinx/lab:nightly
+
 ARG TARGETPLATFORM
 
 
@@ -37,7 +38,8 @@ RUN python3 -m pip install vtk
 
 ADD pyproject.toml /tmp/pyproject.toml
 WORKDIR /tmp
-RUN python3 -m pip install --no-cache-dir --no-binary=h5py -v .[netgen]
+# As we install netgen from source we don't need the netgen deps here
+RUN python3 -m pip install --no-cache-dir --no-binary=h5py -v .
 RUN python3 -m pip cache purge
 
 ENV PYVISTA_TRAME_SERVER_PROXY_PREFIX="/proxy/"
