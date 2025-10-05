@@ -17,6 +17,7 @@ dependencies = [
     "sphinx-codeautolink",
     "trame_jupyter_extension",
     "jupytext",
+    "vtk>=9.5.0",
 ]
 
 [project.optional-dependencies]
