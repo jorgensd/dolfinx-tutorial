@@ -12,15 +12,17 @@ dependencies = [
     "seaborn",
     "pandas",
     "tqdm",
-    "pyvista[all]>=0.43.0",
+    "pyvista[all]>=0.45.0",
     "fenics-dolfinx>0.9.0",
     "sphinx-codeautolink",
+    "trame_jupyter_extension",
+    "jupytext",
 ]
 
 [project.optional-dependencies]
-dev = ["pdbpp", "ipython", "jupytext", "ruff", "pre-commit"]
+dev = ["pdbpp", "ipython", "ruff", "pre-commit"]
 netgen = [
-    "ngsPETSc@git+https://github.com/NGSolve/ngsPETSc.git",
+    "ngsPETSc>=0.1.1",
 ] # Has to be optional as we cant get netgen on linux/arm64
 
 [tool.setuptools]

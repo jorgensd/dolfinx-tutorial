@@ -174,7 +174,6 @@ problem = NonlinearProblem(
 # We create a function to plot the solution at each time step.
 
 # +
-pyvista.start_xvfb(1.0)
 plotter = pyvista.Plotter()
 plotter.open_gif("deformation.gif", fps=3)
 

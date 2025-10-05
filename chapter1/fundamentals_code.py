@@ -309,14 +309,12 @@ if domain.comm.rank == 0:
 # We start by converting the mesh to a format that can be used with {py:mod}`pyvista`.
 # To do this we use the function {py:func}`dolfinx.plot.vtk_mesh`.
 # It creates the data required to create a {py:class}`pyvista.UnstructuredGrid`.
-# On Linux (in docker) we need to start a virtual framebuffer for plotting through docker containers.
 # You can print the current backend and change it with {py:func}`pyvista.set_jupyter_backend`.
 
 # +
 import pyvista
 
 print(pyvista.global_theme.jupyter_backend)
-pyvista.start_xvfb(0.1)
 
 # +
 from dolfinx import plot

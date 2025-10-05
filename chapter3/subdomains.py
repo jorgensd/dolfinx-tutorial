@@ -46,8 +46,6 @@ import gmsh
 import numpy as np
 import pyvista
 
-pyvista.start_xvfb(1.0)
-
 mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
 Q = functionspace(mesh, ("DG", 0))
 

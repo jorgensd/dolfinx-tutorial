@@ -10,7 +10,6 @@ on:
 env:
   HDF5_MPI: "ON"
   HDF5_DIR: "/usr/local/"
-  DISPLAY: ":99.0"
   DEB_PYTHON_INSTALL_LAYOUT: deb_system
   LIBGL_ALWAYS_SOFTWARE: 1
 
@@ -20,8 +19,6 @@ jobs:
     container: ghcr.io/fenics/dolfinx/lab:stable
 
     env:
-      PYVISTA_TRAME_SERVER_PROXY_PREFIX: "/proxy/"
-      PYVISTA_TRAME_SERVER_PROXY_ENABLED: "True"
       PYVISTA_OFF_SCREEN: false
       PYVISTA_JUPYTER_BACKEND: "html"
 

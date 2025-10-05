@@ -185,8 +185,6 @@ print(f"Error_max : {error_max:.2e}")
 # ## Visualization
 # To look at the actual solution, run the script as a python script with `off_screen=True` or as a Jupyter notebook with `off_screen=False`
 
-pyvista.start_xvfb(1.0)
-
 # +
 pyvista_cells, cell_types, geometry = vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(pyvista_cells, cell_types, geometry)
