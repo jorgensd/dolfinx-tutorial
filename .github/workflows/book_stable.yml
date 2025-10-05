@@ -19,8 +19,8 @@ jobs:
     container: ghcr.io/fenics/dolfinx/lab:stable
 
     env:
-      PYVISTA_OFF_SCREEN: false
-      PYVISTA_JUPYTER_BACKEND: "html"
+      PYVISTA_OFF_SCREEN: true
+      PYVISTA_JUPYTER_BACKEND: html
 
     steps:
       - uses: actions/checkout@v5

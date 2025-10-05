@@ -6,4 +6,4 @@ runs:
     - name: Install apt dependencies and upgrade pip
       shell: bash -el {0}
       run: |
-        apt-get update && apt-get install -y libxrender1
+        apt-get update && apt-get install -y libxrender1 libgl1-mesa-dev mesa-utils
