@@ -117,10 +117,8 @@ pressure.interpolate(expr)
 # ## Plotting the solution over a line
 # We first plot the deflection $u_h$ over the domain $\Omega$.
 
-# +
 from dolfinx.plot import vtk_mesh
 import pyvista
-pyvista.start_xvfb()
 
 # Extract topology from mesh and create pyvista mesh
 topology, cell_types, x = vtk_mesh(V)

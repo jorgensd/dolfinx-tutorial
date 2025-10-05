@@ -114,8 +114,6 @@ uh = problem.solve()
 # As in the previous demos, we can either use Pyvista or Paraview for visualization. We start by using Pyvista. Instead of adding scalar values to the grid, we add vectors.
 
 # +
-pyvista.start_xvfb()
-
 # Create plotter and pyvista grid
 p = pyvista.Plotter()
 topology, cell_types, geometry = plot.vtk_mesh(V)

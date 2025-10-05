@@ -151,7 +151,6 @@ solver.convergence_criterion = "incremental"
 # We create a function to plot the solution at each time step.
 
 # +
-pyvista.start_xvfb()
 plotter = pyvista.Plotter()
 plotter.open_gif("deformation.gif", fps=3)
 

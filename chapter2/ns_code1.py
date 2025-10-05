@@ -334,7 +334,6 @@ solver3.destroy()
 # We have already looked at how to plot higher order functions and vector functions. In this section we will look at how to visualize vector functions with glyphs, instead of warping the mesh.
 
 # +
-pyvista.start_xvfb()
 topology, cell_types, geometry = vtk_mesh(V)
 values = np.zeros((geometry.shape[0], 3), dtype=np.float64)
 values[:, :len(u_n)] = u_n.x.array.real.reshape((geometry.shape[0], len(u_n)))

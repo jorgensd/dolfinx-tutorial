@@ -146,8 +146,6 @@ uh = problem.solve()
 # ## Visualization
 
 # +
-pyvista.start_xvfb()
-
 # Create plotter and pyvista grid
 p = pyvista.Plotter()
 topology, cell_types, x = vtk_mesh(V)

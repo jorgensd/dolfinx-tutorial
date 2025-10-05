@@ -125,7 +125,6 @@ print(global_error, max_error)
 #
 
 import pyvista
-pyvista.start_xvfb()
 mesh.topology.create_connectivity(mesh.topology.dim, mesh.topology.dim)
 p_mesh = pyvista.UnstructuredGrid(*dolfinx.plot.vtk_mesh(mesh, mesh.topology.dim))
 pyvista_cells, cell_types, geometry = dolfinx.plot.vtk_mesh(V)

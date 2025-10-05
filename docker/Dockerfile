@@ -1,4 +1,4 @@
-# Execute from root of repo as: docker buildx build --platform=linux/arm64,linux/amd64 -f docker/Dockerfile ./docker/ --progress=plain
+# Execute from root of repo as: docker buildx build --platform=linux/arm64,linux/amd64 -f docker/Dockerfile . --progress=plain
 
 FROM ghcr.io/fenics/dolfinx/lab:v0.9.0
 ARG TARGETPLATFORM
@@ -7,11 +7,10 @@ ARG TARGETPLATFORM
 ENV DEB_PYTHON_INSTALL_LAYOUT=deb_system
 ENV HDF5_MPI="ON"
 ENV HDF5_DIR="/usr/local"
-ENV PYVISTA_JUPYTER_BACKEND="static"
 
 WORKDIR /tmp/
 # Requirements for pyvista (gl1 and render1) and jupyterlab (nodejs and curl)
-RUN apt-get update && apt-get install -y libgl1-mesa-dev libxrender1 xvfb curl
+RUN apt-get update && apt-get install -y libgl1-mesa-dev mesa-utils curl
 RUN curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh && \
     bash nodesource_setup.sh && \
     apt -y install nodejs
@@ -38,10 +37,12 @@ RUN python3 -m pip install vtk
 
 ADD pyproject.toml /tmp/pyproject.toml
 WORKDIR /tmp
-RUN if [ "$TARGETPLATFORM" = "linux/arm64" ]; then python3 -m pip install --no-cache-dir --no-binary=h5py -v .; fi
-RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then python3 -m pip install --no-cache-dir --no-binary=h5py -v .[netgen]; fi
-
-RUN python3 -m pip install -v ngsPETSc@git+https://github.com/NGSolve/ngsPETSc.git scipy --no-deps
+# As we install netgen from source we don't need the netgen deps here
+RUN python3 -m pip install --no-cache-dir --no-binary=h5py -v .
 RUN python3 -m pip cache purge
+
+ENV PYVISTA_OFF_SCREEN="false"
+ENV PYVISTA_JUPYTER_BACKEND="trame"
+ENV LIBGL_ALWAYS_SOFTWARE=1
 
 ENTRYPOINT ["jupyter", "lab", "--ip", "0.0.0.0", "--no-browser", "--allow-root"]

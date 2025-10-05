@@ -120,8 +120,6 @@ solver.getPC().setType(PETSc.PC.Type.LU)
 # We use the DOLFINx plotting functionality, which is based on pyvista to plot the solution at every $15$th time step. We would also like to visualize a colorbar reflecting the minimal and maximum value of $u$ at each time step. We use the following convenience function `plot_function` for this:
 
 # +
-pyvista.start_xvfb()
-
 grid = pyvista.UnstructuredGrid(*plot.vtk_mesh(V))
 
 plotter = pyvista.Plotter()

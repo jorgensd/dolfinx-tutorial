@@ -210,7 +210,6 @@ with XDMFFile(MPI.COMM_WORLD, "mt.xdmf", "w") as xdmf:
 
 # We can also visualize the subdommains using pyvista
 
-pyvista.start_xvfb()
 plotter = pyvista.Plotter()
 tdim = mesh.topology.dim
 mesh.topology.create_connectivity(tdim, tdim)

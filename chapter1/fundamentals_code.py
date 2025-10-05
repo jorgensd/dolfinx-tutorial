@@ -222,9 +222,10 @@ if domain.comm.rank == 0:
 
 # ## Plotting the mesh using pyvista
 # We will visualizing the mesh using [pyvista](https://docs.pyvista.org/), an interface to the VTK toolkit.
-# We start by converting the mesh to a format that can be used with `pyvista`.
-# To do this we use the function `dolfinx.plot.vtk_mesh`. The first step is to create an unstructured grid that can be used by `pyvista`.
-# We need to start a virtual framebuffer for plotting through docker containers. You can print the current backend and change it with `pyvista.set_jupyter_backend(backend)`
+# We start by converting the mesh to a format that can be used with {py:mod}`pyvista`.
+# To do this we use the function {py:func}`dolfinx.plot.vtk_mesh`.
+# It creates the data required to create a {py:class}`pyvista.UnstructuredGrid`.
+# You can print the current backend and change it with {py:func}`pyvista.set_jupyter_backend`.
 
 import pyvista
 print(pyvista.global_theme.jupyter_backend)

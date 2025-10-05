@@ -228,7 +228,6 @@ problem = LinearProblem(a, L, bcs=bcs, petsc_options={"ksp_type": "preonly", "pc
 uh = problem.solve()
 
 # Visualize solution
-pyvista.start_xvfb()
 pyvista_cells, cell_types, geometry = vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(pyvista_cells, cell_types, geometry)
 grid.point_data["u"] = uh.x.array
