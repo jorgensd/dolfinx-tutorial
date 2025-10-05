@@ -180,12 +180,12 @@ pressure.interpolate(expr)
 from dolfinx.plot import vtk_mesh
 import pyvista
 
-# Extract topology from mesh and create pyvista mesh
+# Extract topology from mesh and create {py:class}`pyvista.UnstructuredGrid`
 
 topology, cell_types, x = vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(topology, cell_types, x)
 
-# Set deflection values and add it to plotterss
+# Set deflection values and add it to plotter
 
 # +
 grid.point_data["u"] = uh.x.array
@@ -215,7 +215,8 @@ else:
 
 # ## Making curve plots throughout the domain
 # Another way to compare the deflection and the load is to make a plot along the line $x=0$.
-# This is just a matter of defining a set of points along the $y$-axis and evaluating the finite element functions $u$ and $p$ at these points.
+# This is just a matter of defining a set of points along the $y$-axis and evaluating the
+# finite element functions $u$ and $p$ at these points.
 
 tol = 0.001  # Avoid hitting the outside of the domain
 y = np.linspace(-1 + tol, 1 - tol, 101)
@@ -224,9 +225,15 @@ points[1] = y
 u_values = []
 p_values = []
 
-# As a finite element function is the linear combination of all degrees of freedom, $u_h(x)=\sum_{i=1}^N c_i \phi_i(x)$ where $c_i$ are the coefficients of $u_h$ and $\phi_i$ is the $i$-th basis function, we can compute the exact solution at any point in $\Omega$.
-# However, as a mesh consists of a large set of degrees of freedom (i.e. $N$ is large), we want to reduce the number of evaluations of the basis function $\phi_i(x)$. We do this by identifying which cell of the mesh $x$ is in.
-# This is efficiently done by creating a bounding box tree of the cells of the mesh, allowing a quick recursive search through the mesh entities.
+# As a finite element function is the linear combination of all degrees of freedom,
+# $u_h(x)=\sum_{i=1}^N c_i \phi_i(x)$ where $c_i$ are the coefficients of $u_h$ and $\phi_i$
+# is the $i$-th basis function, we can compute the exact solution at any point in $\Omega$.
+# However, as a mesh consists of a large set of degrees of freedom (i.e. $N$ is large),
+# we want to reduce the number of evaluations of the basis function $\phi_i(x)$.
+# We do this by identifying which cell of the mesh $x$ is in.
+# This is efficiently done by creating a {py:class}`bounding box tree<dolfinx.geometry.BoundingBoxTree`
+# of the cells of the mesh,
+# allowing a quick recursive search through the mesh entities.
 
 # +
 from dolfinx import geometry
@@ -234,12 +241,24 @@ from dolfinx import geometry
 bb_tree = geometry.bb_tree(domain, domain.topology.dim)
 # -
 
-# Now we can compute which cells the bounding box tree collides with using `dolfinx.geometry.compute_collisions_points`. This function returns a list of cells whose bounding box collide for each input point. As different points might have different number of cells, the data is stored in `dolfinx.cpp.graph.AdjacencyList_int32`, where one can access the cells for the `i`th point by calling `links(i)`.
-# However, as the bounding box of a cell spans more of $\mathbb{R}^n$ than the actual cell, we check that the actual cell collides with the input point
-# using `dolfinx.geometry.select_colliding_cells`, which measures the exact distance between the point and the cell (approximated as a convex hull for higher order geometries).
-# This function also returns an adjacency-list, as the point might align with a facet, edge or vertex that is shared between multiple cells in the mesh.
+# Now we can compute which cells the bounding box tree collides with using
+# {py:func}`dolfinx.geometry.compute_collisions_points`.
+# This function returns a list of cells whose bounding box collide for each input point.
+# As different points might have different number of cells, the data is stored in
+# {py:class}`dolfinx.graph.AdjacencyList`, where one can access the cells for the
+# `i`th point by calling `links(i)`.
+# However, as the bounding box of a cell spans more of $\mathbb{R}^n$ than the actual cell,
+# we check that the actual cell collides with the input point using
+# {py:func}`dolfinx.geometry.select_colliding_cells`,
+# which measures the exact distance between the point and the cell
+# (approximated as a convex hull for higher order geometries).
+# This function also returns an adjacency-list, as the point might align with a facet,
+# edge or vertex that is shared between multiple cells in the mesh.
 #
-# Finally, we would like the code below to run in parallel, when the mesh is distributed over multiple processors. In that case, it is not guaranteed that every point in `points` is on each processor. Therefore we create a subset `points_on_proc` only containing the points found on the current processor.
+# Finally, we would like the code below to run in parallel,
+# when the mesh is distributed over multiple processors.
+# In that case, it is not guaranteed that every point in `points` is on each processor.
+# Therefore we create a subset `points_on_proc` only containing the points found on the current processor.
 
 cells = []
 points_on_proc = []
@@ -252,14 +271,16 @@ for i, point in enumerate(points.T):
         points_on_proc.append(point)
         cells.append(colliding_cells.links(i)[0])
 
-# We now have a list of points on the processor, on in which cell each point belongs. We can then call `uh.eval` and `pressure.eval` to obtain the set of values for all the points.
-#
+# We now have a list of points on the processor, on in which cell each point belongs.
+# We can then call {py:func}`uh.eval<dolfinx.fem.Function.eval>` and
+# {py:func}`pressure.eval<dolfinx.fem.Function.eval>` to obtain the set of values for all the points.
 
 points_on_proc = np.array(points_on_proc, dtype=np.float64)
 u_values = uh.eval(points_on_proc, cells)
 p_values = pressure.eval(points_on_proc, cells)
 
-# As we now have an array of coordinates and two arrays of function values, we can use `matplotlib` to plot them
+# As we now have an array of coordinates and two arrays of function values,
+# we can use {py:mod}`matplotlib` to plot them
 
 # +
 import matplotlib.pyplot as plt
@@ -278,7 +299,7 @@ plt.xlabel("y")
 plt.legend()
 # -
 
-# If executed in parallel as a python file, we save a plot per processor
+# If executed in parallel as a Python file, we save a plot per processor
 
 plt.savefig(f"membrane_rank{MPI.COMM_WORLD.rank:d}.png")
 
