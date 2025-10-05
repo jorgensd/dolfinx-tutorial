@@ -1,4 +1,4 @@
-name: Test release branch against DOLFINx nightly build
+name: Test against DOLFINx nightly build
 
 # Controls when the action will run.
 on:
