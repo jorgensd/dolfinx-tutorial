@@ -66,7 +66,6 @@ from dolfinx.fem.petsc import LinearProblem
 from dolfinx.fem import (
     Constant,
     dirichletbc,
-    Function,
     functionspace,
     locate_dofs_geometrical,
     locate_dofs_topological,
@@ -176,8 +175,6 @@ uh = problem.solve()
 # ## Visualization
 
 # +
-pyvista.start_xvfb(1.0)
-
 # Create plotter and pyvista grid
 p = pyvista.Plotter()
 topology, cell_types, x = vtk_mesh(V)

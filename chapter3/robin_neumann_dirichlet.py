@@ -240,7 +240,6 @@ boundary_conditions = [
     BoundaryCondition("Robin", 3, (r, s)),
     BoundaryCondition("Neumann", 4, g),
 ]
-
 # -
 
 # We can now loop through the boundary condition and append them to `L(v)` or the list of Dirichlet boundary conditions
@@ -268,7 +267,6 @@ problem = LinearProblem(
 uh = problem.solve()
 
 # Visualize solution
-pyvista.start_xvfb(1.0)
 pyvista_cells, cell_types, geometry = vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(pyvista_cells, cell_types, geometry)
 grid.point_data["u"] = uh.x.array

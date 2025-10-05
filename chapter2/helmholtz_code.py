@@ -89,13 +89,11 @@ if Version(dolfinx_version) > Version("0.9.0"):
     facet_tags = mesh_data.facet_tags
 else:
     domain, _, facet_tags = mesh_data
-
 # -
 
 # We define the function space for our unknown $p$ and define the range of frequencies we want to solve the Helmholtz equation for.
 
 # +
-
 V = fem.functionspace(domain, ("Lagrange", 1))
 
 # Discrete frequency range
@@ -104,7 +102,6 @@ freq = np.arange(10, 1000, 5)  # Hz
 # Air parameters
 rho0 = 1.225  # kg/m^3
 c = 340  # m/s
-
 # -
 
 # ## Boundary conditions

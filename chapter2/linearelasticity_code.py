@@ -144,8 +144,6 @@ uh = problem.solve()
 # In previous tutorials, we have considered scalar values, while the following section considers vectors.
 
 # +
-pyvista.start_xvfb(1.0)
-
 # Create plotter and pyvista grid
 p = pyvista.Plotter()
 topology, cell_types, geometry = plot.vtk_mesh(V)

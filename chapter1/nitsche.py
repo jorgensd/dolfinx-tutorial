@@ -107,8 +107,6 @@ if domain.comm.rank == 0:
 # +
 import pyvista
 
-pyvista.start_xvfb(1.0)
-
 grid = pyvista.UnstructuredGrid(*plot.vtk_mesh(V))
 grid.point_data["u"] = uh.x.array.real
 grid.set_active_scalars("u")

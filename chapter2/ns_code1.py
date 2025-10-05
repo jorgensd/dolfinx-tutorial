@@ -364,14 +364,14 @@ vtx_u = VTXWriter(mesh.comm, folder / "poiseuille_u.bp", u_n, engine="BP4")
 vtx_p = VTXWriter(mesh.comm, folder / "poiseuille_p.bp", p_n, engine="BP4")
 vtx_u.write(t)
 vtx_p.write(t)
+
+
 # -
 
 # We also interpolate the analytical solution into our function-space and create a variational formulation for the $L^2$-error.
 #
 
 # +
-
-
 def u_exact(x):
     values = np.zeros((2, x.shape[1]), dtype=PETSc.ScalarType)
     values[0] = 4 * x[1] * (1.0 - x[1])
@@ -456,8 +456,6 @@ solver3.destroy()
 # In this section we will look at how to visualize vector functions with glyphs, instead of warping the mesh.
 
 # +
-pyvista.start_xvfb(1.0)
-
 topology, cell_types, geometry = vtk_mesh(V)
 values = np.zeros((geometry.shape[0], 3), dtype=np.float64)
 values[:, : len(u_n)] = u_n.x.array.real.reshape((geometry.shape[0], len(u_n)))

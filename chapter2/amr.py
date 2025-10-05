@@ -72,8 +72,6 @@ mesh, (ct, ft), region_map = geoModel.model_to_mesh(gdim=2, hmax=0.5)
 # We use pyvista to visualize the mesh.
 
 # + tags=["hide-input"]
-pyvista.start_xvfb(1.0)
-
 grid = pyvista.UnstructuredGrid(*dolfinx.plot.vtk_mesh(mesh))
 grid.cell_data["ct"] = ct.values
 

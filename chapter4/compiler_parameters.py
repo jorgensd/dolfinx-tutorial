@@ -42,13 +42,12 @@ from typing import Dict
 
 cache_dir = f"{str(Path.cwd())}/.cache"
 print(f"Directory to put C files in: {cache_dir}")
+
+
 # -
 
 # Next we generate a general function to assemble the mass matrix for a unit cube. Note that we use `dolfinx.fem.form` to compile the variational form.
 # For codes using `dolfinx.fem.petsc.LinearProblem`, you can supply `jit_options` as a keyword argument.
-
-# +
-
 
 def compile_form(space: str, degree: int, jit_options: Dict):
     N = 10
@@ -63,8 +62,6 @@ def compile_form(space: str, degree: int, jit_options: Dict):
     end = time.perf_counter()
     return end - start
 
-
-# -
 
 # We start by considering the different levels of optimization that the C compiler can use on the optimized code. A list of optimization options and explanations can be found [here](https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html)
 
