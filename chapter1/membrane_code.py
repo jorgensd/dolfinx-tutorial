@@ -246,7 +246,7 @@ bb_tree = geometry.bb_tree(domain, domain.topology.dim)
 # This function returns a list of cells whose bounding box collide for each input point.
 # As different points might have different number of cells, the data is stored in
 # {py:class}`dolfinx.graph.AdjacencyList`, where one can access the cells for the
-# `i`th point by calling `links(i)<dolfinx.graph.AdjacencyList.links>`.
+# `i`th point by calling {py:meth}`links(i)<dolfinx.graph.AdjacencyList.links>`.
 # However, as the bounding box of a cell spans more of $\mathbb{R}^n$ than the actual cell,
 # we check that the actual cell collides with the input point using
 # {py:func}`dolfinx.geometry.compute_colliding_cells`,
