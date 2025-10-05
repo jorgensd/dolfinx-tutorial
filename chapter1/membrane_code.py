@@ -246,10 +246,10 @@ bb_tree = geometry.bb_tree(domain, domain.topology.dim)
 # This function returns a list of cells whose bounding box collide for each input point.
 # As different points might have different number of cells, the data is stored in
 # {py:class}`dolfinx.graph.AdjacencyList`, where one can access the cells for the
-# `i`th point by calling `links(i)`.
+# `i`th point by calling `links(i)<dolfinx.graph.AdjacencyList.links>`.
 # However, as the bounding box of a cell spans more of $\mathbb{R}^n$ than the actual cell,
 # we check that the actual cell collides with the input point using
-# {py:func}`dolfinx.geometry.select_colliding_cells`,
+# {py:func}`dolfinx.geometry.compute_colliding_cells`,
 # which measures the exact distance between the point and the cell
 # (approximated as a convex hull for higher order geometries).
 # This function also returns an adjacency-list, as the point might align with a facet,
@@ -272,15 +272,15 @@ for i, point in enumerate(points.T):
         cells.append(colliding_cells.links(i)[0])
 
 # We now have a list of points on the processor, on in which cell each point belongs.
-# We can then call {py:func}`uh.eval<dolfinx.fem.Function.eval>` and
-# {py:func}`pressure.eval<dolfinx.fem.Function.eval>` to obtain the set of values for all the points.
+# We can then call {py:meth}`uh.eval<dolfinx.fem.Function.eval>` and
+# {py:meth}`pressure.eval<dolfinx.fem.Function.eval>` to obtain the set of values for all the points.
 
 points_on_proc = np.array(points_on_proc, dtype=np.float64)
 u_values = uh.eval(points_on_proc, cells)
 p_values = pressure.eval(points_on_proc, cells)
 
 # As we now have an array of coordinates and two arrays of function values,
-# we can use {py:mod}`matplotlib` to plot them
+# we can use {py:mod}`matplotlib<matplotlib.pyplot>` to plot them
 
 # +
 import matplotlib.pyplot as plt
