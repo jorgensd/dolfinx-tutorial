@@ -240,7 +240,6 @@ boundary_conditions = [
     BoundaryCondition("Robin", 3, (r, s)),
     BoundaryCondition("Neumann", 4, g),
 ]
-
 # -
 
 # We can now loop through the boundary condition and append them to `L(v)` or the list of Dirichlet boundary conditions

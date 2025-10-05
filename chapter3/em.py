@@ -244,8 +244,6 @@ else:
 # Next, we define the discontinous functions for the permeability $\mu$ and current $J_z$ using the `MeshTags` as in [Defining material parameters through subdomains](./subdomains)
 #
 
-# +
-
 Q = functionspace(mesh, ("DG", 0))
 material_tags = np.unique(ct.values)
 mu = Function(Q)
@@ -266,7 +264,6 @@ for tag in material_tags:
         J.x.array[cells] = np.full_like(cells, 1, dtype=default_scalar_type)
     elif tag in range(2 + N, 2 * N + 2):
         J.x.array[cells] = np.full_like(cells, -1, dtype=default_scalar_type)
-# -
 
 # In the code above, we have used a somewhat less extreme value for the magnetic permability of iron. This is to make the solution a little more interesting. It would otherwise be completely dominated by the field in the iron cylinder.
 #

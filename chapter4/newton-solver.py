@@ -219,7 +219,6 @@ F = q(uh) * ufl.dot(ufl.grad(uh), ufl.grad(v)) * ufl.dx - f * v * ufl.dx
 J = ufl.derivative(F, uh)
 residual = dolfinx.fem.form(F)
 jacobian = dolfinx.fem.form(J)
-
 # -
 # Next, we define the matrix `A`, right hand side vector `L` and the correction function `du`
 

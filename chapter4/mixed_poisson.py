@@ -50,7 +50,6 @@ mesh = dolfinx.mesh.create_unit_square(MPI.COMM_WORLD, N, N)
 # and $\Gamma_N = \{(0, y) \vert y \in [0, 1]\}\cup\{(1, y) \vert y \in [0, 1]\}$.
 
 # +
-
 import numpy as np
 
 
