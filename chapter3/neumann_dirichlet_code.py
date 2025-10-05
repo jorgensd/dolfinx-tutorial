@@ -93,8 +93,15 @@
 
 # +
 from dolfinx import default_scalar_type
-from dolfinx.fem import (Constant, Function, functionspace,
-                         assemble_scalar, dirichletbc, form, locate_dofs_geometrical)
+from dolfinx.fem import (
+    Constant,
+    Function,
+    functionspace,
+    assemble_scalar,
+    dirichletbc,
+    form,
+    locate_dofs_geometrical,
+)
 from dolfinx.fem.petsc import LinearProblem
 from dolfinx.mesh import create_unit_square
 from dolfinx.plot import vtk_mesh
@@ -116,9 +123,10 @@ a = dot(grad(u), grad(v)) * dx
 
 # Now we get to the Neumann and Dirichlet boundary condition. As previously, we use a Python-function to define the boundary where we should have a Dirichlet condition. Then, with this function, we locate degrees of freedom that fulfill this condition.
 
+
 # +
 def u_exact(x):
-    return 1 + x[0]**2 + 2 * x[1]**2
+    return 1 + x[0] ** 2 + 2 * x[1] ** 2
 
 
 def boundary_D(x):
@@ -141,13 +149,15 @@ L = f * v * dx - g * v * ds
 # We can now assemble and solve the linear system of equations
 
 # +
-problem = LinearProblem(a, L, bcs=[bc], petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
+problem = LinearProblem(
+    a, L, bcs=[bc], petsc_options={"ksp_type": "preonly", "pc_type": "lu"}
+)
 uh = problem.solve()
 
 V2 = functionspace(mesh, ("Lagrange", 2))
 uex = Function(V2)
 uex.interpolate(u_exact)
-error_L2 = assemble_scalar(form((uh - uex)**2 * dx))
+error_L2 = assemble_scalar(form((uh - uex) ** 2 * dx))
 error_L2 = np.sqrt(MPI.COMM_WORLD.allreduce(error_L2, op=MPI.SUM))
 
 u_vertex_values = uh.x.array
@@ -164,8 +174,6 @@ print(f"Error_max : {error_max:.2e}")
 # To look at the actual solution, run the script as a python script with `off_screen=True` or as a Jupyter notebook with `off_screen=False`
 
 # +
-pyvista.start_xvfb()
-
 pyvista_cells, cell_types, geometry = vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(pyvista_cells, cell_types, geometry)
 grid.point_data["u"] = uh.x.array
