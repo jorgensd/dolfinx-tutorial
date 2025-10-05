@@ -185,7 +185,6 @@ import pyvista
 topology, cell_types, x = vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(topology, cell_types, x)
 
-print("HEELo")
 # Set deflection values and add it to plotterss
 
 # +
