@@ -37,10 +37,7 @@ jobs:
           python3 -m pip install --no-build-isolation --break-system-packages --no-cache-dir --no-binary=h5py .[netgen] --upgrade
 
       - name: Test building the book
-        run: PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
-
-      - name: Test building the book
-        run: PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
+        run: PYVISTA_OFF_SCREEN=false jupyter-book build .
 
       - name: Test complex notebooks in parallel
         working-directory: chapter1
