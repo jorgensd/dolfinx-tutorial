@@ -34,7 +34,7 @@ jobs:
           python3 -m pip install --no-binary=h5py .[netgen]
 
       - name: Build the book
-        run: jupyter-book build .
+        run: PYVISTA_OFF_SCREEN=false jupyter-book build .
 
       - uses: actions/upload-artifact@v4
         if: always()
