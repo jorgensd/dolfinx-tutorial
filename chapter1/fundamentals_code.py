@@ -265,6 +265,7 @@ uh = problem.solve()
 # Using {py:meth}`problem.solve()<dolfinx.fem.petsc.LinearProblem.solve>` we solve the linear system of equations and
 # return a {py:class}`Function<dolfinx.fem.Function>` containing the solution.
 #
+# (error-norm)=
 # ## Computing the error
 # Finally, we want to compute the error to check the accuracy of the solution.
 # We do this by comparing the finite element solution `u` with the exact solution.
@@ -281,16 +282,17 @@ uex.interpolate(lambda x: 1 + x[0] ** 2 + 2 * x[1] ** 2)
 # only assembles over the cells on the local process.
 # This means that if we use 2 processes to solve our problem,
 # we need to accumulate the local contributions to get the global error (on one or all processes).
-# We can do this with the {func}`Comm.allreduce<mpi4py.MPI.Comm.allreduce>` function.
+# We can do this with the {py:meth}`Comm.allreduce<mpi4py.MPI.Comm.allreduce>` function.
 
 L2_error = fem.form(ufl.inner(uh - uex, uh - uex) * ufl.dx)
 error_local = fem.assemble_scalar(L2_error)
 error_L2 = numpy.sqrt(domain.comm.allreduce(error_local, op=MPI.SUM))
 
 # Secondly, we compute the maximum error at any degree of freedom.
-# As the finite element function $u$ can be expressed as a linear combination of basis functions $\phi_j$, spanning the space $V$:
-# $ u = \sum_{j=1}^N U_j\phi_j.$
-# By writing `problem.solve()` we compute all the coefficients $U_1,\dots, U_N$.
+# As the finite element function $u$ can be expressed as a linear combination of basis functions $\phi_j$,
+# spanning the space $V$: $ u = \sum_{j=1}^N U_j\phi_j.$
+# By writing {py:meth}`problem.solve()<dolfinx.fem.petsc.LinearProblem.sovle>`
+# we compute all the coefficients $U_1,\dots, U_N$.
 # These values are known as the _degrees of freedom_ (dofs).
 # We can access the degrees of freedom by accessing the underlying vector in `uh`.
 # However, as a second order function space has more dofs than a linear function space,
@@ -299,8 +301,7 @@ error_L2 = numpy.sqrt(domain.comm.allreduce(error_local, op=MPI.SUM))
 # we can compare the maximum values at any degree of freedom of the approximation space.
 
 error_max = numpy.max(numpy.abs(uD.x.array - uh.x.array))
-# Only print the error on one process
-if domain.comm.rank == 0:
+if domain.comm.rank == 0:  # Only print the error on one process
     print(f"Error_L2 : {error_L2:.2e}")
     print(f"Error_max : {error_max:.2e}")
 
