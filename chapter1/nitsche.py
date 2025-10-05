@@ -16,8 +16,10 @@
 # # Weak imposition of Dirichlet conditions for the Poisson problem
 # Author: Jørgen S. Dokken
 #
-# In this section, we will go through how to solve the Poisson problem from the [Fundamentals](./fundamentals_code.ipynb) tutorial using Nitsche's method {cite}`Nitsche1971`.
-# The idea of weak imposition is that we add additional terms to the variational formulation to impose the boundary condition, instead of modifying the matrix system using strong imposition (lifting).
+# In this section, we will go through how to solve the Poisson problem from the
+# [Fundamentals](./fundamentals_code.ipynb) tutorial using Nitsche's method {cite}`nitsche-Nitsche1971`.
+# The idea of weak imposition is that we add additional terms to the variational formulation to
+# impose the boundary condition, instead of modifying the matrix system using strong imposition (lifting).
 #
 # We start by importing the required modules and creating the mesh and function space for our solution
 
@@ -44,7 +46,12 @@ domain = mesh.create_unit_square(MPI.COMM_WORLD, N, N)
 V = fem.functionspace(domain, ("Lagrange", 1))
 # -
 
-# Next, we create a function containing the exact solution (which will also be used in the Dirichlet boundary condition) and the corresponding source function for the right hand side. Note that we use `ufl.SpatialCoordinate` to define the exact solution, which in turn is interpolated into `uD` and used to create the source function `f`.
+# Next, we create a function containing the exact solution (which will also be used in the Dirichlet boundary condition)
+# and the corresponding source function for the right hand side. Note that we use {py:class}`ufl.SpatialCoordinate`
+# to define the exact solution, which in turn is interpolated into {py:class}`uD<dolfinx.fem.Function>`
+# by wrapping the {py:class}`ufl-expression<ufl.core.expr.Expr>` as a {py:class}`dolfinx.fem.Expression`.
+# For the source function, we use the symbolic differentiation capabilities of UFL to
+# compute the negative Laplacian of the exact solution, which we can use directly in the variational formulation.
 
 uD = fem.Function(V)
 x = SpatialCoordinate(domain)
@@ -54,21 +61,34 @@ f = -div(grad(u_ex))
 
 # As opposed to the first tutorial, we now have to have another look at the variational form.
 # We start by integrating the problem by parts, to obtain
+#
+# $$
 # \begin{align}
-#     \int_{\Omega} \nabla u \cdot \nabla v~\mathrm{d}x - \int_{\partial\Omega}\nabla u \cdot n v~\mathrm{d}s = \int_{\Omega} f v~\mathrm{d}x.
+#   \int_{\Omega} \nabla u \cdot \nabla v~\mathrm{d}x
+#   - \int_{\partial\Omega}\nabla u \cdot n v~\mathrm{d}s = \int_{\Omega} f v~\mathrm{d}x.
 # \end{align}
+# $$
+#
 # As we are not using strong enforcement, we do not set the trace of the test function to $0$ on the outer boundary.
 # Instead, we add the following two terms to the variational formulation
+#
+# $$
 # \begin{align}
-#     -\int_{\partial\Omega} \nabla  v \cdot n (u-u_D)~\mathrm{d}s + \frac{\alpha}{h} \int_{\partial\Omega} (u-u_D)v~\mathrm{d}s.
+#   -\int_{\partial\Omega} \nabla  v \cdot n (u-u_D)~\mathrm{d}s
+#   + \frac{\alpha}{h} \int_{\partial\Omega} (u-u_D)v~\mathrm{d}s.
 # \end{align}
+# $$
+#
 # where the first term enforces symmetry to the bilinear form, while the latter term enforces coercivity.
 # $u_D$ is the known Dirichlet condition, and $h$ is the diameter of the circumscribed sphere of the mesh element.
 # We create bilinear and linear form, $a$ and $L$
+#
+# $$
 # \begin{align}
 #     a(u, v) &= \int_{\Omega} \nabla u \cdot \nabla v~\mathrm{d}x + \int_{\partial\Omega}-(n \cdot\nabla u) v - (n \cdot \nabla v) u + \frac{\alpha}{h} uv~\mathrm{d}s,\\
 #     L(v) &= \int_{\Omega} fv~\mathrm{d}x + \int_{\partial\Omega} -(n \cdot \nabla v) u_D + \frac{\alpha}{h} u_Dv~\mathrm{d}s
 # \end{align}
+# $$
 
 u = TrialFunction(V)
 v = TestFunction(V)
@@ -80,7 +100,8 @@ a += -inner(n, grad(v)) * u * ds + alpha / h * inner(u, v) * ds
 L = inner(f, v) * dx
 L += -inner(n, grad(v)) * uD * ds + alpha / h * inner(uD, v) * ds
 
-# As we now have the variational form, we can solve the linear problem
+# As we now have the variational form, we can solve the arising
+# {py:class}`linear problem<dolfinx.fem.petsc.LinearProblem>`
 
 problem = LinearProblem(a, L, petsc_options_prefix="nitsche_poisson")
 uh = problem.solve()
@@ -102,7 +123,9 @@ error_max = domain.comm.allreduce(
 if domain.comm.rank == 0:
     print(f"Error_max : {error_max:.2e}")
 
-# We observe that as we weakly impose the boundary condition, we no longer fullfill the equation to machine precision at the mesh vertices. We also plot the solution using `pyvista`
+# We observe that as we weakly impose the boundary condition,
+# we no longer fullfill the equation to machine precision at the mesh vertices.
+# We also plot the solution using {py:mod}`pyvista`
 
 # +
 import pyvista
@@ -120,5 +143,7 @@ else:
 # -
 
 # ```{bibliography}
-#    :filter: cited and ({"chapter1/nitsche"} >= docnames)
+#    :filter: cited
+#    :labelprefix:
+#    :keyprefix: nitsche-
 # ```
