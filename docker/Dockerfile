@@ -42,10 +42,8 @@ WORKDIR /tmp
 RUN python3 -m pip install --no-cache-dir --no-binary=h5py -v .
 RUN python3 -m pip cache purge
 
-ENV PYVISTA_TRAME_SERVER_PROXY_PREFIX="/proxy/"
-ENV PYVISTA_TRAME_SERVER_PROXY_ENABLED="True"
 ENV PYVISTA_OFF_SCREEN="false"
-ENV PYVISTA_JUPYTER_BACKEND="static"
+ENV PYVISTA_JUPYTER_BACKEND="trame"
 ENV LIBGL_ALWAYS_SOFTWARE=1
 
 ENTRYPOINT ["jupyter", "lab", "--ip", "0.0.0.0", "--no-browser", "--allow-root"]
