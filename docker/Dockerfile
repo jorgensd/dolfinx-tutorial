@@ -18,7 +18,7 @@ RUN curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh && \
 
 # Install netgen from source
 RUN  apt-get update && \
- apt-get -y install python3 python3-tk libpython3-dev libxmu-dev tk-dev tcl-dev cmake git g++ libglu1-mesa-dev liblapacke-dev libocct-data-exchange-dev libocct-draw-dev occt-misc libtbb-dev libxi-dev
+    apt-get -y install python3 python3-tk libpython3-dev libxmu-dev tk-dev tcl-dev cmake git g++ libglu1-mesa-dev liblapacke-dev libocct-data-exchange-dev libocct-draw-dev occt-misc libtbb-dev libxi-dev
 WORKDIR /ngsuite
 RUN git clone --branch=v6.2.2505 --single-branch https://github.com/NGSolve/netgen.git netgen-src
 WORKDIR /ngsuite/netgen-src
@@ -39,9 +39,9 @@ RUN python3 -m pip install vtk
 ADD pyproject.toml /tmp/pyproject.toml
 WORKDIR /tmp
 # As we install netgen from source we don't need the netgen deps here
-RUN python3 -m pip install --no-cache-dir --no-binary=h5py -v .
+RUN python3 -m pip install --no-cache-dir --no-binary=h5py --no-build-isolation -v .
 RUN python3 -m pip cache purge
-
+RUN python3 -m pip install ngspetsc --no-deps --no-build-isolation
 ENV PYVISTA_OFF_SCREEN="false"
 ENV PYVISTA_JUPYTER_BACKEND="trame"
 ENV LIBGL_ALWAYS_SOFTWARE=1
