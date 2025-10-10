@@ -95,6 +95,7 @@ curved_mesh = geoModel.curveField(order)
 # Again, we visualize the curved mesh with pyvista.
 
 # + tags=["hide-input"]
+plotter = pyvista.Plotter()
 curved_grid = pyvista.UnstructuredGrid(*dolfinx.plot.vtk_mesh(curved_mesh))
 curved_grid.cell_data["ct"] = ct.values
 plotter.add_mesh(
@@ -157,7 +158,8 @@ def solve(
     else:
         diag_kwargs = {"diag": 0.0}
 
-    M = dolfinx.fem.petsc.assemble_matrix(dolfinx.fem.form(m), bcs=[bc], **diag_kwargs)
+    M = dolfinx.fem.petsc.assemble_matrix(
+        dolfinx.fem.form(m), bcs=[bc], **diag_kwargs)
     M.assemble()
 
     # Next, we define the SLEPc Eigenvalue Problem Solver (EPS), and set up to use a shift
@@ -208,15 +210,19 @@ def mark_cells(uh_r: dolfinx.fem.Function, lam: float):
     eta_squared = dolfinx.fem.Function(W)
     f = dolfinx.fem.Constant(mesh, 1.0)
     h = dolfinx.fem.Function(W)
-    h.x.array[:] = mesh.h(mesh.topology.dim, np.arange(len(h.x.array), dtype=np.int32))
+    h.x.array[:] = mesh.h(mesh.topology.dim, np.arange(
+        len(h.x.array), dtype=np.int32))
     n = ufl.FacetNormal(mesh)
 
     G = (  # compute cellwise error estimator
         ufl.inner(h**2 * (f + ufl.div(ufl.grad(uh_r))) ** 2, w) * ufl.dx
-        + ufl.inner(h("+") / 2 * ufl.jump(ufl.grad(uh_r), n) ** 2, w("+")) * ufl.dS
-        + ufl.inner(h("-") / 2 * ufl.jump(ufl.grad(uh_r), n) ** 2, w("-")) * ufl.dS
+        + ufl.inner(h("+") / 2 * ufl.jump(ufl.grad(uh_r), n)
+                    ** 2, w("+")) * ufl.dS
+        + ufl.inner(h("-") / 2 * ufl.jump(ufl.grad(uh_r), n)
+                    ** 2, w("-")) * ufl.dS
     )
-    dolfinx.fem.petsc.assemble_vector(eta_squared.x.petsc_vec, dolfinx.fem.form(G))
+    dolfinx.fem.petsc.assemble_vector(
+        eta_squared.x.petsc_vec, dolfinx.fem.form(G))
     eta = dolfinx.fem.Function(W)
     eta.x.array[:] = np.sqrt(eta_squared.x.array[:])
 
@@ -252,12 +258,14 @@ def write_frame(plotter: pyvista.Plotter, uh_r: dolfinx.fem.Function):
     uh_sign = np.sign(uh_r_min)
     if np.isclose(uh_sign, 0):
         uh_sign = np.sign(uh_r_max)
-    assert not np.isclose(uh_sign, 0), "uh_r has zero values, cannot determine sign."
+    assert not np.isclose(
+        uh_sign, 0), "uh_r has zero values, cannot determine sign."
     uh_r.x.array[:] *= uh_sign
 
     # Update plot with refined mesh
     grid = pyvista.UnstructuredGrid(*dolfinx.plot.vtk_mesh(mesh))
-    curved_grid = pyvista.UnstructuredGrid(*dolfinx.plot.vtk_mesh(uh_r.function_space))
+    curved_grid = pyvista.UnstructuredGrid(
+        *dolfinx.plot.vtk_mesh(uh_r.function_space))
     curved_grid.point_data["u"] = uh_r.x.array
     curved_grid = curved_grid.tessellate()
     curved_actor = plotter.add_mesh(
@@ -296,7 +304,8 @@ for i in range(max_iterations):
     )
 
     cells_to_mark = mark_cells(uh_r, lam)
-    mesh, (_, ft) = geoModel.refineMarkedElements(mesh.topology.dim, cells_to_mark)
+    mesh, (_, ft) = geoModel.refineMarkedElements(
+        mesh.topology.dim, cells_to_mark)
     curved_mesh = geoModel.curveField(order)
     write_frame(plotter, uh_r)
 
