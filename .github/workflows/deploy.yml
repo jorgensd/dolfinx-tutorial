@@ -41,13 +41,13 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Download docs artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: webpage
           path: "./public"
 
       - name: Upload page artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: "./public"
 

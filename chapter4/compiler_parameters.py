@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.4
+#       jupytext_version: 1.18.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -27,11 +27,9 @@
 # We start by specifying the current directory as the location to place the generated C files, we obtain the current directory using pathlib
 
 # +
-import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn
 import time
-import ufl
 
 from ufl import TestFunction, TrialFunction, dx, inner
 from dolfinx.mesh import create_unit_cube
@@ -44,11 +42,12 @@ from typing import Dict
 
 cache_dir = f"{str(Path.cwd())}/.cache"
 print(f"Directory to put C files in: {cache_dir}")
+
+
 # -
 
-# Next we generate a general function to assemble the mass matrix for a unit cube. Note that we use `dolfinx.fem.form` to compile the variational form. For codes using `dolfinx.fem.petsc.LinearProblem`, you can supply `jit_options` as a keyword argument.
-
-# +
+# Next we generate a general function to assemble the mass matrix for a unit cube. Note that we use `dolfinx.fem.form` to compile the variational form.
+# For codes using `dolfinx.fem.petsc.LinearProblem`, you can supply `jit_options` as a keyword argument.
 
 
 def compile_form(space: str, degree: int, jit_options: Dict):
@@ -65,13 +64,14 @@ def compile_form(space: str, degree: int, jit_options: Dict):
     return end - start
 
 
-# -
-
-# We start by considering the different levels of optimization that the C compiler can use on the optimized code. A list of optimization options and explanations can be found [here](https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html)
+# We start by considering the different levels of optimization that the C compiler can use on the optimized code.
+# A list of optimization options and explanations can be found [here](https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html)
 
 optimization_options = ["-O1", "-O2", "-O3", "-Ofast"]
 
-# The next option we can choose is if we want to compile the code with `-march=native` or not. This option enables instructions for the local machine, and can give different results on different systems. More information can be found [here](https://gcc.gnu.org/onlinedocs/gcc/AArch64-Options.html#g_t-march-and--mcpu-Feature-Modifiers)
+# The next option we can choose is if we want to compile the code with `-march=native` or not.
+# This option enables instructions for the local machine, and can give different results on different systems.
+# More information can be found [here](https://gcc.gnu.org/onlinedocs/gcc/AArch64-Options.html#g_t-march-and--mcpu-Feature-Modifiers)
 
 march_native = [True, False]
 
@@ -86,20 +86,26 @@ for space in ["N1curl", "Lagrange", "RT"]:
                     cffi_options = [option, "-march=native"]
                 else:
                     cffi_options = [option]
-                jit_options = {"cffi_extra_compile_args": cffi_options,
-                               "cache_dir": cache_dir, "cffi_libraries": ["m"]}
+                jit_options = {
+                    "cffi_extra_compile_args": cffi_options,
+                    "cache_dir": cache_dir,
+                    "cffi_libraries": ["m"],
+                }
                 runtime = compile_form(space, degree, jit_options=jit_options)
                 results["Space"].append(space)
                 results["Degree"].append(str(degree))
                 results["Options"].append("\n".join(cffi_options))
                 results["Time"].append(runtime)
 
-# We have now stored all the results to a dictionary. To visualize it, we use pandas and its Dataframe class. We can inspect the data in a jupyter notebook as follows
+# We have now stored all the results to a dictionary. To visualize it, we use pandas and its Dataframe class.
+# To instpect the data in a Jupyter notebook, call the code below.
+# If you are running this code in a script, you can use `print(results_df)` instead.
 
 results_df = pd.DataFrame.from_dict(results)
 results_df
 
-# We can now make a plot for each element type to see the variation given the different compile options. We create a new colum for each element type and degree.
+# Next, we inspect the impact of the compiler option on each type of finite element family.
+# To achieve this, we add an extra column to the dataframe, which combines the space and degree of the finite element.
 
 seaborn.set(style="ticks")
 seaborn.set(font_scale=1.2)
@@ -111,4 +117,5 @@ for element in elements:
     g = seaborn.catplot(x="Options", y="Time", kind="bar", data=df_e, col="Element")
     g.fig.set_size_inches(16, 4)
 
-# We observe that the compile time increases when increasing the degree of the function space, and that we get most speedup by using "-O3" or "-Ofast" combined with "-march=native".
+# We observe that the compile time increases when increasing the degree of the function space,
+# and that we get most speedup by using "-O3" or "-Ofast" combined with "-march=native".

@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.4
+#       jupytext_version: 1.18.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -48,12 +48,28 @@
 import pyvista
 import numpy as np
 from mpi4py import MPI
-from ufl import Identity, Measure, TestFunction, TrialFunction, dot, dx, inner, grad, nabla_div, sym
+from ufl import (
+    Identity,
+    Measure,
+    TestFunction,
+    TrialFunction,
+    dot,
+    dx,
+    inner,
+    grad,
+    nabla_div,
+    sym,
+)
 from dolfinx import default_scalar_type
 from dolfinx.mesh import CellType, create_rectangle, locate_entities_boundary
 from dolfinx.fem.petsc import LinearProblem
-from dolfinx.fem import (Constant, dirichletbc, Function, functionspace, locate_dofs_geometrical,
-                         locate_dofs_topological)
+from dolfinx.fem import (
+    Constant,
+    dirichletbc,
+    functionspace,
+    locate_dofs_geometrical,
+    locate_dofs_topological,
+)
 from dolfinx.plot import vtk_mesh
 
 L = 1
@@ -66,12 +82,15 @@ g = 1
 
 # As in the previous demos, we define our mesh and function space.
 
-mesh = create_rectangle(MPI.COMM_WORLD, np.array([[0, 0], [L, H]]), [30, 30], cell_type=CellType.triangle)
-V = functionspace(mesh, ("Lagrange", 1, (mesh.geometry.dim , )))
+mesh = create_rectangle(
+    MPI.COMM_WORLD, np.array([[0, 0], [L, H]]), [30, 30], cell_type=CellType.triangle
+)
+V = functionspace(mesh, ("Lagrange", 1, (mesh.geometry.dim,)))
 
 
 # ## Boundary conditions
 # As we would like to clamp the boundary at $x=0$, we do this by using a marker function, we use `dolfinx.fem.locate_dofs_geometrical` to identify the relevant degrees of freedom.
+
 
 # +
 def clamped_boundary(x):
@@ -80,8 +99,6 @@ def clamped_boundary(x):
 
 u_zero = np.array((0,) * mesh.geometry.dim, dtype=default_scalar_type)
 bc = dirichletbc(u_zero, locate_dofs_geometrical(V, clamped_boundary), V)
-
-
 # -
 
 # Next we would like to constrain the $x$-component of our solution at $x=L$ to $0$. We start by creating the sub space only containing the $x$
@@ -97,19 +114,24 @@ bc = dirichletbc(u_zero, locate_dofs_geometrical(V, clamped_boundary), V)
 # [FEniCS Workshop: Dirichlet conditions in mixed spaces](https://jsdokken.com/FEniCS-workshop/src/deep_dive/mixed_problems.html#dirichlet-conditions-in-mixed-spaces)
 # for a detailed discussion.
 
+
+# +
 def right(x):
     return np.logical_and(np.isclose(x[0], L), x[1] < H)
 
 
 boundary_facets = locate_entities_boundary(mesh, mesh.topology.dim - 1, right)
-boundary_dofs_x = locate_dofs_topological(V.sub(0), mesh.topology.dim - 1, boundary_facets)
+boundary_dofs_x = locate_dofs_topological(
+    V.sub(0), mesh.topology.dim - 1, boundary_facets
+)
+# -
 
 # We can now create our Dirichlet condition
 
 bcx = dirichletbc(default_scalar_type(0), boundary_dofs_x, V.sub(0))
 bcs = [bc, bcx]
 
-# As we want the traction $T$ over the remaining boundary to be $0$, we create a `dolfinx.Constant`
+# As we want the traction $T$ over the remaining boundary to be $0$, we create a `dolfinx.fem.Constant`
 
 T = Constant(mesh, default_scalar_type((0, 0)))
 
@@ -120,6 +142,7 @@ ds = Measure("ds", domain=mesh)
 
 # ## Variational formulation
 # We are now ready to create our variational formulation in close to mathematical syntax, as for the previous problems.
+
 
 # +
 def epsilon(u):
@@ -140,7 +163,13 @@ L = dot(f, v) * dx + dot(T, v) * ds
 # ## Solve the linear variational problem
 # As in the previous demos, we assemble the matrix and right hand side vector and use PETSc to solve our variational problem
 
-problem = LinearProblem(a, L, bcs=bcs, petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
+problem = LinearProblem(
+    a,
+    L,
+    bcs=bcs,
+    petsc_options={"ksp_type": "preonly", "pc_type": "lu"},
+    petsc_options_prefix="component_bc_",
+)
 uh = problem.solve()
 
 # ## Visualization
@@ -154,7 +183,7 @@ grid = pyvista.UnstructuredGrid(topology, cell_types, x)
 # Attach vector values to grid and warp grid by vector
 
 vals = np.zeros((x.shape[0], 3))
-vals[:, :len(uh)] = uh.x.array.reshape((x.shape[0], len(uh)))
+vals[:, : len(uh)] = uh.x.array.reshape((x.shape[0], len(uh)))
 grid["u"] = vals
 actor_0 = p.add_mesh(grid, style="wireframe", color="k")
 warped = grid.warp_by_vector("u", factor=1.5)

@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.4
+#       jupytext_version: 1.18.1
 #   kernelspec:
 #     display_name: Python 3 (DOLFINx complex)
 #     language: python
@@ -17,70 +17,116 @@
 #
 # Author: Jørgen S. Dokken
 #
-# Many PDEs, such as the [Helmholtz equation](https://docs.fenicsproject.org/dolfinx/v0.4.1/python/demos/demo_helmholtz.html) require complex-valued fields.
+# Many PDEs, such as the [Helmholtz equation](https://docs.fenicsproject.org/dolfinx/main/python/demos/demo_helmholtz.html)
+# require complex-valued fields.
 #
-# For simplicity, let us consider a Poisson equation of the form: 
+# For simplicity, let us consider a Poisson equation of the form:
 #
-# $$-\Delta u = f \text{ in } \Omega,$$
-# $$ f = -1 - 2j \text{ in } \Omega,$$
-# $$ u = u_{exact} \text{ on } \partial\Omega,$$
-# $$u_{exact}(x, y) = \frac{1}{2}x^2 + 1j\cdot y^2,$$
+# $$
+# \begin{align}
+# -\Delta u &= f &&\text{in } \Omega,\\
+# f &= -1 - 2j &&\text{in } \Omega,\\
+# u &= u_{exact} &&\text{on } \partial\Omega,\\
+# u_{exact}(x, y) &= \frac{1}{2}x^2 + 1j\cdot y^2,
+# \end{align}
+# $$
 #
-# As in [Solving the Poisson equation](./fundamentals) we want to express our partial differential equation as a weak formulation.
+# As in [Solving the Poisson equation](./fundamentals) we want to express our partial differential equation
+# as a weak formulation.
 #
-# We start by defining our discrete function space $V_h$, such that $u_h\in V_h$ and $u_h = \sum_{i=1}^N c_i \phi_i(x, y)$ where $\phi_i$ are **real valued** global basis functions of our space $V_h$, and $c_i \in \mathcal{C}$ are the **complex valued** degrees of freedom.
+# We start by defining our discrete function space $V_h$, such that $u_h\in V_h$ and
+# $u_h = \sum_{i=1}^N c_i \phi_i(x, y)$ where $\phi_i$ are **real valued** global basis
+# functions of our space $V_h$, and $c_i \in \mathcal{C}$ are the **complex valued** degrees of freedom.
 #
-# Next, we choose a test function $v\in \hat V_h$ where $\hat V_h\subset V_h$ such that $v\vert_{\partial\Omega}=0$, as done in the first tutorial.
-# We now need to define our inner product space. We choose the $L^2$ inner product spaces, which is a _[sesquilinear](https://en.wikipedia.org/wiki/Sesquilinear_form) 2-form_, meaning that $\langle u, v\rangle$ is a map from $V_h\times V_h\mapsto K$, and $\langle u, v \rangle = \int_\Omega u \cdot \bar v ~\mathrm{d} x$. As it is sesquilinear, we have the following properties:
+# Next, we choose a test function $v\in \hat V_h$ where $\hat V_h\subset V_h$ such that $v\vert_{\partial\Omega}=0$, as done in the [first tutorial](./fundamentals).
+# We now need to define our inner product space.
+# We choose the $L^2$ inner product spaces, which is a _[sesquilinear](https://en.wikipedia.org/wiki/Sesquilinear_form) 2-form_,
+# meaning that $\langle u, v\rangle$ is a map from $V_h\times V_h\mapsto K$, and
+# $\langle u, v \rangle = \int_\Omega u \cdot \bar v ~\mathrm{d} x$. As it is sesquilinear, we have the following properties:
 #
-# $$\langle u , v \rangle = \overline{\langle v, u \rangle},$$
-# $$\langle u , u \rangle \geq 0.$$
+# $$
+# \begin{align}
+# \langle u , v \rangle &= \overline{\langle v, u \rangle},\\
+# \langle u , u \rangle &\geq 0.
+# \end{align}
+# $$
 #
 # We can now use this inner product space to do integration by parts
 #
-# $$\int_\Omega \nabla u_h \cdot \nabla \overline{v}~ \mathrm{dx} = \int_{\Omega} f \cdot \overline{v} ~\mathrm{d} s \qquad \forall v \in \hat{V}_h.$$
+# $$
+# \int_\Omega \nabla u_h \cdot \nabla \overline{v}~\mathrm{dx} =
+# \int_{\Omega} f \cdot \overline{v} ~\mathrm{d} s \qquad \forall v \in \hat{V}_h.
+# $$
 #
 # ## Installation of FEniCSx with complex number support
 #
-# FEniCSx supports both real and complex numbers, so we can create a function space with real valued or complex valued coefficients.
-#
+# FEniCSx supports both real and complex numbers, so we can create a {py:class}`function space <dolfinx.fem.FunctionSpace>`
+# with either real valued or complex valued coefficients.
+# ```{admonition} Function or Coefficient
+# In FEniCSx, the term *function* and *coefficient* are used interchangeably.
+# A function is a linear combination of basis functions with coefficients, and the coefficients can be real or complex numbers.
+# In {py:mod}`ufl`, the term {py:class}`Coefficient <ufl.Coefficient>`, while in {py:mod}`dolfinx` we use {py:class}`Function<dolfinx.fem.Function>`
+# to represent the same concept (through inheritance). This is because most people think of finding the **unknown** function that solves a PDE,
+# while the coefficients are the set of values that define the function.
+# ```
 
+# +
 from mpi4py import MPI
 import dolfinx
 import numpy as np
+
 mesh = dolfinx.mesh.create_unit_square(MPI.COMM_WORLD, 10, 10)
 V = dolfinx.fem.functionspace(mesh, ("Lagrange", 1))
-u_r = dolfinx.fem.Function(V, dtype=np.float64) 
+u_r = dolfinx.fem.Function(V, dtype=np.float64)
 u_r.interpolate(lambda x: x[0])
 u_c = dolfinx.fem.Function(V, dtype=np.complex128)
-u_c.interpolate(lambda x:0.5*x[0]**2 + 1j*x[1]**2)
+u_c.interpolate(lambda x: 0.5 * x[0] ** 2 + 1j * x[1] ** 2)
 print(u_r.x.array.dtype)
 print(u_c.x.array.dtype)
+# -
 
-# However, as we would like to solve linear algebra problems of the form $Ax=b$, we need to be able to use matrices and vectors that support real and complex numbers. As [PETSc](https://petsc.org/release/) is one of the most popular interfaces to linear algebra packages, we need to be able to work with their matrix and vector structures.
+# However, as we would like to solve linear algebra problems of the form $Ax=b$, we need to be able to use matrices and vectors that support real and complex numbers.
+# As {[PETSc](https://petsc.org/release/)} is the most popular interfaces to linear algebra packages, we need to be able to work with their matrix and vector structures.
 #
-# Unfortunately, PETSc only supports one floating type in their matrices, thus we need to install two versions of PETSc, one that supports `float64` and one that supports `complex128`. In the [docker images](https://hub.docker.com/r/dolfinx/dolfinx) for DOLFINx, both versions are installed, and one can switch between them by calling `source dolfinx-real-mode` or `source dolfinx-complex-mode`. For the `dolfinx/lab` images, one can change the Python kernel to be either the real or complex mode, by going to `Kernel->Change Kernel...` and choosing `Python3 (ipykernel)` (for real mode) or `Python3 (DOLFINx complex)` (for complex mode).
+# Unfortunately, PETSc only supports one floating type in their matrices, thus we need to install two versions of PETSc,
+# one that supports `float64` and one that supports `complex128`.
+# In the [Docker images]https://github.com/orgs/FEniCS/packages/container/package/dolfinx%2Fdolfinx) for DOLFINx, both versions are installed,
+# and one can switch between them by calling `source dolfinx-real-mode` or `source dolfinx-complex-mode`.
+# For the [dolfinx/lab](https://github.com/FEniCS/dolfinx/pkgs/container/dolfinx%2Flab) images,
+# one can change the Python kernel to be either the real or complex mode, by going to
+# `Kernel->Change Kernel...` and choosing `Python3 (ipykernel)` (for real mode) or `Python3 (DOLFINx complex)` (for complex mode).
 #
 # We check that we are using the correct installation of PETSc by inspecting the scalar type.
 
+# +
 from petsc4py import PETSc
 from dolfinx.fem.petsc import assemble_vector
+
 print(PETSc.ScalarType)
-assert np.dtype(PETSc.ScalarType).kind == 'c'
+assert np.dtype(PETSc.ScalarType).kind == "c"
+# -
 
 # ## Variational problem
 # We are now ready to define our variational problem
 
+# +
 import ufl
+
 u = ufl.TrialFunction(V)
 v = ufl.TestFunction(V)
 f = dolfinx.fem.Constant(mesh, PETSc.ScalarType(-1 - 2j))
 a = ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx
 L = ufl.inner(f, v) * ufl.dx
+# -
 
-# Note that we have used the `PETSc.ScalarType` to wrap the constant source on the right hand side. This is because we want the integration kernels to assemble into the correct floating type.
+# Note that we have used the `PETSc.ScalarType` to wrap the constant source on the right hand side.
+# This is because we want the integration kernels to assemble into the correct floating type.
 #
-# Secondly, note that we are using `ufl.inner` to describe multiplication of $f$ and $v$, even if they are scalar values. This is because `ufl.inner` takes the conjugate of the second argument, as decribed by the $L^2$ inner product. One could alternatively write this out explicitly
+# Secondly, note that we are using {py:func}`ufl.inner` to describe multiplication of $f$ and $v$,
+# even if they are scalar values.
+# This is because {py:func}`ufl.inner` takes the conjugate of the second argument,
+# as decribed by the $L^2$ inner product.
+# One could alternatively write this out explicitly
 #
 # ### Inner-products and derivatives
 
@@ -88,8 +134,10 @@ L2 = f * ufl.conj(v) * ufl.dx
 print(L)
 print(L2)
 
-# Similarly, if we want to use the function `ufl.derivative` to take derivatives of functionals, we need to take some special care. As `ufl.derivative` inserts a `ufl.TestFunction` to represent the variation, we need to take the conjugate of this to be able to use it to assemble vectors.
-#
+# Similarly, if we want to use the function {py:func}`ufl.derivative` to take derivatives of functionals,
+# we need to take some special care.
+# As {py:func}`ufl.derivative` inserts a {py:func}`ufl.TestFunction` to represent the variation,
+# we need to take the conjugate of this to be able to use it to assemble vectors.
 
 J = u_c**2 * ufl.dx
 F = ufl.derivative(J, u_c, ufl.conj(v))
@@ -99,11 +147,15 @@ print(residual.array)
 # We define our Dirichlet condition and setup and solve the variational problem.
 # ## Solve variational problem
 
-mesh.topology.create_connectivity(mesh.topology.dim-1, mesh.topology.dim)
+mesh.topology.create_connectivity(mesh.topology.dim - 1, mesh.topology.dim)
 boundary_facets = dolfinx.mesh.exterior_facet_indices(mesh.topology)
-boundary_dofs = dolfinx.fem.locate_dofs_topological(V, mesh.topology.dim-1, boundary_facets)
+boundary_dofs = dolfinx.fem.locate_dofs_topological(
+    V, mesh.topology.dim - 1, boundary_facets
+)
 bc = dolfinx.fem.dirichletbc(u_c, boundary_dofs)
-problem = dolfinx.fem.petsc.LinearProblem(a, L, bcs=[bc])
+problem = dolfinx.fem.petsc.LinearProblem(
+    a, L, bcs=[bc], petsc_options_prefix="complex_poisson"
+)
 uh = problem.solve()
 
 # We compute the $L^2$ error and the max error.
@@ -112,11 +164,13 @@ uh = problem.solve()
 #
 
 x = ufl.SpatialCoordinate(mesh)
-u_ex = 0.5 * x[0]**2 + 1j*x[1]**2
-L2_error = dolfinx.fem.form(ufl.dot(uh-u_ex, uh-u_ex) * ufl.dx(metadata={"quadrature_degree": 5}))
+u_ex = 0.5 * x[0] ** 2 + 1j * x[1] ** 2
+L2_error = dolfinx.fem.form(
+    ufl.dot(uh - u_ex, uh - u_ex) * ufl.dx(metadata={"quadrature_degree": 5})
+)
 local_error = dolfinx.fem.assemble_scalar(L2_error)
 global_error = np.sqrt(mesh.comm.allreduce(local_error, op=MPI.SUM))
-max_error = mesh.comm.allreduce(np.max(np.abs(u_c.x.array-uh.x.array)))
+max_error = mesh.comm.allreduce(np.max(np.abs(u_c.x.array - uh.x.array)))
 print(global_error, max_error)
 
 # ## Plotting
@@ -124,7 +178,9 @@ print(global_error, max_error)
 # Finally, we plot the real and imaginary solutions.
 #
 
+# +
 import pyvista
+
 mesh.topology.create_connectivity(mesh.topology.dim, mesh.topology.dim)
 p_mesh = pyvista.UnstructuredGrid(*dolfinx.plot.vtk_mesh(mesh, mesh.topology.dim))
 pyvista_cells, cell_types, geometry = dolfinx.plot.vtk_mesh(V)
@@ -147,5 +203,3 @@ p_imag.add_mesh(grid, show_edges=True)
 p_imag.view_xy()
 if not pyvista.OFF_SCREEN:
     p_imag.show()
-
-

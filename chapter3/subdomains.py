@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.4
+#       jupytext_version: 1.18.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -22,15 +22,22 @@
 
 # +
 from dolfinx import default_scalar_type
-from dolfinx.fem import (Constant, dirichletbc, Function, functionspace, assemble_scalar,
-                         form, locate_dofs_geometrical, locate_dofs_topological)
+from dolfinx.fem import (
+    Constant,
+    dirichletbc,
+    Function,
+    functionspace,
+    assemble_scalar,
+    form,
+    locate_dofs_geometrical,
+    locate_dofs_topological,
+)
 from dolfinx.fem.petsc import LinearProblem
-from dolfinx.io import XDMFFile, gmshio
+from dolfinx.io import XDMFFile, gmsh as gmshio
 from dolfinx.mesh import create_unit_square, locate_entities
 from dolfinx.plot import vtk_mesh
 
-from ufl import (SpatialCoordinate, TestFunction, TrialFunction,
-                 dx, grad, inner)
+from ufl import SpatialCoordinate, TestFunction, TrialFunction, dx, grad, inner
 
 from mpi4py import MPI
 
@@ -47,6 +54,7 @@ Q = functionspace(mesh, ("DG", 0))
 
 # We will use a simple example with two materials in two dimensions to demonstrate the idea. The whole domain will be $\Omega=[0,1]\times[0,1]$, which consists of two subdomains
 # $\Omega_0=[0,1]\times [0,1/2]$ and $\Omega_1=[0,1]\times[1/2, 1]$. We start by creating two python functions, where each returns `True` if the input coordinate is inside its domain.
+
 
 # +
 def Omega_0(x):
@@ -100,7 +108,13 @@ bcs = [dirichletbc(default_scalar_type(1), dofs, V)]
 # We can now solve and visualize the solution of the problem
 
 # +
-problem = LinearProblem(a, L, bcs=bcs, petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
+problem = LinearProblem(
+    a,
+    L,
+    bcs=bcs,
+    petsc_options={"ksp_type": "preonly", "pc_type": "lu"},
+    petsc_options_prefix="subdomains_structured_",
+)
 uh = problem.solve()
 
 # Filter out ghosted cells
@@ -112,7 +126,9 @@ cells_1 = cells_1[cells_1 < num_cells_local]
 marker[cells_0] = 1
 marker[cells_1] = 2
 mesh.topology.create_connectivity(tdim, tdim)
-topology, cell_types, x = vtk_mesh(mesh, tdim, np.arange(num_cells_local, dtype=np.int32))
+topology, cell_types, x = vtk_mesh(
+    mesh, tdim, np.arange(num_cells_local, dtype=np.int32)
+)
 
 p = pyvista.Plotter(window_size=[800, 800])
 grid = pyvista.UnstructuredGrid(topology, cell_types, x)
@@ -140,6 +156,7 @@ else:
 # ## Interpolation with Python-function
 # As we saw in the first approach, in many cases, we can use the geometrical coordinates to determine which coefficient we should use. Using the unstructured mesh from the previous example, we illustrate an alternative approach using interpolation:
 
+
 def eval_kappa(x):
     values = np.zeros(x.shape[1], dtype=default_scalar_type)
     # Create a boolean array indicating which dofs (corresponding to cell centers)
@@ -157,7 +174,7 @@ kappa2.interpolate(eval_kappa)
 # We verify this by assembling the error between this new function and the old one
 
 # Difference in kappa's
-error = mesh.comm.allreduce(assemble_scalar(form((kappa - kappa2)**2 * dx)))
+error = mesh.comm.allreduce(assemble_scalar(form((kappa - kappa2) ** 2 * dx)))
 print(error)
 
 # ## Subdomains defined from external mesh data
@@ -200,7 +217,12 @@ gmsh.finalize()
 # ## Read in MSH files with DOLFINx
 # You can read in MSH files with DOLFINx, which will read them in on a single process, and then distribute them over the available ranks in the MPI communicator.
 
-mesh, cell_markers, facet_markers = gmshio.read_from_msh("mesh.msh", MPI.COMM_WORLD, gdim=2)
+mesh_data = gmshio.read_from_msh("mesh.msh", MPI.COMM_WORLD, gdim=2)
+mesh = mesh_data.mesh
+assert mesh_data.cell_tags is not None
+cell_markers = mesh_data.cell_tags
+assert mesh_data.facet_tags is not None
+facet_markers = mesh_data.facet_tags
 
 # ## Convert msh-files to XDMF using meshio
 # We will use `meshio` to read in the `msh` file, and convert it to a more suitable IO format. Meshio requires `h5py`, and can be installed on linux with the following commands:
@@ -217,7 +239,11 @@ def create_mesh(mesh, cell_type, prune_z=False):
     cells = mesh.get_cells_type(cell_type)
     cell_data = mesh.get_cell_data("gmsh:physical", cell_type)
     points = mesh.points[:, :2] if prune_z else mesh.points
-    out_mesh = meshio.Mesh(points=points, cells={cell_type: cells}, cell_data={"name_to_read": [cell_data.astype(np.int32)]})
+    out_mesh = meshio.Mesh(
+        points=points,
+        cells={cell_type: cells},
+        cell_data={"name_to_read": [cell_data.astype(np.int32)]},
+    )
     return out_mesh
 
 
@@ -271,7 +297,13 @@ a = inner(kappa * grad(u), grad(v)) * dx
 x = SpatialCoordinate(mesh)
 L = Constant(mesh, default_scalar_type(1)) * v * dx
 
-problem = LinearProblem(a, L, bcs=bcs, petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
+problem = LinearProblem(
+    a,
+    L,
+    bcs=bcs,
+    petsc_options={"ksp_type": "preonly", "pc_type": "lu"},
+    petsc_options_prefix="subdomains_unstructured_",
+)
 uh = problem.solve()
 
 # As the dolfinx.MeshTag contains a value for every cell in the
@@ -301,5 +333,3 @@ if not pyvista.OFF_SCREEN:
     p2.show()
 else:
     p2.screenshot("unstructured_u.png")
-
-

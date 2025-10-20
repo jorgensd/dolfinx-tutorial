@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.4
+#       jupytext_version: 1.18.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -16,8 +16,11 @@
 # # Combining Dirichlet and Neumann conditions
 # Author: Jørgen S. Dokken
 #
-# Let's return to the Poisson problem from the [Fundamentals chapter](./../chapter1/fundamentals.md) and see how to extend the mathematics and the implementation to handle Dirichlet condition in combination with a Neumann condition.
-# The domain is still the unit square, but now we set the Dirichlet condition $u=u_D$ at the left and right sides, while the Neumann condition
+# Let's return to the Poisson problem from the [Fundamentals chapter](./../chapter1/fundamentals.md)
+# and see how to extend the mathematics and the implementation to handle Dirichlet condition
+# in combination with a Neumann condition.
+# The domain is still the unit square, but now we set the Dirichlet condition $u=u_D$ at the left and right sides,
+# while the Neumann condition
 #
 # $$
 # -\frac{\partial u}{\partial n}=g
@@ -26,7 +29,8 @@
 # is applied to the  remaining sides $y=0$ and $y=1$.
 #
 # ## The PDE problem
-# Let $\Lambda_D$ and $\Lambda_N$ denote parts of the boundary $\partial \Omega$ where the Dirichlet and Neumann conditions apply, respectively.
+# Let $\Lambda_D$ and $\Lambda_N$ denote parts of the boundary $\partial \Omega$
+# where the Dirichlet and Neumann conditions apply, respectively.
 # The complete boundary-value problem can be written as
 #
 # $$
@@ -54,30 +58,36 @@
 # u_D(x,y)=1+x^2+2y^2.
 # $$
 #
-# For the ease of programming, we define $g$ as a function over the whole domain $\Omega$ such that $g$ takes on the correct values at $y=0$ and $y=1$. One possible extension is
+# For the ease of programming, we define $g$ as a function over the whole domain $\Omega$ such that
+# $g$ takes on the correct values at $y=0$ and $y=1$. One possible extension is
 #
 # $$
 #  g(x,y)=-4y.
 # $$
 #
 # ## The variational formulation
-# The first task is to derive the variational formulatin. This time we cannot omit the boundary term arising from integration by parts, because $v$ is only zero on $\Lambda_D$. We have
+# The first task is to derive the variational formulation.
+# This time we cannot omit the boundary term arising from integration by parts,
+# because $v$ is only zero on $\Lambda_D$. We have
 #
 # $$
-# -\int_\Omega (\nabla^2u)v~\mathrm{d} x = \int_\Omega \nabla u \cdot \nabla v ~\mathrm{d} x - \int_{\partial\Omega}\frac{\partial u}{\partial n}v~\mathrm{d}s,
+# -\int_\Omega (\nabla^2u)v~\mathrm{d} x =
+# \int_\Omega \nabla u \cdot \nabla v ~\mathrm{d} x - \int_{\partial\Omega}\frac{\partial u}{\partial n}v~\mathrm{d}s,
 # $$
 #
 # and since $v=0$ on $\Lambda_D$,
 #
 # $$
-# - \int_{\partial\Omega}\frac{\partial u}{\partial n}v~\mathrm{d}s= - \int_{\Lambda_N}\frac{\partial u}{\partial n}v~\mathrm{d}s =\int_{\Lambda_N} gv~\mathrm{d}s,
+# - \int_{\partial\Omega}\frac{\partial u}{\partial n}v~\mathrm{d}s=
+# - \int_{\Lambda_N}\frac{\partial u}{\partial n}v~\mathrm{d}s =\int_{\Lambda_N} gv~\mathrm{d}s,
 # $$
 #
 # by applying the boundary condition on $\Lambda_N$.
 # The resulting weak from reads
 #
 # $$
-#     \int_\Omega \nabla u \cdot \nabla v~\mathrm{d} x = \int_\Omega fv~\mathrm{d} x - \int_{\Lambda_N}gv~\mathrm{d}s.
+# \int_\Omega \nabla u \cdot \nabla v~\mathrm{d} x =
+# \int_\Omega fv~\mathrm{d} x - \int_{\Lambda_N}gv~\mathrm{d}s.
 # $$
 # Expressing this equation in the standard notation $a(u,v)=L(v)$ is straight-forward with
 #
@@ -117,8 +127,6 @@ V = functionspace(mesh, ("Lagrange", 1))
 u = TrialFunction(V)
 v = TestFunction(V)
 a = dot(grad(u), grad(v)) * dx
-
-
 # -
 
 # Now we get to the Neumann and Dirichlet boundary condition. As previously, we use a Python-function to define the boundary where we should have a Dirichlet condition. Then, with this function, we locate degrees of freedom that fulfill this condition.
@@ -150,7 +158,11 @@ L = f * v * dx - g * v * ds
 
 # +
 problem = LinearProblem(
-    a, L, bcs=[bc], petsc_options={"ksp_type": "preonly", "pc_type": "lu"}
+    a,
+    L,
+    bcs=[bc],
+    petsc_options={"ksp_type": "preonly", "pc_type": "lu"},
+    petsc_options_prefix="neumann_dirichlet_",
 )
 uh = problem.solve()
 

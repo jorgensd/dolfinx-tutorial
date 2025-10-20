@@ -42,7 +42,7 @@ To run python scripts, either choose `PYVISTA_OFF_SCREEN=True` to get screenshot
 
 
 ```bash
-python3 -m jupytext --sync  */*.ipynb
+python3 -m jupytext --sync  */*.ipynb --set-formats ipynb,py:light
 ```
 or
 ```bash
@@ -86,4 +86,3 @@ from the root of this repository, and run
 ```
 
 from the main directory.
-
