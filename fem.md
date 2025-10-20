@@ -72,7 +72,7 @@ The software is quite complex, and building the software and all the dependencie
 
 ## Introduction to Python for beginners
 
-If you are a beginner in Python, we suggest reading {cite}`Langtangen2016` by Hans Petter Langtangen, which will give you a gentle introduction to the Python programming language. Note that DOLFINx, being a state of the art finite element solver, only supports Python 3, as Python 2 reached its end of life January 1st, 2020. To automatically transfer Python 2 scripts to Python 3, it is suggested to use the [2to3](https://docs.python.org/3/library/2to3.html)-package, which provides automated translation of the code.
+If you are a beginner in Python, we suggest reading {cite}`fem-Langtangen2016` by Hans Petter Langtangen, which will give you a gentle introduction to the Python programming language. Note that DOLFINx, being a state of the art finite element solver, only supports Python 3, as Python 2 reached its end of life January 1st, 2020. To automatically transfer Python 2 scripts to Python 3, it is suggested to use the [2to3](https://docs.python.org/3/library/2to3.html)-package, which provides automated translation of the code.
 
 ## Introduction to the finite element method
 
@@ -83,10 +83,12 @@ In the last decade, several sets of lecture notes on finite element methods have
 - [Finite element analysis for coupled problems](https://drive.google.com/file/d/1o0DY1RWoXd-gOISqyRzJoDHUHvSMvSg3/view?usp=sharing), by David Kamensky.
 - [DefElement: an encyclopedia of finite element definitions](https://defelement.com/), by Matthew W. Scroggs.
 
-Many good textbooks on the finite element method have been written, and we refer to the original FEniCS tutorial for references to these, see Chapter 1.6.2 of The FEniCS tutorial {cite}`FenicsTutorial`.
+Many good textbooks on the finite element method have been written, and we refer to the original FEniCS tutorial for references to these, see Chapter 1.6.2 of The FEniCS tutorial {cite}`fem-FenicsTutorial`.
 
 ## References
 
 ```{bibliography}
-   :filter: cited and ({"fem"} >= docnames)
+   :filter: cited
+   :labelprefix:
+   :keyprefix: fem-
 ```

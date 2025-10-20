@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.17.3
+#       jupytext_version: 1.18.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -17,7 +17,7 @@
 #
 # Author: Jørgen Schartum Dokken
 #
-# This implementation is an adaptation of the work in {cite}`FenicsTutorial` to DOLFINx.
+# This implementation is an adaptation of the work in {cite}`fundamentals-FenicsTutorial` to DOLFINx.
 #
 # In this section, you will learn:
 # - How to use the built-in meshes in DOLFINx
@@ -176,7 +176,7 @@ bc = fem.dirichletbc(uD, boundary_dofs)
 # so it is sufficient to use a common space for the trial and test function.
 #
 # We use the {py:mod}`Unified Form Language<ufl>` (UFL) to specify the varitional formulations.
-# See {cite}`ufl2014` for more details.
+# See {cite}`fundamentals-ufl2014` for more details.
 
 
 # +
@@ -389,5 +389,7 @@ with io.XDMFFile(domain.comm, filename.with_suffix(".xdmf"), "w") as xdmf:
 # -
 
 # ```{bibliography}
-#    :filter: cited and ({"chapter1/fundamentals_code"} >= docnames)
+#    :filter: cited
+#    :labelprefix:
+#    :keyprefix: fundamentals-
 # ```

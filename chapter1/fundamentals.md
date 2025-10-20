@@ -52,7 +52,7 @@ As we have already covered step 1, we shall now cover steps 2-4.
 FEniCSx is based on the finite element method, which is a general and
 efficient mathematical technique for the numerical solution of
 PDEs. The starting point for finite element methods is a PDE
-expressed in _variational form_. For readers not familiar with variational problems, we suggest reading a proper treatment on the finite element method, as this tutorial is meant as a brief introduction to the subject. See the original tutorial {cite}`FenicsTutorial` (Chapter 1.6.2).
+expressed in _variational form_. For readers not familiar with variational problems, we suggest reading a proper treatment on the finite element method, as this tutorial is meant as a brief introduction to the subject. See the original tutorial {cite}`fd-FenicsTutorial` (Chapter 1.6.2).
 
 The basic recipe for turning a PDE into a variational problem is:
 
@@ -80,7 +80,7 @@ $-\int_\Omega (\nabla^2 u)v~\mathrm{d}x
 
 where $\frac{\partial u}{\partial n}=\nabla u \cdot \vec{n}$ is the derivative of $u$ in the outward normal direction $\vec{n}$ on the boundary.
 
-Another feature of variational formulations is that the test function $v$ is required to vanish on the parts of the boundary where the solution $u$ is known. See for instance {cite}`Langtangen_Mardal_FEM_2019`.
+Another feature of variational formulations is that the test function $v$ is required to vanish on the parts of the boundary where the solution $u$ is known. See for instance {cite}`fd-Langtangen_Mardal_FEM_2019`.
 
 In the present problem, this means that $v$ is $0$ on the whole boundary $\partial\Omega$. Thus, the second term in the integration by parts formula vanishes, and we have that
 
@@ -138,5 +138,7 @@ To solve a linear PDE in FEniCSx, such as the Poisson equation, a user thus need
 ## References
 
 ```{bibliography}
-   :filter: cited and ({"chapter1/fundamentals"} >= docnames)
+   :filter: cited
+   :labelprefix:
+   :keyprefix: fd-
 ```

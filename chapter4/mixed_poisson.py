@@ -7,13 +7,13 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.17.3
+#       jupytext_version: 1.18.1
 # ---
 
 # # Mixed Poisson with a Schur complement pre-conditioner
 # This example demonstrates how to use PETSC fieldsplits with custom preconditions in DOLFINx.
 # This example is heavily insipired by the [FEniCSx PCTools example](https://rafinex-external-rifle.gitlab.io/fenicsx-pctools/demo/demo_mixed-poisson.html)
-# which was presented in {cite}`rehor2025pctools`.
+# which was presented in {cite}`mp-rehor2025pctools`.
 
 # We start with the mixed formulation of the Poisson equation, which is given by
 # \begin{align}
@@ -414,6 +414,7 @@ problem = dolfinx.fem.petsc.LinearProblem(
 # Note that instead of using `kind="mpi"` we use `kind="nest"` to indicate that we want to use a nested matrix structure
 # and employ the power of [PETSc fieldsplit](https://petsc.org/release/manual/ksp/#solving-block-matrices-with-pcfieldsplit).
 # ```
+
 start_it = time.perf_counter()
 problem.solve()
 end_it = time.perf_counter()
@@ -444,5 +445,7 @@ np.testing.assert_allclose(sigma_h.x.array, sigma_it.x.array, rtol=1e-7, atol=1e
 
 
 # ```{bibliography}
-#    :filter: cited and ({"chapter4/mixed_poisson"} >= docnames)
+#    :filter: cited
+#    :labelprefix:
+#    :keyprefix: mp-
 # ```
