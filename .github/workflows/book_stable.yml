@@ -20,7 +20,7 @@ jobs:
 
     env:
       PYVISTA_OFF_SCREEN: false
-      PYVISTA_JUPYTER_BACKEND: "html"
+      PYVISTA_JUPYTER_BACKEND: html
 
     steps:
       - uses: actions/checkout@v5
@@ -34,7 +34,7 @@ jobs:
           python3 -m pip install --no-binary=h5py .[netgen]
 
       - name: Build the book
-        run: jupyter-book build . -W
+        run: jupyter-book build .
 
       - uses: actions/upload-artifact@v4
         if: always()

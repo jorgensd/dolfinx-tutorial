@@ -64,11 +64,14 @@ def compile_form(space: str, degree: int, jit_options: Dict):
     return end - start
 
 
-# We start by considering the different levels of optimization that the C compiler can use on the optimized code. A list of optimization options and explanations can be found [here](https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html)
+# We start by considering the different levels of optimization that the C compiler can use on the optimized code.
+# A list of optimization options and explanations can be found [here](https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html)
 
 optimization_options = ["-O1", "-O2", "-O3", "-Ofast"]
 
-# The next option we can choose is if we want to compile the code with `-march=native` or not. This option enables instructions for the local machine, and can give different results on different systems. More information can be found [here](https://gcc.gnu.org/onlinedocs/gcc/AArch64-Options.html#g_t-march-and--mcpu-Feature-Modifiers)
+# The next option we can choose is if we want to compile the code with `-march=native` or not.
+# This option enables instructions for the local machine, and can give different results on different systems.
+# More information can be found [here](https://gcc.gnu.org/onlinedocs/gcc/AArch64-Options.html#g_t-march-and--mcpu-Feature-Modifiers)
 
 march_native = [True, False]
 
