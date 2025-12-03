@@ -26,7 +26,7 @@ jobs:
       LIBGL_ALWAYS_SOFTWARE: 1
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Special handling of some installation
         uses: ./.github/actions/install-dependencies
