@@ -206,14 +206,12 @@ if not args.no_output:
     p_fun = p_view[0] if isinstance(p_view, tuple) else p_view
 
     # interpolate to CG1 for cleaner XDMF viewing
-    Vout = fem.functionspace(domain, element("Lagrange", cell, 1, shape=(gdim,)))
+  Vout = fem.functionspace(domain, element("DG", cell, 1, shape=(gdim,)))
     Qout = fem.functionspace(domain, element("Lagrange", cell, 1))
-    u_out = fem.Function(Vout, name="u"); u_out.interpolate(u_fun)
-    p_out = fem.Function(Qout, name="p"); p_out.interpolate(p_fun)
+    u_out = fem.Function(Vout, name="u")
+    u_out.interpolate(u_fun)
 
-    with io.XDMFFile(domain.comm, args.outfile, "w") as xdmf:
-        xdmf.write_mesh(domain)
-        xdmf.write_function(u_out)
-        xdmf.write_function(p_out)
+    with io.VTXWriter(domain.comm, args.outfile, [u_out, p_fun]) as writer:
+        writer.write(0.0)
     if rank == 0:
         PETSc.Sys.Print(f"Wrote {args.outfile}")
