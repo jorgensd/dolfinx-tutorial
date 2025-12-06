@@ -122,14 +122,13 @@ def build_forms():
     ) * ds(1)
 
     # Bottom (3) and Top (4): no-slip u = 0
-    for tag in (3, 4):
-        F += (
-            - nu * ufl.inner(ufl.grad(u) * n, v)
-            - nu * ufl.inner(ufl.grad(v) * n, (u - zero_vec))
-            + alpha * nu / h * ufl.inner(u - zero_vec, v)
-            - ufl.inner(p * n, v)
-            + q * ufl.inner(u - zero_vec, n)
-        ) * ds(tag)
+    F += (
+        - nu * ufl.inner(ufl.grad(u) * n, v)
+        - nu * ufl.inner(ufl.grad(v) * n, (u - zero_vec))
+        + alpha * nu / h * ufl.inner(u - zero_vec, v)
+        - ufl.inner(p * n, v)
+        + q * ufl.inner(u - zero_vec, n)
+    ) * ds((3,4))
 
     # Right (2) left as natural outlet (do-nothing)
     return ufl.lhs(F), ufl.rhs(F)
