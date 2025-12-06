@@ -83,8 +83,7 @@ W = fem.functionspace(domain, mixed_element([V_el, Q_el]))
 # --- parameters / RHS ---
 nu = fem.Constant(domain, PETSc.ScalarType(args.nu))
 eps_p = fem.Constant(domain, PETSc.ScalarType(args.eps_p))
-zero = fem.Constant(domain, PETSc.ScalarType(0.0))
-f_vec = ufl.as_vector((zero, zero))  # zero body force
+f_vec = fem.Constant(domain, np.zeros(mesh.geometry.dim, dtype=dolfinx.default_scalar_type))
 
 # --- Picard state (for convection) ---
 w = fem.Function(W)        # holds (u_k, p_k)
