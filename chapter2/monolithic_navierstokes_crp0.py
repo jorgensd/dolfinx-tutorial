@@ -55,20 +55,19 @@ bottom_facets = mesh.locate_entities_boundary(domain, fdim, lambda x: np.isclose
 top_facets    = mesh.locate_entities_boundary(domain, fdim, lambda x: np.isclose(x[1], args.Ly))
 
 # Tag: 1=left, 2=right, 3=bottom, 4=top
-facet_indices = np.concatenate([left_facets, right_facets, bottom_facets, top_facets]).astype(np.int32)
-facet_tags    = np.concatenate([
-    np.full_like(left_facets,   1, dtype=np.int32),
-    np.full_like(right_facets,  2, dtype=np.int32),
-    np.full_like(bottom_facets, 3, dtype=np.int32),
-    np.full_like(top_facets,    4, dtype=np.int32),
-])
+num_facets_local = (
+    domain.topology.index_map(fdim).size_local
+    + domain.topology.index_map(fdim).num_ghosts
+)
+facet_markers = np.full(num_facets_local, 0, dtype=np.int32)
+facet_markers[left_facets] = 1
+facet_markers[right_facets] = 2
+facet_markers[bottom_facets] = 3
+facet_markers[top_facets] = 4
+facet_indices = np.flatnonzero(facet_markers)
 
-# Create facet meshtags
-if facet_indices.size == 0:
-    ft = mesh.meshtags(domain, fdim, np.array([], dtype=np.int32), np.array([], dtype=np.int32))
-else:
-    order = np.argsort(facet_indices)
-    ft = mesh.meshtags(domain, fdim, facet_indices[order], facet_tags[order])
+ft = mesh.meshtags(domain, fdim, facet_indices, facet_markers[facet_indices])
+
 
 dx = ufl.Measure("dx", domain=domain)
 ds = ufl.Measure("ds", domain=domain, subdomain_data=ft)
