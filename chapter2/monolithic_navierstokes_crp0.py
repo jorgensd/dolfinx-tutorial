@@ -80,7 +80,7 @@ W = fem.functionspace(domain, mixed_element([V_el, Q_el]))
 (v, q) = ufl.TestFunctions(W)
 
 # --- parameters / RHS ---
-nu = fem.Constant(domain, PETSc.ScalarType(args.nu))
+nu = fem.Constant(domain, dolfinx.default_scalar_type(args.nu))
 eps_p = fem.Constant(domain, PETSc.ScalarType(args.eps_p))
 f_vec = fem.Constant(domain, np.zeros(mesh.geometry.dim, dtype=dolfinx.default_scalar_type))
 
