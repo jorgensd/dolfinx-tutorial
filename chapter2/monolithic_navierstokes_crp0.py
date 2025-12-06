@@ -152,6 +152,7 @@ def solve_once():
     ksp.setType("gmres")
     ksp.setTolerances(rtol=1e-8, max_it=1000)
     ksp.getPC().setType("jacobi")
+    ksp.setErrorIfNotConverged(True)
 
     # wrap dolfinx vector, solve, copy back
     x = PETSc.Vec().createWithArray(w.x.array, comm=comm)
