@@ -129,7 +129,7 @@ def build_forms():
     ) * ds((3,4))
 
     # Right (2) left as natural outlet (do-nothing)
-    return ufl.lhs(F), ufl.rhs(F)
+    return ufl.system(F)
 
 
 def solve_once():
