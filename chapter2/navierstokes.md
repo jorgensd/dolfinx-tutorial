@@ -72,7 +72,7 @@ expression becomes $\sum_i u_i\frac{\partial u_j}{x_i}$. We will use the notatio
 ```
 
 We now move on to the second step in  our splitting scheme for the incompressible Navier-Stokes equations. In the first step, we computed the *tentative velocity* $u^*$ based on the pressure from the previous time step. 
-We may now use the computed tentative velocity to compute the new pressure $p^n$:
+We may now use the computed tentative velocity to compute the new pressure $p^{n+1}$:
 ```{math}
 :label: ipcs-two
     \langle \nabla p^{n+1}, \nabla q \rangle = \langle \nabla p^n, \nabla q\rangle - \frac{\rho}{\Delta t}\langle \nabla \cdot u^*, q\rangle.
