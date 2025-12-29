@@ -68,7 +68,7 @@ As mentioned in the note in [Linear elasticity implementation](./linearelasticit
 $w_i=\sum_{j}\left(u_j\frac{\partial}{\partial x_j}\right)u_i = \sum_j u_j\frac{\partial u_i}{\partial x_j}$. 
 This term can be  implemented in  FEniCSx as either 
 `grad(u)*u`, since this expression becomes $\sum_j\frac{\partial u_i}{\partial x_j}u_j$, or as `dot(u, nabla_grad(u))` since this 
-expression becomes $\sum_i u_i\frac{\partial u_j}{x_i}$. We will use the notation `dot(u, nabla_grad(u))` below since it corresponds more closely to the standard notation $u\cdot \nabla u$.
+expression becomes $\sum_i u_i\frac{\partial u_j}{\partial x_i}$. We will use the notation `dot(u, nabla_grad(u))` below since it corresponds more closely to the standard notation $u\cdot \nabla u$.
 ```
 
 We now move on to the second step in  our splitting scheme for the incompressible Navier-Stokes equations. In the first step, we computed the *tentative velocity* $u^*$ based on the pressure from the previous time step. 
