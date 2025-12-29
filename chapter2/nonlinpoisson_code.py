@@ -125,7 +125,7 @@ problem = NonlinearProblem(
 problem.solve()
 converged = problem.solver.getConvergedReason()
 num_iter = problem.solver.getIterationNumber()
-assert converged > 0, "Solver did not converge, got {converged}."
+assert converged > 0, f"Solver did not converge, got {converged}."
 print(
     f"Solver converged after {num_iter} iterations with converged reason {converged}."
 )
