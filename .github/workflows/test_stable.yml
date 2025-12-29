@@ -78,7 +78,7 @@ jobs:
           mpirun -n 2 python3 newton-solver.py
 
       - name: Upload Navier-Stokes DFG 2D 3 plots
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: DFG2D-3
           path: chapter2/figures

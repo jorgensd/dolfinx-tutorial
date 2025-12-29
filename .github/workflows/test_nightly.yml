@@ -83,7 +83,7 @@ jobs:
           mpirun -n 2 python3 compiler_parameters.py
           mpirun -n 2 python3 newton-solver.py
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         if: always()
         with:
           name: webpage
