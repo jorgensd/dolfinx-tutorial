@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "DOLFINx_Tutorial"
 version = "0.11.0.dev0"
 dependencies = [
-    "jupyter-book<2.0.0",
+    "jupyter-book<2.0",
     "meshio",
     "h5py",
     "seaborn",
