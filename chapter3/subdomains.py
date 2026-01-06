@@ -14,11 +14,14 @@
 # ---
 
 # # Defining subdomains for different materials
+#
 # Author: Jørgen S. Dokken
 #
 # Solving PDEs in domains made up of different materials is a frequently encountered task. In FEniCSx, we handle these problems by defining a Discontinous cell-wise constant function.
 # Such a function can be created over any mesh in the following way
+#
 # ## Subdomains on built-in meshes
+#
 
 # +
 from dolfinx import default_scalar_type
@@ -54,6 +57,7 @@ Q = functionspace(mesh, ("DG", 0))
 
 # We will use a simple example with two materials in two dimensions to demonstrate the idea. The whole domain will be $\Omega=[0,1]\times[0,1]$, which consists of two subdomains
 # $\Omega_0=[0,1]\times [0,1/2]$ and $\Omega_1=[0,1]\times[1/2, 1]$. We start by creating two python functions, where each returns `True` if the input coordinate is inside its domain.
+#
 
 
 # +
@@ -74,14 +78,17 @@ def Omega_1(x):
 # $$
 # -\nabla \cdot [\kappa (x,y)\nabla u(x, y)]= 1 \qquad \text{in } \Omega,
 # $$
+#
 # $$
 # u=u_D=1 \qquad \text{on } \partial\Omega_D=[0,y], y\in[0,1]
 # $$
+#
 # $$
 # -\frac{\partial u}{\partial n}=0 \qquad \text{on } \partial\Omega\setminus \partial\Omega_D
 # $$
 #
 # Our next step is to define $\kappa$
+#
 
 kappa = Function(Q)
 cells_0 = locate_entities(mesh, mesh.topology.dim, Omega_0)
@@ -91,11 +98,13 @@ cells_1 = locate_entities(mesh, mesh.topology.dim, Omega_1)
 # 1 &\text{if } x\in\Omega_0\\
 # 0.1& \text{if } x\in\Omega_1\\
 # \end{cases}$
+#
 
 kappa.x.array[cells_0] = np.full_like(cells_0, 1, dtype=default_scalar_type)
 kappa.x.array[cells_1] = np.full_like(cells_1, 0.1, dtype=default_scalar_type)
 
-# We are now ready to define our variational formulation and  Dirichlet boundary condition after using integration by parts
+# We are now ready to define our variational formulation and Dirichlet boundary condition after using integration by parts
+#
 
 V = functionspace(mesh, ("Lagrange", 1))
 u, v = TrialFunction(V), TestFunction(V)
@@ -106,6 +115,7 @@ dofs = locate_dofs_geometrical(V, lambda x: np.isclose(x[0], 0))
 bcs = [dirichletbc(default_scalar_type(1), dofs, V)]
 
 # We can now solve and visualize the solution of the problem
+#
 
 # +
 problem = LinearProblem(
@@ -152,9 +162,12 @@ else:
 
 
 # We clearly observe different behavior in the two regions, which both have the same Dirichlet boundary condition on the left side, where $x=0$.
+#
 
 # ## Interpolation with Python-function
+#
 # As we saw in the first approach, in many cases, we can use the geometrical coordinates to determine which coefficient we should use. Using the unstructured mesh from the previous example, we illustrate an alternative approach using interpolation:
+#
 
 
 def eval_kappa(x):
@@ -172,13 +185,16 @@ kappa2 = Function(Q)
 kappa2.interpolate(eval_kappa)
 
 # We verify this by assembling the error between this new function and the old one
+#
 
 # Difference in kappa's
 error = mesh.comm.allreduce(assemble_scalar(form((kappa - kappa2) ** 2 * dx)))
 print(error)
 
 # ## Subdomains defined from external mesh data
+#
 # Let us now consider the same problem, but using GMSH to generate the mesh and subdomains. We will then in turn show how to use this data to generate discontinuous functions in DOLFINx.
+#
 
 gmsh.initialize()
 proc = MPI.COMM_WORLD.rank
@@ -215,7 +231,9 @@ if proc == 0:
 gmsh.finalize()
 
 # ## Read in MSH files with DOLFINx
+#
 # You can read in MSH files with DOLFINx, which will read them in on a single process, and then distribute them over the available ranks in the MPI communicator.
+#
 
 mesh_data = gmshio.read_from_msh("mesh.msh", MPI.COMM_WORLD, gdim=2)
 mesh = mesh_data.mesh
@@ -225,14 +243,18 @@ assert mesh_data.facet_tags is not None
 facet_markers = mesh_data.facet_tags
 
 # ## Convert msh-files to XDMF using meshio
+#
 # We will use `meshio` to read in the `msh` file, and convert it to a more suitable IO format. Meshio requires `h5py`, and can be installed on linux with the following commands:
+#
 # ```{code}
 # export HDF5_MPI="ON"
 # export CC=mpicc
 # export HDF5_DIR="/usr/lib/x86_64-linux-gnu/hdf5/mpich/"
 # pip3 install --no-cache-dir --no-binary=h5py h5py meshio
 # ```
+#
 # We start by creating a convenience function for extracting data for a single cell type, and creating a new `meshio.Mesh`.
+#
 
 
 def create_mesh(mesh, cell_type, prune_z=False):
@@ -248,6 +270,7 @@ def create_mesh(mesh, cell_type, prune_z=False):
 
 
 # This function returns a meshio mesh, including physical markers for the given type. The `prune_z` argument is for cases where we want to use two dimensional meshes. The last coordinate in the mesh (as it is generated in a 3D space) has to be removed for DOLFINx to consider this as a two dimensional geometry.
+#
 
 if proc == 0:
     # Read in mesh
@@ -256,13 +279,14 @@ if proc == 0:
     # Create and save one file for the mesh, and one file for the facets
     triangle_mesh = create_mesh(msh, "triangle", prune_z=True)
     line_mesh = create_mesh(msh, "line", prune_z=True)
-    meshio.write("mesh.xdmf", triangle_mesh)
-    meshio.write("mt.xdmf", line_mesh)
+    meshio.write("mesh.xdmf", triangle_mesh, compression=None)
+    meshio.write("mt.xdmf", line_mesh, compression=None)
 MPI.COMM_WORLD.barrier()
 
 # We have now written the mesh and the cell markers to one file, and the facet markers in a separate file. We can now read this data in DOLFINx using `XDMFFile.read_mesh` and `XDMFFile.read_meshtags`. The `dolfinx.MeshTags` stores the index of the entity, along with the value of the marker in two one dimensional arrays.
 #
 # Note that we have generated and written the mesh on only one processor. However, the `xdmf`-format supports parallel IO, and we can thus read the mesh in parallel.
+#
 
 with XDMFFile(MPI.COMM_WORLD, "mesh.xdmf", "r") as xdmf:
     mesh = xdmf.read_mesh(name="Grid")
@@ -272,6 +296,7 @@ with XDMFFile(MPI.COMM_WORLD, "mt.xdmf", "r") as xdmf:
     ft = xdmf.read_meshtags(mesh, name="Grid")
 
 # We have now read in the mesh and corresponding cell and facet data. We can now create our discontinuous function `kappa` as follows
+#
 
 Q = functionspace(mesh, ("DG", 0))
 kappa = Function(Q)
@@ -281,6 +306,7 @@ top_cells = ct.find(top_marker)
 kappa.x.array[top_cells] = np.full_like(top_cells, 0.1, dtype=default_scalar_type)
 
 # We can also efficiently use the facet data `ft` to create the Dirichlet boundary condition
+#
 
 V = functionspace(mesh, ("Lagrange", 1))
 u_bc = Function(V)
@@ -290,6 +316,7 @@ left_dofs = locate_dofs_topological(V, mesh.topology.dim - 1, left_facets)
 bcs = [dirichletbc(default_scalar_type(1), left_dofs, V)]
 
 # We can now solve the problem in a similar fashion as above
+#
 
 # +
 u, v = TrialFunction(V), TestFunction(V)
