@@ -88,8 +88,8 @@ The last term can be written using the Neumann and Robin BCs, that is:
 $$
 \begin{align}
 \int_{\partial \Omega} \frac{\partial p}{\partial n} \bar v ~\mathrm{d}s =
--\int_{\partial \Omega_v}  j \omega \rho_0  \bar v ~\mathrm{d}s
-- \int_{\partial \Omega_Z}  \frac{j \omega \rho_0 \bar{v}_n}{\bar{Z}} p \bar v ~\mathrm{d}s.
+-\int_{\partial \Omega_v}  j \omega \rho_0  \bar{v}_n \bar v ~\mathrm{d}s
+- \int_{\partial \Omega_Z}  \frac{j \omega \rho_0}{\bar{Z}} p \bar v ~\mathrm{d}s.
 \end{align}
 $$
 
@@ -111,7 +111,7 @@ We define the sesquilinear form $a(p,v)$ is
 $$
 \begin{align}
 a(p,v) = \int_{\Omega} \nabla p  \cdot \nabla \bar v ~\mathrm{d}x
-+ \frac{j \omega }{\bar{Z}} \int_{\partial \Omega_Z}  \rho_0  p \bar v ~\mathrm{d}s,
++ \frac{j \omega }{\bar{Z}} \int_{\partial \Omega_Z}  \rho_0  p \bar v ~\mathrm{d}s
 - k^2 \int_{\Omega} p \bar v ~\mathrm{d}x 
 \end{align}
 $$
