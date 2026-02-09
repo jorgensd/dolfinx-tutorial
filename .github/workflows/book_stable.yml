@@ -10,6 +10,7 @@ on:
 env:
   HDF5_MPI: "ON"
   HDF5_DIR: "/usr/local/"
+  H5PY_SETUP_REQUIRES: 0
   DEB_PYTHON_INSTALL_LAYOUT: deb_system
   LIBGL_ALWAYS_SOFTWARE: 1
 
@@ -31,7 +32,7 @@ jobs:
       - name: Install book deps
         run: |
           python3 -m pip install --break-system-packages -U pip setuptools pkgconfig poetry-core
-          python3 -m pip install --no-binary=h5py .[netgen]
+          python3 -m pip install --no-build-isolation --no-binary=h5py .[netgen]
 
       - name: Build the book
         run: jupyter-book build .
