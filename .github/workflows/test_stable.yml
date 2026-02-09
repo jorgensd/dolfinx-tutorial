@@ -13,6 +13,7 @@ jobs:
     env:
       HDF5_MPI: "ON"
       HDF5_DIR: "/usr/local/"
+      H5PY_SETUP_REQUIRES: "0"
       DEB_PYTHON_INSTALL_LAYOUT: deb_system
       PYVISTA_OFF_SCREEN: true
       PYVISTA_JUPYTER_BACKEND: html

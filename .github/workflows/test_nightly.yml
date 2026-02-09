@@ -21,6 +21,8 @@ jobs:
 
     env:
       HDF5_MPI: "ON"
+      H5PY_SETUP_REQUIRES: 0
+      HDF5_DIR: "/usr/local/"
       PYVISTA_OFF_SCREEN: true
       PYVISTA_JUPYTER_BACKEND: html
       LIBGL_ALWAYS_SOFTWARE: 1
