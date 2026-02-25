@@ -7,7 +7,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.18.1
+#       jupytext_version: 1.19.1
 # ---
 
 # # Adaptive mesh refinement with NetGen and DOLFINx
@@ -97,6 +97,7 @@ curved_mesh = geoModel.curveField(order)
 # + tags=["hide-input"]
 curved_grid = pyvista.UnstructuredGrid(*dolfinx.plot.vtk_mesh(curved_mesh))
 curved_grid.cell_data["ct"] = ct.values
+plotter = pyvista.Plotter()
 plotter.add_mesh(
     curved_grid, show_edges=False, scalars="ct", cmap="blues", show_scalar_bar=False
 )
