@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.18.1
+#       jupytext_version: 1.19.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -99,6 +99,11 @@ L = dolfinx.fem.petsc.create_vector(dolfinx.fem.extract_function_spaces(residual
 # Next, we create the linear solver and the vector to hold `du`.
 
 solver = PETSc.KSP().create(mesh.comm)
+solver.setType("preonly")
+solver.getPC().setType("lu")
+solver.getPC().setFactorSolverType("mumps")
+solver.setErrorIfNotConverged(True)
+
 solver.setOperators(A)
 du = dolfinx.fem.Function(V)
 
@@ -139,7 +144,7 @@ while i < max_iterations:
 
     # Compute norm of update
     correction_norm = du.x.petsc_vec.norm(0)
-    print(f"Iteration {i}: Correction norm {correction_norm}")
+    PETSc.Sys.Print(f"Iteration {i}: Correction norm {correction_norm}")
     if correction_norm < 1e-10:
         break
     solutions[i, :] = uh.x.array[sort_order]
@@ -147,7 +152,7 @@ while i < max_iterations:
 # We now compute the magnitude of the residual.
 
 dolfinx.fem.petsc.assemble_vector(L, residual)
-print(f"Final residual {L.norm(0)}")
+PETSc.Sys.Print(f"Final residual {L.norm(0)}")
 A.destroy()
 L.destroy()
 solver.destroy()
@@ -167,7 +172,7 @@ for j, root in enumerate(roots):
     u_ex = root(x)
     L2_error = dolfinx.fem.form(ufl.inner(uh - u_ex, uh - u_ex) * ufl.dx)
     global_L2 = mesh.comm.allreduce(dolfinx.fem.assemble_scalar(L2_error), op=MPI.SUM)
-    print(f"L2-error (root {j}) {np.sqrt(global_L2)}")
+    PETSc.Sys.Print(f"L2-error (root {j}) {np.sqrt(global_L2)}")
 
     kwargs = {} if j == 0 else {"label": "u_exact"}
     plt.plot(x_spacing, root(x_spacing.reshape(1, -1)), *args, **kwargs)
@@ -227,6 +232,10 @@ A = dolfinx.fem.petsc.create_matrix(jacobian)
 L = dolfinx.fem.petsc.create_vector(dolfinx.fem.extract_function_spaces(residual))
 solver = PETSc.KSP().create(mesh.comm)
 solver.setOperators(A)
+solver.setType("preonly")
+solver.getPC().setType("lu")
+solver.getPC().setFactorSolverType("mumps")
+solver.setErrorIfNotConverged(True)
 
 # Since this problem has strong Dirichlet conditions, we need to apply lifting to the right hand side of our Newton problem.
 # We previously had that we wanted to solve the system:
@@ -262,14 +271,19 @@ while i < max_iterations:
     dolfinx.fem.petsc.assemble_matrix(A, jacobian, bcs=[bc])
     A.assemble()
     dolfinx.fem.petsc.assemble_vector(L, residual)
-    L.ghostUpdate(addv=PETSc.InsertMode.ADD, mode=PETSc.ScatterMode.REVERSE)
-    L.scale(-1)
 
-    # Compute b - J(u_D-u_(i-1))
-    dolfinx.fem.petsc.apply_lifting(L, [jacobian], [[bc]], x0=[uh.x.petsc_vec], alpha=1)
-    # Set du|_bc = u_{i-1}-u_D
-    dolfinx.fem.petsc.set_bc(L, [bc], uh.x.petsc_vec, 1.0)
+    # Compute b - alpha * J(u_D-u_(i-1))
+    dolfinx.fem.petsc.apply_lifting(
+        L, [jacobian], [[bc]], x0=[uh.x.petsc_vec], alpha=-1.0
+    )
+    L.ghostUpdate(addv=PETSc.InsertMode.ADD, mode=PETSc.ScatterMode.REVERSE)
+
+    # Set du|_bc = - (u_{i-1}-u_D)
+    dolfinx.fem.petsc.set_bc(L, [bc], uh.x.petsc_vec, -1.0)
     L.ghostUpdate(addv=PETSc.InsertMode.INSERT_VALUES, mode=PETSc.ScatterMode.FORWARD)
+
+    # Compute negative residual
+    L.scale(-1)
 
     # Solve linear problem
     solver.solve(L, du.x.petsc_vec)
@@ -287,8 +301,10 @@ while i < max_iterations:
         np.sqrt(mesh.comm.allreduce(dolfinx.fem.assemble_scalar(error), op=MPI.SUM))
     )
     du_norm.append(correction_norm)
-
-    print(f"Iteration {i}: Correction norm {correction_norm}, L2 error: {L2_error[-1]}")
+    PETSc.Sys.Print(
+        f"Iteration {i}: Correction norm {correction_norm}, L2 error: {L2_error[-1]}",
+        flush=True,
+    )
     if correction_norm < 1e-10:
         break
 
@@ -315,8 +331,7 @@ plt.grid()
 # We compute the max error and plot the solution
 
 error_max = domain.comm.allreduce(np.max(np.abs(uh.x.array - u_D.x.array)), op=MPI.MAX)
-if domain.comm.rank == 0:
-    print(f"Error_max: {error_max:.2e}")
+PETSc.Sys.Print(f"Error_max: {error_max:.2e}")
 
 u_topology, u_cell_types, u_geometry = dolfinx.plot.vtk_mesh(V)
 u_grid = pyvista.UnstructuredGrid(u_topology, u_cell_types, u_geometry)
