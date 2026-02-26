@@ -31,7 +31,7 @@ jobs:
       - name: Install book deps
         run: |
           python3 -m pip install --break-system-packages -U pip setuptools pkgconfig poetry-core
-          python3 -m pip install --no-binary=h5py .[netgen]
+          python3 -m pip install --no-binary=h5py --no-build-isolation .[netgen]
 
       - name: Build the book
         run: jupyter-book build .
