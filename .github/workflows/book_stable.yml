@@ -37,7 +37,7 @@ jobs:
       - name: Build the book
         run: jupyter-book build .
 
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: webpage
