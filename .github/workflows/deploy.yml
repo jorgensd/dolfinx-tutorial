@@ -41,7 +41,7 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Download docs artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: webpage
           path: "./public"
