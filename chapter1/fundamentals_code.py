@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.18.1
+#       jupytext_version: 1.19.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -97,8 +97,8 @@ import numpy
 domain = mesh.create_unit_square(MPI.COMM_WORLD, 8, 8, mesh.CellType.quadrilateral)
 # -
 
-# Note that in addition to give how many elements we would like to have in each direction.
-# We also have to supply the _MPI-communicator_.
+# Note that in addition to give how many elements we would like to have in each direction,
+# we also have to supply the _MPI-communicator_.
 # This is to specify how we would like the program to behave in parallel.
 # If we supply {py:data}`MPI.COMM_WORLD<mpi4py.MPI.COMM_WORLD>` we create a single mesh,
 # whose data is distributed over the number of processors we would like to use.
@@ -200,7 +200,7 @@ f = fem.Constant(domain, default_scalar_type(-6))
 # However, if we would like to change this parameter later in the simulation,
 # we would have to redefine our variational formulation.
 # The {py:attr}`dolfinx.fem.Constant.value` allows us to update the value in $f$ by using `f.value=5`.
-# Additionally, by indicating that $f$ is a constant, we speed of compilation of the variational
+# Additionally, by indicating that $f$ is a constant, we speed up compilation of the variational
 # formulations required for the created linear system.
 # ```
 #
