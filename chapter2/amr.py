@@ -95,6 +95,7 @@ curved_mesh = geoModel.curveField(order)
 # Again, we visualize the curved mesh with pyvista.
 
 # + tags=["hide-input"]
+plotter = pyvista.Plotter()
 curved_grid = pyvista.UnstructuredGrid(*dolfinx.plot.vtk_mesh(curved_mesh))
 curved_grid.cell_data["ct"] = ct.values
 plotter.add_mesh(
