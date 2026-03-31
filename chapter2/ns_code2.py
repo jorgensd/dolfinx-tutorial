@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.18.1
+#       jupytext_version: 1.19.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -165,11 +165,13 @@ if mesh_comm.rank == model_rank:
 
 # Create distance field from obstacle.
 # Add threshold of mesh sizes based on the distance field
+# ```
 # LcMax -                  /--------
 #                      /
 # LcMin -o---------/
 #        |         |       |
 #       Point    DistMin DistMax
+# ```
 
 res_min = r / 3
 if mesh_comm.rank == model_rank:
