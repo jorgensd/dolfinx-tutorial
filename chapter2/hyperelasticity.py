@@ -209,7 +209,7 @@ tval0 = -1.5
 for n in range(1, 10):
     T.value[2] = n * tval0
     problem.solve()
-    converged = problem.solver.getConvergedReason() > 0
+    converged = problem.solver.getConvergedReason()
     num_its = problem.solver.getIterationNumber()
     assert converged > 0, f"Solver did not converge with reason {converged}."
 
