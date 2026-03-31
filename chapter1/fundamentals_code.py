@@ -175,7 +175,7 @@ bc = fem.dirichletbc(uD, boundary_dofs)
 # In FEniCSx, we do not specify boundary conditions as part of the function space,
 # so it is sufficient to use a common space for the trial and test function.
 #
-# We use the {py:mod}`Unified Form Language<ufl>` (UFL) to specify the varitional formulations.
+# We use the {py:mod}`Unified Form Language<ufl>` (UFL) to specify the variational formulations.
 # See {cite}`fundamentals-ufl2014` for more details.
 
 
