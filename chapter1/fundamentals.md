@@ -93,10 +93,12 @@ Find $u\in V$ such that
 $$\int_\Omega \nabla u \cdot \nabla v~\mathrm{d} x = \int_\Omega f v~\mathrm{d} x\qquad \forall v \in \hat{V}.$$
 
 For the present problem, the trial and test spaces $V$ and $\hat{V}$ are defined as
-\begin{align}
-V&=\{v\in H^1(\Omega) \vert v=u_D&&\text{on } \partial \Omega \},\\
-\hat{V}&=\{v\in H^1(\Omega) \vert v=0 &&\text{on } \partial \Omega \}.
-\end{align}
+\begin{equation}
+\begin{alignedat}{2}
+V &= \{v \in H^1(\Omega) \mid v = u_D && \quad \text{on } \partial \Omega \}, \\
+\hat{V} &= \{v \in H^1(\Omega) \mid v = 0 && \quad \text{on } \partial \Omega \}.
+\end{alignedat}
+\end{equation}
 In short, $H^1(\Omega)$ is the Sobolev space containing functions $v$ such that $v^2$ and $\vert \nabla v \vert ^2$ have finite integrals over $\Omega$. The solution of the underlying
 PDE must lie in a function space where the derivatives are
 also continuous, but the Sobolev space $H^1(\Omega)$ allows functions with discontinuous derivatives.
