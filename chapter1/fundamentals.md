@@ -78,7 +78,7 @@ $-\int_\Omega (\nabla^2 u)v~\mathrm{d}x
 = \int_\Omega\nabla u\cdot\nabla v~\mathrm{d}x- 
 \int_{\partial\Omega}\frac{\partial u}{\partial n}v~\mathrm{d}s,$
 
-where $\frac{\partial u}{\partial n}=\nabla u \cdot \vec{n}$ is the derivative of $u$ in the outward normal direction $\vec{n}$ on the boundary.
+where $\dfrac{\partial u}{\partial n}=\nabla u \cdot \vec{n}$ is the derivative of $u$ in the outward normal direction $\vec{n}$ on the boundary.
 
 Another feature of variational formulations is that the test function $v$ is required to vanish on the parts of the boundary where the solution $u$ is known. See for instance {cite}`fd-Langtangen_Mardal_FEM_2019`.
 
