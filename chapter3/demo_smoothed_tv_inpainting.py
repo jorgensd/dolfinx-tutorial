@@ -1,11 +1,12 @@
 # ---
 # jupyter:
 #   jupytext:
+#     formats: ipynb,py:light
 #     text_representation:
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.13.6
+#       jupytext_version: 1.19.1
 # ---
 
 # # Smoothed TV image inpainting
@@ -43,7 +44,7 @@
 # $\alpha$  and $\beta$ control the balance between the data fidelity
 # (fit to f) and smoothness.
 # The parameter $\varepsilon>0$ smooths the TV function so that
-# it is differentiable and can be solved with Newton type methods
+# it is differentiable and can be solved with Newton type methods.
 #
 # ## Discretization
 # We discretize the problem using
@@ -67,8 +68,9 @@ import matplotlib.tri as mtri
 import numpy as np
 
 import ufl
-from dolfinx import fem, mesh
+from dolfinx import fem, mesh, plot
 from dolfinx.fem.petsc import NonlinearProblem
+import pyvista
 
 # -
 
@@ -80,9 +82,8 @@ nx = 128
 ny = 128
 msh = mesh.create_unit_square(MPI.COMM_WORLD, nx, ny)
 
-# We use first order Lagrange elements for discretizing the image.
-# In this space, the DOFs are the values of u at mesh vertices
-# the solution is continous but has piecewise constant gradient
+# We use [first order Lagrange elements](https://defelement.org/elements/examples/triangle-lagrange-equispaced-1.html) for discretizing the image.
+#
 
 V = fem.functionspace(msh, ("Lagrange", 1))
 
@@ -91,8 +92,8 @@ V = fem.functionspace(msh, ("Lagrange", 1))
 #
 # $$
 #   u_{true}=\begin{cases}
-#   1 & \text{ if } (x,y) \text{ is inside a square}\\
-#   0 &\text{ otherwise}
+#   1 & \text{ if } (x,y) \text{ is inside a square},\\
+#   0 &\text{ otherwise}.
 #   \end{cases}
 # $$
 #
@@ -102,8 +103,7 @@ V = fem.functionspace(msh, ("Lagrange", 1))
 
 def true_image(x):
     """Define a binary image with a square in the center."""
-    X = x[0]
-    Y = x[1]
+    X, Y, _ = x
     return ((X > 0.2) & (X < 0.8) & (Y > 0.2) & (Y < 0.8)).astype(np.float64)
 
 
@@ -112,8 +112,8 @@ def true_image(x):
 #
 # $$
 #   m(x,y)=\begin{cases}
-#   1& \text{ known data}\\
-#   0 & \text{ missing region}
+#   1& \text{ known data},\\
+#   0 & \text{ missing region}.
 #   \end{cases}
 # $$
 #
@@ -129,21 +129,28 @@ def true_image(x):
 # using smoothness (TV regularization)
 
 
-def mask_function(x):
-    """Create a mask with random circular holes inside the square."""
-    X = x[0]
-    Y = x[1]
-    # all pixels known
-    mask = np.ones_like(X, dtype=np.float64)
-    # number of speckles
-    num_speckles = 50
-    # random centers
-    generator = np.random.Generator(np.random.MT19937(0))  # random seed for reproducibility
+def mask_function(x, num_speckles=50, seed=0):
+    """Create a mask with random circular holes inside the square.
+    
+    Args:
+        x: The coordinates of the mesh points (x, y, z).
+        num_speckles: The number of circular holes to create.
+        seed: Random seed number for the center of the circular holes.
 
+    """
+    X, Y, _ = x
+
+    # all pixels stat as known
+    mask = np.ones_like(X, dtype=np.float64)
+
+    # random centers
+    generator = np.random.Generator(np.random.MT19937(seed))
     cx = generator.uniform(0.2, 0.8, num_speckles)
     cy = generator.uniform(0.2, 0.8, num_speckles)
+
     # random radii (small + varied)
     radii = generator.uniform(0.01, 0.03, num_speckles)
+
     # create holes. mask =0 inside circles
     for i in range(num_speckles):
         r2 = (X - cx[i]) ** 2 + (Y - cy[i]) ** 2
@@ -163,8 +170,25 @@ m = fem.Function(V, name="mask")
 m.interpolate(mask_function)
 f = fem.Function(V, name="observed_image")
 f.x.array[:] = m.x.array * u_true.x.array
-u = fem.Function(V, name="reconstructed_image")
-u.x.array[:] = f.x.array.copy()
+
+# We visualize the true and observed image with Pyvista before solving the problem
+
+# +
+grid = pyvista.UnstructuredGrid(*plot.vtk_mesh(V))
+grid.point_data["true_image"] = u_true.x.array
+grid.point_data["observed_image"] = f.x.array
+
+plotter = pyvista.Plotter(shape=(1, 2))
+plotter.subplot(0, 0)
+plotter.add_text("True Image", font_size=12)
+plotter.add_mesh(grid, scalars="true_image", cmap="gray")
+plotter.subplot(0, 1)
+plotter.add_text("Observed Image", font_size=12)
+plotter.add_mesh(grid, scalars="observed_image", cmap="gray")
+plotter.link_views()
+plotter.view_xy()
+plotter.show()
+# -
 
 # We now define the nonlinear variational problem corresponding to the
 # smoothed total variation regularised inpainting model.
@@ -205,12 +229,11 @@ eps = fem.Constant(msh, 1.0e-4)
 # + \alpha \int {\nabla u \cdot \nabla v \over \sqrt{TV}}
 # $$
 
-v = ufl.TestFunction(V)
-du = ufl.TrialFunction(V)
-
+u = fem.Function(V, name="reconstructed_image")
 grad_u = ufl.grad(u)
 tv_denom = ufl.sqrt(ufl.inner(grad_u, grad_u) + eps**2)
 
+v = ufl.TestFunction(V)
 F = beta * m * (u - f) * v * ufl.dx + alpha * ufl.inner(grad_u, ufl.grad(v)) / tv_denom * ufl.dx
 
 # This formulation is based on total variation (TV) regulaization
@@ -220,8 +243,10 @@ F = beta * m * (u - f) * v * ufl.dx + alpha * ufl.inner(grad_u, ufl.grad(v)) / t
 # A nonlinear PETSc problem is created and solved with a Newton line-search
 # method, with an LU factorization for the linearized system
 # $J(u_k) s= -F(u_k)$.
+# We initialize the non-linear problem with the observed image
 
 # +
+u.x.array[:] = f.x.array
 petsc_options = {
     "snes_type": "newtonls",
     "snes_linesearch_type": "bt",
@@ -389,40 +414,43 @@ coords = V.tabulate_dof_coordinates()
 x, y = coords[:, 0], coords[:, 1]
 inner_idx = np.where((x > 0.3) & (x < 0.7) & (y > 0.3) & (y < 0.7))[0]
 
+# +
 # Printing statments for validation and metrics
 # If on main process
-if msh.comm.rank == 0:
-    print("---Smoothed TV inpainting results---")
+from petsc4py import PETSc
+pprint = PETSc.Sys.Print
+pprint("---Smoothed TV inpainting results---")
 
-    print("--FEM Metrics--")
-    print(f"Global DOFs: {num_dofs}")
-    print(f"H1 seminorm error: {h1_semi_error}")
+pprint("--FEM Metrics--")
+pprint(f"Global DOFs: {num_dofs}")
+pprint(f"H1 seminorm error: {h1_semi_error}")
 
-    print("--Newton Linesearch:--")
-    print("-Optimization:-")
-    print(f"Initial objective J(f): {J0:.4e}")
-    print(f"Final objective J(u): {objective_value:.4e}")
-    print(f"Relative decrease: {(J0 - objective_value) / J0:.2%}")
+pprint("--Newton Linesearch:--")
+pprint("-Optimization:-")
+pprint(f"Initial objective J(f): {J0:.4e}")
+pprint(f"Final objective J(u): {objective_value:.4e}")
+pprint(f"Relative decrease: {(J0 - objective_value) / J0:.2%}")
 
-    print("-Solver convergence:-")
-    print(f"SNES iteration: {iters}")
-    print(f"SNES final residual norm: {final_residual:.4e}")
-    print(f"SNES status: {status}")
-    print(f"SNES converged reason: {reason}")
+pprint("-Solver convergence:-")
+pprint(f"SNES iteration: {iters}")
+pprint(f"SNES final residual norm: {final_residual:.4e}")
+pprint(f"SNES status: {status}")
+pprint(f"SNES converged reason: {reason}")
 
-    print("---Reconstruction Quality:---")
-    print(f"Data error (known region): {data_error:.4e}")
-    print(f"TV seminorm: {tv_energy:.4e}")
-    print(f"True L2 error: {true_error:.4e}")
-    print(f"Hole error: {hole_error:.4e}")
-    print(f"PSNR: {psnr:.2f} dB")
+pprint("---Reconstruction Quality:---")
+pprint(f"Data error (known region): {data_error:.4e}")
+pprint(f"TV seminorm: {tv_energy:.4e}")
+pprint(f"True L2 error: {true_error:.4e}")
+pprint(f"Hole error: {hole_error:.4e}")
+pprint(f"PSNR: {psnr:.2f} dB")
 
-    print("---Recovered image range:---")
-    print("u min:", np.min(u.x.array))
-    print("u max:", np.max(u.x.array))
-    print("u mean in inner square:", np.mean(u.x.array[inner_idx]))
-    print("u min in inner square:", np.min(u.x.array[inner_idx]))
-    print("u max in inner square:", np.max(u.x.array[inner_idx]))
+pprint("---Recovered image range:---")
+pprint(f"u min: {np.min(u.x.array)}")
+pprint(f"u max: {np.max(u.x.array)}")
+pprint(f"u mean in inner square: {np.mean(u.x.array[inner_idx])}")
+pprint(f"u min in inner square: {np.min(u.x.array[inner_idx])}")
+pprint(f"u max in inner square: {np.max(u.x.array[inner_idx])}")
+# -
 
 # ## Visualization
 # We construct fields that allow us to visually asses the quality
@@ -451,6 +479,7 @@ msh.topology.create_connectivity(msh.topology.dim, 0)
 cells = msh.topology.connectivity(msh.topology.dim, 0)
 triangles = np.array(cells.array, dtype=np.int32).reshape(-1, 3)
 triang = mtri.Triangulation(x, y, triangles)
+
 
 
 # Plotting
