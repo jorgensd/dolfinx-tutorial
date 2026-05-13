@@ -104,6 +104,8 @@ def true_image(x):
     """Define a binary image with a square in the center."""
     X = x[0]
     Y = x[1]
+
+    # main square
     return ((X > 0.2) & (X < 0.8) & (Y > 0.2) & (Y < 0.8)).astype(np.float64)
 
 
@@ -136,14 +138,14 @@ def mask_function(x):
     # all pixels known
     mask = np.ones_like(X, dtype=np.float64)
     # number of speckles
-    num_speckles = 50
+    num_speckles = 25
     # random centers
     generator = np.random.Generator(np.random.MT19937(0))  # random seed for reproducibility
 
-    cx = generator.uniform(0.2, 0.8, num_speckles)
-    cy = generator.uniform(0.2, 0.8, num_speckles)
+    cx = generator.uniform(0.25, 0.75, num_speckles)
+    cy = generator.uniform(0.25, 0.75, num_speckles)
     # random radii (small + varied)
-    radii = generator.uniform(0.01, 0.03, num_speckles)
+    radii = generator.uniform(0.012, 0.035,  num_speckles)
     # create holes. mask =0 inside circles
     for i in range(num_speckles):
         r2 = (X - cx[i]) ** 2 + (Y - cy[i]) ** 2
@@ -197,21 +199,35 @@ alpha = fem.Constant(msh, 0.003)
 beta = fem.Constant(msh, 1.0)
 eps = fem.Constant(msh, 1.0e-4)
 
-# Smoothed TV inpainting weak form
-# where $TV=||\nabla u||_2 +\varepsilon^2$:
+# Smoothed TV inpainting energy functional.
+# We define the energy J(u) and use ufl.derivative to obtain
+# the residual form F.
 #
 # $$
-# F(u) = \int m (u-f)v dx
-# + \alpha \int {\nabla u \cdot \nabla v \over \sqrt{TV}}
+# J(u) = {1 \over 2}\beta\int_\Omega m(u-f)^2\,dx
+# + \alpha\int_\Omega \sqrt{||\nabla u||^2+\varepsilon^2}\,dx
+# $$
+#
+# Taking the first variation gives the weak form F(u; v).
+# 
+# $$
+# F(u; v) =
+# \beta\int_\Omega m(u-f)v\,dx
+# + \alpha\int_\Omega
+# {\nabla u\cdot\nabla v
+# \over
+# \sqrt{||\nabla u||^2+\varepsilon^2}}\,dx
+# = 0 \quad \forall v\in V.
 # $$
 
 v = ufl.TestFunction(V)
-du = ufl.TrialFunction(V)
 
-grad_u = ufl.grad(u)
-tv_denom = ufl.sqrt(ufl.inner(grad_u, grad_u) + eps**2)
+J_energy = (
+    0.5 * beta * m * (u - f) ** 2 * ufl.dx
+    + alpha * ufl.sqrt(ufl.inner(ufl.grad(u), ufl.grad(u)) + eps**2) * ufl.dx
+)
 
-F = beta * m * (u - f) * v * ufl.dx + alpha * ufl.inner(grad_u, ufl.grad(v)) / tv_denom * ufl.dx
+F = ufl.derivative(J_energy, u, v)
 
 # This formulation is based on total variation (TV) regulaization
 # for image denoising and inpainting
@@ -219,7 +235,7 @@ F = beta * m * (u - f) * v * ufl.dx + alpha * ufl.inner(grad_u, ufl.grad(v)) / t
 
 # A nonlinear PETSc problem is created and solved with a Newton line-search
 # method, with an LU factorization for the linearized system
-# $J(u_k) s= -F(u_k)$.
+# $F'(u_k) s= -F(u_k)$.
 
 # +
 petsc_options = {
@@ -248,7 +264,6 @@ problem.solve()
 # 1. whether the nonlinear Newton/SNES solve converged
 # 2. whether the variational objective decreased
 # 3. how accurate the reconstruction is globally and in the hole region
-# 4. how well the recovered square preserves its interior plateau
 
 # FEM Metrics
 # Global number of degrees of freedom reports the  size of the
@@ -376,18 +391,6 @@ J0_tv = msh.comm.allreduce(J0_tv, op=MPI.SUM)
 J0 = 0.5 * float(beta) * J0_data + float(alpha) * J0_tv
 # -
 
-# Interior plateau statistics
-# Measures the recovered values in an inner square
-# instead of the full true square.
-# This avoids the edge transition layer, where TV smoothing naturally
-# rounds sharpe boundaries
-# The mean value tells us how well the reconstruction preserves
-# the unit plateau inside the square
-# Ideally we want mean $\approx$ 1
-
-coords = V.tabulate_dof_coordinates()
-x, y = coords[:, 0], coords[:, 1]
-inner_idx = np.where((x > 0.3) & (x < 0.7) & (y > 0.3) & (y < 0.7))[0]
 
 # Printing statments for validation and metrics
 # If on main process
@@ -417,13 +420,6 @@ if msh.comm.rank == 0:
     print(f"Hole error: {hole_error:.4e}")
     print(f"PSNR: {psnr:.2f} dB")
 
-    print("---Recovered image range:---")
-    print("u min:", np.min(u.x.array))
-    print("u max:", np.max(u.x.array))
-    print("u mean in inner square:", np.mean(u.x.array[inner_idx]))
-    print("u min in inner square:", np.min(u.x.array[inner_idx]))
-    print("u max in inner square:", np.max(u.x.array[inner_idx]))
-
 # ## Visualization
 # We construct fields that allow us to visually asses the quality
 # of the reconstruction
@@ -442,14 +438,15 @@ hole_error_field.x.array[:] = (1.0 - m.x.array) * (u.x.array - u_true.x.array)
 # The solution u in FEM is represented by values at degrees
 # of freedom (DOFs), not on a regular grid
 # To plot in matplotlib
-# 1. extract the coordiantes of the DOFs
-# 2. extract the mesh connectivity (triangles)
-# 3. build a Triangluation object
+# 1. extract the coordinates of the DOFs
+# 2. extract the function-space dofmap connectivity (triangles)
+# 3. build a Triangulation object
 # This allows matplotlib to render the piecewise linear FEM solution
 
-msh.topology.create_connectivity(msh.topology.dim, 0)
-cells = msh.topology.connectivity(msh.topology.dim, 0)
-triangles = np.array(cells.array, dtype=np.int32).reshape(-1, 3)
+coords = V.tabulate_dof_coordinates()
+x, y = coords[:, 0], coords[:, 1]
+
+triangles = V.dofmap.list
 triang = mtri.Triangulation(x, y, triangles)
 
 
