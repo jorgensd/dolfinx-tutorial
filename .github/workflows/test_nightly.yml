@@ -21,12 +21,14 @@ jobs:
 
     env:
       HDF5_MPI: "ON"
+      H5PY_SETUP_REQUIRES: 0
+      HDF5_DIR: "/usr/local/"
       PYVISTA_OFF_SCREEN: true
       PYVISTA_JUPYTER_BACKEND: html
       LIBGL_ALWAYS_SOFTWARE: 1
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Special handling of some installation
         uses: ./.github/actions/install-dependencies
@@ -83,7 +85,7 @@ jobs:
           mpirun -n 2 python3 compiler_parameters.py
           mpirun -n 2 python3 newton-solver.py
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: webpage

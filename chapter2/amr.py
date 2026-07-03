@@ -98,6 +98,7 @@ curved_mesh = geoModel.curveField(order)
 plotter = pyvista.Plotter()
 curved_grid = pyvista.UnstructuredGrid(*dolfinx.plot.vtk_mesh(curved_mesh))
 curved_grid.cell_data["ct"] = ct.values
+plotter = pyvista.Plotter()
 plotter.add_mesh(
     curved_grid, show_edges=False, scalars="ct", cmap="blues", show_scalar_bar=False
 )

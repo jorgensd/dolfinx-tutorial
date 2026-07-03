@@ -10,6 +10,7 @@ on:
 env:
   HDF5_MPI: "ON"
   HDF5_DIR: "/usr/local/"
+  H5PY_SETUP_REQUIRES: 0
   DEB_PYTHON_INSTALL_LAYOUT: deb_system
   LIBGL_ALWAYS_SOFTWARE: 1
 
@@ -23,7 +24,7 @@ jobs:
       PYVISTA_JUPYTER_BACKEND: html
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Install common packages
         uses: ./.github/actions/install-dependencies
@@ -31,12 +32,12 @@ jobs:
       - name: Install book deps
         run: |
           python3 -m pip install --break-system-packages -U pip setuptools pkgconfig poetry-core
-          python3 -m pip install --no-binary=h5py --no-build-isolation .[netgen]
+          python3 -m pip install --no-build-isolation --no-binary=h5py .[netgen]
 
       - name: Build the book
         run: jupyter-book build .
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: webpage

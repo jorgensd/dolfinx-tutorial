@@ -165,11 +165,13 @@ if mesh_comm.rank == model_rank:
 
 # Create distance field from obstacle.
 # Add threshold of mesh sizes based on the distance field
+# ```
 # LcMax -                  /--------
 #                      /
 # LcMin -o---------/
 #        |         |       |
 #       Point    DistMin DistMax
+# ```
 
 res_min = r / 3
 if mesh_comm.rank == model_rank:
