@@ -42,7 +42,8 @@
 # We now need to define our inner product space.
 # We choose the $L^2$ inner product spaces, which is a _[sesquilinear](https://en.wikipedia.org/wiki/Sesquilinear_form) 2-form_,
 # meaning that $\langle u, v\rangle$ is a map from $V_h\times V_h\mapsto K$, and
-# $\langle u, v \rangle = \int_\Omega u \cdot \bar v ~\mathrm{d} x$.As it is sesquilinear, we have the following properties:
+# $\langle u, v \rangle = \int_\Omega u \cdot \bar v ~\mathrm{d} x$.
+# As it is sesquilinear, we have the following properties:
 #
 # $$
 # \begin{align}
