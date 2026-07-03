@@ -7,7 +7,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.18.1
+#       jupytext_version: 1.19.4
 # ---
 
 # # Mixed Poisson with a Schur complement pre-conditioner
