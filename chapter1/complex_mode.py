@@ -8,9 +8,9 @@
 #       format_version: '1.5'
 #       jupytext_version: 1.19.4
 #   kernelspec:
-#     display_name: Python 3 (ipykernel)
+#     display_name: Python 3 (DOLFINx complex)
 #     language: python
-#     name: python3
+#     name: python3-complex
 # ---
 
 # # The Poisson problem with complex numbers
