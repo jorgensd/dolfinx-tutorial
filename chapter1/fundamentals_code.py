@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.19.1
+#       jupytext_version: 1.19.4
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -114,11 +114,11 @@ domain = mesh.create_unit_square(MPI.COMM_WORLD, 8, 8, mesh.CellType.quadrilater
 #  Once the mesh has been created, we can create the finite element function space $V$.
 # The finite element function space does not need to be the same as the one used to describe the mesh.
 # DOLFINx supports a wide range of arbitrary order finite element function spaces, see:
-# [Supported elements in DOLFINx](https://defelement.org/lists/implementations/basix.ufl.html)
+# [Supported elements in DOLFINx](https://defelement.org/lists/implementations/basix_ufl.html)
 # for an extensive list.
 # To create a function space, we need to specify what mesh the space is defined on,
-# what element famil the space is based on, and the degree of the element.
-# These can for instance be defned through a tuple `("family", degree)`, as shown below
+# what element family the space is based on, and the degree of the element.
+# These can for instance be defined through a tuple `("family", degree)`, as shown below
 
 # +
 from dolfinx import fem

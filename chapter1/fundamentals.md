@@ -27,7 +27,7 @@ The Poisson problem, including both the PDE, $-\nabla^2 u = f$, and the boundary
 
 In the two-dimensional space with coordinates $x$ and $y$, we can expand the Poisson equation as
 
-$-\frac{\partial^2 u}{\partial x^2} - \frac{\partial^2 u}{\partial y^2} = f(x,y)$
+$$-\frac{\partial^2 u}{\partial x^2} - \frac{\partial^2 u}{\partial y^2} = f(x,y)$$
 
 The unknown $u$ is now a function of two variables, $u=u(x,y)$, defined over the two-dimensional domain $\Omega$.
 
@@ -65,7 +65,7 @@ The terms trial and test functions are used in FEniCSx too. The test and trial f
 
 In the present case, we multiply the Poisson equation by a test function $v$ and integrate over $\Omega$:
 
-$\int_\Omega (-\nabla^2 u) v~\mathrm{d} x = \int_\Omega f v~\mathrm{d} x.$
+$$\int_\Omega (-\nabla^2 u) v~\mathrm{d} x = \int_\Omega f v~\mathrm{d} x.$$
 
 Here $\mathrm{d} x$ denotes the differential element for integration over the domain $\Omega$. We will later let $\mathrm{d} s$ denote the differential element for integration over $\partial\Omega$, the boundary of $\Omega$.
 
@@ -74,29 +74,31 @@ Here, we have a second-order differential of $u$, which can be transformed to a 
 [integration by parts](https://en.wikipedia.org/wiki/Integration_by_parts).
 The formula reads
 
-$-\int_\Omega (\nabla^2 u)v~\mathrm{d}x
+$$-\int_\Omega (\nabla^2 u)v~\mathrm{d}x
 = \int_\Omega\nabla u\cdot\nabla v~\mathrm{d}x- 
-\int_{\partial\Omega}\frac{\partial u}{\partial n}v~\mathrm{d}s,$
+\int_{\partial\Omega}\frac{\partial u}{\partial n}v~\mathrm{d}s,$$
 
-where $\frac{\partial u}{\partial n}=\nabla u \cdot \vec{n}$ is the derivative of $u$ in the outward normal direction $\vec{n}$ on the boundary.
+where $\dfrac{\partial u}{\partial n}=\nabla u \cdot \vec{n}$ is the derivative of $u$ in the outward normal direction $\vec{n}$ on the boundary.
 
 Another feature of variational formulations is that the test function $v$ is required to vanish on the parts of the boundary where the solution $u$ is known. See for instance {cite}`fd-Langtangen_Mardal_FEM_2019`.
 
 In the present problem, this means that $v$ is $0$ on the whole boundary $\partial\Omega$. Thus, the second term in the integration by parts formula vanishes, and we have that
 
-$\int_\Omega \nabla u \cdot \nabla v~\mathrm{d} x = \int_\Omega f v~\mathrm{d} x.$
+$$\int_\Omega \nabla u \cdot \nabla v~\mathrm{d} x = \int_\Omega f v~\mathrm{d} x.$$
 
 If we require that this equation holds for all test functions $v$ in some suitable space $\hat{V}$, the so-called _test space_, we obtain a well-defined mathematical problem that uniquely determines the solution $u$ which lies in some function space $V$. Note that $V$ does not have to be the same space as
 $\hat{V}$. We call the space $V$ the _trial space_. We refer to the equation above as the _weak form_/_variational form_ of the original boundary-value problem. We now properly state our variational problem:
 Find $u\in V$ such that
 
-$\int_\Omega \nabla u \cdot \nabla v~\mathrm{d} x = \int_\Omega f v~\mathrm{d} x\qquad \forall v \in \hat{V}.$
+$$\int_\Omega \nabla u \cdot \nabla v~\mathrm{d} x = \int_\Omega f v~\mathrm{d} x\qquad \forall v \in \hat{V}.$$
 
 For the present problem, the trial and test spaces $V$ and $\hat{V}$ are defined as
-\begin{align}
-V&=\{v\in H^1(\Omega) \vert v=u_D&&\text{on } \partial \Omega \},\\
-\hat{V}&=\{v\in H^1(\Omega) \vert v=0 &&\text{on } \partial \Omega \}.
-\end{align}
+\begin{equation}
+\begin{alignedat}{2}
+V &= \{v \in H^1(\Omega) \mid v = u_D && \quad \text{on } \partial \Omega \}, \\
+\hat{V} &= \{v \in H^1(\Omega) \mid v = 0 && \quad \text{on } \partial \Omega \}.
+\end{alignedat}
+\end{equation}
 In short, $H^1(\Omega)$ is the Sobolev space containing functions $v$ such that $v^2$ and $\vert \nabla v \vert ^2$ have finite integrals over $\Omega$. The solution of the underlying
 PDE must lie in a function space where the derivatives are
 also continuous, but the Sobolev space $H^1(\Omega)$ allows functions with discontinuous derivatives.
