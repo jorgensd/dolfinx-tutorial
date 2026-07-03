@@ -7,7 +7,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.18.1
+#       jupytext_version: 1.19.4
 # ---
 
 # # Mixed Poisson with a Schur complement pre-conditioner
@@ -223,7 +223,7 @@ def interpolate_facet_expression(
     interpolation_points = Q_el.basix_element.x
     for i, points in enumerate(interpolation_points[fdim]):
         geom = ref_geom[ref_top[fdim][i]]
-        ref_points = facet_cel.pull_back(points, geom)
+        ref_points = facet_cel.pull_back(points, geom, tol=1e-6, maxit=25)
         # Assert that interpolation points are all equal on all facets
         if reference_facet_points is None:
             reference_facet_points = ref_points
@@ -265,7 +265,7 @@ def interpolate_facet_expression(
     # Use lower-level interpolation that takes in the function evaluated at the physical
     # interpolation points of the mesh.
     qh = dolfinx.fem.Function(Q)
-    qh._cpp_object.interpolate(
+    qh._cpp_object.interpolate_f(
         values.reshape(-1, domain.geometry.dim).T.copy(), boundary_entities[::2].copy()
     )
     qh.x.scatter_forward()
