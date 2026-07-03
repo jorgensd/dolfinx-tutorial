@@ -1,25 +1,50 @@
 [build-system]
-requires = ["setuptools>=64.4.0", "wheel", "pip>=22.3"]
+requires = ["setuptools>=64.4.0", "wheel", "pip>=22.3", "poetry-core"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "DOLFINx_Tutorial"
-version = "0.7.2"
+version = "0.11.0"
 dependencies = [
-    "jupyter-book",
-    # Pin docutils due to https://github.com/executablebooks/jupyter-book/issues/1970#issuecomment-1466051277
-    "docutils==0.17.1",
+    "jupyter-book<2.0",
     "meshio",
     "h5py",
     "seaborn",
     "pandas",
     "tqdm",
-    "pyvista[all]>=0.43.0",
-    "fenics-dolfinx>=0.7.0",
+    "pyvista[all]>=0.45.0",
+    "fenics-dolfinx>=0.11.0,<0.12.0",
+    "sphinx-codeautolink",
+    "trame_jupyter_extension",
+    "jupytext",
+    "vtk>=9.5.0",
 ]
 
 [project.optional-dependencies]
-dev = ["pdbpp", "ipython"]
+dev = ["pdbpp", "ipython", "ruff", "pre-commit"]
+netgen = [
+    "ngsPETSc@git+https://github.com/NGSolve/ngsPETSc/@main",
+] # Has to be optional as we cant get netgen on linux/arm64
 
 [tool.setuptools]
 packages = []
+
+
+[tool.jupytext]
+formats = "ipynb,py:percent"
+
+
+[tool.ruff.lint.isort]
+known-first-party = ["basix", "dolfinx", "ffcx", "ufl"]
+known-third-party = ["gmsh", "numpy", "pytest"]
+section-order = [
+    "future",
+    "standard-library",
+    "mpi",
+    "third-party",
+    "first-party",
+    "local-folder",
+]
+
+[tool.ruff.lint.isort.sections]
+"mpi" = ["mpi4py", "petsc4py"]

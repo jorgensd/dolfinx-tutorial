@@ -39,7 +39,7 @@ The IPCS scheme involves three steps. First, we compute a *tentative velocity $u
     -\left\langle \mu \nabla u^{n+\frac{1}{2}}\cdot n, v \right \rangle_{\partial\Omega}=
     \left\langle f^{n+1}, v \right\rangle.
 ```
-This notation, suitable for problems wit many terms in the variational formulations, requires some explaination. 
+This notation, suitable for problems with many terms in the variational formulations, requires some explanation. 
 First, we use the short-hand notation
 ```{math}
 \langle v, w \rangle = \int_{\Omega} vw~\mathrm{d}x, \qquad
@@ -50,7 +50,7 @@ This allows us to express the variational problem in a more compact way. Second,
    u^{n+\frac{1}{2}}\approx \frac{u^{n}+ u^{n+1}}{2}.
 ```
 Third, we notice that the variational problem [](ipcs-one) arises from the integration by parts of the term 
-$langle -\nabla \cdot \sigma, v\rangle$. Just as for the [linear elasticity problem](./linearelasticity.md), we obtain
+$\langle -\nabla \cdot \sigma, v\rangle$. Just as for the [linear elasticity problem](./linearelasticity.md), we obtain
 ```{math}
     \langle -\nabla \cdot \sigma, v\rangle =
     \langle \sigma, \epsilon(v) \rangle 
@@ -59,7 +59,7 @@ $langle -\nabla \cdot \sigma, v\rangle$. Just as for the [linear elasticity prob
 where $T=\sigma \cdot n$ is the boundary traction. If we solve a problem with a free boundary, we can take $T=0$ on the boundary. However, if we compute the flow through a channel or a pipe and want to model flow that continues into an "imaginary channel" at the outflow, we need to treat this term with some care. 
 The assumption we then can make is that the derivative of the velocity in the direction of the channel is zero at the outflow, corresponding to that the flow is "fully developed" or doesn't change significantly downstream at the outflow.
 Doing so, the remaining boundary term at the outflow becomes 
-$pn - \mu \nabla u \cdot n$, which is the term appearing in the variational problem [](ipcs-one). Note that this argument and the implementation depends exact on the definition of $\nabla u$, as either the  matrix with components $\frac{\partial u_i}{\partial x_j}$ or $\frac{\partial u_j}{\partial x_i}$.
+$pn - \mu \nabla u \cdot n$, which is the term appearing in the variational problem [](ipcs-one). Note that this argument and the implementation depend exactly on the definition of $\nabla u$, as either the  matrix with components $\frac{\partial u_i}{\partial x_j}$ or $\frac{\partial u_j}{\partial x_i}$.
 We here choose the  latter, $\frac{\partial u_j}{\partial x_i}$,
 which means that we must use the UFL-operator `nabla_grad`. If we use the operator `grad` and the definition $\frac{\partial u_i}{\partial x_j}$, we must instead keep the terms $pn-\mu(\nabla u)^T \cdot n$.
 
@@ -67,12 +67,12 @@ which means that we must use the UFL-operator `nabla_grad`. If we use the operat
 As mentioned in the note in [Linear elasticity implementation](./linearelasticity_code) the usage of `nabla_grad` and `grad` has to be interpreted with care. For the Navier-Stokes equations it is important to consider the term $u\cdot \nabla u$ which should be interpreted as the vector $w$ with elements
 $w_i=\sum_{j}\left(u_j\frac{\partial}{\partial x_j}\right)u_i = \sum_j u_j\frac{\partial u_i}{\partial x_j}$. 
 This term can be  implemented in  FEniCSx as either 
-`grad(u)*u`, since this expression becomes $\sum_j\frac{\partial u_j}{\partial x_j}u_j$, or as `dot(u, nabla_grad(u))` since this 
-expression becomes $\sum_i u_i\frac{\partial u_j}{x_i}$. We will use the notation `dot(u, nabla_grad(u))` below since it corresponds more closely to the standard notation $u\cdot \nabla u$.
+`grad(u)*u`, since this expression becomes $\sum_j\frac{\partial u_i}{\partial x_j}u_j$, or as `dot(u, nabla_grad(u))` since this 
+expression becomes $\sum_i u_i\frac{\partial u_j}{\partial x_i}$. We will use the notation `dot(u, nabla_grad(u))` below since it corresponds more closely to the standard notation $u\cdot \nabla u$.
 ```
 
 We now move on to the second step in  our splitting scheme for the incompressible Navier-Stokes equations. In the first step, we computed the *tentative velocity* $u^*$ based on the pressure from the previous time step. 
-We may now use the computed tentative velocity to compute the new pressure $p^n$:
+We may now use the computed tentative velocity to compute the new pressure $p^{n+1}$:
 ```{math}
 :label: ipcs-two
     \langle \nabla p^{n+1}, \nabla q \rangle = \langle \nabla p^n, \nabla q\rangle - \frac{\rho}{\Delta t}\langle \nabla \cdot u^*, q\rangle.
@@ -88,7 +88,7 @@ Taking the divergence and requiring that $\nabla \cdot u^{n+1}=0$ by the Navier-
 :label: ipcs-tmp
  - \frac{\rho \nabla\cdot  u^*}{\Delta t}+ \nabla^2p^{n+1}-\nabla^2p^n=0,
 ```
-which is the Poisson problem for the pressure $p^{n+1} resulting in the variational formulation [](ipcs-two).
+which is the Poisson problem for the pressure $p^{n+1}$ resulting in the variational formulation [](ipcs-two).
 
 Finally, we compute the corrected velocity $u^{n+1}$ from the equation [](ipcs-tmp). Multiplying this equation by a test function $v$, we obtain
 ```{math}

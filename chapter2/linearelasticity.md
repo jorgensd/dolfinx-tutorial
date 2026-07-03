@@ -26,11 +26,11 @@ The variational formulation of the PDE consists of forming the inner product of 
 ```
 Since $\nabla \cdot \sigma$ contains second-order derivatives of our unknown $u$, we integrate this term by parts
 ```{math}
-    -\int_{\Omega}(\nabla \cdot \sigma)\cdot v ~\mathrm{d} x =\int_{\Omega}\sigma : \nabla v ~\mathrm{d}x - \int_{\partial\Omega} (\sigma \cdot n)\cdot v~\mathrm{d}x,
+    -\int_{\Omega}(\nabla \cdot \sigma)\cdot v ~\mathrm{d} x =\int_{\Omega}\sigma : \nabla v ~\mathrm{d}x - \int_{\partial\Omega} (\sigma \cdot n)\cdot v~\mathrm{d}s,
 ```
 where the colon operator is the inner product between tensors (summed pairwise product of all elements), and $n$ is the outward unit normal at the boundary. The quantity $\sigma \cdot n$ is known as the *traction* or stress vector at the boundary, and often prescribed as a boundary condition. We here assume that it is prescribed on a part $\partial \Omega_T$ of the boundary as $\sigma \cdot n=T$. On the remaining part of the boundary, we assume that the value of the displacement is given as Dirichlet condition (and hence the boundary integral on those boundaries are $0$). We thus obtain
 ```{math}
-    \int_{\Omega} \sigma : \nabla v ~\mathrm{d} x = \int_{\Omega} f\cdot v ~\mathrm{d} x + \int_{\partial\Omega_T}Tv~\mathrm{d} s.
+    \int_{\Omega} \sigma : \nabla v ~\mathrm{d} x = \int_{\Omega} f\cdot v ~\mathrm{d} x + \int_{\partial\Omega_T}T\cdot v~\mathrm{d} s.
 ```
 If we now insert for $\sigma$ its representation with the unknown $u$, we can obtain our variational formulation:
 Find $u\in V$ such that 

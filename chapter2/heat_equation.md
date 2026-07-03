@@ -9,7 +9,7 @@ As a first extension of the Poisson problem from the previous chapter, we consid
 The model problem for the time-dependent PDE reads
 \begin{align}
     \frac{\partial u}{\partial t}&=\nabla^2 u + f && \text{in } \Omega \times (0, T],\\
-    u &= u_D && \text{n } \partial\Omega \times (0,T],\\
+    u &= u_D && \text{on } \partial\Omega \times (0,T],\\
     u &= u_0 && \text{at } t=0.
 \end{align}
 
@@ -38,7 +38,7 @@ We reorder the equation such that the left-hand side contains the terms with onl
 \end{align}
 Given $u_0$, we can solve for $u^0, u^1, u^2$ and so on.
 
-We then in turn use the finite element method. This means that we have to turn the equation into its weak formulation. We multiply by the test-function of $v\in \hat{V}$ and integrate second-order derivatives by parts. we now introduce the symbol $u$ for $u^{n+1}$ and we write the resulting weak formulation as
+We then in turn use the finite element method. This means that we have to turn the equation into its weak formulation. We multiply by the test-function of $v\in \hat{V}$ and integrate second-order derivatives by parts. We now introduce the symbol $u$ for $u^{n+1}$ and we write the resulting weak formulation as
 
 \begin{align}
     a(u,v)&=L_{n+1}(v),
@@ -64,4 +64,4 @@ When solving this variational problem $u^0$ becomes the $L^2$-projection of the 
 
 The alternative is to construct $u^0$ by just interpolating the initial value $u_0$. We covered how to use interpolation in DOLFINx in the {doc}`membrane chapter <../chapter1/membrane_code>`.
 
-We can use DOLFINx to either project or interpolate the initial condition. The most common choice is to use an projection, which computes an approximation to $u_0$. However, in some applications where we want to verify the code by reproducing exact solutions, one must use interpolate. In this chapter, we will use such a problem.
+We can use DOLFINx to either project or interpolate the initial condition. The most common choice is to use a projection, which computes an approximation to $u_0$. However, in some applications where we want to verify the code by reproducing exact solutions, one must use interpolation. In this chapter, we will use such a problem.
