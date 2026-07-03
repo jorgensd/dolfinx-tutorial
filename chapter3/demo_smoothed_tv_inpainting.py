@@ -1,11 +1,12 @@
 # ---
 # jupyter:
 #   jupytext:
+#     formats: ipynb,py:light
 #     text_representation:
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.13.6
+#       jupytext_version: 1.19.4
 # ---
 
 # # Smoothed TV image inpainting
@@ -30,7 +31,7 @@
 # - $f = m u_{\mathrm{true}}$: observed incomplete image
 # - $u$: reconstructed image
 #
-# We compute $u$ by minimising
+# We compute $u$ by minimizing
 #
 # $$
 # J(u)= {1 \over 2}\beta \int_\Omega m(u-f)^2\,\mathrm{d}x
@@ -38,7 +39,7 @@
 # $$
 #
 # The first term enforces agreement with the known image data, while
-# the second term is a smoothed total variation regularisation term.
+# the second term is a smoothed total variation regularization term.
 # It promotes piecewise smooth solution and preserves edges
 # $\alpha$  and $\beta$ control the balance between the data fidelity
 # (fit to f) and smoothness.
@@ -82,7 +83,7 @@ msh = mesh.create_unit_square(MPI.COMM_WORLD, nx, ny)
 
 # We use first order Lagrange elements for discretizing the image.
 # In this space, the DOFs are the values of u at mesh vertices
-# the solution is continous but has piecewise constant gradient
+# the solution is continuous but has piecewise constant gradient
 
 V = fem.functionspace(msh, ("Lagrange", 1))
 
@@ -121,7 +122,7 @@ def true_image(x):
 #
 # We construct a mask with random "holes" inside the square
 # * small circular regions are removed and set to 0
-# * everyhere else remains known (1)
+# * everywhere else remains known (1)
 
 # This creates a challenging inpainting problem as:
 # * many small missing regions
@@ -140,12 +141,14 @@ def mask_function(x):
     # number of speckles
     num_speckles = 25
     # random centers
-    generator = np.random.Generator(np.random.MT19937(0))  # random seed for reproducibility
+    generator = np.random.Generator(
+        np.random.MT19937(0)
+    )  # random seed for reproducibility
 
     cx = generator.uniform(0.25, 0.75, num_speckles)
     cy = generator.uniform(0.25, 0.75, num_speckles)
     # random radii (small + varied)
-    radii = generator.uniform(0.012, 0.035,  num_speckles)
+    radii = generator.uniform(0.012, 0.035, num_speckles)
     # create holes. mask =0 inside circles
     for i in range(num_speckles):
         r2 = (X - cx[i]) ** 2 + (Y - cy[i]) ** 2
@@ -193,33 +196,34 @@ u.x.array[:] = f.x.array.copy()
 #
 # where # $\varepsilon$ is the smoothing of the TV:
 # * large $\varepsilon$ smoother more like quadratic diffusion
-# * small $\varepsilon$ closer to true TV edge pereserving
+# * small $\varepsilon$ closer to true TV edge preserving
 
 alpha = fem.Constant(msh, 0.003)
 beta = fem.Constant(msh, 1.0)
 eps = fem.Constant(msh, 1.0e-4)
 
 # Smoothed TV inpainting energy functional.
-# We define the energy J(u) and use ufl.derivative to obtain
-# the residual form F.
+# We define the energy J(u) and use {py:func}`ufl.derivative` to obtain
+# the residual form $F(u; v)=0 \quad\forall v\in V$:
 #
 # $$
 # J(u) = {1 \over 2}\beta\int_\Omega m(u-f)^2\,dx
-# + \alpha\int_\Omega \sqrt{||\nabla u||^2+\varepsilon^2}\,dx
+# + \alpha\int_\Omega \sqrt{||\nabla u||^2+\varepsilon^2}~\mathrm{d}x
 # $$
 #
 # Taking the first variation gives the weak form F(u; v).
-# 
+#
 # $$
 # F(u; v) =
 # \beta\int_\Omega m(u-f)v\,dx
 # + \alpha\int_\Omega
 # {\nabla u\cdot\nabla v
 # \over
-# \sqrt{||\nabla u||^2+\varepsilon^2}}\,dx
+# \sqrt{||\nabla u||^2+\varepsilon^2}}~\mathrm{d}x
 # = 0 \quad \forall v\in V.
 # $$
 
+# +
 v = ufl.TestFunction(V)
 
 J_energy = (
@@ -228,8 +232,9 @@ J_energy = (
 )
 
 F = ufl.derivative(J_energy, u, v)
+# -
 
-# This formulation is based on total variation (TV) regulaization
+# This formulation is based on total variation (TV) regularization
 # for image denoising and inpainting
 # {cite:t}`tv-RUDIN1992TV,tv-CHAN2001TV`.
 
@@ -267,14 +272,14 @@ problem.solve()
 
 # FEM Metrics
 # Global number of degrees of freedom reports the  size of the
-# finite element discretisation H1 seminorm error measures the
+# finite element discretization H1 seminorm error measures the
 # gradient error
 #
 # $$
 #   \vert\vert\nabla(u-u_{true})\vert\vert_{L_2 (\Omega)}
 # $$
 #
-# This is useful as TV regulization is gradient based.
+# This is useful as TV regularization is gradient based.
 # Smaller values mean the reconstruction recovers edge structure better
 
 num_dofs = V.dofmap.index_map.size_global
@@ -368,7 +373,7 @@ final_residual = snes.getFunctionNorm()
 # $$
 #
 # A decrease in the objective show that the nonlinear optimization
-# improved the damaged image undeer the smoothed TV model
+# improved the damaged image under the smoothed TV model
 
 # +
 objective_value = 0.5 * float(beta) * data_error**2 + float(alpha) * tv_energy
@@ -392,8 +397,9 @@ J0 = 0.5 * float(beta) * J0_data + float(alpha) * J0_tv
 # -
 
 
-# Printing statments for validation and metrics
+# Printing statements for validation and metrics
 # If on main process
+
 if msh.comm.rank == 0:
     print("---Smoothed TV inpainting results---")
 
@@ -424,7 +430,7 @@ if msh.comm.rank == 0:
 # We construct fields that allow us to visually asses the quality
 # of the reconstruction
 # $u-u_{true}$ is the global reconstruction error
-# $(1-m)(u-u_{true})$ is the hole error, restriced to the missing regions
+# $(1-m)(u-u_{true})$ is the hole error, restricted to the missing regions
 
 # +
 u_minus_u_true = fem.Function(V)
@@ -440,19 +446,21 @@ hole_error_field.x.array[:] = (1.0 - m.x.array) * (u.x.array - u_true.x.array)
 # To plot in matplotlib
 # 1. extract the coordinates of the DOFs
 # 2. extract the function-space dofmap connectivity (triangles)
-# 3. build a Triangulation object
+# 3. build a {py:class}`Triangulation<matplotlib.tri.Triangulation>` object
+#
 # This allows matplotlib to render the piecewise linear FEM solution
 
+# +
 coords = V.tabulate_dof_coordinates()
 x, y = coords[:, 0], coords[:, 1]
 
 triangles = V.dofmap.list
 triang = mtri.Triangulation(x, y, triangles)
-
+# -
 
 # Plotting
-# We use tripcolor to plot scalar fields defined on a triangulated mesh
-# shading= "flat" shows piecewise constant coloring per triangle
+# We use {py:func}`matplotlib.pyplot.tripcolor` to plot scalar fields defined on a
+# triangulated mesh shading= "flat" shows piecewise constant coloring per triangle
 # which better reflects the discrete FEM representations
 
 # +
@@ -479,7 +487,13 @@ plot_field(axes[1, 0], u.x.array, "u", fig)
 lim = np.max(np.abs(u_minus_u_true.x.array))
 # $u-u_{true}$ is the global reconstruction error
 plot_field(
-    axes[1, 1], u_minus_u_true.x.array, "u - u_true", fig, cmap="coolwarm", vmin=-lim, vmax=lim
+    axes[1, 1],
+    u_minus_u_true.x.array,
+    "u - u_true",
+    fig,
+    cmap="coolwarm",
+    vmin=-lim,
+    vmax=lim,
 )
 # Hole only errors
 lim = np.max(np.abs(hole_error_field.x.array))
