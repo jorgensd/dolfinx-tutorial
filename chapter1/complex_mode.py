@@ -172,7 +172,8 @@ L2_error = dolfinx.fem.form(
 local_error = dolfinx.fem.assemble_scalar(L2_error)
 global_error = np.sqrt(mesh.comm.allreduce(local_error, op=MPI.SUM))
 max_error = mesh.comm.allreduce(np.max(np.abs(u_c.x.array - uh.x.array)))
-print(global_error, max_error)
+if mesh.comm.rank == 0:
+    print(f"{global_error=:.2e}, {max_error=:.2e}", flush=True)
 
 # ## Plotting
 #
