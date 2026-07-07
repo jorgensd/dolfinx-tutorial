@@ -301,6 +301,7 @@ error_L2 = numpy.sqrt(domain.comm.allreduce(error_local, op=MPI.SUM))
 # we can compare the maximum values at any degree of freedom of the approximation space.
 
 error_max = numpy.max(numpy.abs(uD.x.array - uh.x.array))
+vertex_max = domain.comm.allreduce(error_max, op=MPI.MAX)
 if domain.comm.rank == 0:  # Only print the error on one process
     print(f"Error_L2 : {error_L2:.2e}")
     print(f"Error_max : {error_max:.2e}")
