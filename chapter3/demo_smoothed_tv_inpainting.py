@@ -11,6 +11,8 @@
 
 # # Smoothed TV image inpainting
 #
+# Authors: Jack Brockett and Jørgen S. Dokken
+#
 # ```{admonition} Download sources
 # :class: download
 # * {download}`Python script <./demo_smoothed_tv_inpainting.py>`
