@@ -300,11 +300,11 @@ error_L2 = numpy.sqrt(domain.comm.allreduce(error_local, op=MPI.SUM))
 # As we already have interpolated the exact solution into the first order space when creating the boundary condition,
 # we can compare the maximum values at any degree of freedom of the approximation space.
 
-error_max = numpy.max(numpy.abs(uD.x.array - uh.x.array))
-vertex_max = domain.comm.allreduce(error_max, op=MPI.MAX)
+local_L_infty = numpy.max(numpy.abs(uD.x.array - uh.x.array))
+L_infty = domain.comm.allreduce(local_L_infty, op=MPI.MAX)
 if domain.comm.rank == 0:  # Only print the error on one process
     print(f"Error_L2 : {error_L2:.2e}")
-    print(f"Error_max : {vertex_max:.2e}")
+    print(f"Error_max : {L_infty:.2e}")
 
 # ## Plotting the mesh using pyvista
 # We will visualizing the mesh using [pyvista](https://docs.pyvista.org/), an interface to the VTK toolkit.
