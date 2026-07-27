@@ -41,6 +41,7 @@ WORKDIR /tmp
 # As we install netgen from source we don't need the netgen deps here
 RUN python3 -m pip install --no-cache-dir --no-binary=h5py --no-build-isolation -v .
 RUN python3 -m pip cache purge
+RUN python3 -m pip install poetry_dynamic_versioning poetry-core
 RUN python3 -m pip install ngsPETSc --no-build-isolation --no-deps
 
 ENV PYVISTA_OFF_SCREEN="false"
