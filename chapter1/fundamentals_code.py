@@ -268,15 +268,15 @@ uh = problem.solve()
 # (error-norm)=
 # ## Computing the error
 # Finally, we want to compute the error to check the accuracy of the solution.
-# We do this by comparing the finite element solution `u` with the exact solution.
+# We do this by comparing the finite element solution `uh` with the exact solution.
 # First we interpolate the exact solution into a function space that contains it
 
 V2 = fem.functionspace(domain, ("Lagrange", 2))
-uex = fem.Function(V2, name="u_exact")
-uex.interpolate(lambda x: 1 + x[0] ** 2 + 2 * x[1] ** 2)
+ue = fem.Function(V2, name="u_exact")
+ue.interpolate(lambda x: 1 + x[0] ** 2 + 2 * x[1] ** 2)
 
 # We compute the error in two different ways.
-# First, we compute the $L^2$-norm of the error, defined by $E=\sqrt{\int_\Omega (u_D-u_h)^2\mathrm{d} x}$.
+# First, we compute the $L^2$-norm of the error, defined by $E=\sqrt{\int_\Omega (u_e-u_h)^2\mathrm{d} x}$.
 # We use UFL to express the $L^2$-error, and use {py:func}`dolfinx.fem.assemble_scalar` to compute the scalar value.
 # In DOLFINx, {py:func}`assemble_scalar<dolfinx.fem.assemble_scalar>`
 # only assembles over the cells on the local process.
@@ -284,7 +284,7 @@ uex.interpolate(lambda x: 1 + x[0] ** 2 + 2 * x[1] ** 2)
 # we need to accumulate the local contributions to get the global error (on one or all processes).
 # We can do this with the {py:meth}`Comm.allreduce<mpi4py.MPI.Comm.allreduce>` function.
 
-L2_error = fem.form(ufl.inner(uh - uex, uh - uex) * ufl.dx)
+L2_error = fem.form(ufl.inner(uh - ue, uh - ue) * ufl.dx)
 error_local = fem.assemble_scalar(L2_error)
 error_L2 = numpy.sqrt(domain.comm.allreduce(error_local, op=MPI.SUM))
 
