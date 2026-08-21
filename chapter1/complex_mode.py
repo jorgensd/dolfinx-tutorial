@@ -184,7 +184,6 @@ if mesh.comm.rank == 0:
 import pyvista
 
 mesh.topology.create_connectivity(mesh.topology.dim, mesh.topology.dim)
-p_mesh = pyvista.UnstructuredGrid(*dolfinx.plot.vtk_mesh(mesh, mesh.topology.dim))
 pyvista_cells, cell_types, geometry = dolfinx.plot.vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(pyvista_cells, cell_types, geometry)
 grid.point_data["u_real"] = uh.x.array.real
