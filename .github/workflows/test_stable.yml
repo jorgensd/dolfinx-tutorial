@@ -11,13 +11,18 @@ jobs:
     runs-on: ubuntu-latest
     container: ghcr.io/fenics/dolfinx/lab:stable
     env:
-      HDF5_MPI: "ON"
-      HDF5_DIR: "/usr/local/"
-      H5PY_SETUP_REQUIRES: "0"
+
       DEB_PYTHON_INSTALL_LAYOUT: deb_system
       PYVISTA_OFF_SCREEN: true
       PYVISTA_JUPYTER_BACKEND: html
       LIBGL_ALWAYS_SOFTWARE: 1
+      CC: "mpicc"
+      HDF5_MPI: "ON"
+      HDF5_INCLUDEDIR: "/usr/include/hdf5/openmpi"
+      H5PY_SETUP_REQUIRES: 0
+      OMPI_ALLOW_RUN_AS_ROOT: 1
+      OMPI_ALLOW_RUN_AS_ROOT_CONFIRM: 1
+      PRTE_MCA_rmaps_default_mapping_policy: :oversubscribe
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
