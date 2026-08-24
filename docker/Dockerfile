@@ -7,6 +7,9 @@ ARG TARGETPLATFORM
 
 ENV DEB_PYTHON_INSTALL_LAYOUT=deb_system
 ENV HDF5_MPI="ON"
+ENV OMPI_ALLOW_RUN_AS_ROOT=1
+ENV OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
+ENV PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe
 
 WORKDIR /tmp/
 # Requirements for pyvista (gl1 and render1) and jupyterlab (nodejs and curl)

@@ -27,6 +27,9 @@ jobs:
       HDF5_MPI: "ON"
       HDF5_INCLUDEDIR: "/usr/include/hdf5/openmpi"
       H5PY_SETUP_REQUIRES: 0
+      OMPI_ALLOW_RUN_AS_ROOT: 1
+      OMPI_ALLOW_RUN_AS_ROOT_CONFIRM: 1
+      PRTE_MCA_rmaps_default_mapping_policy: :oversubscribe
 
     steps:
       - uses: actions/checkout@v7
