@@ -72,7 +72,6 @@ from dolfinx.fem import (
     extract_function_spaces,
     form,
     locate_dofs_topological,
-    set_bc,
 )
 from dolfinx.fem.petsc import (
     apply_lifting,
