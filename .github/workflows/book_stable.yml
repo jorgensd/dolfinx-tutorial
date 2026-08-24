@@ -9,7 +9,6 @@ on:
     branches: ["release"]
 env:
   HDF5_MPI: "ON"
-  HDF5_DIR: "/usr/local/"
   H5PY_SETUP_REQUIRES: 0
   DEB_PYTHON_INSTALL_LAYOUT: deb_system
   LIBGL_ALWAYS_SOFTWARE: 1
@@ -28,6 +27,12 @@ jobs:
 
       - name: Install common packages
         uses: ./.github/actions/install-dependencies
+
+      - name: Configure HDF5 MPI Environment
+        run: |
+          # Evaluate architecture dynamically and write to GITHUB_ENV
+          ARCH_TRIPLET=$(gcc -print-multiarch)
+          echo "HDF5_LIBDIR=/usr/lib/${ARCH_TRIPLET}/hdf5/openmpi" >> $GITHUB_ENV
 
       - name: Install book deps
         run: |

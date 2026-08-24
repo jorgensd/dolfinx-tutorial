@@ -7,14 +7,11 @@ ARG TARGETPLATFORM
 
 ENV DEB_PYTHON_INSTALL_LAYOUT=deb_system
 ENV HDF5_MPI="ON"
-ENV HDF5_DIR="/usr/local"
 
 WORKDIR /tmp/
 # Requirements for pyvista (gl1 and render1) and jupyterlab (nodejs and curl)
 RUN apt-get update && apt-get install -y libgl1-mesa-dev mesa-utils curl
-# RUN curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh && \
-#     bash nodesource_setup.sh && \
-#     apt -y install nodejs
+
 
 # Install netgen from source
 RUN  apt-get update && \
@@ -35,6 +32,13 @@ ENV PYTHONPATH=$NETGENDIR/../lib/python3.12/site-packages:${PYTHONPATH}:${PYTHON
 
 # Install vtk
 RUN python3 -m pip install vtk
+
+RUN ARCH_TRIPLET=$(gcc -print-multiarch) && \
+    export CC="mpicc" && \
+    export HDF5_MPI="ON" && \
+    export HDF5_INCLUDEDIR="/usr/include/hdf5/openmpi" && \
+    export HDF5_LIBDIR="/usr/lib/${ARCH_TRIPLET}/hdf5/openmpi" && \
+    pip install --no-binary=h5py h5py --no-build-isolation --no-cache-dir
 
 ADD pyproject.toml /tmp/pyproject.toml
 WORKDIR /tmp

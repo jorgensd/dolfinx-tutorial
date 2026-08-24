@@ -20,18 +20,25 @@ jobs:
     container: ghcr.io/fenics/dolfinx/lab:nightly
 
     env:
-      HDF5_MPI: "ON"
-      H5PY_SETUP_REQUIRES: 0
-      HDF5_DIR: "/usr/local/"
       PYVISTA_OFF_SCREEN: true
       PYVISTA_JUPYTER_BACKEND: html
       LIBGL_ALWAYS_SOFTWARE: 1
+      CC: "mpicc"
+      HDF5_MPI: "ON"
+      HDF5_INCLUDEDIR: "/usr/include/hdf5/openmpi"
+      H5PY_SETUP_REQUIRES: 0
 
     steps:
       - uses: actions/checkout@v7
 
       - name: Special handling of some installation
         uses: ./.github/actions/install-dependencies
+
+      - name: Configure HDF5 MPI Environment
+        run: |
+          # Evaluate architecture dynamically and write to GITHUB_ENV
+          ARCH_TRIPLET=$(gcc -print-multiarch)
+          echo "HDF5_LIBDIR=/usr/lib/${ARCH_TRIPLET}/hdf5/openmpi" >> $GITHUB_ENV
 
       - name: Install requirements
         run: |
