@@ -327,10 +327,18 @@ print(pyvista.global_theme.jupyter_backend)
 # single grid with {py:func}`pyvista.merge`.
 # {py:func}`dolfinx.plot.vtk_mesh` uses only the cells that the process *owns*, so a cell that is
 # shared between two processes is not drawn twice.
-# `merge` welds the points that the pieces have in common back together, so the merged grid behaves
-# like one built on a single process: filters that follow the field from one cell into the next,
-# such as {py:meth}`streamlines<pyvista.DataSetFilters.streamlines>`, do not stop at the partition
-# boundaries.
+# `merge` welds the points that the pieces have in common back together, so we get a single mesh
+# that is drawn with a single color bar, and that filters can be applied to as a whole.
+#
+# ```{admonition} Points on a partition boundary
+# :class: tip
+# The processes on either side of a partition boundary compute the coordinates of the points they
+# share independently, so these can differ in the last bits, and `merge` then keeps both copies.
+# The picture is the same either way, but a filter that follows the field from one cell into the
+# next, such as {py:meth}`streamlines<pyvista.DataSetFilters.streamlines>`, would stop at such a
+# point. Merge with a tolerance to weld them as well:
+# `pieces[0].merge(pieces[1:], tolerance=1e-14)`.
+# ```
 #
 # The process that collects the pieces is chosen with `root`, which has to be one of the processes
 # we run on.
