@@ -317,6 +317,26 @@ if domain.comm.rank == 0:  # Only print the error on one process
 import pyvista
 
 print(pyvista.global_theme.jupyter_backend)
+# -
+
+# ### Plotting in parallel
+# When the program runs on several processes, each process holds one piece of the mesh, and knows
+# nothing about the rest of it, so no process can draw the whole figure on its own.
+# We therefore let each process build the grid of its own piece, send the pieces to a single
+# process with {py:meth}`gather<mpi4py.MPI.Comm.gather>`, and let that process join them into a
+# single grid with {py:func}`pyvista.merge`.
+# {py:func}`dolfinx.plot.vtk_mesh` uses only the cells that the process *owns*, so a cell that is
+# shared between two processes is not drawn twice.
+# `merge` welds the points that the pieces have in common back together, so the merged grid behaves
+# like one built on a single process: filters that follow the field from one cell into the next,
+# such as {py:meth}`streamlines<pyvista.DataSetFilters.streamlines>`, do not stop at the partition
+# boundaries.
+#
+# The process that collects the pieces is chosen with `root`, which has to be one of the processes
+# we run on.
+# `gather` returns the list of pieces on that process, and `None` on every other process, so the
+# returned value tells each process whether it is the one that draws.
+# The same code runs on a single process, where the list holds a single piece.
 
 # +
 from dolfinx import plot
@@ -324,6 +344,11 @@ from dolfinx import plot
 domain.topology.create_connectivity(tdim, tdim)
 topology, cell_types, geometry = plot.vtk_mesh(domain, tdim)
 grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
+
+root = 0
+assert root < domain.comm.size, f"Cannot gather on process {root} of {domain.comm.size}"
+
+pieces = domain.comm.gather(grid, root=root)
 # -
 
 # There are several backends that can be used with pyvista, and they have different benefits and drawbacks.
@@ -334,13 +359,15 @@ grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
 # In the jupyter notebook environment, we use the default setting of `pyvista.OFF_SCREEN=False`,
 # which will render plots directly in the notebook.
 
-plotter = pyvista.Plotter()
-plotter.add_mesh(grid, show_edges=True)
-plotter.view_xy()
-if not pyvista.OFF_SCREEN:
-    plotter.show()
-else:
-    figure = plotter.screenshot("fundamentals_mesh.png")
+if pieces is not None:
+    merged_grid = pyvista.merge(pieces)
+    plotter = pyvista.Plotter()
+    plotter.add_mesh(merged_grid, show_edges=True)
+    plotter.view_xy()
+    if not pyvista.OFF_SCREEN:
+        plotter.show()
+    else:
+        figure = plotter.screenshot("fundamentals_mesh.png")
 
 # ## Plotting a function using pyvista
 # We want to plot the solution `uh`.
@@ -352,23 +379,44 @@ else:
 u_topology, u_cell_types, u_geometry = plot.vtk_mesh(V)
 
 # Next, we create the {py:class}`pyvista.UnstructuredGrid` and add the dof-values to the mesh.
+# The values are attached before the grids are gathered, so that each piece carries its own data
+# into the merged grid.
+# We also compute the range of `uh` over all processes with
+# {py:meth}`reduce<mpi4py.MPI.Comm.reduce>`, and pass it to the plotter as `clim`.
+# Only the root process draws, so the result is only needed there, and `reduce` leaves it as `None`
+# on the other processes.
 
+# +
 u_grid = pyvista.UnstructuredGrid(u_topology, u_cell_types, u_geometry)
 u_grid.point_data["u"] = uh.x.array.real
 u_grid.set_active_scalars("u")
-u_plotter = pyvista.Plotter()
-u_plotter.add_mesh(u_grid, show_edges=True)
-u_plotter.view_xy()
-if not pyvista.OFF_SCREEN:
-    u_plotter.show()
+
+u_clim = [
+    domain.comm.reduce(uh.x.array.real.min(), op=MPI.MIN, root=root),
+    domain.comm.reduce(uh.x.array.real.max(), op=MPI.MAX, root=root),
+]
+u_pieces = domain.comm.gather(u_grid, root=root)
+# -
+
+if u_pieces is not None:
+    merged_u_grid = pyvista.merge(u_pieces)
+    u_plotter = pyvista.Plotter()
+    u_plotter.add_mesh(merged_u_grid, show_edges=True, clim=u_clim)
+    u_plotter.view_xy()
+    if not pyvista.OFF_SCREEN:
+        u_plotter.show()
 
 # We can also warp the mesh by scalar to make use of the 3D plotting.
+# As the grid has already been merged, filters such as
+# {py:meth}`warp_by_scalar<pyvista.DataSetFilters.warp_by_scalar>` are applied to the whole mesh.
 
-warped = u_grid.warp_by_scalar()
-plotter2 = pyvista.Plotter()
-plotter2.add_mesh(warped, show_edges=True, show_scalar_bar=True)
-if not pyvista.OFF_SCREEN:
-    plotter2.show()
+if u_pieces is not None:
+    plotter2 = pyvista.Plotter()
+    plotter2.add_mesh(
+        merged_u_grid.warp_by_scalar(), show_edges=True, show_scalar_bar=True, clim=u_clim
+    )
+    if not pyvista.OFF_SCREEN:
+        plotter2.show()
 
 # ## External post-processing
 # For post-processing outside the python code, it is suggested to save the solution to file using either

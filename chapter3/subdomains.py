@@ -127,6 +127,10 @@ problem = LinearProblem(
 )
 uh = problem.solve()
 
+# Each process builds the grid of the cells it owns, the pieces are gathered on one process and
+# merged into a single grid, which is then drawn, see
+# [Plotting in parallel](../chapter1/fundamentals_code).
+
 # Filter out ghosted cells
 tdim = mesh.topology.dim
 num_cells_local = mesh.topology.index_map(tdim).size_local
@@ -140,25 +144,46 @@ topology, cell_types, x = vtk_mesh(
     mesh, tdim, np.arange(num_cells_local, dtype=np.int32)
 )
 
-p = pyvista.Plotter(window_size=[800, 800])
 grid = pyvista.UnstructuredGrid(topology, cell_types, x)
 grid.cell_data["Marker"] = marker
 grid.set_active_scalars("Marker")
-p.add_mesh(grid, show_edges=True)
-if pyvista.OFF_SCREEN:
-    figure = p.screenshot("subdomains_structured.png")
-p.show()
+
+root = 0
+assert root < mesh.comm.size, f"Cannot gather on process {root} of {mesh.comm.size}"
+
+marker_clim = [
+    mesh.comm.reduce(marker.min(), op=MPI.MIN, root=root),
+    mesh.comm.reduce(marker.max(), op=MPI.MAX, root=root),
+]
+marker_pieces = mesh.comm.gather(grid, root=root)
+
+if marker_pieces is not None:
+    marker_grid = pyvista.merge(marker_pieces)
+    p = pyvista.Plotter(window_size=[800, 800])
+    p.add_mesh(marker_grid, show_edges=True, clim=marker_clim)
+    if pyvista.OFF_SCREEN:
+        figure = p.screenshot("subdomains_structured.png")
+    p.show()
 # -
 
-p2 = pyvista.Plotter(window_size=[800, 800])
 grid_uh = pyvista.UnstructuredGrid(*vtk_mesh(V))
 grid_uh.point_data["u"] = uh.x.array.real
 grid_uh.set_active_scalars("u")
-p2.add_mesh(grid_uh, show_edges=True)
-if not pyvista.OFF_SCREEN:
-    p2.show()
-else:
-    figure = p2.screenshot("subdomains_structured2.png")
+
+u_clim = [
+    mesh.comm.reduce(uh.x.array.real.min(), op=MPI.MIN, root=root),
+    mesh.comm.reduce(uh.x.array.real.max(), op=MPI.MAX, root=root),
+]
+u_pieces = mesh.comm.gather(grid_uh, root=root)
+
+if u_pieces is not None:
+    merged_u_grid = pyvista.merge(u_pieces)
+    p2 = pyvista.Plotter(window_size=[800, 800])
+    p2.add_mesh(merged_u_grid, show_edges=True, clim=u_clim)
+    if not pyvista.OFF_SCREEN:
+        p2.show()
+    else:
+        figure = p2.screenshot("subdomains_structured2.png")
 
 
 # We clearly observe different behavior in the two regions, which both have the same Dirichlet boundary condition on the left side, where $x=0$.
@@ -341,22 +366,40 @@ mesh.topology.create_connectivity(tdim, tdim)
 topology, cell_types, x = vtk_mesh(mesh, tdim)
 grid = pyvista.UnstructuredGrid(topology, cell_types, x)
 num_local_cells = mesh.topology.index_map(tdim).size_local
-grid.cell_data["Marker"] = ct.values[ct.indices < num_local_cells]
+markers = ct.values[ct.indices < num_local_cells]
+grid.cell_data["Marker"] = markers
 grid.set_active_scalars("Marker")
 
-p = pyvista.Plotter(window_size=[800, 800])
-p.add_mesh(grid, show_edges=True)
-if not pyvista.OFF_SCREEN:
-    p.show()
-else:
-    figure = p.screenshot("subdomains_unstructured.png")
+marker_clim = [
+    mesh.comm.reduce(markers.min(), op=MPI.MIN, root=root),
+    mesh.comm.reduce(markers.max(), op=MPI.MAX, root=root),
+]
+marker_pieces = mesh.comm.gather(grid, root=root)
+
+if marker_pieces is not None:
+    marker_grid = pyvista.merge(marker_pieces)
+    p = pyvista.Plotter(window_size=[800, 800])
+    p.add_mesh(marker_grid, show_edges=True, clim=marker_clim)
+    if not pyvista.OFF_SCREEN:
+        p.show()
+    else:
+        figure = p.screenshot("subdomains_unstructured.png")
 # -
 grid_uh = pyvista.UnstructuredGrid(*vtk_mesh(V))
 grid_uh.point_data["u"] = uh.x.array.real
 grid_uh.set_active_scalars("u")
-p2 = pyvista.Plotter(window_size=[800, 800])
-p2.add_mesh(grid_uh, show_edges=True)
-if not pyvista.OFF_SCREEN:
-    p2.show()
-else:
-    p2.screenshot("unstructured_u.png")
+
+u_clim = [
+    mesh.comm.reduce(uh.x.array.real.min(), op=MPI.MIN, root=root),
+    mesh.comm.reduce(uh.x.array.real.max(), op=MPI.MAX, root=root),
+]
+u_pieces = mesh.comm.gather(grid_uh, root=root)
+
+if u_pieces is not None:
+    merged_u_grid = pyvista.merge(u_pieces)
+    p2 = pyvista.Plotter(window_size=[800, 800])
+    p2.add_mesh(merged_u_grid, show_edges=True, clim=u_clim)
+    if not pyvista.OFF_SCREEN:
+        p2.show()
+    else:
+        p2.screenshot("unstructured_u.png")

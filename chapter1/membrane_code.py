@@ -180,7 +180,10 @@ pressure.interpolate(expr)
 from dolfinx.plot import vtk_mesh
 import pyvista
 
-# Extract topology from mesh and create {py:class}`pyvista.UnstructuredGrid`
+# Extract topology from mesh and create {py:class}`pyvista.UnstructuredGrid`.
+# Each process builds the grid of the cells it owns, the pieces are gathered on one process and
+# merged into a single grid, which is then drawn, see
+# [Plotting in parallel](./fundamentals_code).
 
 topology, cell_types, x = vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(topology, cell_types, x)
@@ -189,29 +192,59 @@ grid = pyvista.UnstructuredGrid(topology, cell_types, x)
 
 # +
 grid.point_data["u"] = uh.x.array
-warped = grid.warp_by_scalar("u", factor=25)
 
-plotter = pyvista.Plotter()
-plotter.add_mesh(warped, show_edges=True, show_scalar_bar=True, scalars="u")
-if not pyvista.OFF_SCREEN:
-    plotter.show()
-else:
-    plotter.screenshot("deflection.png")
+root = 0
+assert root < domain.comm.size, f"Cannot gather on process {root} of {domain.comm.size}"
+
+u_clim = [
+    domain.comm.reduce(uh.x.array.real.min(), op=MPI.MIN, root=root),
+    domain.comm.reduce(uh.x.array.real.max(), op=MPI.MAX, root=root),
+]
+u_pieces = domain.comm.gather(grid, root=root)
+
+if u_pieces is not None:
+    merged_grid = pyvista.merge(u_pieces)
+    plotter = pyvista.Plotter()
+    plotter.add_mesh(
+        merged_grid.warp_by_scalar("u", factor=25),
+        show_edges=True,
+        show_scalar_bar=True,
+        scalars="u",
+        clim=u_clim,
+    )
+    if not pyvista.OFF_SCREEN:
+        plotter.show()
+    else:
+        plotter.screenshot("deflection.png")
 # -
 
 # We next plot the load on the domain
 
-load_plotter = pyvista.Plotter()
+# +
 p_grid = pyvista.UnstructuredGrid(*vtk_mesh(Q))
 p_grid.point_data["p"] = pressure.x.array.real
-warped_p = p_grid.warp_by_scalar("p", factor=0.5)
-warped_p.set_active_scalars("p")
-load_plotter.add_mesh(warped_p, show_scalar_bar=True)
-load_plotter.view_xy()
-if not pyvista.OFF_SCREEN:
-    load_plotter.show()
-else:
-    load_plotter.screenshot("load.png")
+
+p_clim = [
+    domain.comm.reduce(pressure.x.array.real.min(), op=MPI.MIN, root=root),
+    domain.comm.reduce(pressure.x.array.real.max(), op=MPI.MAX, root=root),
+]
+p_pieces = domain.comm.gather(p_grid, root=root)
+
+if p_pieces is not None:
+    merged_p_grid = pyvista.merge(p_pieces)
+    load_plotter = pyvista.Plotter()
+    load_plotter.add_mesh(
+        merged_p_grid.warp_by_scalar("p", factor=0.5),
+        show_scalar_bar=True,
+        scalars="p",
+        clim=p_clim,
+    )
+    load_plotter.view_xy()
+    if not pyvista.OFF_SCREEN:
+        load_plotter.show()
+    else:
+        load_plotter.screenshot("load.png")
+# -
 
 # ## Making curve plots throughout the domain
 # Another way to compare the deflection and the load is to make a plot along the line $x=0$.

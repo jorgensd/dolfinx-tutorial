@@ -127,19 +127,35 @@ if domain.comm.rank == 0:
 # we no longer fullfill the equation to machine precision at the mesh vertices.
 # We also plot the solution using {py:mod}`pyvista`
 
+# Each process builds the grid of the cells it owns, the pieces are gathered on one process and
+# merged into a single grid, which is then drawn, see
+# [Plotting in parallel](./fundamentals_code).
+
 # +
 import pyvista
 
 grid = pyvista.UnstructuredGrid(*plot.vtk_mesh(V))
 grid.point_data["u"] = uh.x.array.real
 grid.set_active_scalars("u")
-plotter = pyvista.Plotter()
-plotter.add_mesh(grid, show_edges=True, show_scalar_bar=True)
-plotter.view_xy()
-if not pyvista.OFF_SCREEN:
-    plotter.show()
-else:
-    figure = plotter.screenshot("nitsche.png")
+
+root = 0
+assert root < domain.comm.size, f"Cannot gather on process {root} of {domain.comm.size}"
+
+clim = [
+    domain.comm.reduce(uh.x.array.real.min(), op=MPI.MIN, root=root),
+    domain.comm.reduce(uh.x.array.real.max(), op=MPI.MAX, root=root),
+]
+pieces = domain.comm.gather(grid, root=root)
+
+if pieces is not None:
+    grid = pyvista.merge(pieces)
+    plotter = pyvista.Plotter()
+    plotter.add_mesh(grid, show_edges=True, show_scalar_bar=True, clim=clim)
+    plotter.view_xy()
+    if not pyvista.OFF_SCREEN:
+        plotter.show()
+    else:
+        figure = plotter.screenshot("nitsche.png")
 # -
 
 # ```{bibliography}

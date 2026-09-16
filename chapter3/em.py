@@ -226,19 +226,36 @@ with XDMFFile(MPI.COMM_WORLD, "mt.xdmf", "w") as xdmf:
 
 # We can also visualize the subdommains using pyvista
 
-plotter = pyvista.Plotter()
+# Each process builds the grid of the cells it owns, the pieces are gathered on one process and
+# merged into a single grid, which is then drawn, see
+# [Plotting in parallel](../chapter1/fundamentals_code).
+
 tdim = mesh.topology.dim
 mesh.topology.create_connectivity(tdim, tdim)
 grid = pyvista.UnstructuredGrid(*vtk_mesh(mesh, tdim))
 num_local_cells = mesh.topology.index_map(tdim).size_local
-grid.cell_data["Marker"] = ct.values[ct.indices < num_local_cells]
+markers = ct.values[ct.indices < num_local_cells]
+grid.cell_data["Marker"] = markers
 grid.set_active_scalars("Marker")
-actor = plotter.add_mesh(grid, show_edges=True)
-plotter.view_xy()
-if not pyvista.OFF_SCREEN:
-    plotter.show()
-else:
-    cell_tag_fig = plotter.screenshot("cell_tags.png")
+
+root = 0
+assert root < mesh.comm.size, f"Cannot gather on process {root} of {mesh.comm.size}"
+
+marker_clim = [
+    mesh.comm.reduce(markers.min(), op=MPI.MIN, root=root),
+    mesh.comm.reduce(markers.max(), op=MPI.MAX, root=root),
+]
+marker_pieces = mesh.comm.gather(grid, root=root)
+
+if marker_pieces is not None:
+    marker_grid = pyvista.merge(marker_pieces)
+    plotter = pyvista.Plotter()
+    actor = plotter.add_mesh(marker_grid, show_edges=True, clim=marker_clim)
+    plotter.view_xy()
+    if not pyvista.OFF_SCREEN:
+        plotter.show()
+    else:
+        cell_tag_fig = plotter.screenshot("cell_tags.png")
 
 
 # Next, we define the discontinous functions for the permeability $\mu$ and current $J_z$ using the `MeshTags` as in [Defining material parameters through subdomains](./subdomains)
@@ -300,17 +317,26 @@ B.interpolate(B_expr)
 # We now plot the magnetic potential $A_z$ and the magnetic field $B$. We start by creating a new plotter
 
 # +
-plotter = pyvista.Plotter()
-
 Az_grid = pyvista.UnstructuredGrid(*vtk_mesh(V))
 Az_grid.point_data["A_z"] = A_z.x.array
 Az_grid.set_active_scalars("A_z")
-warp = Az_grid.warp_by_scalar("A_z", factor=1e7)
-actor = plotter.add_mesh(warp, show_edges=True)
-if not pyvista.OFF_SCREEN:
-    plotter.show()
-else:
-    Az_fig = plotter.screenshot("Az.png")
+
+Az_clim = [
+    mesh.comm.reduce(A_z.x.array.min(), op=MPI.MIN, root=root),
+    mesh.comm.reduce(A_z.x.array.max(), op=MPI.MAX, root=root),
+]
+Az_pieces = mesh.comm.gather(Az_grid, root=root)
+
+if Az_pieces is not None:
+    merged_Az_grid = pyvista.merge(Az_pieces)
+    plotter = pyvista.Plotter()
+    actor = plotter.add_mesh(
+        merged_Az_grid.warp_by_scalar("A_z", factor=1e7), show_edges=True, clim=Az_clim
+    )
+    if not pyvista.OFF_SCREEN:
+        plotter.show()
+    else:
+        Az_fig = plotter.screenshot("Az.png")
 # -
 
 # ## Visualizing the magnetic field
@@ -320,28 +346,35 @@ else:
 # We connect the vector field with the midpoint by using `pyvista.PolyData`.
 
 # +
-plotter = pyvista.Plotter()
-plotter.set_position([0, 0, 5])
-
-# We include ghosts cells as we access all degrees of freedom (including ghosts) on each process
+# We use the cells owned by the process, so that no arrow is drawn twice where two processes
+# meet, and gather the clouds along with the grid of the mesh
 top_imap = mesh.topology.index_map(mesh.topology.dim)
-num_cells = top_imap.size_local + top_imap.num_ghosts
+num_cells = top_imap.size_local
 mesh.topology.create_connectivity(mesh.topology.dim, mesh.topology.dim)
 midpoints = compute_midpoints(
     mesh, mesh.topology.dim, np.arange(num_cells, dtype=np.int32)
 )
 
-num_dofs = W.dofmap.index_map.size_local + W.dofmap.index_map.num_ghosts
+num_dofs = W.dofmap.index_map.size_local
 assert num_cells == num_dofs
+bs = W.dofmap.index_map_bs
 values = np.zeros((num_dofs, 3), dtype=np.float64)
-values[:, : mesh.geometry.dim] = B.x.array.real.reshape(num_dofs, W.dofmap.index_map_bs)
+values[:, : mesh.geometry.dim] = B.x.array.real[: num_dofs * bs].reshape(num_dofs, bs)
 cloud = pyvista.PolyData(midpoints)
 cloud["B"] = values
-glyphs = cloud.glyph("B", factor=2e6)
-actor = plotter.add_mesh(grid, style="wireframe", color="k")
-actor2 = plotter.add_mesh(glyphs)
 
-if not pyvista.OFF_SCREEN:
-    plotter.show()
-else:
-    B_fig = plotter.screenshot("B.png")
+cloud_pieces = mesh.comm.gather(cloud, root=root)
+mesh_pieces = mesh.comm.gather(grid, root=root)
+
+if cloud_pieces is not None and mesh_pieces is not None:
+    merged_cloud = pyvista.merge(cloud_pieces)
+    merged_grid = pyvista.merge(mesh_pieces)
+    plotter = pyvista.Plotter()
+    plotter.set_position([0, 0, 5])
+    actor = plotter.add_mesh(merged_grid, style="wireframe", color="k")
+    actor2 = plotter.add_mesh(merged_cloud.glyph("B", factor=2e6))
+
+    if not pyvista.OFF_SCREEN:
+        plotter.show()
+    else:
+        B_fig = plotter.screenshot("B.png")

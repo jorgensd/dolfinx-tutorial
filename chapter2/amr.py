@@ -71,17 +71,27 @@ mesh, (ct, ft), region_map = geoModel.model_to_mesh(gdim=2, hmax=0.5)
 
 # We use pyvista to visualize the mesh.
 
+# Each process builds the grid of the cells it owns, the pieces are gathered on one process and
+# merged into a single grid, which is then drawn, see
+# [Plotting in parallel](../chapter1/fundamentals_code).
+
 # + tags=["hide-input"]
 grid = pyvista.UnstructuredGrid(*dolfinx.plot.vtk_mesh(mesh))
-grid.cell_data["ct"] = ct.values
+grid.cell_data["ct"] = ct.values[: grid.n_cells]
 
-plotter = pyvista.Plotter()
-plotter.add_mesh(
-    grid, show_edges=True, scalars="ct", cmap="blues", show_scalar_bar=False
-)
-plotter.view_xy()
-if not pyvista.OFF_SCREEN:
-    plotter.show()
+root = 0
+assert root < mesh.comm.size, f"Cannot gather on process {root} of {mesh.comm.size}"
+
+pieces = mesh.comm.gather(grid, root=root)
+if pieces is not None:
+    merged_grid = pyvista.merge(pieces)
+    plotter = pyvista.Plotter()
+    plotter.add_mesh(
+        merged_grid, show_edges=True, scalars="ct", cmap="blues", show_scalar_bar=False
+    )
+    plotter.view_xy()
+    if not pyvista.OFF_SCREEN:
+        plotter.show()
 # -
 
 # We have read in any cell and facet markers that have been defined in the NetGen model,
@@ -96,15 +106,23 @@ curved_mesh = geoModel.curveField(order)
 
 # + tags=["hide-input"]
 curved_grid = pyvista.UnstructuredGrid(*dolfinx.plot.vtk_mesh(curved_mesh))
-curved_grid.cell_data["ct"] = ct.values
-plotter = pyvista.Plotter()
-plotter.add_mesh(
-    curved_grid, show_edges=False, scalars="ct", cmap="blues", show_scalar_bar=False
-)
-plotter.add_mesh(grid, style="wireframe", color="black")
-plotter.view_xy()
-if not pyvista.OFF_SCREEN:
-    plotter.show()
+curved_grid.cell_data["ct"] = ct.values[: curved_grid.n_cells]
+
+curved_pieces = curved_mesh.comm.gather(curved_grid, root=root)
+if curved_pieces is not None and pieces is not None:
+    merged_curved_grid = pyvista.merge(curved_pieces)
+    plotter = pyvista.Plotter()
+    plotter.add_mesh(
+        merged_curved_grid,
+        show_edges=False,
+        scalars="ct",
+        cmap="blues",
+        show_scalar_bar=False,
+    )
+    plotter.add_mesh(merged_grid, style="wireframe", color="black")
+    plotter.view_xy()
+    if not pyvista.OFF_SCREEN:
+        plotter.show()
 # -
 
 # ## Solving the eigenvalue problem
@@ -238,15 +256,19 @@ def mark_cells(uh_r: dolfinx.fem.Function, lam: float):
 
 # We will track the progress of the adaptive mesh refinement as a GIF.
 
-plotter = pyvista.Plotter()
-plotter.open_gif("amr.gif", fps=1)
+plotter = None
+if mesh.comm.rank == 0:
+    plotter = pyvista.Plotter()
+    plotter.open_gif("amr.gif", fps=1)
 
 # We make a convenience function to attach the relevant data to the plotter at a given
 # refinement step.
+# The mesh is refined between the frames, so unlike the other animations in this tutorial, the
+# pieces are gathered anew at each frame.
 
 
 # + tags=["hide-input"]
-def write_frame(plotter: pyvista.Plotter, uh_r: dolfinx.fem.Function):
+def write_frame(plotter: pyvista.Plotter | None, uh_r: dolfinx.fem.Function):
     # Scale uh_r to be consistent between refinement steps, as it can be multiplied by -1
     uh_r_min = curved_mesh.comm.allreduce(uh_r.x.array.min(), op=MPI.MIN)
     uh_r_max = curved_mesh.comm.allreduce(uh_r.x.array.max(), op=MPI.MAX)
@@ -261,16 +283,21 @@ def write_frame(plotter: pyvista.Plotter, uh_r: dolfinx.fem.Function):
     curved_grid = pyvista.UnstructuredGrid(*dolfinx.plot.vtk_mesh(uh_r.function_space))
     curved_grid.point_data["u"] = uh_r.x.array
     curved_grid = curved_grid.tessellate()
-    curved_actor = plotter.add_mesh(
-        curved_grid,
+
+    # The gathers are collective, so every process takes part in them, while only the process
+    # that received the pieces draws the frame
+    pieces = mesh.comm.gather(grid, root=root)
+    curved_pieces = mesh.comm.gather(curved_grid, root=root)
+    if plotter is None or pieces is None or curved_pieces is None:
+        return
+    plotter.clear()
+    plotter.add_mesh(
+        pyvista.merge(curved_pieces),
         show_edges=False,
     )
-
-    actor = plotter.add_mesh(grid, style="wireframe", color="black")
+    plotter.add_mesh(pyvista.merge(pieces), style="wireframe", color="black")
     plotter.view_xy()
     plotter.write_frame()
-    plotter.remove_actor(actor)
-    plotter.remove_actor(curved_actor)
 
 
 # -
@@ -304,7 +331,8 @@ for i in range(max_iterations):
     if relative_error < termination_criteria:
         PETSc.Sys.Print(f"Converged in {i + 1} iterations.")
         break
-plotter.close()
+if plotter is not None:
+    plotter.close()
 # -
 
 # <img src="./amr.gif" alt="gif" class="bg-primary mb-1" width="800px">

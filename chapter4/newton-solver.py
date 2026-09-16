@@ -333,12 +333,28 @@ plt.grid()
 error_max = domain.comm.allreduce(np.max(np.abs(uh.x.array - u_D.x.array)), op=MPI.MAX)
 PETSc.Sys.Print(f"Error_max: {error_max:.2e}")
 
+# Each process builds the grid of the cells it owns, the pieces are gathered on one process and
+# merged into a single grid, which is then drawn, see
+# [Plotting in parallel](../chapter1/fundamentals_code).
+
 u_topology, u_cell_types, u_geometry = dolfinx.plot.vtk_mesh(V)
 u_grid = pyvista.UnstructuredGrid(u_topology, u_cell_types, u_geometry)
 u_grid.point_data["u"] = uh.x.array.real
 u_grid.set_active_scalars("u")
-u_plotter = pyvista.Plotter()
-u_plotter.add_mesh(u_grid, show_edges=True)
-u_plotter.view_xy()
-if not pyvista.OFF_SCREEN:
-    u_plotter.show()
+
+root = 0
+assert root < domain.comm.size, f"Cannot gather on process {root} of {domain.comm.size}"
+
+u_clim = [
+    domain.comm.reduce(uh.x.array.real.min(), op=MPI.MIN, root=root),
+    domain.comm.reduce(uh.x.array.real.max(), op=MPI.MAX, root=root),
+]
+pieces = domain.comm.gather(u_grid, root=root)
+
+if pieces is not None:
+    merged_u_grid = pyvista.merge(pieces)
+    u_plotter = pyvista.Plotter()
+    u_plotter.add_mesh(merged_u_grid, show_edges=True, clim=u_clim)
+    u_plotter.view_xy()
+    if not pyvista.OFF_SCREEN:
+        u_plotter.show()

@@ -180,6 +180,10 @@ if mesh.comm.rank == 0:
 # Finally, we plot the real and imaginary solutions.
 #
 
+# Each process builds the grid of the cells it owns, the pieces are gathered on one process and
+# merged into a single grid, which is then drawn, see
+# [Plotting in parallel](./fundamentals_code).
+
 # +
 import pyvista
 
@@ -188,19 +192,34 @@ pyvista_cells, cell_types, geometry = dolfinx.plot.vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(pyvista_cells, cell_types, geometry)
 grid.point_data["u_real"] = uh.x.array.real
 grid.point_data["u_imag"] = uh.x.array.imag
-_ = grid.set_active_scalars("u_real")
 
-p_real = pyvista.Plotter()
-p_real.add_text("uh real", position="upper_edge", font_size=14, color="black")
-p_real.add_mesh(grid, show_edges=True)
-p_real.view_xy()
-if not pyvista.OFF_SCREEN:
-    p_real.show()
+root = 0
+assert root < mesh.comm.size, f"Cannot gather on process {root} of {mesh.comm.size}"
 
-grid.set_active_scalars("u_imag")
-p_imag = pyvista.Plotter()
-p_imag.add_text("uh imag", position="upper_edge", font_size=14, color="black")
-p_imag.add_mesh(grid, show_edges=True)
-p_imag.view_xy()
-if not pyvista.OFF_SCREEN:
-    p_imag.show()
+clim_real = [
+    mesh.comm.reduce(uh.x.array.real.min(), op=MPI.MIN, root=root),
+    mesh.comm.reduce(uh.x.array.real.max(), op=MPI.MAX, root=root),
+]
+clim_imag = [
+    mesh.comm.reduce(uh.x.array.imag.min(), op=MPI.MIN, root=root),
+    mesh.comm.reduce(uh.x.array.imag.max(), op=MPI.MAX, root=root),
+]
+pieces = mesh.comm.gather(grid, root=root)
+# -
+
+if pieces is not None:
+    merged_grid = pyvista.merge(pieces)
+
+    p_real = pyvista.Plotter()
+    p_real.add_text("uh real", position="upper_edge", font_size=14, color="black")
+    p_real.add_mesh(merged_grid, scalars="u_real", show_edges=True, clim=clim_real)
+    p_real.view_xy()
+    if not pyvista.OFF_SCREEN:
+        p_real.show()
+
+    p_imag = pyvista.Plotter()
+    p_imag.add_text("uh imag", position="upper_edge", font_size=14, color="black")
+    p_imag.add_mesh(merged_grid, scalars="u_imag", show_edges=True, clim=clim_imag)
+    p_imag.view_xy()
+    if not pyvista.OFF_SCREEN:
+        p_imag.show()
