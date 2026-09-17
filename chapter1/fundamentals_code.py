@@ -421,7 +421,10 @@ if u_pieces is not None:
 if u_pieces is not None:
     plotter2 = pyvista.Plotter()
     plotter2.add_mesh(
-        merged_u_grid.warp_by_scalar(), show_edges=True, show_scalar_bar=True, clim=u_clim
+        merged_u_grid.warp_by_scalar(),
+        show_edges=True,
+        show_scalar_bar=True,
+        clim=u_clim,
     )
     if not pyvista.OFF_SCREEN:
         plotter2.show()

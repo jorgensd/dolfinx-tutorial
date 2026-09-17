@@ -210,7 +210,7 @@ if pieces is not None:
 
 
 def write_frame(displacements: list[np.ndarray], magnitudes: list[np.ndarray]):
-    """Update the values of every piece, and draw the merged grid into a single frame."""
+    """Update the values of each piece, and draw the merged grid as a single frame."""
     assert plotter is not None and pieces is not None
     for piece, displacement, mag in zip(pieces, displacements, magnitudes):
         piece["u"][:, : displacement.shape[1]] = displacement
