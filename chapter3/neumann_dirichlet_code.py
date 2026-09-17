@@ -186,17 +186,32 @@ print(f"Error_max : {error_max:.2e}")
 # To look at the actual solution, run the script as a python script with `off_screen=True` or as a Jupyter notebook with `off_screen=False`
 
 # +
+# Each process builds the grid of the cells it owns, the pieces are gathered on one process and
+# merged into a single grid, which is then drawn, see
+# [Plotting in parallel](../chapter1/fundamentals_code).
+
 pyvista_cells, cell_types, geometry = vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(pyvista_cells, cell_types, geometry)
 grid.point_data["u"] = uh.x.array
 grid.set_active_scalars("u")
 
-plotter = pyvista.Plotter()
-plotter.add_text("uh", position="upper_edge", font_size=14, color="black")
-plotter.add_mesh(grid, show_edges=True)
-plotter.view_xy()
+root = 0
+assert root < mesh.comm.size, f"Cannot gather on process {root} of {mesh.comm.size}"
 
-if not pyvista.OFF_SCREEN:
-    plotter.show()
-else:
-    figure = plotter.screenshot("neumann_dirichlet.png")
+clim = [
+    mesh.comm.reduce(uh.x.array.min(), op=MPI.MIN, root=root),
+    mesh.comm.reduce(uh.x.array.max(), op=MPI.MAX, root=root),
+]
+pieces = mesh.comm.gather(grid, root=root)
+
+if pieces is not None:
+    merged_grid = pyvista.merge(pieces)
+    plotter = pyvista.Plotter()
+    plotter.add_text("uh", position="upper_edge", font_size=14, color="black")
+    plotter.add_mesh(merged_grid, show_edges=True, clim=clim)
+    plotter.view_xy()
+
+    if not pyvista.OFF_SCREEN:
+        plotter.show()
+    else:
+        figure = plotter.screenshot("neumann_dirichlet.png")

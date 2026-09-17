@@ -174,9 +174,12 @@ uh = problem.solve()
 
 # ## Visualization
 
+# Each process builds the grid of the cells it owns, the pieces are gathered on one process and
+# merged into a single grid, which is then drawn, see
+# [Plotting in parallel](../chapter1/fundamentals_code).
+
 # +
-# Create plotter and pyvista grid
-p = pyvista.Plotter()
+# Create pyvista grid
 topology, cell_types, x = vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(topology, cell_types, x)
 
@@ -185,11 +188,19 @@ grid = pyvista.UnstructuredGrid(topology, cell_types, x)
 vals = np.zeros((x.shape[0], 3))
 vals[:, : len(uh)] = uh.x.array.reshape((x.shape[0], len(uh)))
 grid["u"] = vals
-actor_0 = p.add_mesh(grid, style="wireframe", color="k")
-warped = grid.warp_by_vector("u", factor=1.5)
-actor_1 = p.add_mesh(warped, opacity=0.8)
-p.view_xy()
-if not pyvista.OFF_SCREEN:
-    p.show()
-else:
-    fig_array = p.screenshot("component.png")
+
+root = 0
+assert root < mesh.comm.size, f"Cannot gather on process {root} of {mesh.comm.size}"
+
+pieces = mesh.comm.gather(grid, root=root)
+
+if pieces is not None:
+    merged_grid = pyvista.merge(pieces)
+    p = pyvista.Plotter()
+    actor_0 = p.add_mesh(merged_grid, style="wireframe", color="k")
+    actor_1 = p.add_mesh(merged_grid.warp_by_vector("u", factor=1.5), opacity=0.8)
+    p.view_xy()
+    if not pyvista.OFF_SCREEN:
+        p.show()
+    else:
+        fig_array = p.screenshot("component.png")

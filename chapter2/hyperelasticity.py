@@ -173,10 +173,14 @@ problem = NonlinearProblem(
 
 # We create a function to plot the solution at each time step.
 
-# +
-plotter = pyvista.Plotter()
-plotter.open_gif("deformation.gif", fps=3)
+# Each process builds the grid of the cells it owns, the pieces are gathered on one process and
+# merged into a single grid, which is then drawn, see
+# [Plotting in parallel](../chapter1/fundamentals_code).
+#
+# The mesh does not change during the simulation, so the pieces are gathered once, and only the
+# values are sent to the process that writes the GIF at each frame.
 
+# +
 topology, cells, geometry = plot.vtk_mesh(u.function_space)
 function_grid = pyvista.UnstructuredGrid(topology, cells, geometry)
 
@@ -185,13 +189,6 @@ values[:, : len(u)] = u.x.array.reshape(geometry.shape[0], len(u))
 function_grid["u"] = values
 function_grid.set_active_vectors("u")
 
-# Warp mesh by deformation
-warped = function_grid.warp_by_vector("u", factor=1)
-warped.set_active_vectors("u")
-
-# Add mesh to plotter and visualize
-actor = plotter.add_mesh(warped, show_edges=True, lighting=False, clim=[0, 10])
-
 # Compute magnitude of displacement to visualize in GIF
 Vs = fem.functionspace(domain, ("Lagrange", 2))
 magnitude = fem.Function(Vs)
@@ -199,7 +196,31 @@ us = fem.Expression(
     ufl.sqrt(sum([u[i] ** 2 for i in range(len(u))])), Vs.element.interpolation_points
 )
 magnitude.interpolate(us)
-warped["mag"] = magnitude.x.array
+function_grid["mag"] = magnitude.x.array
+
+root = 0
+assert root < domain.comm.size, f"Cannot gather on process {root} of {domain.comm.size}"
+
+pieces = domain.comm.gather(function_grid, root=root)
+
+plotter = None
+if pieces is not None:
+    plotter = pyvista.Plotter()
+    plotter.open_gif("deformation.gif", fps=3)
+
+
+def write_frame(displacements: list[np.ndarray], magnitudes: list[np.ndarray]):
+    """Update the values of each piece, and draw the merged grid as a single frame."""
+    assert plotter is not None and pieces is not None
+    for piece, displacement, mag in zip(pieces, displacements, magnitudes):
+        piece["u"][:, : displacement.shape[1]] = displacement
+        piece["mag"][:] = mag
+    warped = pyvista.merge(pieces).warp_by_vector("u", factor=1)
+    warped.set_active_scalars("mag")
+    plotter.clear()
+    plotter.add_mesh(warped, show_edges=True, lighting=False, clim=[0, 10])
+    plotter.update_scalar_bar_range([0, 10])
+    plotter.write_frame()
 # -
 
 # Finally, we solve the problem over several time steps, updating the z-component of the traction
@@ -214,14 +235,16 @@ for n in range(1, 10):
     assert converged > 0, f"Solver did not converge with reason {converged}."
 
     print(f"Time step {n}, Number of iterations {num_its}, Load {T.value}")
-    function_grid["u"][:, : len(u)] = u.x.array.reshape(geometry.shape[0], len(u))
     magnitude.interpolate(us)
-    warped.set_active_scalars("mag")
-    warped_n = function_grid.warp_by_vector(factor=1)
-    warped.points[:, :] = warped_n.points
-    warped.point_data["mag"][:] = magnitude.x.array
-    plotter.update_scalar_bar_range([0, 10])
-    plotter.write_frame()
-plotter.close()
+
+    # The gathers are collective, so every process takes part in them, while only the process
+    # that received the pieces draws the frame
+    local_u = u.x.array.reshape(geometry.shape[0], len(u))
+    displacements = domain.comm.gather(local_u.copy(), root=root)
+    magnitudes = domain.comm.gather(magnitude.x.array.copy(), root=root)
+    if displacements is not None and magnitudes is not None:
+        write_frame(displacements, magnitudes)
+if plotter is not None:
+    plotter.close()
 
 # <img src="./deformation.gif" alt="gif" class="bg-primary mb-1" width="800px">

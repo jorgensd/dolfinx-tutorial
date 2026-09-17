@@ -143,22 +143,33 @@ uh = problem.solve()
 # We start by using Pyvista.
 # In previous tutorials, we have considered scalar values, while the following section considers vectors.
 
+# Each process builds the grid of the cells it owns, the pieces are gathered on one process and
+# merged into a single grid, which is then drawn, see
+# [Plotting in parallel](../chapter1/fundamentals_code).
+
 # +
-# Create plotter and pyvista grid
-p = pyvista.Plotter()
+# Create pyvista grid
 topology, cell_types, geometry = plot.vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
 
 # Attach vector values to grid and warp grid by vector
 grid["u"] = uh.x.array.reshape((geometry.shape[0], 3))
-actor_0 = p.add_mesh(grid, style="wireframe", color="k")
-warped = grid.warp_by_vector("u", factor=1.5)
-actor_1 = p.add_mesh(warped, show_edges=True)
-p.show_axes()
-if not pyvista.OFF_SCREEN:
-    p.show()
-else:
-    figure_as_array = p.screenshot("deflection.png")
+
+root = 0
+assert root < domain.comm.size, f"Cannot gather on process {root} of {domain.comm.size}"
+
+pieces = domain.comm.gather(grid, root=root)
+
+if pieces is not None:
+    merged_grid = pyvista.merge(pieces)
+    p = pyvista.Plotter()
+    actor_0 = p.add_mesh(merged_grid, style="wireframe", color="k")
+    actor_1 = p.add_mesh(merged_grid.warp_by_vector("u", factor=1.5), show_edges=True)
+    p.show_axes()
+    if not pyvista.OFF_SCREEN:
+        p.show()
+    else:
+        figure_as_array = p.screenshot("deflection.png")
 # -
 
 # We could also use Paraview for visualizing this.
@@ -198,12 +209,27 @@ stresses.interpolate(stress_expr)
 # The first thing we notice is that we  now set values for each cell,
 # which has a one to one correspondence with the degrees of freedom in the function space.
 
-warped.cell_data["VonMises"] = stresses.x.petsc_vec.array
-warped.set_active_scalars("VonMises")
-p = pyvista.Plotter()
-p.add_mesh(warped)
-p.show_axes()
-if not pyvista.OFF_SCREEN:
-    p.show()
-else:
-    stress_figure = p.screenshot("stresses.png")
+# The stresses are attached to the grid of each process before the pieces are gathered, so that
+# each piece carries its own values. `petsc_vec.array` holds the cells the process owns, which are
+# exactly the cells of its grid.
+
+# +
+grid.cell_data["VonMises"] = stresses.x.petsc_vec.array
+grid.set_active_scalars("VonMises")
+
+stress_clim = [
+    domain.comm.reduce(stresses.x.petsc_vec.array.min(), op=MPI.MIN, root=root),
+    domain.comm.reduce(stresses.x.petsc_vec.array.max(), op=MPI.MAX, root=root),
+]
+stress_pieces = domain.comm.gather(grid, root=root)
+
+if stress_pieces is not None:
+    merged_stress_grid = pyvista.merge(stress_pieces)
+    p = pyvista.Plotter()
+    p.add_mesh(merged_stress_grid.warp_by_vector("u", factor=1.5), clim=stress_clim)
+    p.show_axes()
+    if not pyvista.OFF_SCREEN:
+        p.show()
+    else:
+        stress_figure = p.screenshot("stresses.png")
+# -

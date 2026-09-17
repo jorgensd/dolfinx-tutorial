@@ -456,6 +456,12 @@ solver3.destroy()
 # We have already looked at how to plot higher order functions and vector functions.
 # In this section we will look at how to visualize vector functions with glyphs, instead of warping the mesh.
 
+# Each process builds the grid of the cells it owns, the pieces are gathered on one process and
+# merged into a single grid, which is then drawn, see
+# [Plotting in parallel](../chapter1/fundamentals_code).
+# As the grids are merged, {py:meth}`glyph<pyvista.DataSetFilters.glyph>` places a single arrow at
+# a point that is shared by two processes.
+
 # +
 topology, cell_types, geometry = vtk_mesh(V)
 values = np.zeros((geometry.shape[0], 3), dtype=np.float64)
@@ -464,23 +470,31 @@ values[:, : len(u_n)] = u_n.x.array.real.reshape((geometry.shape[0], len(u_n)))
 # Create a point cloud of glyphs
 function_grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
 function_grid["u"] = values
-glyphs = function_grid.glyph(orient="u", factor=0.2)
 
 # Create a pyvista-grid for the mesh
 tdim = mesh.topology.dim
 mesh.topology.create_connectivity(tdim, tdim)
 grid = pyvista.UnstructuredGrid(*vtk_mesh(mesh, tdim))
 
-# Create plotter
-plotter = pyvista.Plotter()
-plotter.add_mesh(grid, style="wireframe", color="k")
-plotter.add_mesh(glyphs)
-plotter.view_xy()
+root = 0
+assert root < mesh.comm.size, f"Cannot gather on process {root} of {mesh.comm.size}"
 
-if not pyvista.OFF_SCREEN:
-    plotter.show()
-else:
-    fig_as_array = plotter.screenshot("glyphs.png")
+u_pieces = mesh.comm.gather(function_grid, root=root)
+mesh_pieces = mesh.comm.gather(grid, root=root)
+
+# Create plotter
+if u_pieces is not None and mesh_pieces is not None:
+    merged_u_grid = pyvista.merge(u_pieces)
+    merged_grid = pyvista.merge(mesh_pieces)
+    plotter = pyvista.Plotter()
+    plotter.add_mesh(merged_grid, style="wireframe", color="k")
+    plotter.add_mesh(merged_u_grid.glyph(orient="u", factor=0.2))
+    plotter.view_xy()
+
+    if not pyvista.OFF_SCREEN:
+        plotter.show()
+    else:
+        fig_as_array = plotter.screenshot("glyphs.png")
 # -
 
 # ## References

@@ -168,14 +168,18 @@ solver.getPC().setType(PETSc.PC.Type.LU)
 # We would also like to visualize a colorbar reflecting the minimal and maximum
 # value of $u$ at each time step.
 
+# The mesh does not change during the simulation, so the pieces are gathered once, and only the
+# values are sent to the process that writes the GIF at each frame.
+# That process attaches the values to the pieces and merges them into a single grid before drawing,
+# see [Plotting in parallel](../chapter1/fundamentals_code).
+# We collect the pieces on the process `root`, which has to be one of the processes we run on.
+
 # +
+root = 0
+assert root < domain.comm.size, f"Cannot gather on process {root} of {domain.comm.size}"
+
 grid = pyvista.UnstructuredGrid(*plot.vtk_mesh(V))
-
-plotter = pyvista.Plotter()
-plotter.open_gif("u_time.gif", fps=10)
-
-grid.point_data["uh"] = uh.x.array
-warped = grid.warp_by_scalar("uh", factor=1)
+pieces = domain.comm.gather(grid, root=root)
 
 viridis = mpl.colormaps.get_cmap("viridis").resampled(25)
 sargs = dict(
@@ -188,15 +192,30 @@ sargs = dict(
     width=0.8,
     height=0.1,
 )
+clim = [0, domain.comm.reduce(uh.x.array.max(), op=MPI.MAX, root=root)]
 
-renderer = plotter.add_mesh(
-    warped,
-    show_edges=True,
-    lighting=False,
-    cmap=viridis,
-    scalar_bar_args=sargs,
-    clim=[0, max(uh.x.array)],
-)
+plotter = None
+if pieces is not None:
+    plotter = pyvista.Plotter()
+    plotter.open_gif("u_time.gif", fps=10)
+
+
+def write_frame(values: list[np.ndarray]):
+    """Draw the merged solution into a single frame of the GIF."""
+    assert plotter is not None and pieces is not None
+    for piece, piece_values in zip(pieces, values):
+        piece.point_data["uh"] = piece_values
+    merged_grid = pyvista.merge(pieces)
+    plotter.clear()
+    plotter.add_mesh(
+        merged_grid.warp_by_scalar("uh", factor=1),
+        show_edges=True,
+        lighting=False,
+        cmap=viridis,
+        scalar_bar_args=sargs,
+        clim=clim,
+    )
+    plotter.write_frame()
 # -
 
 # (time-dep-assembly)=
@@ -242,12 +261,14 @@ for i in range(num_steps):
 
     # Write solution to file
     xdmf.write_function(uh, t)
-    # Update plot
-    new_warped = grid.warp_by_scalar("uh", factor=1)
-    warped.points[:, :] = new_warped.points
-    warped.point_data["uh"][:] = uh.x.array
-    plotter.write_frame()
-plotter.close()
+
+    # Update plot. The gather is collective, so every process takes part in it, while only the
+    # process that received the pieces draws the frame
+    values = domain.comm.gather(uh.x.array.copy(), root=root)
+    if values is not None:
+        write_frame(values)
+if plotter is not None:
+    plotter.close()
 xdmf.close()
 
 # We {py:meth}`destroy<petsc4py.PETSc.Mat.destroy>` the PETSc objects to avoid memory leaks.
