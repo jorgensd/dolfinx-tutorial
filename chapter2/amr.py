@@ -291,10 +291,7 @@ def write_frame(plotter: pyvista.Plotter | None, uh_r: dolfinx.fem.Function):
     if plotter is None or pieces is None or curved_pieces is None:
         return
     plotter.clear()
-    plotter.add_mesh(
-        pyvista.merge(curved_pieces),
-        show_edges=False,
-    )
+    plotter.add_mesh(pyvista.merge(curved_pieces), show_edges=False)
     plotter.add_mesh(pyvista.merge(pieces), style="wireframe", color="black")
     plotter.view_xy()
     plotter.write_frame()
