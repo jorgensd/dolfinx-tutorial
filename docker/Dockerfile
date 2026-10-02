@@ -1,6 +1,6 @@
 # Execute from root of repo as: docker buildx build --platform=linux/arm64,linux/amd64 -f docker/Dockerfile . --progress=plain
 
-FROM ghcr.io/fenics/dolfinx/lab:stable
+FROM ghcr.io/fenics/dolfinx/lab:nightly
 
 ARG TARGETPLATFORM
 
@@ -20,18 +20,18 @@ RUN apt-get update && apt-get install -y libgl1-mesa-dev mesa-utils curl
 RUN  apt-get update && \
     apt-get -y install python3 python3-tk libpython3-dev libxmu-dev tk-dev tcl-dev cmake git g++ libglu1-mesa-dev liblapacke-dev libocct-data-exchange-dev libocct-draw-dev occt-misc libtbb-dev libxi-dev
 WORKDIR /ngsuite
-RUN git clone --branch=v6.2.2505 --single-branch https://github.com/NGSolve/netgen.git netgen-src
+RUN git clone --branch=v6.2.2604 --single-branch https://github.com/NGSolve/netgen.git netgen-src
 WORKDIR /ngsuite/netgen-src
 RUN git submodule update --init --recursive
 WORKDIR /ngsuite
 RUN mkdir netgen-build
 RUN mkdir netgen-install
-RUN cmake -DCMAKE="-cxx-flags=-flax-vector-conversions" -DCMAKE_INSTALL_PREFIX=/ngsuite/netgen-install /ngsuite/netgen-src
+RUN cmake -DCMAKE_CXX_FLAGS="-flax-vector-conversions" -DCMAKE_INSTALL_PREFIX=/ngsuite/netgen-install /ngsuite/netgen-src
 RUN make
 RUN make install
 ENV NETGENDIR=/ngsuite/netgen-install/bin
 ENV PATH=$NETGENDIR:$PATH
-ENV PYTHONPATH=$NETGENDIR/../lib/python3.12/site-packages:${PYTHONPATH}:${PYTHONPATH}:$PATH
+ENV PYTHONPATH=$NETGENDIR/../lib/python3.14/site-packages:${PYTHONPATH}:${PYTHONPATH}:$PATH
 
 # Install vtk
 RUN python3 -m pip install vtk
