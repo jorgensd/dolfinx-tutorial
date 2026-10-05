@@ -400,6 +400,6 @@ if u_pieces is not None:
     p2 = pyvista.Plotter(window_size=[800, 800])
     p2.add_mesh(merged_u_grid, show_edges=True, clim=u_clim)
     if not pyvista.OFF_SCREEN:
-        p2.show()
+        p2.show(screenshot="unstructured_u.png")
     else:
         p2.screenshot("unstructured_u.png")

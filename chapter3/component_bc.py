@@ -201,6 +201,6 @@ if pieces is not None:
     actor_1 = p.add_mesh(merged_grid.warp_by_vector("u", factor=1.5), opacity=0.8)
     p.view_xy()
     if not pyvista.OFF_SCREEN:
-        p.show()
+        p.show(screenshot="component.png")
     else:
         fig_array = p.screenshot("component.png")
