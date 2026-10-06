@@ -153,7 +153,7 @@ if pieces is not None:
     plotter.add_mesh(grid, show_edges=True, show_scalar_bar=True, clim=clim)
     plotter.view_xy()
     if not pyvista.OFF_SCREEN:
-        plotter.show()
+        plotter.show(screenshot="nitsche.png")
     else:
         figure = plotter.screenshot("nitsche.png")
 # -

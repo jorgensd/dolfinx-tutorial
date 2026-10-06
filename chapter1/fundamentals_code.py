@@ -427,7 +427,9 @@ if u_pieces is not None:
         clim=u_clim,
     )
     if not pyvista.OFF_SCREEN:
-        plotter2.show()
+        plotter2.show(screenshot="fundamentals_code.png")
+    else:
+        figure = plotter2.screenshot("fundamentals_code.png")
 
 # ## External post-processing
 # For post-processing outside the python code, it is suggested to save the solution to file using either

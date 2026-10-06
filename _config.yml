@@ -32,6 +32,9 @@ launch_buttons:
   binderhub_url: "https://mybinder.org"
 
 sphinx:
+  # Copies the tutorials' animations for the gallery on the front page
+  local_extensions:
+    gallery: _ext
   config:
     html_last_updated_fmt: "%b %d, %Y"
     suppress_warnings: ["mystnb.unknown_mime_type"]

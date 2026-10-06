@@ -375,6 +375,6 @@ if cloud_pieces is not None and mesh_pieces is not None:
     actor2 = plotter.add_mesh(merged_cloud.glyph("B", factor=2e6))
 
     if not pyvista.OFF_SCREEN:
-        plotter.show()
+        plotter.show(screenshot="B.png")
     else:
         B_fig = plotter.screenshot("B.png")

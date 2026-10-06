@@ -146,6 +146,6 @@ if pieces is not None:
     plotter.add_mesh(merged_grid, show_edges=True, clim=clim)
     plotter.view_xy()
     if not pyvista.OFF_SCREEN:
-        plotter.show()
+        plotter.show(screenshot="multiple_dirichlet.png")
     else:
         figure = plotter.screenshot("multiple_dirichlet.png")

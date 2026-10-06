@@ -241,7 +241,7 @@ if p_pieces is not None:
     )
     load_plotter.view_xy()
     if not pyvista.OFF_SCREEN:
-        load_plotter.show()
+        load_plotter.show(screenshot="load.png")
     else:
         load_plotter.screenshot("load.png")
 # -

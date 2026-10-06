@@ -229,7 +229,6 @@ if stress_pieces is not None:
     p.add_mesh(merged_stress_grid.warp_by_vector("u", factor=1.5), clim=stress_clim)
     p.show_axes()
     if not pyvista.OFF_SCREEN:
-        p.show()
+        p.show(screenshot="stresses.png")
     else:
         stress_figure = p.screenshot("stresses.png")
-# -

@@ -492,7 +492,7 @@ if u_pieces is not None and mesh_pieces is not None:
     plotter.view_xy()
 
     if not pyvista.OFF_SCREEN:
-        plotter.show()
+        plotter.show(screenshot="glyphs.png")
     else:
         fig_as_array = plotter.screenshot("glyphs.png")
 # -

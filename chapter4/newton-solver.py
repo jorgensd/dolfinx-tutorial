@@ -357,4 +357,6 @@ if pieces is not None:
     u_plotter.add_mesh(merged_u_grid, show_edges=True, clim=u_clim)
     u_plotter.view_xy()
     if not pyvista.OFF_SCREEN:
-        u_plotter.show()
+        u_plotter.show(screenshot="newton_solver.png")
+    else:
+        figure = u_plotter.screenshot("newton_solver.png")

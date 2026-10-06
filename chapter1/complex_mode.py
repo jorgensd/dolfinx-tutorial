@@ -222,4 +222,6 @@ if pieces is not None:
     p_imag.add_mesh(merged_grid, scalars="u_imag", show_edges=True, clim=clim_imag)
     p_imag.view_xy()
     if not pyvista.OFF_SCREEN:
-        p_imag.show()
+        p_imag.show(screenshot="complex_mode.png")
+    else:
+        figure = p_imag.screenshot("complex_mode.png")

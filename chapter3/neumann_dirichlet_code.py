@@ -212,6 +212,6 @@ if pieces is not None:
     plotter.view_xy()
 
     if not pyvista.OFF_SCREEN:
-        plotter.show()
+        plotter.show(screenshot="neumann_dirichlet.png")
     else:
         figure = plotter.screenshot("neumann_dirichlet.png")

@@ -122,7 +122,9 @@ if curved_pieces is not None and pieces is not None:
     plotter.add_mesh(merged_grid, style="wireframe", color="black")
     plotter.view_xy()
     if not pyvista.OFF_SCREEN:
-        plotter.show()
+        plotter.show(screenshot="amr.png")
+    else:
+        figure = plotter.screenshot("amr.png")
 # -
 
 # ## Solving the eigenvalue problem
