@@ -23,13 +23,16 @@
 #
 # ![Cross section of wires](wire.png)
 #
-# Through the copper wires a static current of $J=1A$ is flowing.
-# We would like to compute the magnetic field $B$ in the iron cylinder, the copper wires, and the surrounding vaccum.
+# Through the copper wires a static current is flowing, with current density $+1\,\mathrm{A/m^2}$ in the inner wires
+# and $-1\,\mathrm{A/m^2}$ in the outer wires.
+# We would like to compute the magnetic field $B$ in the iron cylinder, the copper wires, and the surrounding vacuum.
 #
-# We start by simplifying the problem to a 2D problem.
-# We can do this by assuming that the cylinder extends far along the z-axis and
-# as a consequence the field is virtually independent of the z-coordinate.
-# Next, we consider Maxwell's equation to derive a Poisson equation for the magnetic field (or rather its potential)
+# We will reduce this to a problem on the 2D cross section of the geometry,
+# and derive a Poisson equation for the magnetic field (or rather its potential).
+#
+# ## Reduction of Maxwell's equations to a 2D Poisson problem
+#
+# We start with Maxwell's equations
 #
 # $$
 # \nabla \cdot D = \rho,
@@ -45,21 +48,110 @@
 # $$
 #
 # Here, $D$ is the displacement field, $B$ is the magnetic field, $E$ is the electric field, and $H$ is the magnetizing field.
-# In addition to Maxwell's equation, we need a constitutive relation between $B$ and $H$,
+# In addition to Maxwell's equations, we need a constitutive relation between $B$ and $H$,
 #
 # $$
 # B =\mu H,
 # $$
 #
 # which holds for an isotropic linear magnetic medium.
-# Here, $\mu$ is the magnetic permability of the material.
-# Now, since $B$ is solenodial (divergence free) according to Maxwell's equations, we known that $B$ must be the curl of some vector field $A$. This field is called the magnetic vector potential. Since the problem is static and thus $\frac{\partial D}{\partial t}=0$, it follows that
+# Here, $\mu$ is the magnetic permeability of the material.
+# Since $B$ is solenoidal (divergence free) according to Maxwell's equations, $B$ must be the curl of some vector field $A$ in $\mathbb{R}^3$.
+# This field is called the magnetic vector potential. Since the problem is static (assumption 3 below) and thus $\frac{\partial D}{\partial t}=0$, it follows that
 #
 # $$
-# J = \nabla \times H = \nabla \times(\mu^{-1} B)=\nabla \times (\mu^{-1}\nabla \times A ) = -\nabla \cdot (\mu^{-1}\nabla A).
+# J = \nabla \times H = \nabla \times(\mu^{-1} B)=\nabla \times (\mu^{-1}\nabla \times A ).
 # $$
 #
-# In the last step, we have expanded the second derivatives and used the gauge freedom of $A$ to simplify the equations to a simple vector-valued Poisson equation for the magnetic vector potential; if $B=\nabla \times A$, then $B=\nabla \times (A+\nabla \phi)$ for any scalar field $\phi$ (the gauge function).
+# So far, apart from the problem being static, everything holds for a general 3D problem.
+# Note that $\mu$ varies in space.
+# It is piecewise constant, with jumps at all material interfaces.
+# The largest jump is between the iron cylinder and its surroundings,
+# as the permeabilities of copper and vacuum are almost equal.
+# We can therefore not use the identity $\nabla \times (\nabla \times A) = \nabla(\nabla\cdot A) - \nabla^2 A$ directly,
+# as $\mu^{-1}$ cannot be moved outside the outer curl.
+# Instead, we use the 2D structure of the problem.
+#
+# ### Assumptions of the 2D model
+#
+# We make the following assumptions:
+#
+# 1. The cylinder and the wires extend far along the $z$-axis, so that all fields are independent of the $z$-coordinate.
+# 2. The current only flows in the $z$-direction, $J=(0,0,J_z(x,y))$.
+# 3. The problem is static, $\frac{\partial D}{\partial t}=0$.
+# 4. The materials are linear and isotropic, with a piecewise constant permeability $\mu=\mu(x,y)$.
+# 5. There are no surface currents at the material interfaces.
+# 6. The magnetic field and its potential vanish far away from the wires.
+#    The magnetic field decays for any net current through the cross section,
+#    while the potential can only vanish if the net current is zero (otherwise it grows logarithmically).
+#    This is the case here, as the currents in the inner and outer wires cancel.
+#
+# By assumption 3, $\nabla \times H = J$.
+# As all derivatives with respect to $z$ vanish by assumption 1, and $J=(0,0,J_z)$ by assumption 2, this equation reads
+#
+# $$
+# \nabla \times H = \left(\frac{\partial H_z}{\partial y}, -\frac{\partial H_z}{\partial x}, \frac{\partial H_y}{\partial x} - \frac{\partial H_x}{\partial y}\right) = (0, 0, J_z).
+# $$
+#
+# The $z$-component will give us the Poisson equation for the magnetic vector potential below.
+# The $x$- and $y$-components give $\frac{\partial H_z}{\partial y} = \frac{\partial H_z}{\partial x} = 0$.
+# Thus $H_z$ is constant within each connected component of the material subdomains
+# (the vacuum, for instance, consists of the hole inside the iron cylinder and the exterior).
+# As $H_z$ is tangential to the material interfaces, it is continuous across them by assumption 5,
+# and therefore constant in the whole plane.
+# By assumption 6, $H_z=B_z=0$.
+# In other words, $B=B(x,y)$ only has $x$- and $y$-components.
+#
+# ### Choice of gauge
+#
+# The vector potential $A$ is not unique; if $B=\nabla \times A$, then $B=\nabla \times (A+\nabla \phi)$ for any scalar field $\phi$ (the gauge function),
+# as $\nabla \times \nabla \phi = 0$.
+# Conversely, on a simply connected domain such as $\mathbb{R}^3$, the difference of two vector potentials of $B$ is curl free,
+# and thus they differ by such a gradient.
+# A gauge is an additional condition imposed on $A$, which restricts this freedom.
+#
+# As $\frac{\partial B_x}{\partial x} + \frac{\partial B_y}{\partial y} = \nabla \cdot B = 0$, there exists a scalar function $\psi(x,y)$ (a stream function)
+# such that $B = \left(\frac{\partial \psi}{\partial y}, -\frac{\partial \psi}{\partial x}, 0\right)$.
+# Thus, $A=(0,0,\psi)$ is a vector potential of $B$.
+# We use this as our gauge condition, i.e. we require that $A$ is of the form $A=(0,0,A_z(x,y))$.
+# This choice also satisfies the Coulomb gauge, $\nabla \cdot A = \frac{\partial A_z}{\partial z}=0$.
+# However, it does not determine $A$ completely.
+# The gauge function $\phi = cz$, for any constant $c$, gives $\nabla \phi = (0,0,c)$,
+# so $A_z$ and $A_z + c$ give the same magnetic field $B$.
+# We remove this freedom through the boundary condition below.
+#
+# ### The scalar Poisson equation
+#
+# With $A=(0,0,A_z(x,y))$ we have
+#
+# $$
+# B = \nabla \times A = \left(\frac{\partial A_z}{\partial y}, -\frac{\partial A_z}{\partial x}, 0\right).
+# $$
+#
+# As $\mu^{-1}B$ is also independent of $z$ and has no $z$-component, the $x$- and $y$-components of its curl vanish, while the $z$-component is
+#
+# $$
+# \left(\nabla \times (\mu^{-1}B)\right)_z = \frac{\partial}{\partial x}\left(-\mu^{-1}\frac{\partial A_z}{\partial x}\right) - \frac{\partial}{\partial y}\left(\mu^{-1}\frac{\partial A_z}{\partial y}\right) = -\nabla \cdot (\mu^{-1}\nabla A_z).
+# $$
+#
+# Equating the $z$-components of $J$ and $\nabla \times (\mu^{-1}\nabla \times A)$ gives $-\nabla \cdot (\mu^{-1}\nabla A_z) = J_z$, without any assumption of $\mu$ being constant.
+# As $\mu$ is discontinuous, this equation should be understood in the weak sense.
+# At a material interface with unit normal $n=(n_x, n_y)$ and unit tangent $t=(-n_y, n_x)$,
+# the normal component of $B$ and, by assumption 5, the tangential component of $H$ are continuous.
+# Inserting the expression for $B$, we obtain
+#
+# $$
+# B\cdot n = \frac{\partial A_z}{\partial t}, \qquad H \cdot t = -\mu^{-1}\frac{\partial A_z}{\partial n}.
+# $$
+#
+# Continuity of $B\cdot n$ only implies that the tangential derivative of $A_z$ is continuous,
+# i.e. that $A_z$ is continuous up to a constant along each interface.
+# A jump in $A_z$ would however give a singular contribution to $B$ on the interface, and an infinite magnetic energy.
+# We therefore require that $A_z\in H^1_{\mathrm{loc}}(\mathbb{R}^2)$, i.e. that $A_z$ is in $H^1$ on every bounded subset of $\mathbb{R}^2$, which rules out such jumps.
+# Thus, $A_z$ and $\mu^{-1}\frac{\partial A_z}{\partial n}$ should be continuous across material interfaces.
+#
+# ### Boundary conditions and uniqueness
+#
 # For the current problem, we thus need to solve the following 2D Poisson problem for the $z$-component $A_z$ of the magnetic vector potential
 #
 # $$
@@ -69,20 +161,63 @@
 # \lim_{\vert(x,y)\vert\to \infty}A_z = 0.
 # $$
 #
-# Since we cannot solve the problem on an infinite domain, we will truncate the domain using a large disk, and set $A_z=0$ on the boundary. The current $J_z$ is set to $+1$A in the interior set of the circles (copper-wire cross sections) and to $-1$ A in the exterior set of circles in the cross section figure.
-# Once the magnetic field vector potential has been computed, we can compute the magnetic field $B=B(x,y)$ by
+# The condition at infinity is what makes the solution unique.
+# Without it, we could add any function $w$ satisfying $-\nabla \cdot (\mu^{-1}\nabla w) = 0$ to $A_z$.
+# This includes the constant shift $w=c$ from the gauge freedom above, which does not change $B$.
+# It also includes non-constant functions that do change $B$, for instance $w=ax+by$ if $\mu$ were constant,
+# which adds the uniform background field $(b, -a, 0)$ to $B$.
+# Requiring that $A_z$ vanishes at infinity rules out both.
+# Without any boundary condition, these additional solutions form an infinite-dimensional space,
+# so we cannot remove them by attaching a nullspace to the linear system.
+#
+# Since we cannot solve the problem on an infinite domain, we will truncate the domain using a large disk $\Omega$, and set $A_z=0$ on its boundary $\partial\Omega$.
+# This Dirichlet condition approximates the condition at infinity, and makes the linear system non-singular.
+# Alternatively, we could use the natural (homogeneous Neumann) condition $\mu^{-1}\frac{\partial A_z}{\partial n}=0$, i.e. $H\cdot t=0$, on $\partial\Omega$.
+# Then, only the constants remain as additional solutions, which could be handled
+# by attaching the nullspace as in the [singular Poisson problem](../chapter2/singular_poisson).
+# This requires the net current to be zero, i.e. the compatibility condition $\int_\Omega J_z~\mathrm{d}x = 0$.
+# For the discretized problem, this condition only holds up to the geometry approximation error,
+# as the area of each polygonal wire cross section differs slightly from $\pi r^2$.
+# The two conditions give slightly different solutions on a finite disk.
+# With $A_z=0$, the magnetic field is tangential to $\partial\Omega$ ($B\cdot n=0$),
+# while with $H\cdot t=0$ it crosses $\partial\Omega$ at a right angle.
+# Both converge to the solution in $\mathbb{R}^2$ as the radius of the disk increases.
+#
+# The current density $J_z$ is set to $+1\,\mathrm{A/m^2}$ in the interior set of the circles (copper-wire cross sections) and to $-1\,\mathrm{A/m^2}$ in the exterior set of circles in the cross section figure.
+#
+# ### Weak formulation
+#
+# We multiply the Poisson equation by a test function $v$ that vanishes on $\partial\Omega$,
+# and integrate by parts over each material subdomain $\Omega_i$ separately, as $\mu$ is discontinuous across their boundaries.
+# This gives
 #
 # $$
-#     B(x,y)=\left(\frac{\partial A_z}{\partial y}, - \frac{\partial A_z}{\partial x} \right).
+# \sum_i \int_{\Omega_i} \mu^{-1}\nabla A_z \cdot \nabla v ~\mathrm{d}x - \sum_i \int_{\partial\Omega_i} \mu^{-1}\frac{\partial A_z}{\partial n_i} v ~\mathrm{d}s = \int_\Omega J_z v~\mathrm{d} x,
 # $$
 #
-# The weak formulation is easily obtained by multiplication of a test function $v$, followed by integration by parts, where all boundary integrals vanish due to the Dirichlet condition, we obtain $a(A_z,v)=L(v)$ with
+# where $n_i$ is the outward pointing unit normal of $\Omega_i$.
+# The integrals over $\partial\Omega$ vanish, as $v=0$ there.
+# Each interface $\Gamma$ between two subdomains appears twice, with opposite normals,
+# and the two contributions combine to the integral of the jump of $\mu^{-1}\frac{\partial A_z}{\partial n}$ across $\Gamma$, multiplied by $v$.
+# By continuity of $H\cdot t$, these interface terms vanish.
+# Conversely, any $A_z$ satisfying the resulting weak formulation for all $v$ has a continuous $\mu^{-1}\frac{\partial A_z}{\partial n}$ across interfaces.
+# In other words, this is a natural condition of the weak formulation, and it is therefore only satisfied weakly by the discrete solution.
+# Continuity of $A_z$ (and thereby of $B\cdot n$) is on the other hand imposed by choosing a continuous (Lagrange) function space for $A_z$.
+#
+# We obtain $a(A_z,v)=L(v)$ with
 #
 # $$
 # a(A_z, v)=\int_\Omega \mu^{-1}\nabla A_z \cdot \nabla v ~\mathrm{d}x,
 # $$
 # $$
 # L(v)=\int_\Omega J_z v~\mathrm{d} x.
+# $$
+#
+# Once the magnetic vector potential has been computed, we compute the magnetic field from $B=\nabla \times A$ derived above,
+# which for the 2D problem reads
+#
+# $$
+#     B(x,y)=\left(\frac{\partial A_z}{\partial y}, - \frac{\partial A_z}{\partial x} \right).
 # $$
 
 # ## Meshing a complex structure with subdomains
@@ -258,7 +393,7 @@ if marker_pieces is not None:
         cell_tag_fig = plotter.screenshot("cell_tags.png")
 
 
-# Next, we define the discontinous functions for the permeability $\mu$ and current $J_z$ using the `MeshTags` as in [Defining material parameters through subdomains](./subdomains)
+# Next, we define the discontinuous functions for the permeability $\mu$ and current $J_z$ using the `MeshTags` as in [Defining material parameters through subdomains](./subdomains)
 #
 
 Q = functionspace(mesh, ("DG", 0))
@@ -282,7 +417,7 @@ for tag in material_tags:
     elif tag in range(2 + N, 2 * N + 2):
         J.x.array[cells] = np.full_like(cells, -1, dtype=default_scalar_type)
 
-# In the code above, we have used a somewhat less extreme value for the magnetic permability of iron. This is to make the solution a little more interesting. It would otherwise be completely dominated by the field in the iron cylinder.
+# In the code above, we have used a somewhat less extreme value for the magnetic permeability of iron. This is to make the solution a little more interesting. It would otherwise be completely dominated by the field in the iron cylinder.
 #
 # We can now define the weak problem
 
@@ -305,7 +440,7 @@ A_z = Function(V)
 problem = LinearProblem(a, L, u=A_z, bcs=[bc], petsc_options_prefix="em_")
 problem.solve()
 
-# As we have computed the magnetic potential, we can now compute the magnetic field, by setting `B=curl(A_z)`. Note that as we have chosen a function space of first order piecewise linear function to describe our potential, the curl of a function in this space is a discontinous zeroth order function (a function of cell-wise constants). We use `dolfinx.fem.Expression` to interpolate the curl into `W`.
+# As we have computed the magnetic potential, we can now compute the magnetic field, by setting `B=curl(A_z)`. Note that as we have chosen a function space of first order piecewise linear function to describe our potential, the curl of a function in this space is a discontinuous zeroth order function (a function of cell-wise constants). We use `dolfinx.fem.Expression` to interpolate the curl into `W`.
 
 W = functionspace(mesh, ("DG", 0, (mesh.geometry.dim,)))
 B = Function(W)
