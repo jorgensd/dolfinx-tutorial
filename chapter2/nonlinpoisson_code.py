@@ -143,7 +143,7 @@ print(
 # We observe that the solver converges after $8$ iterations.
 # If we think of the problem in terms of finite differences on a uniform mesh,
 # $\mathcal{P}_1$ elements mimic standard second-order finite differences,
-# which compute the derivative of a linear or quadratic funtion exactly.
+# which compute the derivative of a linear or quadratic function exactly.
 # Here $\nabla u$ is a constant vector, which is multiplied by $1+u^2$,
 # giving a second order polynomial in $x$ and $y$, which the finite difference operator would compute exactly.
 # We can therefore, even with $\mathcal{P}_1$ elements, expect the manufactured solution to be
