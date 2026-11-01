@@ -52,6 +52,9 @@ ASSET = re.compile(r"^docs-(main|v[^-]+)-[0-9a-f]{8}\.tar\.gz$")
 # Where the version switcher is put in the web page, and how a page refers to it
 SWITCHER_PATH = "_versions/version-switcher.js"
 MARKER = b"<!-- tutorial-version-switcher -->"
+# Hides the second search bar that sphinx-book-theme >= 1.3 shows in builds from before
+# `navbar_persistent: []` was set in _config.yml (v0.11.1 and older), as a style so it doesn't flash
+FIXES = b"<style>#pst-header .navbar-persistent--container{display:none}</style>"
 HEAD = re.compile(rb"<head(?:\s[^>]*)?>", re.IGNORECASE)
 
 
@@ -409,7 +412,7 @@ def inject(args):
                 continue
             depth = len(page.relative_to(args.site).parts) - 1
             src = "../" * depth + SWITCHER_PATH
-            tag = MARKER + f'<script defer src="{src}"></script>'.encode()
+            tag = MARKER + FIXES + f'<script defer src="{src}"></script>'.encode()
             page.write_bytes(html[: head.end()] + tag + html[head.end() :])
             count += 1
     print(f"Added the version switcher to {count} pages")
