@@ -1,56 +1,177 @@
 name: Publish book
 
+# The web page has a version of the book per minor release, "stable" (the newest release) and
+# "main" (built against DOLFINx nightly). Each version is built once and its HTML archived in the
+# `docs-archive` release, so a push to main only rebuilds main, and a new tag only builds that tag.
+# Every build is tested, and only published if its tests pass: otherwise the version keeps its
+# archived build.
+# See .github/docs-versions.toml and .github/scripts/docs_site.py.
 on:
   push:
     branches:
-      - "release"
+      - "main"
+    tags:
+      - "v*"
   workflow_dispatch:
 
-  # Weekly build on Mondays at 8 am
+  # Weekly build on Mondays at 8 am, to follow DOLFINx nightly
   schedule:
     - cron: "0 8 * * 1"
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: "pages"
-  cancel-in-progress: true
+  cancel-in-progress: false
+
+env:
+  ARCHIVE: docs-archive
 
 jobs:
-  run-tests:
-    uses: ./.github/workflows/test_stable.yml
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      build: ${{ steps.plan.outputs.build }}
+      main_ref: ${{ steps.plan.outputs.main_ref }}
+      tests: ${{ steps.plan.outputs.tests }}
+      test: ${{ steps.plan.outputs.test }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      # The scripts and the list of versions always come from main, also when run for a tag
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
 
-  build-book:
+      - name: List archived builds
+        run: python3 .github/scripts/docs_site.py archived
+
+      - name: Plan builds
+        id: plan
+        env:
+          TAG: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+        run: python3 .github/scripts/docs_site.py plan ${TAG:+--tag "$TAG"}
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: site-plan
+          path: plan.json
+          retention-days: 1
+
+  build:
+    needs: plan
+    if: needs.plan.outputs.build == 'true'
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
     uses: ./.github/workflows/book_stable.yml
+    with:
+      label: ${{ matrix.label }}
+      ref: ${{ matrix.ref }}
+      image: ${{ matrix.image }}
+      asset: ${{ matrix.asset }}
+
+  test-main:
+    needs: plan
+    if: needs.plan.outputs.main_ref != ''
+    uses: ./.github/workflows/test_nightly.yml
+    with:
+      ref: ${{ needs.plan.outputs.main_ref }}
+      skip-book: true
+
+  # Each release test uploads a mark of whether it passed, as a matrix only has one result
+  test-release:
+    needs: plan
+    if: needs.plan.outputs.test == 'true'
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.plan.outputs.tests) }}
+    uses: ./.github/workflows/test_stable.yml
+    with:
+      ref: ${{ matrix.ref }}
+      image: ${{ matrix.image }}
+      asset: ${{ matrix.asset }}
 
   deploy:
-    runs-on: ubuntu-22.04
-    needs: [build-book, run-tests]
+    needs: [plan, build, test-main, test-release]
+    # Publish whatever built and passed its tests: other versions keep their archived build
+    if: ${{ !cancelled() && needs.plan.result == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # To keep the builds in the docs-archive release
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      GH_TOKEN: ${{ github.token }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v6
+      - uses: actions/download-artifact@v8
+        with:
+          name: site-plan
 
-      - name: Download docs artifact
+      # The builds, the marks of passed tests and the marks of failed builds and tests. Nothing
+      # matching is fine, but a failed download stops the deploy.
+      - name: Download fresh builds
         uses: actions/download-artifact@v8
         with:
-          name: webpage
-          path: "./public"
+          pattern: "{docs,tested,failed}-*"
+          path: fresh
+          merge-multiple: true
+
+      # A release that failed keeps its mark, so that it isn't built again on every run
+      - name: Leave out builds that failed or weren't tested
+        env:
+          MAIN_TESTS: ${{ needs.test-main.result }}
+        run: python3 .github/scripts/docs_site.py gate --main-tests "$MAIN_TESTS" fresh
+
+      # main is archived too, so that a failed nightly build falls back to the last one that built
+      - name: Archive fresh builds
+        run: |
+          gh release view "$ARCHIVE" > /dev/null 2>&1 \
+            || gh release create "$ARCHIVE" --prerelease --latest=false \
+                 --title "Documentation archive" \
+                 --notes "Built HTML of each version of the book, used to publish the web page. Do not delete."
+          shopt -s nullglob
+          for f in fresh/*.tar.gz fresh/*.failed; do
+            gh release upload "$ARCHIVE" "$f" --clobber
+          done
+          python3 .github/scripts/docs_site.py archived
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v6
+
+      - name: Assemble site
+        run: |
+          python3 .github/scripts/docs_site.py assemble --used used.txt \
+            --base-path "${{ steps.pages.outputs.base_path }}" fresh site
+
+      - name: Add version switcher
+        run: python3 .github/scripts/docs_site.py inject site
+
+      - name: Remove unused builds from the archive
+        run: |
+          for asset in $(cut -f1 archived.txt); do
+            if ! grep -qxF "$asset" used.txt; then
+              echo "Removing ${asset}"
+              gh release delete-asset "$ARCHIVE" "$asset" --yes
+            fi
+          done
 
       - name: Upload page artifact
         uses: actions/upload-pages-artifact@v5
         with:
-          path: "./public"
+          path: site
 
-      - name: Deploy coverage report to GH Pages
+      - name: Deploy to GH Pages
         id: deployment
         uses: actions/deploy-pages@v5

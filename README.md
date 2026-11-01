@@ -8,6 +8,22 @@ Author: Jørgen S. Dokken
 This is the source code for the dolfinx-tutorial [webpage](https://jorgensd.github.io/dolfinx-tutorial/).
 If you have any comments, corrections or questions, please submit an issue in the issue tracker.
 
+## Versions of the webpage
+
+The webpage has a version switcher, and a version of the tutorial for:
+
+- `stable`: the newest release, where the webpage (and any link from before it had versions) leads.
+- `main`: the `main` branch, built against DOLFINx nightly. It is rebuilt on every push to `main`.
+- `vX.Y`: each minor release from the one set in [docs-versions.toml](.github/docs-versions.toml), built from its newest `vX.Y.Z[.postN]` tag.
+
+A release is made by pushing a tag `vX.Y.Z` on `main`: the [deploy workflow](.github/workflows/deploy.yml) builds and tests it in the image `ghcr.io/fenics/dolfinx/lab:vX.Y.0` (which can be overridden in [docs-versions.toml](.github/docs-versions.toml)), and `stable` moves to it.
+Every build is tested, and only published if its tests pass; otherwise the version keeps its previous build.
+Each version is built once, and its HTML is kept in the [`docs-archive`](https://github.com/jorgensd/dolfinx-tutorial/releases/tag/docs-archive) release, which must not be deleted.
+A tag that fails to build or test gets a `.failed` mark there, and isn't built again until the mark is deleted (a build that didn't finish for other reasons, such as a cancelled job, is tried again on the next run).
+To rebuild a release, delete its tarball (or mark) from that release and run the deploy workflow.
+
+Pull requests are tested against DOLFINx nightly, and also against the newest release (in its image), to show whether the change works there too.
+
 ## Contributing
 
 If you want to contribute to this tutorial, please make a fork of the repository, make your changes, and test that the CI passes.

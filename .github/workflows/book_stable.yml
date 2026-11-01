@@ -1,12 +1,33 @@
 name: Test stable build of book
 
+# Builds the book of a version of the tutorial in a DOLFINx image, and uploads its HTML as the
+# artifact `docs-<label>`, or a `.failed` mark if it fails to build. The deploy workflow uses
+# this for each version it builds. On its own
+# (on a schedule, or by hand) it builds the newest release, as listed by
+# .github/docs-versions.toml, to catch it no longer building.
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * 1"
   workflow_call:
-  pull_request:
-    branches: ["release"]
-  push:
-    branches: ["release"]
+    inputs:
+      label:
+        description: "Name of the version, e.g. main or v0.11"
+        type: string
+        required: true
+      ref:
+        description: "Commit to build"
+        type: string
+        required: true
+      image:
+        description: "DOLFINx image to build in"
+        type: string
+        required: true
+      asset:
+        description: "Name of the tarball of the HTML"
+        type: string
+        required: true
+
 env:
   HDF5_MPI: "ON"
   H5PY_SETUP_REQUIRES: 0
@@ -14,16 +35,52 @@ env:
   LIBGL_ALWAYS_SOFTWARE: 1
 
 jobs:
-  build-book:
+  latest:
+    if: ${{ !inputs.ref }}
     runs-on: ubuntu-latest
-    container: ghcr.io/fenics/dolfinx/lab:stable
+    outputs:
+      label: ${{ steps.latest.outputs.label }}
+      ref: ${{ steps.latest.outputs.ref }}
+      image: ${{ steps.latest.outputs.image }}
+      asset: ${{ steps.latest.outputs.asset }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Find the newest release
+        id: latest
+        run: python3 .github/scripts/docs_site.py latest
+
+  build-book:
+    needs: latest
+    if: ${{ !cancelled() && (inputs.ref || needs.latest.result == 'success') }}
+    name: build-book (${{ inputs.label || needs.latest.outputs.label }})
+    runs-on: ubuntu-latest
+    container: ${{ inputs.image || needs.latest.outputs.image }}
 
     env:
       PYVISTA_OFF_SCREEN: false
       PYVISTA_JUPYTER_BACKEND: html
+      CC: "mpicc"
+      HDF5_INCLUDEDIR: "/usr/include/hdf5/openmpi"
+      PIP_BREAK_SYSTEM_PACKAGES: 1
+      # The book config needs jupyter-book 1.x, which older tags don't bound
+      PIP_CONSTRAINT: /tmp/constraints.txt
+      ASSET: ${{ inputs.asset || needs.latest.outputs.asset }}
+
+    defaults:
+      run:
+        working-directory: book
 
     steps:
+      # The install action comes from the commit of this workflow, as older tags may not have it
       - uses: actions/checkout@v7
+
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref || needs.latest.outputs.ref }}
+          path: book
 
       - name: Install common packages
         uses: ./.github/actions/install-dependencies
@@ -35,17 +92,42 @@ jobs:
           echo "HDF5_LIBDIR=/usr/lib/${ARCH_TRIPLET}/hdf5/openmpi" >> $GITHUB_ENV
 
       - name: Install book deps
+        id: deps
         run: |
-          python3 -m pip install --break-system-packages -U pip setuptools pkgconfig poetry-core poetry_dynamic_versioning
+          echo "jupyter-book<2.0" > "$PIP_CONSTRAINT"
+          python3 -m pip install -U pip setuptools pkgconfig poetry-core poetry-dynamic-versioning
           python3 -m pip install --no-build-isolation --no-binary=h5py .[netgen]
 
       - name: Build the book
+        id: book
         run: jupyter-book build .
 
+      - name: Package HTML
+        run: tar -czf "$ASSET" -C _build/html .
+
       - uses: actions/upload-artifact@v7
-        if: always()
         with:
-          name: webpage
-          path: ./_build/html
+          name: docs-${{ inputs.label || needs.latest.outputs.label }}
+          path: book/${{ env.ASSET }}
           retention-days: 2
           if-no-files-found: error
+
+      # So that the deploy workflow doesn't build it again until the mark is deleted. Other
+      # failures, such as of a checkout, are more likely to be passing, so it is built again.
+      - name: Mark the build as failed
+        if: ${{ failure() && inputs.asset && (steps.deps.outcome == 'failure' || steps.book.outcome == 'failure') }}
+        working-directory: .
+        env:
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          WHAT: ${{ inputs.ref }} in ${{ inputs.image }}
+        run: |
+          MARK="${ASSET%.tar.gz}.failed"
+          echo "Failed to build ${WHAT}: ${RUN}" > "$MARK"
+          echo "MARK=$MARK" >> "$GITHUB_ENV"
+
+      - uses: actions/upload-artifact@v7
+        if: ${{ failure() && env.MARK }}
+        with:
+          name: failed-build-${{ inputs.label }}
+          path: ${{ env.MARK }}
+          retention-days: 2
