@@ -6,7 +6,7 @@
 # Each tag is built once, and its HTML is kept in the `docs-archive` release.
 
 # Oldest minor release to publish
-oldest = "0.9"
+oldest = "0.10"
 
 # DOLFINx image to build a release in
 image = "ghcr.io/fenics/dolfinx/lab:v{major}.{minor}.0"
@@ -14,4 +14,4 @@ nightly_image = "ghcr.io/fenics/dolfinx/lab:nightly"
 
 # Per-minor overrides of `image`
 [images]
-"0.9" = "ghcr.io/fenics/dolfinx/lab:v0.9.0r1"
+"0.10" = "ghcr.io/fenics/dolfinx/lab:v0.10.0-r1"
