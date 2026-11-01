@@ -11,8 +11,8 @@
 # ---
 
 # # Mixed Poisson with a Schur complement pre-conditioner
-# This example demonstrates how to use PETSC fieldsplits with custom preconditions in DOLFINx.
-# This example is heavily insipired by the [FEniCSx PCTools example](https://rafinex-external-rifle.gitlab.io/fenicsx-pctools/demo/demo_mixed-poisson.html)
+# This example demonstrates how to use PETSc fieldsplits with custom preconditioners in DOLFINx.
+# This example is heavily inspired by the [FEniCSx PCTools example](https://rafinex-external-rifle.gitlab.io/fenicsx-pctools/demo/demo_mixed-poisson.html)
 # which was presented in {cite}`mp-rehor2025pctools`.
 
 # We start with the mixed formulation of the Poisson equation, which is given by
@@ -23,12 +23,22 @@
 # \sigma \cdot n &= g &&\text{on } \Gamma_N,
 # \end{align}
 #
+# where the boundary is split into two non-overlapping parts, $\partial\Omega = \Gamma_D \cup \Gamma_N$.
+# On $\Gamma_D$ we prescribe the potential $u$ (a Dirichlet condition),
+# while on $\Gamma_N$ we prescribe the normal component of the flux $\sigma$ (a Neumann condition).
+# As we will see below, the roles of these conditions are swapped compared to the primal formulation of the Poisson equation.
+# The Dirichlet condition becomes a natural boundary condition, which enters the variational formulation through a boundary integral,
+# while the Neumann condition becomes an essential boundary condition, which is enforced strongly on the function space for $\sigma$.
+#
 # As in previous examples, we pick a manufactured solution to ensure that we can verify
 # the correctness of our implementation.
 # The manufactured solution is given by
 # \begin{align}
-# u_{ex}(x, y) &= \sin(\pi x) + y^2.
+# u_{ex}(x, y) &= \sin(\pi x) + y^2,
 # \end{align}
+#
+# and we choose $f$, $u_D$ and $g$ such that $u_{ex}$ solves the problem above,
+# i.e. $f=-\Delta u_{ex}$, $u_D=u_{ex}$ and $g=\nabla u_{ex}\cdot n$.
 
 
 def u_ex(mod, x):
@@ -46,33 +56,28 @@ N = 400
 mesh = dolfinx.mesh.create_unit_square(MPI.COMM_WORLD, N, N)
 # -
 
-# where $\Gamma_D = \{(x, 0) \vert x \in [0, 1]\}\cup\{ (x, 1) \vert x \in [0, 1]\}$
-# and $\Gamma_N = \{(0, y) \vert y \in [0, 1]\}\cup\{(1, y) \vert y \in [0, 1]\}$.
+# For this example, we choose $\Gamma_D = \{(x, 0) \vert x \in [0, 1]\}\cup\{ (x, 1) \vert x \in [0, 1]\}$
+# and $\Gamma_N = \{(0, y) \vert y \in [0, 1]\}\cup\{(1, y) \vert y \in [0, 1]\}$,
+# i.e. we prescribe the Dirichlet condition at the bottom and top of the square, and the Neumann condition at the left and right sides.
+# The two functions below mark the facets of $\Gamma_D$ and $\Gamma_N$.
 
 # +
 import numpy as np
 
 
 def Gamma_D(x):
-    return (
-        np.isclose(x[1], 0)
-        | np.isclose(x[1], 1)
-        | np.isclose(x[0], 0)
-        | np.isclose(x[0], 1)
-    )
+    return np.isclose(x[1], 0) | np.isclose(x[1], 1)
 
 
 def Gamma_N(x):
-    return np.full_like(
-        x[0], 0, dtype=bool
-    )  # np.isclose(x[0], 0) | np.isclose(x[0], 1)
+    return np.isclose(x[0], 0) | np.isclose(x[0], 1)
 
 
 # -
 
-# We define the function space for the vector-valued flux $p\in Q$ as the zeroth order discontinuous Lagrange space,
-# while the scalar potential $u \in V$ is defined in first order
-# [Brezzi-Douglas-Marini space](https://defelement.org/elements/brezzi-douglas-marini.html).
+# We define the function space for the vector-valued flux $\sigma\in Q$ as the first order
+# [Brezzi-Douglas-Marini space](https://defelement.org/elements/brezzi-douglas-marini.html),
+# while the scalar potential $u \in V$ is defined in the zeroth order discontinuous Lagrange space.
 
 V = dolfinx.fem.functionspace(mesh, ("DG", 0))
 Q = dolfinx.fem.functionspace(mesh, ("BDM", 1))
@@ -86,7 +91,7 @@ W = ufl.MixedFunctionSpace(*[Q, V])
 # -
 
 # Next, we have to define the bilinear and linear forms.
-# We do this as usual, by introducing a test functions $v\in V$ and $\tau\in Q$ and a trial function $u\in V$ and $q\in Q$,
+# We do this as usual, by introducing test functions $v\in V$ and $\tau\in Q$ and trial functions $u\in V$ and $\sigma\in Q$,
 # and integrate the first equation by parts.
 #
 # \begin{align}
@@ -98,20 +103,25 @@ W = ufl.MixedFunctionSpace(*[Q, V])
 # - \int_{\Gamma_D} u_D \tau\cdot \mathbf{n}~\mathrm{d}s,\\
 # \end{align}
 #
-# where $f_i$ is an interior facet of the mesh, $\mathbf{n}_i$ is an outwards pointing normal of one of the two
-# adjacent elements. We will enforce the boundary conditions strongly by using a
-# `dolfinx.fem.dirichletbc` on both $\Gamma_N$, which makes its integral dissapear, while we enforced the Dirichlet boundary condition
-# on $\Gamma_D$ weakly._
-# We enforce the continuity of $u$ weakly by removing the jump term.
+# where $f_i$ is an interior facet of the mesh and $\mathbf{n}_i$ is an outwards pointing normal of one of the two
+# adjacent elements.
+# In the second step, we have used the following:
+#
+# - We enforce the continuity of $u$ weakly by removing the jump term.
+# - On $\Gamma_D$, we insert the Dirichlet condition $u=u_D$.
+#   The Dirichlet condition is thus enforced weakly, as a natural boundary condition.
+# - On $\Gamma_N$, we enforce the Neumann condition $\sigma\cdot \mathbf{n}=g$ strongly, by using a `dolfinx.fem.dirichletbc` for $\sigma$.
+#   The test function $\tau$ then satisfies $\tau\cdot\mathbf{n}=0$ on $\Gamma_N$, and the integral over $\Gamma_N$ vanishes.
+#
 # Thus we end up with:
 #
-# Find $u\in V_{u_D}, \sigma \in Q_{g}$ such that
+# Find $u\in V$, $\sigma \in Q_{g}=\{\tau\in Q \vert \tau\cdot\mathbf{n}=g \text{ on } \Gamma_N\}$ such that
 #
 # \begin{align}
 # \begin{split}
 # \int_\Omega \sigma \cdot \tau + u \nabla \cdot \tau ~\mathrm{d} x&= \int_{\Gamma_D} u_D \tau\cdot \mathbf{n}~\mathrm{d}s,\\\\
 # \int_\Omega \nabla \cdot \sigma v ~\mathrm{d} x&=-\int_\Omega f v ~\mathrm{d} x
-# \end{split}\qquad \forall v \in V_{0}, \tau \in Q_{0}
+# \end{split}\qquad \forall v \in V, \tau \in Q_{0}
 # \end{align}
 
 u_D = dolfinx.fem.Function(V)
@@ -167,7 +177,11 @@ L = ufl.inner(u_D, ufl.dot(tau, n)) * dGammaD - ufl.inner(f, v) * ufl.dx
 L_blocked = ufl.extract_blocks(L)
 # -
 
-# Next we create the Dirichlet boundary condition for $\sigma$.
+# Next, we create the essential boundary condition $\sigma\cdot\mathbf{n}=g$ on $\Gamma_N$,
+# which in DOLFINx is a `dolfinx.fem.dirichletbc` for $\sigma$.
+# The degrees of freedom of the first order BDM space are moments of the normal component $\sigma\cdot\mathbf{n}$ on each facet.
+# Thus, we can interpolate any vector field whose normal component is equal to $g$ on $\Gamma_N$.
+# We use $g\mathbf{n}$, which only requires knowledge of $g$, and not of the full flux $\sigma$ on the boundary.
 # As we are using manufactured solutions for this problem, we could manually derive the explicit expression
 # for $\sigma$ on the boundary $\Gamma_N$.
 # However, in general this is not possible (especially for curved boundaries), and we have to use a more generic approach.
@@ -185,7 +199,7 @@ def interpolate_facet_expression(
     facets: npt.NDArray[np.int32],
 ) -> dolfinx.fem.Function:
     """
-    Interpolate a UFL-expression into a function space, only for the degrees of freedom assoicated with facets.
+    Interpolate a UFL-expression into a function space, only for the degrees of freedom associated with facets.
     """
     domain = Q.mesh
     Q_el = Q.element
@@ -277,12 +291,11 @@ sigma_facets = dolfinx.mesh.locate_entities_boundary(
 )
 n = ufl.FacetNormal(mesh)
 g = ufl.dot(ufl.grad(u_exact), n)
-sigma_bc = interpolate_facet_expression(Q, g, sigma_facets)
+sigma_bc = interpolate_facet_expression(Q, g * n, sigma_facets)
 bc_sigma = dolfinx.fem.dirichletbc(
     sigma_bc,
     dolfinx.fem.locate_dofs_topological(Q, mesh.topology.dim - 1, sigma_facets),
 )
-assert len(sigma_facets) == 0
 
 # Now that we have created the bilinear and linear form, and the boundary conditions,
 # we turn to solving the problem. For this we use the `dolfinx.fem.petsc.LinearProblem` class.
@@ -311,7 +324,7 @@ problem = dolfinx.fem.petsc.LinearProblem(
 # -
 
 # Note that we have specified `kind="mpi"` in the initialization of the `LinearProblem`.
-# This is to inform DOLFINx that we wan to preserve the block structure of the problem when assembling.
+# This is to inform DOLFINx that we want to preserve the block structure of the problem when assembling.
 
 import time
 
@@ -339,7 +352,7 @@ print(f"Direct solver, L2(u): {u_error:.2e}, H(div)(sigma): {sigma_error:.2e}")
 # As mentioned earlier, there are more efficient ways of solving this problem, than using a direct solver.
 # Especially with the saddle point structure of the problem, we can use a Schur complement preconditioner.
 # As described in [FEniCSx PCTools: Mixed Poisson](https://rafinex-external-rifle.gitlab.io/fenicsx-pctools/demo/demo_mixed-poisson.html),
-# Instead of wrapping the matrices in a custom wrapper, we can use `dolfinx.fem.petsc.LinearProblem` to solve the problem.
+# instead of wrapping the matrices in a custom wrapper, we can use `dolfinx.fem.petsc.LinearProblem` to solve the problem.
 
 # We start by defining the $S$ matrix in the Schur complement (see the aforementioned link for details on the variational formulation).
 
