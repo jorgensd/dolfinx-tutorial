@@ -1,17 +1,48 @@
 name: Test stable release
 
+# Runs the tests of the tutorial in the DOLFINx image of a release. The deploy workflow uses this
+# to test each release it builds before publishing it, and it uploads a mark of whether the tests
+# passed. On a pull request (or by hand) it tests the code in the image of the newest release, as
+# listed by .github/docs-versions.toml, to show whether it works in the newest DOLFINx release.
 on:
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
   workflow_call:
-  pull_request:
-    branches: ["release"]
+    inputs:
+      ref:
+        description: "Commit to test"
+        type: string
+        required: true
+      image:
+        description: "DOLFINx image to test in"
+        type: string
+        required: true
+      asset:
+        description: "Tarball of the HTML of the commit, named in the mark of whether the tests passed"
+        type: string
+        default: ""
 
 jobs:
-  test:
+  latest:
+    if: ${{ !inputs.image }}
     runs-on: ubuntu-latest
-    container: ghcr.io/fenics/dolfinx/lab:stable
-    env:
+    outputs:
+      image: ${{ steps.latest.outputs.image }}
+    steps:
+      - uses: actions/checkout@v7
 
+      - name: Find the newest release
+        id: latest
+        run: python3 .github/scripts/docs_site.py latest
+
+  test:
+    needs: latest
+    if: ${{ !cancelled() && (inputs.image || needs.latest.result == 'success') }}
+    runs-on: ubuntu-latest
+    container: ${{ inputs.image || needs.latest.outputs.image }}
+    env:
       DEB_PYTHON_INSTALL_LAYOUT: deb_system
       PYVISTA_OFF_SCREEN: true
       PYVISTA_JUPYTER_BACKEND: html
@@ -23,14 +54,23 @@ jobs:
       OMPI_ALLOW_RUN_AS_ROOT: 1
       OMPI_ALLOW_RUN_AS_ROOT_CONFIRM: 1
       PRTE_MCA_rmaps_default_mapping_policy: :oversubscribe
+      ASSET: ${{ inputs.asset }}
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    defaults:
+      run:
+        working-directory: tutorial
+
     steps:
+      # The install action comes from the commit of this workflow, as older tags may not have it
+      - uses: actions/checkout@v7
+
       - uses: actions/checkout@v7
         with:
-          ref: release
+          ref: ${{ inputs.ref }}
+          path: tutorial
 
-      - uses: ./.github/actions/install-dependencies
+      - id: install
+        uses: ./.github/actions/install-dependencies
 
       - name: Install additional deps
         run: |
@@ -38,24 +78,25 @@ jobs:
           python3 -m pip install --no-binary=h5py --no-build-isolation .[netgen]
 
       - name: Test complex notebooks in parallel
-        working-directory: chapter1
+        working-directory: tutorial/chapter1
         run: |
           export PKG_CONFIG_PATH=/usr/local/dolfinx-complex/lib/pkgconfig:$PKG_CONFIG_PATH
           export PETSC_ARCH=linux-gnu-complex128-32
-          export PYTHONPATH=/usr/local/dolfinx-complex/lib/python3.12/dist-packages:$PYTHONPATH
+          # Where the Python packages are depends on the image
+          export PYTHONPATH=$(echo /usr/local/dolfinx-complex/lib/python*/dist-packages | tr ' ' ':'):$PYTHONPATH
           export LD_LIBRARY_PATH=/usr/local/dolfinx-complex/lib:$LD_LIBRARY_PATH
           python3 complex_mode.py
           mpirun -n 2 python3 complex_mode.py
 
       - name: Test chapter 1
-        working-directory: chapter1
+        working-directory: tutorial/chapter1
         run: |
           mpirun -n 2 python3 fundamentals_code.py
           mpirun -n 2 python3 nitsche.py
           mpirun -n 2 python3 membrane_code.py
 
       - name: Test chapter 2
-        working-directory: chapter2
+        working-directory: tutorial/chapter2
         run: |
           mpirun -n 2 python3 diffusion_code.py
           mpirun -n 2 python3 heat_code.py
@@ -66,7 +107,7 @@ jobs:
           mpirun -n 2 python3 ns_code2.py
 
       - name: Test chapter 3
-        working-directory: chapter3
+        working-directory: tutorial/chapter3
         run: |
           mpirun -n 2 python3 neumann_dirichlet_code.py
           mpirun -n 2 python3 multiple_dirichlet.py
@@ -76,17 +117,50 @@ jobs:
           mpirun -n 2 python3 em.py
 
       - name: Test chapter 4
-        working-directory: chapter4
+        working-directory: tutorial/chapter4
         run: |
           mpirun -n 2 python3 solvers.py
           mpirun -n 2 python3 convergence.py
           mpirun -n 2 python3 compiler_parameters.py
           mpirun -n 2 python3 newton-solver.py
 
+      - name: Mark the tests as passed
+        id: passed
+        if: ${{ inputs.asset }}
+        working-directory: .
+        run: echo "${ASSET%.tar.gz}" > "${ASSET%.tar.gz}.tested"
+
+      - uses: actions/upload-artifact@v7
+        if: ${{ inputs.asset }}
+        with:
+          name: tested-${{ inputs.asset }}
+          path: "*.tested"
+          retention-days: 2
+          if-no-files-found: error
+
+      # So that the deploy workflow doesn't build it again until the mark is deleted. A failure
+      # before the tests could run, such as of a checkout, is more likely to be passing.
+      - name: Mark the tests as failed
+        id: failed
+        if: ${{ failure() && inputs.asset && steps.install.outcome == 'success' && steps.passed.outcome != 'success' }}
+        working-directory: .
+        env:
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          WHAT: ${{ inputs.ref }} in ${{ inputs.image }}
+        run: |
+          echo "Tests of ${WHAT} failed: ${RUN}" > "${ASSET%.tar.gz}.failed"
+
+      - uses: actions/upload-artifact@v7
+        if: ${{ failure() && steps.failed.outcome == 'success' }}
+        with:
+          name: failed-test-${{ inputs.asset }}
+          path: "*.failed"
+          retention-days: 2
+
       - name: Upload Navier-Stokes DFG 2D 3 plots
         uses: actions/upload-artifact@v7
         with:
-          name: DFG2D-3
-          path: chapter2/figures
+          name: DFG2D-3-${{ inputs.ref || github.sha }}
+          path: tutorial/chapter2/figures
           retention-days: 2
           if-no-files-found: error

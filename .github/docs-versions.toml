@@ -1,0 +1,17 @@
+# Versions of the tutorial published on the web page, read by .github/scripts/docs_site.py.
+#
+# "main" is always built against DOLFINx nightly. Each minor release from `oldest` onwards gets
+# one slot (e.g. v0.11), filled by its newest `vX.Y.Z[.postN]` tag. The newest slot is also
+# published as "stable", which is where the root of the web page leads.
+# Each tag is built once, and its HTML is kept in the `docs-archive` release.
+
+# Oldest minor release to publish
+oldest = "0.9"
+
+# DOLFINx image to build a release in
+image = "ghcr.io/fenics/dolfinx/lab:v{major}.{minor}.0"
+nightly_image = "ghcr.io/fenics/dolfinx/lab:nightly"
+
+# Per-minor overrides of `image`
+[images]
+"0.9" = "ghcr.io/fenics/dolfinx/lab:v0.9.0r1"

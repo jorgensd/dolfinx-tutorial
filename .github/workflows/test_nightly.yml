@@ -9,6 +9,15 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
   workflow_call:
+    inputs:
+      ref:
+        description: "Commit to test, if not the one the caller runs for"
+        type: string
+        default: ""
+      skip-book:
+        description: "Skip building the book, when the caller builds it"
+        type: boolean
+        default: false
   schedule:
     - cron: "0 9 * * *"
 
@@ -33,6 +42,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref }}
 
       - name: Special handling of some installation
         uses: ./.github/actions/install-dependencies
@@ -49,6 +60,7 @@ jobs:
           python3 -m pip install --no-build-isolation --break-system-packages --no-cache-dir --no-binary=h5py .[netgen] --upgrade
 
       - name: Test building the book
+        if: ${{ !inputs.skip-book }}
         run: PYVISTA_OFF_SCREEN=false jupyter-book build .
 
       - name: Test complex notebooks in parallel
@@ -96,7 +108,7 @@ jobs:
           mpirun -n 2 python3 newton-solver.py
 
       - uses: actions/upload-artifact@v7
-        if: always()
+        if: ${{ always() && !inputs.skip-book }}
         with:
           name: webpage
           path: ./_build/html
