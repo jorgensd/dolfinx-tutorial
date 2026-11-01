@@ -291,7 +291,7 @@ error_L2 = numpy.sqrt(domain.comm.allreduce(error_local, op=MPI.SUM))
 # Secondly, we compute the maximum error at any degree of freedom.
 # As the finite element function $u$ can be expressed as a linear combination of basis functions $\phi_j$,
 # spanning the space $V$: $ u = \sum_{j=1}^N U_j\phi_j.$
-# By writing {py:meth}`problem.solve()<dolfinx.fem.petsc.LinearProblem.sovle>`
+# By writing {py:meth}`problem.solve()<dolfinx.fem.petsc.LinearProblem.solve>`
 # we compute all the coefficients $U_1,\dots, U_N$.
 # These values are known as the _degrees of freedom_ (dofs).
 # We can access the degrees of freedom by accessing the underlying vector in `uh`.

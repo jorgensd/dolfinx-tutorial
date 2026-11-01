@@ -11,7 +11,7 @@
 # ---
 
 # # Mixed Poisson with a Schur complement pre-conditioner
-# This example demonstrates how to use PETSc fieldsplits with custom preconditioners in DOLFINx.
+# This example demonstrates how to use {py:mod}`PETSc<petsc4py.PETSc>` fieldsplits with custom preconditioners in DOLFINx.
 # This example is heavily inspired by the [FEniCSx PCTools example](https://rafinex-external-rifle.gitlab.io/fenicsx-pctools/demo/demo_mixed-poisson.html)
 # which was presented in {cite}`mp-rehor2025pctools`.
 
@@ -82,7 +82,7 @@ def Gamma_N(x):
 V = dolfinx.fem.functionspace(mesh, ("DG", 0))
 Q = dolfinx.fem.functionspace(mesh, ("BDM", 1))
 
-# We define a `ufl.MixedFunctionSpace` to automatically handle the block structure of the problem
+# We define a {py:class}`ufl.MixedFunctionSpace` to automatically handle the block structure of the problem
 
 # +
 import ufl
@@ -110,7 +110,7 @@ W = ufl.MixedFunctionSpace(*[Q, V])
 # - We enforce the continuity of $u$ weakly by removing the jump term.
 # - On $\Gamma_D$, we insert the Dirichlet condition $u=u_D$.
 #   The Dirichlet condition is thus enforced weakly, as a natural boundary condition.
-# - On $\Gamma_N$, we enforce the Neumann condition $\sigma\cdot \mathbf{n}=g$ strongly, by using a `dolfinx.fem.dirichletbc` for $\sigma$.
+# - On $\Gamma_N$, we enforce the Neumann condition $\sigma\cdot \mathbf{n}=g$ strongly, by using a {py:func}`dolfinx.fem.dirichletbc` for $\sigma$.
 #   The test function $\tau$ then satisfies $\tau\cdot\mathbf{n}=0$ on $\Gamma_N$, and the integral over $\Gamma_N$ vanishes.
 #
 # Thus we end up with:
@@ -163,7 +163,7 @@ a += ufl.inner(ufl.div(sigma), v) * ufl.dx
 # b_1
 # \end{pmatrix}
 # \end{align}
-# We can extract the block structure of the bilinear form using `ufl.extract_blocks`, which returns a nested list of bilinear forms.
+# We can extract the block structure of the bilinear form using {py:func}`ufl.extract_blocks`, which returns a nested list of bilinear forms.
 # You can also build this nested list by hand if you want to, but it is usually more error-prone.
 
 # +
@@ -178,14 +178,14 @@ L_blocked = ufl.extract_blocks(L)
 # -
 
 # Next, we create the essential boundary condition $\sigma\cdot\mathbf{n}=g$ on $\Gamma_N$,
-# which in DOLFINx is a `dolfinx.fem.dirichletbc` for $\sigma$.
+# which in DOLFINx is a {py:func}`dolfinx.fem.dirichletbc` for $\sigma$.
 # The degrees of freedom of the first order BDM space are moments of the normal component $\sigma\cdot\mathbf{n}$ on each facet.
 # Thus, we can interpolate any vector field whose normal component is equal to $g$ on $\Gamma_N$.
 # We use $g\mathbf{n}$, which only requires knowledge of $g$, and not of the full flux $\sigma$ on the boundary.
 # As we are using manufactured solutions for this problem, we could manually derive the explicit expression
 # for $\sigma$ on the boundary $\Gamma_N$.
 # However, in general this is not possible (especially for curved boundaries), and we have to use a more generic approach.
-# For this we will use the `dolfinx.fem.Expression` class to interpolate the expression into the function space $Q$.
+# For this we will use the {py:class}`dolfinx.fem.Expression` class to interpolate the expression into the function space $Q$.
 # This is done by evaluating the expression at the physical interpolation points of the mesh.
 # A convenience function for this is provided in the `interpolate_facet_expression` function below.
 
@@ -217,13 +217,15 @@ def interpolate_facet_expression(
     facet_cmap = basix.ufl.element(
         "Lagrange", facet_type, c_el.degree, shape=(domain.geometry.dim,), dtype=x_type
     )
+    # Wrap the C++ coordinate element in the Python interface, as the signature of
+    # the C++ `pull_back` differs between DOLFINx versions
     if np.issubdtype(x_type, np.float32):
-        facet_cel = dolfinx.cpp.fem.CoordinateElement_float32(
-            facet_cmap.basix_element._e
+        facet_cel = dolfinx.fem.CoordinateElement(
+            dolfinx.cpp.fem.CoordinateElement_float32(facet_cmap.basix_element._e)
         )
     elif np.issubdtype(x_type, np.float64):
-        facet_cel = dolfinx.cpp.fem.CoordinateElement_float64(
-            facet_cmap.basix_element._e
+        facet_cel = dolfinx.fem.CoordinateElement(
+            dolfinx.cpp.fem.CoordinateElement_float64(facet_cmap.basix_element._e)
         )
     else:
         raise TypeError(
@@ -237,7 +239,7 @@ def interpolate_facet_expression(
     interpolation_points = Q_el.basix_element.x
     for i, points in enumerate(interpolation_points[fdim]):
         geom = ref_geom[ref_top[fdim][i]]
-        ref_points = facet_cel.pull_back(points, geom, tol=1e-6, maxit=25)
+        ref_points = facet_cel.pull_back(points, geom)
         # Assert that interpolation points are all equal on all facets
         if reference_facet_points is None:
             reference_facet_points = ref_points
@@ -298,7 +300,7 @@ bc_sigma = dolfinx.fem.dirichletbc(
 )
 
 # Now that we have created the bilinear and linear form, and the boundary conditions,
-# we turn to solving the problem. For this we use the `dolfinx.fem.petsc.LinearProblem` class.
+# we turn to solving the problem. For this we use the {py:class}`dolfinx.fem.petsc.LinearProblem` class.
 # As opposed to the previous examples, we now have an explicit block structure, which we would like to
 # exploit when solving the problem. However, first we will solve the problem without any preconditioner
 # to have a baseline performance.
@@ -323,7 +325,7 @@ problem = dolfinx.fem.petsc.LinearProblem(
 )
 # -
 
-# Note that we have specified `kind="mpi"` in the initialization of the `LinearProblem`.
+# Note that we have specified `kind="mpi"` in the initialization of the {py:class}`LinearProblem<dolfinx.fem.petsc.LinearProblem>`.
 # This is to inform DOLFINx that we want to preserve the block structure of the problem when assembling.
 
 import time
@@ -352,7 +354,7 @@ print(f"Direct solver, L2(u): {u_error:.2e}, H(div)(sigma): {sigma_error:.2e}")
 # As mentioned earlier, there are more efficient ways of solving this problem, than using a direct solver.
 # Especially with the saddle point structure of the problem, we can use a Schur complement preconditioner.
 # As described in [FEniCSx PCTools: Mixed Poisson](https://rafinex-external-rifle.gitlab.io/fenicsx-pctools/demo/demo_mixed-poisson.html),
-# instead of wrapping the matrices in a custom wrapper, we can use `dolfinx.fem.petsc.LinearProblem` to solve the problem.
+# instead of wrapping the matrices in a custom wrapper, we can use {py:class}`dolfinx.fem.petsc.LinearProblem` to solve the problem.
 
 # We start by defining the $S$ matrix in the Schur complement (see the aforementioned link for details on the variational formulation).
 
