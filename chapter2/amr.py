@@ -33,6 +33,7 @@ from slepc4py import SLEPc
 from packaging.version import Version
 import dolfinx.fem.petsc
 import numpy as np
+import numpy.typing as npt
 import ufl
 import pyvista
 import ngsPETSc.utils.fenicsx as ngfx
@@ -210,47 +211,75 @@ def solve(
 
 
 # ## Error-indicator
-# In this example, we will use an error-indicator $\eta$ to decide what cells should be refined.
-# Specifically, the estimator $\eta$ is defined as:
+# In this example, we will use the standard residual based error-indicator for the Laplace
+# eigenvalue problem {cite}`amr-larson2000,amr-duran2003` to decide what cells should be refined.
+# For each cell $K$, the indicator $\eta_K$ is defined as:
 #
+# $$
 # \begin{align*}
-#  \eta^2 = \sum_{K\in \mathcal{T}_h(\Omega)}\left(h^2\int_K \vert \lambda u_h + \Delta u_h\vert^2~\mathrm{d}x\right)
-# + \sum_{E\in\mathcal{F}_i}\frac{h}{2} \vert [\nabla \cdot \mathbf{n}_E ]\vert^2~\mathrm{d}s
+#  \eta_K^2 = h_K^2\int_K \vert \lambda_h u_h + \Delta u_h\vert^2~\mathrm{d}x
+# + h_K\int_{\partial K\setminus\partial\Omega} \left\vert \frac{[\nabla u_h \cdot \mathbf{n}]}{2}\right\vert^2~\mathrm{d}s
 # \end{align*}
+# $$
 #
-# where $\mathcal{T}_h$ is the collection of cells in the mesh, $\mathcal{F}_i$ the collection of interior facets
-# (those connected to two cells).
+# where $(\lambda_h, u_h)$ is the discrete eigenpair, $h_K$ the diameter of $K$ and
+# $[\nabla u_h \cdot \mathbf{n}]$ the jump of the normal derivative over the facets of $K$.
+# The global estimator is $\eta^2 = \sum_{K\in \mathcal{T}_h(\Omega)}\eta_K^2$, where $\mathcal{T}_h$
+# is the collection of cells in the mesh.
+#
+# ```{note}
+# Following {cite}`amr-larson2000` (Equations 3.5-3.7), the facet part of the residual is defined per cell,
+# as an integral of half the jump over $\partial K\setminus\partial\Omega$, rather than as a sum over the
+# facets of the mesh.
+# An interior facet $E$, shared by the cells $K^+$ and $K^-$, therefore contributes
+# $h_{K^\pm}\int_E\vert [\nabla u_h \cdot \mathbf{n}]/2\vert^2~\mathrm{d}s$ to both cells.
+# With the piecewise constant test function $w$, this is the integral of
+# $\vert [\nabla u_h \cdot \mathbf{n}]/2\vert^2$ against $h^+w^+ + h^-w^- = 2\,\mathrm{avg}(hw)$ over each
+# interior facet.
+# Larson bounds the energy norm of the error by $\Vert h(R_i + R_e)\Vert$, where $R_i$ and $R_e$ are the
+# (non-negative) cell and facet parts of the residual, so $\eta^2$ differs from $\Vert h(R_i + R_e)\Vert^2$
+# by at most a factor $2$.
+# ```
+#
+# We mark a cell for refinement if $\eta_K > \theta \max_{K'\in\mathcal{T}_h}\eta_{K'}$, with $\theta=0.5$.
+#
+# As $\eta_K^2$ is assembled into a piecewise constant function space, the facet integrals on the
+# interface between two processes add contributions to the ghost entries of the vector.
+# These are accumulated on the process owning the cell with a reverse scatter.
 
 
-def mark_cells(uh_r: dolfinx.fem.Function, lam: float):
+def mark_cells(uh_r: dolfinx.fem.Function, lam: float) -> npt.NDArray[np.int32]:
     mesh = uh_r.function_space.mesh
+    tdim = mesh.topology.dim
     W = dolfinx.fem.functionspace(mesh, ("DG", 0))
     w = ufl.TestFunction(W)
-    eta_squared = dolfinx.fem.Function(W)
-    f = dolfinx.fem.Constant(mesh, 1.0)
-    h = dolfinx.fem.Function(W)
-    h.x.array[:] = mesh.h(mesh.topology.dim, np.arange(len(h.x.array), dtype=np.int32))
+    lam_h = dolfinx.fem.Constant(mesh, dolfinx.default_scalar_type(lam))
     n = ufl.FacetNormal(mesh)
 
-    G = (  # compute cellwise error estimator
-        ufl.inner(h**2 * (f + ufl.div(ufl.grad(uh_r))) ** 2, w) * ufl.dx
-        + ufl.inner(h("+") / 2 * ufl.jump(ufl.grad(uh_r), n) ** 2, w("+")) * ufl.dS
-        + ufl.inner(h("-") / 2 * ufl.jump(ufl.grad(uh_r), n) ** 2, w("-")) * ufl.dS
-    )
-    dolfinx.fem.petsc.assemble_vector(eta_squared.x.petsc_vec, dolfinx.fem.form(G))
-    eta = dolfinx.fem.Function(W)
-    eta.x.array[:] = np.sqrt(eta_squared.x.array[:])
+    # The cell diameter is needed on the ghost cells for the facet integrals
+    # on the interface between processes
+    cell_map = mesh.topology.index_map(tdim)
+    num_cells = cell_map.size_local + cell_map.num_ghosts
+    h = dolfinx.fem.Function(W)
+    h.x.array[W.dofmap.list[:, 0]] = mesh.h(tdim, np.arange(num_cells, dtype=np.int32))
 
-    eta_max = eta.x.petsc_vec.max()[1]
+    residual = lam_h * uh_r + ufl.div(ufl.grad(uh_r))
+    flux_jump = ufl.jump(ufl.grad(uh_r), n)
+    G = (  # compute cellwise error estimator
+        ufl.inner(h**2 * residual**2, w) * ufl.dx
+        + ufl.inner((flux_jump / 2) ** 2, 2 * ufl.avg(h * w)) * ufl.dS
+    )
+    eta_squared = dolfinx.fem.Function(W)
+    dolfinx.fem.petsc.assemble_vector(eta_squared.x.petsc_vec, dolfinx.fem.form(G))
+    eta_squared.x.scatter_reverse(dolfinx.la.InsertMode.add)
+
+    # Only mark the cells owned by this process, as the ghost cells are marked by their owner
+    num_owned = cell_map.size_local
+    eta = np.sqrt(eta_squared.x.array[W.dofmap.list[:num_owned, 0]].real)
+    eta_max = mesh.comm.allreduce(eta.max(initial=0.0), op=MPI.MAX)
 
     theta = 0.5
-    should_refine = ufl.conditional(ufl.gt(eta, theta * eta_max), 1, 0)
-    markers = dolfinx.fem.Function(W)
-    ip = W.element.interpolation_points
-    if Version(dolfinx.__version__) < Version("0.10.0"):
-        ip = ip()
-    markers.interpolate(dolfinx.fem.Expression(should_refine, ip))
-    return np.flatnonzero(np.isclose(markers.x.array.astype(np.int32), 1))
+    return np.flatnonzero(eta > theta * eta_max).astype(np.int32)
 
 
 # ## Running the adaptive refinement algorithm
@@ -271,14 +300,13 @@ if mesh.comm.rank == 0:
 
 # + tags=["hide-input"]
 def write_frame(plotter: pyvista.Plotter | None, uh_r: dolfinx.fem.Function):
-    # Scale uh_r to be consistent between refinement steps, as it can be multiplied by -1
-    uh_r_min = curved_mesh.comm.allreduce(uh_r.x.array.min(), op=MPI.MIN)
-    uh_r_max = curved_mesh.comm.allreduce(uh_r.x.array.max(), op=MPI.MAX)
-    uh_sign = np.sign(uh_r_min)
-    if np.isclose(uh_sign, 0):
-        uh_sign = np.sign(uh_r_max)
-    assert not np.isclose(uh_sign, 0), "uh_r has zero values, cannot determine sign."
-    uh_r.x.array[:] *= uh_sign
+    # Scale uh_r to be consistent between refinement steps, as it can be multiplied by -1.
+    # The first eigenfunction does not change sign in the interior, so we use the sign of the
+    # value with the largest magnitude (the values on the boundary are zero up to round-off).
+    comm = uh_r.function_space.mesh.comm
+    uh_r_min = comm.allreduce(uh_r.x.array.min(initial=np.inf), op=MPI.MIN)
+    uh_r_max = comm.allreduce(uh_r.x.array.max(initial=-np.inf), op=MPI.MAX)
+    uh_r.x.array[:] *= 1.0 if abs(uh_r_max) >= abs(uh_r_min) else -1.0
 
     # Update plot with refined mesh
     grid = pyvista.UnstructuredGrid(*dolfinx.plot.vtk_mesh(mesh))
@@ -317,7 +345,7 @@ termination_criteria = 1e-5
 for i in range(max_iterations):
     lam, uh_r, _ = solve(curved_mesh, ft, region_map)
 
-    relative_error = (lam - exact) / abs(exact)
+    relative_error = abs(lam - exact) / abs(exact)
     PETSc.Sys.Print(
         f"Iteration {i + 1}/{max_iterations}, {lam=:.5e}, {exact=:.5e}, {relative_error=:.2e}"
     )
@@ -335,3 +363,9 @@ if plotter is not None:
 # -
 
 # <img src="./amr.gif" alt="gif" class="bg-primary mb-1" width="800px">
+
+# ```{bibliography}
+#    :filter: cited
+#    :labelprefix:
+#    :keyprefix: amr-
+# ```
